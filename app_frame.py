@@ -20,3 +20,6 @@ class AppFrame:
 
     def show(self) -> None:
         self.wrapper.tkraise()
+
+    def destroy(self) -> None:
+        self.wrapper.destroy()
