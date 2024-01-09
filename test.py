@@ -22,3 +22,4 @@ def test_folder_select(app):
     app.set_folder(folder_path)
     assert app.image_folder == folder_path
     assert app.image_filepaths == []
+    assert app.main_menu.go_button.cget('state') == 'disabled'

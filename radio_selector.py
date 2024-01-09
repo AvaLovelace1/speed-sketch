@@ -24,7 +24,7 @@ class RadioSelector:
         return buttons
 
     def _create_radio_button(self, idx: int, txt: str, val: int) -> ttk.Radiobutton:
-        button = ttk.Radiobutton(self.frame, text=txt, value=val, variable=self.variable, bootstyle="toolbutton")
+        button = ttk.Radiobutton(self.frame, text=txt, value=val, variable=self.variable, bootstyle='toolbutton')
         padx = (0, 0) if idx == 0 else (1, 0)
         button.pack(side='left', padx=padx)
         return button
