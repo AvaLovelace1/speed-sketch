@@ -165,7 +165,18 @@ class TimedSession:
         self._reset_timer()
 
     def toggle_pause(self, _=None) -> None:
-        pass
+        if self.is_paused:
+            self._resume()
+        else:
+            self._pause()
+
+    def _pause(self) -> None:
+        self.is_paused = True
+        self.image_viewer.update_state_is_paused()
+
+    def _resume(self) -> None:
+        self.is_paused = False
+        self.image_viewer.update_state_is_resumed()
 
     def destroy(self) -> None:
         self.image_viewer.destroy()

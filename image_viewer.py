@@ -122,6 +122,12 @@ class ImageViewer(AppFrame):
         formatted_time_remaining = time.strftime('%M:%S', time.gmtime(self.timed_session.time_remaining))
         self.countdown_text.set(f'Time remaining ⏲ {formatted_time_remaining}')
 
+    def update_state_is_paused(self) -> None:
+        self.button_bar.buttons['pause'].configure(text='RESUME ▶', bootstyle='success')
+
+    def update_state_is_resumed(self) -> None:
+        self.button_bar.buttons['pause'].configure(text='PAUSE ⏸', bootstyle='warning')
+
     def _bind_hotkeys(self) -> None:
         for key, cmd in zip(self.BUTTON_HOTKEYS, self.button_commands):
             self.app.window.bind(key, cmd)
