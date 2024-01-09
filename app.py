@@ -3,6 +3,7 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from image_viewer import ImageViewer
 from main_menu import MainMenu
 
 
@@ -22,6 +23,7 @@ class App:
         self.window = self._create_window()
         self.image_show_time = tk.IntVar()
         self.main_menu = MainMenu(self)
+        self.image_viewer = ImageViewer(self)
         self.image_folder = ''
         self.image_filepaths = []
 
@@ -41,6 +43,7 @@ class App:
         self.window.style.configure('TButton', font=self.BUTTON_FONT)
 
     def run(self):
+        self.main_menu.show()
         self.window.mainloop()
 
     def set_folder(self, folder_path: str) -> None:
@@ -58,6 +61,7 @@ class App:
     def can_start_timed_session(self) -> bool:
         return self.image_folder and self.n_images > 0
 
-    def _start_timed_session(self, _=None) -> None:
+    def start_timed_session(self, _=None) -> None:
         if not self.can_start_timed_session():
             return
+        self.image_viewer.show()

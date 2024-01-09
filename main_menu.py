@@ -42,7 +42,7 @@ class MainMenu(AppFrame):
             master=self.label_frame,
             text='SELECT IMAGE FOLDER',
             width=self.app.MENU_BUTTON_WIDTH,
-            command=self._ask_for_folder
+            command=self._ask_for_folder,
         )
         button.pack(pady=(0, 7))
         return button
@@ -59,7 +59,7 @@ class MainMenu(AppFrame):
             self.label_frame,
             self.app.MENU_TIME_OPTION_TEXTS,
             self.app.MENU_TIME_OPTIONS,
-            self.app.image_show_time
+            self.app.image_show_time,
         )
 
     def _create_go_button(self) -> ttk.Button:
@@ -68,7 +68,8 @@ class MainMenu(AppFrame):
             text='GO! ▶',
             width=self.app.MENU_BUTTON_WIDTH,
             state='disabled',
-            bootstyle='success'
+            bootstyle='success',
+            command=self.app.start_timed_session,
         )
         button.pack(pady=(12, 7))
         return button
