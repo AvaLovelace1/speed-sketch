@@ -1,4 +1,5 @@
 import os
+import tkinter as tk
 
 import ttkbootstrap as ttk
 
@@ -12,9 +13,12 @@ class App:
 
     MENU_HEADING_FONT = (None, 32)
     MENU_BUTTON_WIDTH = 23
+    MENU_TIME_OPTION_TEXTS = ['30s', '45s', '1m', '2m', '5m', '10m']
+    MENU_TIME_OPTIONS = [30, 45, 60, 120, 300, 600]
 
     def __init__(self):
         self.window = self._create_window()
+        self.image_show_time = tk.IntVar()
         self.main_menu = MainMenu(self)
         self.image_folder = ''
         self.image_filepaths = []

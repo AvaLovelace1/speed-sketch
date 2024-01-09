@@ -5,6 +5,7 @@ import tkinter.filedialog
 import ttkbootstrap as ttk
 
 from app_frame import AppFrame
+from radio_selector import RadioSelector
 
 
 def _basename(filepath: str) -> str:
@@ -19,6 +20,12 @@ class MainMenu(AppFrame):
         self.heading_label = self._create_heading_label()
         self.folder_select_button = self._create_folder_select_button()
         self.folder_label = self._create_folder_label()
+        self.time_selector = RadioSelector(
+            self.label_frame,
+            self.app.MENU_TIME_OPTION_TEXTS,
+            self.app.MENU_TIME_OPTIONS,
+            self.app.image_show_time
+        )
 
     def _create_label_frame(self) -> ttk.LabelFrame:
         label_frame = ttk.LabelFrame(master=self.frame, text=self.app.VERSION_INFO)
