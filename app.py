@@ -70,12 +70,12 @@ class App:
     def can_start_timed_session(self) -> bool:
         return self.image_folder and self.n_images > 0 and self.timed_session is None
 
-    def start_timed_session(self) -> None:
+    def start_timed_session(self, _=None) -> None:
         if not self.can_start_timed_session():
             return
         self.timed_session = TimedSession(self, self.image_filepaths, self.image_show_time.get())
 
-    def end_timed_session(self):
+    def end_timed_session(self, _=None):
         self.timed_session.destroy()
         self.timed_session = None
 
@@ -120,13 +120,13 @@ class TimedSession:
         self.image_viewer.set_image(Image.open(self.image_filepaths[idx]))
         self.image_idx = idx
 
-    def prev_image(self) -> None:
+    def prev_image(self, _=None) -> None:
         self._set_image((self.image_idx - 1 + self.n_images) % self.n_images)
 
-    def next_image(self) -> None:
+    def next_image(self, _=None) -> None:
         self._set_image((self.image_idx + 1) % self.n_images)
 
-    def toggle_pause(self) -> None:
+    def toggle_pause(self, _=None) -> None:
         pass
 
     def destroy(self) -> None:
