@@ -1,3 +1,4 @@
+import tkinter as tk
 from collections.abc import Callable
 
 import ttkbootstrap as ttk
@@ -22,6 +23,9 @@ class ImageViewer(AppFrame):
         self.image = None
 
         self.frame = self._create_frame()
+        self.info_frame = self._create_info_frame()
+        self.image_count_label = self._create_image_count_label()
+        self.countdown_label = self._create_countdown_label()
         self.image_container = self._create_image_container()
         self.button_bar = self._create_button_bar()
 
@@ -44,6 +48,25 @@ class ImageViewer(AppFrame):
         frame = ttk.Frame(master=self.wrapper)
         frame.pack(fill='x', expand=True)
         return frame
+
+    def _create_info_frame(self) -> ttk.Frame:
+        frame = ttk.Frame(master=self.frame)
+        frame.pack(pady=(0, 8))
+        return frame
+
+    def _create_image_count_label(self) -> ttk.Label:
+        self.image_count_text = tk.StringVar()
+        self.image_count_text.set('Images completed: —')
+        label = ttk.Label(master=self.info_frame, textvariable=self.image_count_text)
+        label.pack(side='left', padx=20)
+        return label
+
+    def _create_countdown_label(self) -> ttk.Label:
+        self.countdown_text = tk.StringVar()
+        self.countdown_text.set('Time remaining: —')
+        label = ttk.Label(master=self.info_frame, textvariable=self.countdown_text)
+        label.pack(side='right', padx=20)
+        return label
 
     def _create_image_container(self) -> ttk.Label:
         label = ttk.Label(master=self.frame)
