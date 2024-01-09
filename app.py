@@ -1,6 +1,4 @@
 import os
-import tkinter as tk
-import tkinter.filedialog
 
 import ttkbootstrap as ttk
 
@@ -18,6 +16,12 @@ class App:
     def __init__(self):
         self.window = self._create_window()
         self.main_menu = MainMenu(self)
+        self.image_folder = ''
+        self.image_filepaths = []
+
+    @property
+    def n_images(self) -> int:
+        return len(self.image_filepaths)
 
     def _create_window(self) -> ttk.Window:
         window = ttk.Window(title=self.APP_NAME, themename=self.THEME)
@@ -28,13 +32,8 @@ class App:
     def run(self):
         self.window.mainloop()
 
-    def ask_for_folder(self) -> None:
-        folder_path = tk.filedialog.askdirectory()
-        self._set_folder(folder_path)
-
-    def _set_folder(self, folder_path: str) -> None:
-        if not folder_path:
-            return
+    def set_folder(self, folder_path: str) -> None:
+        assert os.path.isdir(folder_path)
         self.image_folder = folder_path
         self.image_filepaths = self._load_image_filepaths()
 

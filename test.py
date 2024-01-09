@@ -19,6 +19,6 @@ def test_main_menu_gui(app):
 
 def test_folder_select(app):
     folder_path = '.'
-    app._set_folder(folder_path)
+    app.set_folder(folder_path)
     assert app.image_folder == folder_path
     assert app.image_filepaths == []
