@@ -1,6 +1,8 @@
+import json
 import os
 import random
 import tkinter as tk
+from pathlib import Path
 
 import ttkbootstrap as ttk
 from PIL import Image
@@ -38,6 +40,7 @@ class App:
 
         self._customize_styles()
         self._bind_hotkeys()
+        self._set_close_protocol()
 
     @property
     def n_images(self) -> int:
@@ -46,6 +49,21 @@ class App:
     @property
     def screen_size(self) -> tuple[int, int]:
         return self.window.winfo_screenwidth(), self.window.winfo_screenheight()
+
+    @property
+    def window_size(self) -> tuple[int, int]:
+        return self.window.winfo_width(), self.window.winfo_height()
+
+    @property
+    def config_file_path(self) -> Path:
+        return Path.home() / f'.{self.APP_NAME}.conf'
+
+    @property
+    def config_dict(self) -> dict:
+        return {
+            'window_size': self.window_size,
+            'image_folder': self.image_folder,
+        }
 
     def _create_window(self) -> ttk.Window:
         window = ttk.Window(
@@ -94,9 +112,17 @@ class App:
             return
         self.timed_session = TimedSession(self, self.image_filepaths, self.image_show_time.get())
 
-    def end_timed_session(self, _=None):
+    def end_timed_session(self, _=None) -> None:
         self.timed_session.destroy()
         self.timed_session = None
+
+    def _set_close_protocol(self) -> None:
+        self.window.protocol('WM_DELETE_WINDOW', self._save_settings)
+
+    def _save_settings(self) -> None:
+        with open(self.config_file_path, 'w') as f:
+            json.dump(self.config_dict, f)
+        self.window.destroy()
 
 
 class TimedSession:
