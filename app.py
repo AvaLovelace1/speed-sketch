@@ -47,3 +47,10 @@ class App:
             filepaths = [entry.path for entry in entries
                          if entry.is_file() and any(entry.name.lower().endswith(ext) for ext in image_extensions)]
             return filepaths
+
+    def can_start_timed_session(self) -> bool:
+        return self.image_folder and self.n_images > 0
+
+    def _start_timed_session(self, _=None) -> None:
+        if not self.can_start_timed_session():
+            return

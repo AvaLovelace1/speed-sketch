@@ -79,7 +79,14 @@ class MainMenu(AppFrame):
             return
         self.app.set_folder(folder_path)
         self._update_folder_label()
+        self._update_go_button()
 
     def _update_folder_label(self) -> None:
         self.folder_label_text.set(f'Folder: {_basename(self.app.image_folder)} '
                                    f'({self.app.n_images} images found)')
+
+    def _update_go_button(self) -> None:
+        if self.app.can_start_timed_session():
+            self.go_button.configure(state='enabled')
+        else:
+            self.go_button.configure(state='disabled')
