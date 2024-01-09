@@ -11,6 +11,8 @@ class App:
     VERSION_INFO = 'v1.0 • Ava Pun, 2024'
     THEME = 'darkly'
 
+    BUTTON_FONT = (None, 18)
+
     MENU_HEADING_FONT = (None, 32)
     MENU_BUTTON_WIDTH = 23
     MENU_TIME_OPTION_TEXTS = ['30s', '45s', '1m', '2m', '5m', '10m']
@@ -23,6 +25,8 @@ class App:
         self.image_folder = ''
         self.image_filepaths = []
 
+        self._customize_styles()
+
     @property
     def n_images(self) -> int:
         return len(self.image_filepaths)
@@ -32,6 +36,9 @@ class App:
         window.grid_rowconfigure(0, weight=1)
         window.grid_columnconfigure(0, weight=1)
         return window
+
+    def _customize_styles(self) -> None:
+        self.window.style.configure('TButton', font=self.BUTTON_FONT)
 
     def run(self):
         self.window.mainloop()
