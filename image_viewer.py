@@ -26,6 +26,7 @@ class ImageViewer(AppFrame):
         self.info_frame = self._create_info_frame()
         self.image_count_label = self._create_image_count_label()
         self.countdown_label = self._create_countdown_label()
+        self.progress_bar = self._create_progress_bar()
         self.image_container = self._create_image_container()
         self.button_bar = self._create_button_bar()
 
@@ -56,17 +57,22 @@ class ImageViewer(AppFrame):
 
     def _create_image_count_label(self) -> ttk.Label:
         self.image_count_text = tk.StringVar()
-        self.image_count_text.set('Images completed: —')
+        self.image_count_text.set('Images completed ☑ —')
         label = ttk.Label(master=self.info_frame, textvariable=self.image_count_text)
-        label.pack(side='left', padx=20)
+        label.pack(side='left', padx=30)
         return label
 
     def _create_countdown_label(self) -> ttk.Label:
         self.countdown_text = tk.StringVar()
-        self.countdown_text.set('Time remaining: —')
+        self.countdown_text.set('Time remaining ⏲ —')
         label = ttk.Label(master=self.info_frame, textvariable=self.countdown_text)
-        label.pack(side='right', padx=20)
+        label.pack(side='right', padx=30)
         return label
+
+    def _create_progress_bar(self) -> ttk.Progressbar:
+        bar = ttk.Progressbar(master=self.frame, length=self.app.VIEWER_PROGRESS_BAR_LENGTH)
+        bar.pack()
+        return bar
 
     def _create_image_container(self) -> ttk.Label:
         label = ttk.Label(master=self.frame)
