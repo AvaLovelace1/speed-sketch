@@ -79,7 +79,7 @@ class MainMenu(AppFrame):
         return button
 
     def _ask_for_folder(self) -> None:
-        folder_path = tk.filedialog.askdirectory()
+        folder_path = tk.filedialog.askdirectory(initialdir=self.app.image_folder)
         if not folder_path:
             return
         self.app.set_folder(folder_path)
