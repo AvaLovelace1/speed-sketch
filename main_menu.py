@@ -4,13 +4,11 @@ from app_frame import AppFrame
 
 
 class MainMenu(AppFrame):
-    TITLE_FONT = (None, 32)
-    BUTTON_WIDTH = 23
-
     def __init__(self, app):
         super().__init__(app.window)
         self.app = app
         self.label_frame = self._create_label_frame()
+        self.heading_label = self._create_heading_label()
 
     def _create_label_frame(self) -> ttk.LabelFrame:
         label_frame = ttk.LabelFrame(master=self.frame, text=self.app.VERSION_INFO)
@@ -18,3 +16,10 @@ class MainMenu(AppFrame):
         label_frame.grid_rowconfigure(0, weight=1)
         label_frame.grid_columnconfigure(0, weight=1)
         return label_frame
+
+    def _create_heading_label(self) -> ttk.Label:
+        label = ttk.Label(master=self.label_frame, text=self.app.APP_NAME, font=self.app.MENU_HEADING_FONT)
+        label.pack(pady=(18, 7))
+        sep = ttk.Separator(master=self.label_frame, orient='horizontal')
+        sep.pack(pady=(0, 24))
+        return label
