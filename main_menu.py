@@ -26,14 +26,12 @@ class MainMenu(AppFrame):
 
     def _create_frame(self) -> ttk.Frame:
         frame = ttk.Frame(master=self.wrapper)
-        frame.grid(row=0, column=0)
+        frame.pack(fill='both', expand=True)
         return frame
 
     def _create_label_frame(self) -> ttk.LabelFrame:
         label_frame = ttk.LabelFrame(master=self.frame, text=self.app.VERSION_INFO)
-        label_frame.grid(row=0, column=0, ipadx=25, ipady=12)
-        label_frame.grid_rowconfigure(0, weight=1)
-        label_frame.grid_columnconfigure(0, weight=1)
+        label_frame.pack(expand=True, ipadx=25, ipady=12)
         return label_frame
 
     def _create_heading_label(self) -> ttk.Label:
