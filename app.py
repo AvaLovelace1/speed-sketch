@@ -10,7 +10,7 @@ from main_menu import MainMenu
 
 
 class App:
-    APP_NAME = 'Drawing Practice Timer'
+    APP_NAME = 'SpeedSketch'
     VERSION_INFO = 'v1.0 • Ava Pun, 2024'
     THEME = 'darkly'
 
