@@ -33,6 +33,7 @@ class App:
         self.timed_session = None
 
         self._customize_styles()
+        self._bind_hotkeys()
 
     @property
     def n_images(self) -> int:
@@ -50,6 +51,9 @@ class App:
 
     def _customize_styles(self) -> None:
         self.window.style.configure('TButton', font=self.BUTTON_FONT)
+
+    def _bind_hotkeys(self) -> None:
+        self.window.bind('<Return>', self.start_timed_session)
 
     def run(self):
         self.main_menu.show()
