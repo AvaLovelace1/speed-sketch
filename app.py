@@ -3,7 +3,7 @@ import random
 import tkinter as tk
 
 import ttkbootstrap as ttk
-from PIL import Image, ImageTk
+from PIL import Image
 
 from image_viewer import ImageViewer
 from main_menu import MainMenu
@@ -38,10 +38,6 @@ class App:
     @property
     def screen_size(self) -> tuple[int, int]:
         return self.window.winfo_screenwidth(), self.window.winfo_screenheight()
-
-    @property
-    def max_image_size(self) -> tuple[int, int]:
-        return self.window.winfo_width(), self.window.winfo_height() - 150
 
     def _create_window(self) -> ttk.Window:
         window = ttk.Window(title=self.APP_NAME, themename=self.THEME)
@@ -83,11 +79,12 @@ class App:
 
 class TimedSession:
     def __init__(self, app, image_filepaths: list[str], image_show_time: int):
-        self.image_viewer = ImageViewer(app)
         self.app = app
         self.image_filepaths = image_filepaths.copy()
         random.shuffle(self.image_filepaths)
         self.image_show_time = image_show_time
+
+        self.image_viewer = ImageViewer(app)
 
         self._set_image(0)
         self.images_completed = 0
@@ -117,17 +114,8 @@ class TimedSession:
         return self.image_show_time - self.time_passed
 
     def _set_image(self, idx: int) -> None:
+        self.image_viewer.set_image(Image.open(self.image_filepaths[idx]))
         self.image_idx = idx
-        self.image = Image.open(self.image_filepaths[idx])
-        self.image.thumbnail(self.app.screen_size)
-        self._update_image_container()
-
-    def _update_image_container(self) -> None:
-        image = self.image.copy()
-        image.thumbnail(self.app.max_image_size)
-        image_tk = ImageTk.PhotoImage(image)
-        self.image_viewer.image.configure(image=image_tk)
-        self.image_viewer.image.image = image_tk
 
     def prev_image(self) -> None:
         self._set_image((self.image_idx - 1 + self.n_images) % self.n_images)
