@@ -21,6 +21,9 @@ class App:
     MENU_TIME_OPTION_TEXTS = ['30s', '45s', '1m', '2m', '5m', '10m']
     MENU_TIME_OPTIONS = [30, 45, 60, 120, 300, 600]
 
+    VIEWER_BUTTON_WIDTH = 10
+    VIEWER_BUTTON_PADX = 7
+
     def __init__(self):
         self.window = self._create_window()
         self.image_show_time = tk.IntVar()
