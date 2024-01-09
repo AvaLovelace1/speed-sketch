@@ -14,6 +14,9 @@ class App:
     VERSION_INFO = 'v1.0 • Ava Pun, 2024'
     THEME = 'darkly'
 
+    WINDOW_DEFAULT_SIZE = (800, 600)
+    WINDOW_MINSIZE = (600, 350)
+
     BUTTON_FONT = (None, 18)
 
     MENU_HEADING_FONT = (None, 32)
@@ -45,7 +48,12 @@ class App:
         return self.window.winfo_screenwidth(), self.window.winfo_screenheight()
 
     def _create_window(self) -> ttk.Window:
-        window = ttk.Window(title=self.APP_NAME, themename=self.THEME)
+        window = ttk.Window(
+            title=self.APP_NAME,
+            themename=self.THEME,
+            size=self.WINDOW_DEFAULT_SIZE,
+            minsize=self.WINDOW_MINSIZE
+        )
         window.grid_rowconfigure(0, weight=1)
         window.grid_columnconfigure(0, weight=1)
         return window
