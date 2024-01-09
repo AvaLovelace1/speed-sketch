@@ -10,10 +10,11 @@ class ImageViewer(AppFrame):
     BUTTON_TEXTS = ['← PREV', 'NEXT →', 'PAUSE ⏸', 'EXIT Ⓧ']
     BUTTON_STYLES = ['default', 'default', 'warning', 'danger']
 
-    def __init__(self, app):
+    def __init__(self, app, timed_session):
         super().__init__(app.window)
 
         self.app = app
+        self.timed_session = timed_session
         self.prev_max_image_size = (0, 0)
         self.image = None
         self.image_container = self._create_image_container()
@@ -30,11 +31,18 @@ class ImageViewer(AppFrame):
         return label
 
     def _create_button_bar(self) -> ButtonBar:
+        button_commands = [
+            self.timed_session.prev_image,
+            self.timed_session.next_image,
+            self.timed_session.toggle_pause,
+            self.app.end_timed_session,
+        ]
         return ButtonBar(
             self.frame,
             self.BUTTON_NAMES,
             self.BUTTON_TEXTS,
             self.BUTTON_STYLES,
+            button_commands,
             self.app.VIEWER_BUTTON_WIDTH,
             self.app.VIEWER_BUTTON_PADX,
         )

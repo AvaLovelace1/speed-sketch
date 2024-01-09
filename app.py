@@ -87,7 +87,7 @@ class TimedSession:
         random.shuffle(self.image_filepaths)
         self.image_show_time = image_show_time
 
-        self.image_viewer = ImageViewer(app)
+        self.image_viewer = ImageViewer(app, self)
 
         self._set_image(0)
         self.images_completed = 0
@@ -125,6 +125,9 @@ class TimedSession:
 
     def next_image(self) -> None:
         self._set_image((self.image_idx + 1) % self.n_images)
+
+    def toggle_pause(self) -> None:
+        pass
 
     def destroy(self) -> None:
         self.image_viewer.destroy()
