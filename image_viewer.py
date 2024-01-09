@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 from collections.abc import Callable
 
@@ -57,20 +58,24 @@ class ImageViewer(AppFrame):
 
     def _create_image_count_label(self) -> ttk.Label:
         self.image_count_text = tk.StringVar()
-        self.image_count_text.set('Images completed ☑ —')
         label = ttk.Label(master=self.info_frame, textvariable=self.image_count_text)
         label.pack(side='left', padx=30)
+        self.update_image_count_text()
         return label
 
     def _create_countdown_label(self) -> ttk.Label:
         self.countdown_text = tk.StringVar()
-        self.countdown_text.set('Time remaining ⏲ —')
         label = ttk.Label(master=self.info_frame, textvariable=self.countdown_text)
         label.pack(side='right', padx=30)
+        self.update_countdown_text()
         return label
 
     def _create_progress_bar(self) -> ttk.Progressbar:
-        bar = ttk.Progressbar(master=self.frame, length=self.app.VIEWER_PROGRESS_BAR_LENGTH)
+        bar = ttk.Progressbar(
+            master=self.frame,
+            length=self.app.VIEWER_PROGRESS_BAR_LENGTH,
+            variable=self.timed_session.percentage_time_passed
+        )
         bar.pack()
         return bar
 
@@ -109,6 +114,13 @@ class ImageViewer(AppFrame):
             return
         self._update_image_size()
         self.prev_max_image_size = self.max_image_size
+
+    def update_image_count_text(self) -> None:
+        self.image_count_text.set(f'Images completed ☑ {self.timed_session.images_completed}')
+
+    def update_countdown_text(self) -> None:
+        formatted_time_remaining = time.strftime('%M:%S', time.gmtime(self.timed_session.time_remaining))
+        self.countdown_text.set(f'Time remaining ⏲ {formatted_time_remaining}')
 
     def _bind_hotkeys(self) -> None:
         for key, cmd in zip(self.BUTTON_HOTKEYS, self.button_commands):

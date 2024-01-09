@@ -57,8 +57,14 @@ class App:
         self.window.bind('<Return>', self.start_timed_session)
 
     def run(self):
+        self._tick()
         self.main_menu.show()
         self.window.mainloop()
+
+    def _tick(self):
+        if self.timed_session:
+            self.timed_session.tick()
+        self.window.after(1000, self._tick)
 
     def set_folder(self, folder_path: str) -> None:
         assert os.path.isdir(folder_path)
@@ -92,17 +98,27 @@ class TimedSession:
         random.shuffle(self.image_filepaths)
         self.image_show_time = image_show_time
 
+        self._images_completed = 0
+        self._time_passed = 0
+        self.is_paused = False
+        self._percentage_time_passed = tk.DoubleVar()
         self.image_viewer = ImageViewer(app, self)
 
         self._set_image(0)
-        self.images_completed = 0
-        self._time_passed = 0
-        self._percentage_time_passed = tk.DoubleVar()
-        self.is_paused = False
+        self._reset_timer()
 
     @property
     def n_images(self) -> int:
         return len(self.image_filepaths)
+
+    @property
+    def images_completed(self) -> int:
+        return self._images_completed
+
+    @images_completed.setter
+    def images_completed(self, value):
+        self._images_completed = value
+        self.image_viewer.update_image_count_text()
 
     @property
     def time_passed(self) -> int:
@@ -112,6 +128,7 @@ class TimedSession:
     def time_passed(self, value) -> None:
         self._time_passed = value
         self._percentage_time_passed.set(value / self.image_show_time * 100)
+        self.image_viewer.update_countdown_text()
 
     @property
     def percentage_time_passed(self) -> tk.DoubleVar:
@@ -121,15 +138,31 @@ class TimedSession:
     def time_remaining(self) -> int:
         return self.image_show_time - self.time_passed
 
+    def tick(self) -> None:
+        if self.is_paused:
+            return
+        self.time_passed += 1
+        if self.time_remaining <= 0:
+            self._finish_image()
+
+    def _finish_image(self) -> None:
+        self.images_completed += 1
+        self.next_image()
+
+    def _reset_timer(self) -> None:
+        self.time_passed = 0
+
     def _set_image(self, idx: int) -> None:
         self.image_viewer.set_image(Image.open(self.image_filepaths[idx]))
         self.image_idx = idx
 
     def prev_image(self, _=None) -> None:
         self._set_image((self.image_idx - 1 + self.n_images) % self.n_images)
+        self._reset_timer()
 
     def next_image(self, _=None) -> None:
         self._set_image((self.image_idx + 1) % self.n_images)
+        self._reset_timer()
 
     def toggle_pause(self, _=None) -> None:
         pass
