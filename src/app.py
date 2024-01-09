@@ -37,11 +37,10 @@ class App:
         self.image_folder = ''
         self.image_filepaths = []
         self.timed_session = None
+        self.last_saved_window_size = self.window_size
 
         self._customize_styles()
         self._bind_hotkeys()
-        self._set_close_protocol()
-
         self._load_settings()
 
     @property
@@ -92,6 +91,8 @@ class App:
     def _tick(self):
         if self.timed_session:
             self.timed_session.tick()
+        if self.last_saved_window_size != self.window_size:
+            self._save_settings()
         self.window.after(1000, self._tick)
 
     def set_folder(self, folder_path: str) -> None:
@@ -100,6 +101,7 @@ class App:
         self.image_filepaths = self._load_image_filepaths()
         self.main_menu.update_folder_label()
         self.main_menu.update_go_button()
+        self._save_settings()
 
     def _load_image_filepaths(self) -> list[str]:
         image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
@@ -120,13 +122,10 @@ class App:
         self.timed_session.destroy()
         self.timed_session = None
 
-    def _set_close_protocol(self) -> None:
-        self.window.protocol('WM_DELETE_WINDOW', self._save_settings)
-
-    def _save_settings(self) -> None:
+    def _save_settings(self, _=None) -> None:
+        self.last_saved_window_size = self.window_size
         with open(self.config_file_path, 'w') as f:
             json.dump(self.config_dict, f)
-        self.window.destroy()
 
     def _load_settings(self) -> None:
         try:
