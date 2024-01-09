@@ -17,12 +17,19 @@ class ImageViewer(AppFrame):
         self.timed_session = timed_session
         self.prev_max_image_size = (0, 0)
         self.image = None
+
+        self.frame = self._create_frame()
         self.image_container = self._create_image_container()
         self.button_bar = self._create_button_bar()
 
     @property
     def max_image_size(self) -> tuple[int, int]:
         return self.app.window.winfo_width(), self.app.window.winfo_height() - 150
+
+    def _create_frame(self) -> ttk.Frame:
+        frame = ttk.Frame(master=self.wrapper)
+        frame.pack(fill='x', expand=True)
+        return frame
 
     def _create_image_container(self) -> ttk.Label:
         label = ttk.Label(master=self.frame)

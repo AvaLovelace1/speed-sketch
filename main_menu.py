@@ -16,12 +16,18 @@ class MainMenu(AppFrame):
     def __init__(self, app):
         super().__init__(app.window)
         self.app = app
+        self.frame = self._create_frame()
         self.label_frame = self._create_label_frame()
         self.heading_label = self._create_heading_label()
         self.folder_select_button = self._create_folder_select_button()
         self.folder_label = self._create_folder_label()
         self.time_selector = self._create_time_selector()
         self.go_button = self._create_go_button()
+
+    def _create_frame(self) -> ttk.Frame:
+        frame = ttk.Frame(master=self.wrapper)
+        frame.grid(row=0, column=0)
+        return frame
 
     def _create_label_frame(self) -> ttk.LabelFrame:
         label_frame = ttk.LabelFrame(master=self.frame, text=self.app.VERSION_INFO)
