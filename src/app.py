@@ -42,6 +42,8 @@ class App:
         self._bind_hotkeys()
         self._set_close_protocol()
 
+        self._load_settings()
+
     @property
     def n_images(self) -> int:
         return len(self.image_filepaths)
@@ -96,6 +98,8 @@ class App:
         assert os.path.isdir(folder_path)
         self.image_folder = folder_path
         self.image_filepaths = self._load_image_filepaths()
+        self.main_menu.update_folder_label()
+        self.main_menu.update_go_button()
 
     def _load_image_filepaths(self) -> list[str]:
         image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
@@ -123,6 +127,18 @@ class App:
         with open(self.config_file_path, 'w') as f:
             json.dump(self.config_dict, f)
         self.window.destroy()
+
+    def _load_settings(self) -> None:
+        try:
+            with open(self.config_file_path, 'r') as f:
+                settings = json.load(f)
+            w, h = settings['window_size']
+            folder = settings['image_folder']
+            self.window.geometry(f'{w}x{h}')
+            if folder:
+                self.set_folder(folder)
+        except Exception as e:
+            print(f'Resetting settings due to exception: {e}')
 
 
 class TimedSession:
