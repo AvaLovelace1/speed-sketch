@@ -7,7 +7,7 @@
 > - On Mac, right-click the app, select "Open," and click "Open" on the dialog that pops up.
 > - On Windows, click "More Info" and then "Run Anyway."
 > 
-> Alternatively, you can build the app yourself using the provided build script.
+> Alternatively, you can [build the app yourself using the provided build scripts](https://github.com/AvaLovelace1/speed-sketch/tree/main#building-from-source-mac-apple-silicon--mac-universal--windows).
 
 **SpeedSketch** is a free app that allows you to create timed drawing sessions using photo references on your own
 computer—perfect for gesture studies, figure drawing practice, and the like.
