@@ -29,8 +29,9 @@ elif sys.platform == 'win32':
     extra_options = dict(
         setup_requires=['py2exe'],
         windows=[{'script': mainscript}],
-        options={'py2exe': options},
+        package_dir={'': 'src'},
         zipfile=None,
+        options={'py2exe': options},
     )
 else:
     extra_options = dict(
