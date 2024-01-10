@@ -23,7 +23,7 @@ elif sys.platform == 'win32':
 
     extra_options = dict(
         setup_requires=['py2exe'],
-        app=[mainscript],
+        windows=[mainscript],
     )
 else:
     extra_options = dict(

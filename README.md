@@ -69,6 +69,7 @@ Then, create the Python virtual environment:
 ```bash
 python3 -m venv .venv  # Initialize python virtualenv
 .venv\Scripts\activate.bat  # Activate virtualenv
+pip install -r requirements.txt  # Install required packages
 ```
 
 To build the application, we use [py2exe](http://www.py2exe.org).
@@ -77,3 +78,4 @@ The app will be saved to the folder `dist`.
 ```bash
 pip install py2exe
 python setup.py py2exe
+```
