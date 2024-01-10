@@ -107,10 +107,11 @@ class App:
 
     def _load_image_filepaths(self) -> list[str]:
         image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
-        with os.scandir(self.image_folder) as entries:
-            filepaths = [entry.path for entry in entries
-                         if entry.is_file() and any(entry.name.lower().endswith(ext) for ext in image_extensions)]
-            return filepaths
+        filepaths = [str(os.path.join(root, file))
+                     for root, _, files in os.walk(self.image_folder)
+                     for file in files
+                     if any(file.lower().endswith(ext) for ext in image_extensions)]
+        return filepaths
 
     def can_start_timed_session(self) -> bool:
         return self.image_folder and self.n_images > 0 and self.timed_session is None
