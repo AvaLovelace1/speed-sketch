@@ -22,7 +22,11 @@ You can find pre-built Mac applications (Intel and Apple Silicon)
 
 ### Building from source (Mac + Windows)
 
+#### Prerequisites
+
 To build from source, you must have [Python](https://www.python.org/downloads/) installed.
+
+#### Instructions for Mac (bash/zsh)
 
 First clone this repository:
 
@@ -31,7 +35,7 @@ git clone https://github.com/AvaLovelace1/speed-sketch.git
 cd speed-sketch
 ```
 
-Then, initialize the Python virtual environment:
+Then, create the Python virtual environment:
 
 ```bash
 python3 -m venv .venv  # Initialize python virtualenv
@@ -39,24 +43,37 @@ source .venv/bin/activate  # Activate virtualenv
 pip install -r requirements.txt  # Install required packages
 ```
 
-To build the application, we use [py2app](https://py2app.readthedocs.io/en/latest/) (Mac)
-or [py2exe](http://www.py2exe.org) (Windows).
+To build the application, we use [py2app](https://py2app.readthedocs.io/en/latest/).
+The app will be saved to the folder `dist`.
 
-- On **Mac**, run:
-
-  ```bash
-  python setup.py py2app
-  ```
-
-- On **Windows**, run:
-
-  ```bash
-  python setup.py py2exe
-  ```
-
-  _Note:_ Building on WIndows has not yet been tested.
+```bash
+pip install py2app
+python setup.py py2app
+```
 
 > [!NOTE]
 > Issues may arise if [PyInstaller](http://www.pyinstaller.org) is installed at the same time as py2app.
 > If this is the case, try uninstalling PyInstaller.
 
+#### Instructions for Windows (cmd.exe)
+
+First clone this repository:
+
+```bash
+git clone https://github.com/AvaLovelace1/speed-sketch.git
+cd speed-sketch
+```
+
+Then, create the Python virtual environment:
+
+```bash
+python3 -m venv .venv  # Initialize python virtualenv
+.venv\Scripts\activate.bat  # Activate virtualenv
+```
+
+To build the application, we use [py2exe](http://www.py2exe.org).
+The app will be saved to the folder `dist`.
+
+```bash
+pip install py2exe
+python setup.py py2exe
