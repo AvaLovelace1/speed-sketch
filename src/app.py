@@ -5,7 +5,7 @@ import tkinter as tk
 from pathlib import Path
 
 import ttkbootstrap as ttk
-from PIL import Image
+from PIL import Image, ImageTk
 
 from image_viewer import ImageViewer
 from main_menu import MainMenu
@@ -15,6 +15,7 @@ class App:
     APP_NAME = 'SpeedSketch'
     VERSION_INFO = 'v1.0 • Ava Pun, 2024'
     THEME = 'darkly'
+    ICON_FILENAME = 'icon.png'
 
     WINDOW_DEFAULT_SIZE = (800, 600)
     WINDOW_MINSIZE = (600, 350)
@@ -75,6 +76,7 @@ class App:
         )
         window.grid_rowconfigure(0, weight=1)
         window.grid_columnconfigure(0, weight=1)
+        window.iconphoto(False, ImageTk.PhotoImage(file=self.ICON_FILENAME))
         return window
 
     def _customize_styles(self) -> None:
