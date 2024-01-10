@@ -43,7 +43,7 @@ Then, run the provided build script:
 ```bash
 ./build_mac.zsh  # On Mac
 # OR
-build_windows.cmd  # On Windows
+build_windows.bat  # On Windows
 ```
 
 The app will be saved to the folder `bin`.
