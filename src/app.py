@@ -1,26 +1,26 @@
 import json
 import os
-import sys
 import random
+import sys
 import tkinter as tk
 from pathlib import Path
 
 import ttkbootstrap as ttk
-from PIL import Image, ImageTk
+from PIL import Image
 
 from image_viewer import ImageViewer
 from main_menu import MainMenu
 
+
 def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath('.')
-    return os.path.join(base_path, relative_path)
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 
 class App:
     APP_NAME = 'SpeedSketch'
-    VERSION_INFO = 'v1.0.0 • Ava Pun, 2024'
+    VERSION_INFO = 'v1.1.0 • Ava Pun, 2024'
     THEME = 'darkly'
     ICON_FILENAME = 'icon.png'
 
