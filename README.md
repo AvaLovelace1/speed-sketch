@@ -10,7 +10,8 @@ and [Quickposes](https://quickposes.com/en/desktop-app).
 Given an input folder, SpeedSketch scans the folder for images. It then displays them one by one in a
 random order, each for a specified amount of time.
 
-![Screenshot: Main Menu](screenshot-1.png) ![Screenshot: Image Viewer](screenshot-2.png)
+<img src="screenshot-1.png" width="500" alt="Screenshot: Main Menu"/>
+<img src="screenshot-2.png" width="500" alt="Screenshot: Image Viewer"/> 
 
 ## Installation
 
