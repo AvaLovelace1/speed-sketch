@@ -3,7 +3,11 @@
 **[Download (Mac + Windows)](https://github.com/AvaLovelace1/speed-sketch/releases/latest)**
 
 >[!NOTE]
-> **NOTE FOR MAC USERS:** Mac may prevent the app from opening for the first time, as it is from an unidentified developer. To bypass this problem, right-click the app, select `Open`, and click `Open` on the dialog that pops up.
+> Your antivirus software may prevent the app from opening for the first time, as it is from an unidentified developer. To bypass this problem:
+> - On Mac, right-click the app, select "Open," and click "Open" on the dialog that pops up.
+> - On Windows, click "More Info" and then "Run Anyway."
+> 
+> Alternatively, you can build the app yourself using the provided build script.
 
 **SpeedSketch** is a free app that allows you to create timed drawing sessions using photo references on your own
 computer—perfect for gesture studies, figure drawing practice, and the like.
