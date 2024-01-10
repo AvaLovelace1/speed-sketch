@@ -30,7 +30,7 @@ else:
 
 setup(
     name='SpeedSketch',
-    version='1.0',
+    version='1.0.0',
     description='An app that allows you to create timed drawing sessions using photo references on your own computer.',
     author='Ava Pun',
     copyright='© 2024 Ava Pun',
