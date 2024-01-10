@@ -72,11 +72,11 @@ class App:
             title=self.APP_NAME,
             themename=self.THEME,
             size=self.WINDOW_DEFAULT_SIZE,
-            minsize=self.WINDOW_MINSIZE
+            minsize=self.WINDOW_MINSIZE,
+            iconphoto=self.ICON_FILENAME,
         )
         window.grid_rowconfigure(0, weight=1)
         window.grid_columnconfigure(0, weight=1)
-        window.iconphoto(False, ImageTk.PhotoImage(file=self.ICON_FILENAME))
         return window
 
     def _customize_styles(self) -> None:
