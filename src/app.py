@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import random
 import tkinter as tk
 from pathlib import Path
@@ -10,6 +11,12 @@ from PIL import Image, ImageTk
 from image_viewer import ImageViewer
 from main_menu import MainMenu
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath('.')
+    return os.path.join(base_path, relative_path)
 
 class App:
     APP_NAME = 'SpeedSketch'
@@ -73,7 +80,7 @@ class App:
             themename=self.THEME,
             size=self.WINDOW_DEFAULT_SIZE,
             minsize=self.WINDOW_MINSIZE,
-            iconphoto=self.ICON_FILENAME,
+            iconphoto=resource_path(self.ICON_FILENAME),
         )
         window.grid_rowconfigure(0, weight=1)
         window.grid_columnconfigure(0, weight=1)
