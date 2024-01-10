@@ -27,7 +27,7 @@ random order, each for a specified amount of time.
 You can find pre-built Mac (Apple Silicon) and Windows applications
 **[here](https://github.com/AvaLovelace1/speed-sketch/releases/latest)**.
 
-### Building from source: Mac (Apple Silicon) + Mac (Universal) + Windows)
+### Building from source: Mac (Apple Silicon) + Mac (Universal) + Windows
 
 To build from source, you must have [Python](https://www.python.org/downloads/) installed.
 
