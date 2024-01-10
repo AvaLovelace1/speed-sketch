@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup
 
-data_files = [os.path.join('src', 'icon.png')]
+data_files = [('', [os.path.join('src', 'icon.png')])]
 mainscript = os.path.join('src', 'main.py')
 
 if sys.platform == 'darwin':
@@ -11,7 +11,7 @@ if sys.platform == 'darwin':
         'optimize': 2,
         'iconfile': os.path.join('src', 'icon'),
         # 'arch': 'x86_64',
-        'arch': 'arm64',
+        # 'arch': 'arm64',
     }
     extra_options = dict(
         setup_requires=['py2app'],
@@ -19,6 +19,8 @@ if sys.platform == 'darwin':
         options={'py2app': options},
     )
 elif sys.platform == 'win32':
+    import py2exe
+
     extra_options = dict(
         setup_requires=['py2exe'],
         app=[mainscript],
@@ -30,10 +32,9 @@ else:
 
 setup(
     name='SpeedSketch',
-    version='1.0.0',
+    version='1.1.0',
     description='An app that allows you to create timed drawing sessions using photo references on your own computer.',
     author='Ava Pun',
-    copyright='© 2024 Ava Pun',
     license='MIT',
     data_files=data_files,
     **extra_options,
