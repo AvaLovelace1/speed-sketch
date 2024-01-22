@@ -7,10 +7,10 @@ pip install -r requirements.txt  # Install required packages
 
 # BUILD APP (UNIVERSAL)
 rm -rf build dist
-pyinstaller -F --add-data "src/icon.png:." -i "src/icon.png" -w "src/main.py" -n SpeedSketch --target-arch universal2
+pyinstaller -F --add-data "src/icon.png:." -i "src/icon.png" -w "src/main.py" -n SpeedSketch --target-arch universal2 --hidden-import wakepy._deprecated._darwin
 zip -r "bin/SpeedSketch (Mac OS - Universal).zip" "dist/SpeedSketch.app"
 
 # BUILD APP (APPLE SILICON)
 rm -rf build dist
-pyinstaller -F --add-data "src/icon.png:." -i "src/icon.png" -w "src/main.py" -n SpeedSketch --target-arch arm64
+pyinstaller -F --add-data "src/icon.png:." -i "src/icon.png" -w "src/main.py" -n SpeedSketch --target-arch arm64 --hidden-import wakepy._deprecated._darwin
 zip -r "bin/SpeedSketch (Mac OS - Apple Silicon).zip" "dist/SpeedSketch.app"

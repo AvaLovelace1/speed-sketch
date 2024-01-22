@@ -4,6 +4,7 @@ import random
 import sys
 import tkinter as tk
 from pathlib import Path
+from wakepy import keep
 
 import ttkbootstrap as ttk
 from PIL import Image
@@ -80,7 +81,7 @@ class App:
             themename=self.THEME,
             size=self.WINDOW_DEFAULT_SIZE,
             minsize=self.WINDOW_MINSIZE,
-            iconphoto=resource_path(self.ICON_FILENAME),
+            iconphoto=str(resource_path(self.ICON_FILENAME)),
         )
         window.grid_rowconfigure(0, weight=1)
         window.grid_columnconfigure(0, weight=1)
@@ -95,7 +96,8 @@ class App:
     def run(self):
         self._tick()
         self.main_menu.show()
-        self.window.mainloop()
+        with keep.presenting():
+            self.window.mainloop()
 
     def _tick(self):
         if self.timed_session:
