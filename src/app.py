@@ -98,8 +98,7 @@ class App:
     def run(self):
         self._tick()
         self.main_menu.show()
-        with keep.presenting():
-            self.window.mainloop()
+        self.window.mainloop()
 
     def _tick(self):
         if self.timed_session:
@@ -208,11 +207,12 @@ class TimedSession:
         return self.image_show_time - self.time_passed
 
     def tick(self) -> None:
-        if self.is_paused:
-            return
-        self.time_passed += 1
-        if self.time_remaining <= 0:
-            self._finish_image()
+        with keep.presenting():
+            if self.is_paused:
+                return
+            self.time_passed += 1
+            if self.time_remaining <= 0:
+                self._finish_image()
 
     def _finish_image(self) -> None:
         self.images_completed += 1
