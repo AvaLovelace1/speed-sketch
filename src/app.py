@@ -47,6 +47,7 @@ class App:
         self.image_filepaths = []
         self.timed_session = None
         self.last_saved_window_size = self.window_size
+        self.last_image_show_time = self.image_show_time.get()
 
         self._customize_styles()
         self._bind_hotkeys()
@@ -73,6 +74,7 @@ class App:
         return {
             'window_size': self.window_size,
             'image_folder': self.image_folder,
+            'image_show_time': self.image_show_time.get(),
         }
 
     def _create_window(self) -> ttk.Window:
@@ -102,7 +104,7 @@ class App:
     def _tick(self):
         if self.timed_session:
             self.timed_session.tick()
-        if self.last_saved_window_size != self.window_size:
+        if self.last_saved_window_size != self.window_size or self.last_image_show_time != self.image_show_time.get():
             self._save_settings()
         self.window.after(1000, self._tick)
 
@@ -136,6 +138,7 @@ class App:
 
     def _save_settings(self, _=None) -> None:
         self.last_saved_window_size = self.window_size
+        self.last_image_show_time = self.image_show_time.get()
         with open(self.config_file_path, 'w') as f:
             json.dump(self.config_dict, f)
 
@@ -143,9 +146,14 @@ class App:
         try:
             with open(self.config_file_path, 'r') as f:
                 settings = json.load(f)
-            w, h = settings['window_size']
-            folder = settings['image_folder']
-            self.window.geometry(f'{w}x{h}')
+            w, h = settings.get('window_size')
+            folder = settings.get('image_folder')
+            image_show_time = settings.get('image_show_time')
+
+            if w and h:
+                self.window.geometry(f'{w}x{h}')
+            if image_show_time:
+                self.image_show_time.set(image_show_time)
             if folder:
                 self.set_folder(folder)
         except Exception as e:
