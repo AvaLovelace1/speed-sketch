@@ -3,7 +3,11 @@
 **[Download (Mac + Windows)](https://github.com/AvaLovelace1/speed-sketch/releases/latest)**
 
 >[!NOTE]
-> **NOTE FOR MAC USERS:** Mac may prevent the app from opening for the first time, as it is from an unidentified developer. To bypass this problem, right-click the app, select `Open`, and click `Open` on the dialog that pops up.
+> Your antivirus software may prevent the app from opening for the first time, as it is from an unidentified developer. To bypass this problem:
+> - On Mac, right-click the app, select "Open," and click "Open" on the dialog that pops up.
+> - On Windows, click "More Info" and then "Run Anyway."
+> 
+> Alternatively, you can [build the app yourself using the provided build scripts](https://github.com/AvaLovelace1/speed-sketch/tree/main#building-from-source-mac-apple-silicon--mac-universal--windows).
 
 **SpeedSketch** is a free app that allows you to create timed drawing sessions using photo references on your own
 computer—perfect for gesture studies, figure drawing practice, and the like.
@@ -23,7 +27,7 @@ random order, each for a specified amount of time.
 You can find pre-built Mac (Apple Silicon) and Windows applications
 **[here](https://github.com/AvaLovelace1/speed-sketch/releases/latest)**.
 
-### Building from source: Mac (Apple Silicon) + Mac (Universal) + Windows)
+### Building from source: Mac (Apple Silicon) + Mac (Universal) + Windows
 
 To build from source, you must have [Python](https://www.python.org/downloads/) installed.
 
@@ -39,7 +43,7 @@ Then, run the provided build script:
 ```bash
 ./build_mac.zsh  # On Mac
 # OR
-build_windows.cmd  # On Windows
+build_windows.bat  # On Windows
 ```
 
 The app will be saved to the folder `bin`.
