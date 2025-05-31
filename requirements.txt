@@ -1,4 +1,0 @@
-ttkbootstrap~=1.10.1
-pillow~=10.2.0
-pyinstaller~=6.3.0
-wakepy~=0.7.2
