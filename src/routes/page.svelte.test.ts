@@ -9,7 +9,7 @@ describe.concurrent('/+page.svelte', () => {
         expect(screen.getByRole('heading', {name: 'SpeedSketch', level: 1})).toBeVisible();
     });
     test('should render folder select', () => {
-        expect(screen.getByRole('button', {name: /.*Folder.*/})).toBeVisible();
+        expect(screen.getByRole('button', {name: RegExp('.*choose.*', 'i')})).toBeVisible();
     });
     test('should render image show time select', () => {
         const times = ['30s', '45s', '1m', '2m', '5m', '10m'];
@@ -18,6 +18,6 @@ describe.concurrent('/+page.svelte', () => {
         });
     });
     test('should render go button', () => {
-        expect(screen.getByRole('button', {name: /.*Go.*/})).toBeVisible();
+        expect(screen.getByRole('button', {name: RegExp('.*go.*', 'i')})).toBeVisible();
     });
 });
