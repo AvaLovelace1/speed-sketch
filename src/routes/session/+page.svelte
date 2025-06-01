@@ -19,10 +19,10 @@
     }
 </script>
 
-<div role="main" class="fixed inset-0 flex flex-col items-center justify-center"
+<div role="main" class="flex flex-col min-h-dvh items-center justify-center"
      onmousemove={doShowControls} onmouseleave={doHideControls}>
-    <div class="relative max-w-full max-h-full flex">
-        <img src="example.png" alt="Reference used for drawing practice" class="max-w-full max-h-full"/>
+    <div class="relative">
+        <img src="example.png" alt="Reference used for drawing practice" class="max-w-dvw max-h-dvh"/>
         {#if showControls}
             <div role="status" class="absolute toast toast-top toast-start" title="Images completed"
                  transition:fade={{duration: 150}}>
@@ -40,7 +40,7 @@
                 <Button label="← PREV" class_="join-item btn-soft btn-primary"/>
                 <Button label="NEXT →" class_="join-item btn-soft btn-primary"/>
                 <Button label="PAUSE ⏸" class_="join-item btn-soft btn-warning"/>
-                <Button label="EXIT Ⓧ" class_="join-item btn-soft btn-error"/>
+                <Button label="EXIT Ⓧ" class_="join-item btn-soft btn-error" href="/"/>
             </div>
         </div>
     {/if}
