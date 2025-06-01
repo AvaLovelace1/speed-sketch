@@ -2,6 +2,7 @@
     import SessionMenu from '$lib/components/SessionMenu.svelte';
 </script>
 
-<div class="bg-primary fixed inset-0 flex items-center justify-center">
+<div class="bg-primary fixed inset-0"></div> <!-- Background overlay -->
+<div class="flex flex-col min-h-dvh items-center justify-center">
     <SessionMenu/>
 </div>

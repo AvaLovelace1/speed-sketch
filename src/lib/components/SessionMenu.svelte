@@ -1,7 +1,7 @@
 <script lang="ts">
     import Button from '$lib/components/Button.svelte';
     import FolderInput from "$lib/components/FolderInput.svelte";
-    import ButtonGroup from '$lib/components/ButtonGroup.svelte';
+    import RadioButtons from '$lib/components/RadioButtons.svelte';
 
     interface Props {
         title?: string;
@@ -24,7 +24,7 @@
         </div>
         <div class="grid gap-3">
             <FolderInput/>
-            <ButtonGroup name="imgShowTime" labels={imgShowTimes}/>
+            <RadioButtons name="imgShowTime" labels={imgShowTimes}/>
             <Button label="GO! ▶" class_="btn-success btn-block" href="/session"/>
         </div>
     </div>
