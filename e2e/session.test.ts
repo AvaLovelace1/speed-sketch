@@ -1,5 +1,4 @@
-import {expect, test} from '@playwright/test';
-import {type Page} from '@playwright/test';
+import {expect, type Page, test} from '@playwright/test';
 
 test.describe('/session', () => {
     test.beforeEach(async ({page}) => {
@@ -23,22 +22,49 @@ test.describe('/session', () => {
         await page.mouse.move(-1, -1);
         await expectControlsHidden(page);
     });
+
+    test('pause button works', async ({page}) => {
+        await page.mouse.move(0, 0);
+        await expectControlsVisible(page);
+        await pauseButton(page).click();
+        await expect(resumeButton(page)).toBeVisible();
+        await resumeButton(page).click();
+        await expect(pauseButton(page)).toBeVisible();
+    });
 });
 
-function locateControls(page: Page) {
-    return [
-        page.getByRole('button', {name: /.*prev.*/i}),
-        page.getByRole('button', {name: /.*next.*/i}),
-        page.getByRole('button', {name: /.*pause.*/i}),
-        page.getByRole('button', {name: /.*exit.*/i}),
-        page.getByRole('status', {name: /.*completed.*/i}),
-    ];
+function controls(page: Page) {
+    return [prevButton(page), nextButton(page), pauseButton(page), exitButton(page), completedStatus(page)];
+}
+
+function prevButton(page: Page) {
+    return page.getByRole('button', {name: /.*prev.*/i});
+}
+
+function nextButton(page: Page) {
+    return page.getByRole('button', {name: /.*next.*/i});
+}
+
+function pauseButton(page: Page) {
+    return page.getByRole('button', {name: /.*pause.*/i});
+}
+
+function resumeButton(page: Page) {
+    return page.getByRole('button', {name: /.*resume.*/i});
+}
+
+function exitButton(page: Page) {
+    return page.getByRole('button', {name: /.*exit.*/i});
+}
+
+function completedStatus(page: Page) {
+    return page.getByRole('status', {name: /.*completed.*/i});
 }
 
 async function expectControlsVisible(page: Page) {
-    for (const elem of locateControls(page)) await expect(elem).toBeVisible();
+    for (const elem of controls(page)) await expect(elem).toBeVisible();
 }
 
 async function expectControlsHidden(page: Page, timeout = 500) {
-    for (const elem of locateControls(page)) await expect(elem).not.toBeVisible({timeout: timeout});
+    for (const elem of controls(page)) await expect(elem).not.toBeVisible({timeout: timeout});
 }

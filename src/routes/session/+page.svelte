@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Button from '$lib/components/Button.svelte';
     import {fade} from 'svelte/transition';
 
     let showControls = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
+    let isPaused = $state(false);
 
     const doShowControls = () => {
         showControls = true;
@@ -37,10 +37,18 @@
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
              transition:fade={{duration: 150}}>
             <div class="join rounded shadow-sm">
-                <Button label="← PREV" class_="join-item btn-soft btn-primary"/>
-                <Button label="NEXT →" class_="join-item btn-soft btn-primary"/>
-                <Button label="PAUSE ⏸" class_="join-item btn-soft btn-warning"/>
-                <Button label="EXIT Ⓧ" class_="join-item btn-soft btn-error" href="/"/>
+                <button type="button" class="btn join-item btn-soft btn-primary">← PREV</button>
+                <button type="button" class="btn join-item btn-soft btn-primary">NEXT →</button>
+                {#if isPaused}
+                    <button type="button" class="btn join-item btn-soft btn-success" onclick={() => isPaused = false}>
+                        RESUME ▶
+                    </button>
+                {:else}
+                    <button type="button" class="btn join-item btn-soft btn-warning" onclick={() => isPaused = true}>
+                        PAUSE ⏸
+                    </button>
+                {/if}
+                <a href="/" role="button" class="btn join-item btn-soft btn-error">EXIT Ⓧ</a>
             </div>
         </div>
     {/if}
