@@ -5,6 +5,16 @@
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
 
+    const initialTime = 70;
+
+    let timeRemaining = $state(initialTime);
+    let hoursRemaining = $derived(Math.floor(timeRemaining / 3600));
+    let minutesRemaining = $derived(Math.floor((timeRemaining % 3600) / 60));
+    let secondsRemaining = $derived(timeRemaining % 60);
+    let timerInterval: NodeJS.Timeout | undefined = undefined;
+
+    let nCompleted = $state(0);
+
     const doShowControls = () => {
         showControls = true;
         clearTimeout(hideControlsTimeout);
@@ -18,6 +28,24 @@
         clearTimeout(hideControlsTimeout);
     }
 
+    const doPause = () => {
+        isPaused = true;
+        clearInterval(timerInterval);
+        doShowControls();
+    }
+
+    const doResume = () => {
+        isPaused = false;
+        timerInterval = setInterval(() => {
+            if (timeRemaining > 0) timeRemaining--;
+            else if (timeRemaining === 0) {
+                nCompleted += 1;
+                timeRemaining = initialTime;
+            }
+        }, 1000);
+        doShowControls();
+    }
+
     function onKeyDown(e: KeyboardEvent) {
         switch (e.key) {
             case 'ArrowLeft':
@@ -27,14 +55,16 @@
                 console.log('Next image');
                 break;
             case ' ':
-                doShowControls();
-                isPaused = !isPaused;
+                if (isPaused) doResume();
+                else doPause();
                 break;
             case 'Escape':
                 console.log('Exit session');
                 break;
         }
     }
+
+    doResume();
 </script>
 
 <svelte:window onkeydown={onKeyDown}/>
@@ -46,11 +76,24 @@
         {#if showControls}
             <div role="status" class="absolute toast toast-top toast-start" title="Images completed"
                  transition:fade={{duration: 150}}>
-                <div class="alert alert-soft shadow-sm p-2">☑ 11</div>
+                <div class="alert alert-soft shadow-sm p-2 font-mono flex">
+                    <span class="font-mono">☑&nbsp;{nCompleted}</span>
+                </div>
             </div>
         {/if}
         <div role="timer" class="absolute toast toast-top toast-end" title="Time remaining">
-            <div class="alert alert-soft shadow-sm p-2">⏲ 9:45</div>
+            <div class="alert alert-soft shadow-sm p-2 flex">
+                <span class="countdown font-mono">⏲&nbsp;
+                    {#if hoursRemaining}
+                    <span style="--value:{hoursRemaining};" aria-live="polite"
+                          aria-label="{hoursRemaining.toString()}">{hoursRemaining}</span> :
+                    {/if}
+                    <span style="--value:{minutesRemaining};" aria-live="polite"
+                          aria-label="{minutesRemaining.toString()}">{minutesRemaining}</span> :
+                    <span style="--value:{secondsRemaining};" aria-live="polite"
+                          aria-label={secondsRemaining.toString()}>{secondsRemaining}</span>
+                </span>
+            </div>
         </div>
     </div>
     {#if showControls}

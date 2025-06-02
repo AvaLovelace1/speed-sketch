@@ -39,6 +39,20 @@ test.describe('/session', () => {
         await main.press(' ');
         await expect(pauseButton(page)).toBeVisible();
     });
+
+    test('timer pauses on pause', async ({page}) => {
+        const main = page.getByRole('main');
+        await main.press(' ');
+        const initialTime = await timerStatus(page).textContent();
+        await page.waitForTimeout(5000);
+        const pausedTime = await timerStatus(page).textContent();
+        expect(pausedTime).toBe(initialTime); // Time should not change while paused
+
+        await main.press(' ');
+        await page.waitForTimeout(5000);
+        const resumedTime = await timerStatus(page).textContent();
+        expect(resumedTime).not.toBe(initialTime); // Time should change after resuming
+    });
 });
 
 function controls(page: Page) {
@@ -67,6 +81,10 @@ function exitButton(page: Page) {
 
 function completedStatus(page: Page) {
     return page.getByRole('status', {name: /.*completed.*/i});
+}
+
+function timerStatus(page: Page) {
+    return page.getByRole('timer');
 }
 
 async function expectControlsVisible(page: Page) {
