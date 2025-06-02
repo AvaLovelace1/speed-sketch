@@ -22,10 +22,10 @@
         <div class="divider text-lg mt-1 mb-5 font-light">
             <span class="opacity-50"><em>{subtitle}</em></span>
         </div>
-        <div class="grid gap-3">
+        <form class="grid gap-3">
             <FolderInput/>
             <RadioButtons name="imgShowTime" labels={imgShowTimes}/>
             <Button label="GO! ▶" class_="btn-success btn-block" href="/session"/>
-        </div>
+        </form>
     </div>
 </div>
