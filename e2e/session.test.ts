@@ -31,6 +31,14 @@ test.describe('/session', () => {
         await resumeButton(page).click();
         await expect(pauseButton(page)).toBeVisible();
     });
+
+    test('press space to pause/resume', async ({page}) => {
+        const main = page.getByRole('main');
+        await main.press(' ');
+        await expect(resumeButton(page)).toBeVisible();
+        await main.press(' ');
+        await expect(pauseButton(page)).toBeVisible();
+    });
 });
 
 function controls(page: Page) {

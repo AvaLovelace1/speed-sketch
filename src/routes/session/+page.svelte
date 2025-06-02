@@ -17,7 +17,27 @@
         showControls = false;
         clearTimeout(hideControlsTimeout);
     }
+
+    function onKeyDown(e: KeyboardEvent) {
+        switch (e.key) {
+            case 'ArrowLeft':
+                console.log('Previous image');
+                break;
+            case 'ArrowRight':
+                console.log('Next image');
+                break;
+            case ' ':
+                doShowControls();
+                isPaused = !isPaused;
+                break;
+            case 'Escape':
+                console.log('Exit session');
+                break;
+        }
+    }
 </script>
+
+<svelte:window onkeydown={onKeyDown}/>
 
 <div role="main" class="flex flex-col min-h-dvh items-center justify-center"
      onmousemove={doShowControls} onmouseleave={doHideControls}>
@@ -37,18 +57,26 @@
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
              transition:fade={{duration: 150}}>
             <div class="join rounded shadow-sm">
-                <button type="button" class="btn join-item btn-soft btn-primary">← PREV</button>
-                <button type="button" class="btn join-item btn-soft btn-primary">NEXT →</button>
+                <button type="button" class="btn join-item btn-soft btn-primary" title="Previous image (left arrow)">
+                    ← PREV
+                </button>
+                <button type="button" class="btn join-item btn-soft btn-primary" title="Next image (right arrow)">
+                    NEXT →
+                </button>
                 {#if isPaused}
-                    <button type="button" class="btn join-item btn-soft btn-success" onclick={() => isPaused = false}>
+                    <button type="button" class="btn join-item btn-soft btn-success"
+                            title="Resume session (space)" onclick={() => isPaused = false}>
                         RESUME ▶
                     </button>
                 {:else}
-                    <button type="button" class="btn join-item btn-soft btn-warning" onclick={() => isPaused = true}>
+                    <button type="button" class="btn join-item btn-soft btn-warning"
+                            title="Pause session (space)" onclick={() => isPaused = true}>
                         PAUSE ⏸
                     </button>
                 {/if}
-                <a href="/" role="button" class="btn join-item btn-soft btn-error">EXIT Ⓧ</a>
+                <a href="/" role="button" class="btn join-item btn-soft btn-error" title="Exit (esc)">
+                    EXIT Ⓧ
+                </a>
             </div>
         </div>
     {/if}
