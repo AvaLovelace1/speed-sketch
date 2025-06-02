@@ -1,5 +1,5 @@
 [package]
-name = "speed-sketch"
+name = "SpeedSketch"
 version = "2.0.0"
 description = "App for timed drawing sessions"
 authors = ["Ava Pun"]
