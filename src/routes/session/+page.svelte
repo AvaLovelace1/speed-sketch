@@ -103,7 +103,7 @@
         {#if showControls}
             <div class="absolute toast toast-top toast-start" title="Images completed"
                  transition:fade={{duration: 200}}>
-                <StatusAlert alertClass="font-mono">
+                <StatusAlert alertClass="font-mono alert-success">
                     <CircleCheck size={20}/>{nCompleted}
                 </StatusAlert>
             </div>
