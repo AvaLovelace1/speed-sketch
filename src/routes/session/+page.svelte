@@ -1,5 +1,6 @@
 <script lang="ts">
     import {fade} from 'svelte/transition';
+    import Timer from "$lib/components/Timer.svelte";
 
     let showControls = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
@@ -8,9 +9,6 @@
     const initialTime = 70;
 
     let timeRemaining = $state(initialTime);
-    let hoursRemaining = $derived(Math.floor(timeRemaining / 3600));
-    let minutesRemaining = $derived(Math.floor((timeRemaining % 3600) / 60));
-    let secondsRemaining = $derived(timeRemaining % 60);
     let timerInterval: NodeJS.Timeout | undefined = undefined;
 
     let nCompleted = $state(0);
@@ -38,7 +36,7 @@
         isPaused = false;
         timerInterval = setInterval(() => {
             if (timeRemaining > 0) timeRemaining--;
-            else if (timeRemaining === 0) {
+            else {
                 nCompleted += 1;
                 timeRemaining = initialTime;
             }
@@ -69,8 +67,9 @@
 
 <svelte:window onkeydown={onKeyDown}/>
 
-<div role="main" class="flex flex-col min-h-dvh items-center justify-center"
-     onmousemove={doShowControls} onmouseleave={doHideControls}>
+<svelte:body onmousemove={doShowControls} onmouseleave={doHideControls}/>
+
+<div role="main" class="flex flex-col min-h-dvh items-center justify-center">
     <div class="relative">
         <img src="example.png" alt="Reference used for drawing practice" class="max-w-dvw max-h-dvh"/>
         {#if showControls}
@@ -81,19 +80,8 @@
                 </div>
             </div>
         {/if}
-        <div role="timer" class="absolute toast toast-top toast-end" title="Time remaining">
-            <div class="alert alert-soft shadow-sm p-2 flex">
-                <span class="countdown font-mono">⏲&nbsp;
-                    {#if hoursRemaining}
-                    <span style="--value:{hoursRemaining};" aria-live="polite"
-                          aria-label="{hoursRemaining.toString()}">{hoursRemaining}</span> :
-                    {/if}
-                    <span style="--value:{minutesRemaining};" aria-live="polite"
-                          aria-label="{minutesRemaining.toString()}">{minutesRemaining}</span> :
-                    <span style="--value:{secondsRemaining};" aria-live="polite"
-                          aria-label={secondsRemaining.toString()}>{secondsRemaining}</span>
-                </span>
-            </div>
+        <div class="absolute toast toast-top toast-end" title="Time remaining">
+            <Timer time={timeRemaining}/>
         </div>
     </div>
     {#if showControls}
