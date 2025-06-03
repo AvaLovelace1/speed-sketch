@@ -1,10 +1,26 @@
 import {describe, expect, test, vi} from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import {render, screen} from '@testing-library/svelte';
+import {createRawSnippet} from 'svelte';
 import {Skull} from '@lucide/svelte';
 import ControlsMenu from './ControlsMenu.svelte';
 import Timer from './Timer.svelte';
+import StatusAlert from './StatusAlert.svelte';
 
+describe('Alert.svelte', () => {
+    test('renders with default props', () => {
+        const snippet = () => ({
+            render() {
+                return '<span>Test Alert</span>'
+            }
+        });
+
+        render(StatusAlert, {children: createRawSnippet(snippet), alertClass: 'custom-class'});
+        const alert = screen.getByRole('status');
+        expect(alert).toHaveTextContent('Test Alert');
+        expect(alert).toHaveClass('custom-class');
+    });
+})
 
 describe('Timer.svelte', () => {
     test('timeRemaining 0', async () => {

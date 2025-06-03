@@ -1,16 +1,17 @@
 <script lang="ts">
+    import {ArrowLeft, ArrowRight, CircleCheck, LogOut, Pause, Play} from '@lucide/svelte';
     import {fade} from 'svelte/transition';
-    import Timer from "$lib/components/Timer.svelte";
-    import ControlsMenu from "$lib/components/ControlsMenu.svelte";
-    import {ArrowLeft, ArrowRight, LogOut, Pause, Play} from '@lucide/svelte';
+    import {cubicOut} from 'svelte/easing';
     import {goto} from '$app/navigation';
+    import ControlsMenu from '$lib/components/ControlsMenu.svelte';
+    import Timer from '$lib/components/Timer.svelte';
+    import StatusAlert from '$lib/components/StatusAlert.svelte';
 
     let showControls = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
 
     const initialTime = 70;
-
     let timeRemaining = $state(initialTime);
     let timerInterval: NodeJS.Timeout | undefined = undefined;
 
@@ -100,20 +101,28 @@
     <div class="relative">
         <img src="example.png" alt="Reference used for drawing practice" class="max-w-dvw max-h-dvh"/>
         {#if showControls}
-            <div role="status" class="absolute toast toast-top toast-start" title="Images completed"
-                 transition:fade={{duration: 150}}>
-                <div class="alert alert-soft shadow-sm p-2 font-mono flex">
-                    <span class="font-mono">☑&nbsp;{nCompleted}</span>
-                </div>
+            <div class="absolute toast toast-top toast-start" title="Images completed"
+                 transition:fade={{duration: 200}}>
+                <StatusAlert alertClass="font-mono">
+                    <CircleCheck size={20}/>{nCompleted}
+                </StatusAlert>
             </div>
         {/if}
         <div class="absolute toast toast-top toast-end" title="Time remaining">
             <Timer time={timeRemaining}/>
+            {#if isPaused}
+                <StatusAlert alertClass="alert-error">
+                    <Pause size={20}/>
+                    PAUSED
+                </StatusAlert>
+            {/if}
+        </div>
+        <div class="absolute toast toast-top toast-end" title="Time remaining">
         </div>
     </div>
     {#if showControls}
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
-             transition:fade={{duration: 150}}>
+             transition:fade={{duration: 200, easing: cubicOut}}>
             <ControlsMenu {controls}/>
         </div>
     {/if}
