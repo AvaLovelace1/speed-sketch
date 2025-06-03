@@ -1,6 +1,9 @@
 <script lang="ts">
     import {fade} from 'svelte/transition';
     import Timer from "$lib/components/Timer.svelte";
+    import ControlsMenu from "$lib/components/ControlsMenu.svelte";
+    import {ArrowLeft, ArrowRight, LogOut, Pause, Play} from '@lucide/svelte';
+    import {goto} from '$app/navigation';
 
     let showControls = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
@@ -13,7 +16,7 @@
 
     let nCompleted = $state(0);
 
-    const doShowControls = () => {
+    function doShowControls() {
         showControls = true;
         clearTimeout(hideControlsTimeout);
         hideControlsTimeout = setTimeout(() => {
@@ -21,18 +24,26 @@
         }, 3000);
     }
 
-    const doHideControls = () => {
+    function doHideControls() {
         showControls = false;
         clearTimeout(hideControlsTimeout);
     }
 
-    const doPause = () => {
+    function doPrevImg() {
+        console.log('Previous image');
+    }
+
+    function doNextImg() {
+        console.log('Next image');
+    }
+
+    function doPause() {
         isPaused = true;
         clearInterval(timerInterval);
         doShowControls();
     }
 
-    const doResume = () => {
+    function doResume() {
         isPaused = false;
         timerInterval = setInterval(() => {
             if (timeRemaining > 0) timeRemaining--;
@@ -42,6 +53,10 @@
             }
         }, 1000);
         doShowControls();
+    }
+
+    function doExit() {
+        goto('/');
     }
 
     function onKeyDown(e: KeyboardEvent) {
@@ -61,6 +76,18 @@
                 break;
         }
     }
+
+    const prevBtn = {label: 'PREV', Icon: ArrowLeft, action: doPrevImg, btnClass: 'btn-primary'};
+    const nextBtn = {label: 'NEXT', Icon: ArrowRight, action: doNextImg, btnClass: 'btn-primary'};
+    const pauseBtn = {label: 'PAUSE', Icon: Pause, action: doPause, btnClass: 'btn-warning'};
+    const resumeBtn = {label: 'RESUME', Icon: Play, action: doResume, btnClass: 'btn-success'};
+    const exitBtn = {label: 'EXIT', Icon: LogOut, action: doExit, btnClass: 'btn-error'};
+    const controls = $derived([
+        prevBtn,
+        nextBtn,
+        isPaused ? resumeBtn : pauseBtn,
+        exitBtn,
+    ]);
 
     doResume();
 </script>
@@ -87,28 +114,7 @@
     {#if showControls}
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
              transition:fade={{duration: 150}}>
-            <div class="join rounded shadow-sm">
-                <button type="button" class="btn join-item btn-soft btn-primary" title="Previous image (left arrow)">
-                    ← PREV
-                </button>
-                <button type="button" class="btn join-item btn-soft btn-primary" title="Next image (right arrow)">
-                    NEXT →
-                </button>
-                {#if isPaused}
-                    <button type="button" class="btn join-item btn-soft btn-success"
-                            title="Resume session (space)" onclick={() => isPaused = false}>
-                        RESUME ▶
-                    </button>
-                {:else}
-                    <button type="button" class="btn join-item btn-soft btn-warning"
-                            title="Pause session (space)" onclick={() => isPaused = true}>
-                        PAUSE ⏸
-                    </button>
-                {/if}
-                <a href="/" role="button" class="btn join-item btn-soft btn-error" title="Exit (esc)">
-                    EXIT Ⓧ
-                </a>
-            </div>
+            <ControlsMenu {controls}/>
         </div>
     {/if}
 </div>

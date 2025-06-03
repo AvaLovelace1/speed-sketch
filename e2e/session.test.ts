@@ -6,8 +6,8 @@ test.describe('/session', () => {
     });
 
     test('show controls on mouse move', async ({page}) => {
-        await expectControlsHidden(page);
-        await page.mouse.move(0, 0);
+        const main = page.getByRole('main');
+        await main.hover();
         await expectControlsVisible(page);
 
         // Hide controls after inactivity
@@ -15,7 +15,7 @@ test.describe('/session', () => {
         await expectControlsHidden(page);
 
         // Show controls again on mouse move
-        await page.mouse.move(0, 0);
+        await main.hover();
         await expectControlsVisible(page);
 
         // Hide controls after moving off the page
@@ -24,7 +24,8 @@ test.describe('/session', () => {
     });
 
     test('pause button works', async ({page}) => {
-        await page.mouse.move(0, 0);
+        const main = page.getByRole('main');
+        await main.hover();
         await expectControlsVisible(page);
         await pauseButton(page).click();
         await expect(resumeButton(page)).toBeVisible();
@@ -52,6 +53,12 @@ test.describe('/session', () => {
         await page.waitForTimeout(5000);
         const resumedTime = await timerStatus(page).textContent();
         expect(resumedTime).not.toBe(initialTime); // Time should change after resuming
+    });
+
+    test('exit button works', async ({page}) => {
+        await expectControlsVisible(page);
+        await exitButton(page).click();
+        await expect(page).toHaveURL('/');
     });
 });
 
