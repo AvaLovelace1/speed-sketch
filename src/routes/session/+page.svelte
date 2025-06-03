@@ -63,17 +63,17 @@
     function onKeyDown(e: KeyboardEvent) {
         switch (e.key) {
             case 'ArrowLeft':
-                console.log('Previous image');
+                doPrevImg();
                 break;
             case 'ArrowRight':
-                console.log('Next image');
+                doNextImg();
                 break;
             case ' ':
                 if (isPaused) doResume();
                 else doPause();
                 break;
             case 'Escape':
-                console.log('Exit session');
+                doExit();
                 break;
         }
     }
