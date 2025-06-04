@@ -13,13 +13,15 @@
 
     let {time = 0, criticalTime = 10, ...props}: Props = $props();
 
-    let negative = $derived(time < 0);
-    let hrs = $derived(Math.floor(Math.abs(time) / 60 / 60));
-    let mins = $derived((Math.floor(Math.abs(time) / 60) % 60));
-    let minsFmt = $derived(hrs ? mins.toString().padStart(2, '0') : mins);
-    let secs = $derived(Math.floor(Math.abs(time) % 60));
-    let secsFmt = $derived(secs.toString().padStart(2, '0'));
-    let timerString = $derived(`${negative ? '-' : ''}${hrs ? hrs + ':' : ''}${minsFmt}:${secsFmt}`);
+    let timerString = $derived.by(() => {
+        let negative = time < 0;
+        let hrs = Math.floor(Math.abs(time) / 60 / 60);
+        let mins = Math.floor(Math.abs(time) / 60) % 60;
+        let minsFmt = hrs > 0 && mins < 10 ? `0${mins}` : mins;
+        let secs = Math.floor(Math.abs(time) % 60);
+        let secsFmt = secs < 10 ? `0${secs}` : secs;
+        return `${negative ? '-' : ''}${hrs ? hrs + ':' : ''}${minsFmt}:${secsFmt}`;
+    });
     let timeIsCritical = $derived(criticalTime !== null && time <= criticalTime);
 </script>
 
