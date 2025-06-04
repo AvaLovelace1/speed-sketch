@@ -1,6 +1,7 @@
 import {describe, expect, test, vi} from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import {render, screen} from '@testing-library/svelte';
+import userEvent from '@testing-library/user-event'
 import {createRawSnippet} from 'svelte';
 import {Skull} from '@lucide/svelte';
 
@@ -53,29 +54,50 @@ describe('Timer.svelte', () => {
         render(Timer, {time: -3610});
         expect(screen.getByRole('timer')).toHaveTextContent(/^-1:00:10$/);
     });
-    test('timer renders with custom class', async () => {
+    test('custom class is applied', async () => {
         render(Timer, {time: 10, class: 'custom-class'});
         expect(screen.getByRole('timer')).toHaveClass('custom-class');
     });
 });
 
 describe('ControlsMenu.svelte', () => {
-    test('manu buttons work', () => {
+    test('menu buttons work', async () => {
         const handler1 = vi.fn();
         const handler2 = vi.fn();
-
         render(ControlsMenu, {
             controls: [
                 {label: 'Control 1', Icon: Skull, action: handler1},
-                {label: 'Control 2', action: handler2, btnClass: 'btn-primary'},
+                {label: 'Control 2', action: handler2},
             ]
         });
 
-        screen.getByRole('button', {name: 'Control 1'}).click();
-        screen.getByRole('button', {name: 'Control 2'}).click();
-        screen.getByRole('button', {name: 'Control 2'}).click();
-
+        const control1 = screen.getByRole('button', {name: 'Control 1'});
+        const control2 = screen.getByRole('button', {name: 'Control 2'});
+        const user = userEvent.setup();
+        await user.click(control1);
+        await user.click(control2);
+        await user.click(control2);
         expect(handler1).toHaveBeenCalledTimes(1);
         expect(handler2).toHaveBeenCalledTimes(2);
+    });
+    test('custom class is applied', () => {
+        const handler1 = vi.fn();
+        render(ControlsMenu, {
+            controls: [{label: 'Control 1', action: handler1, class: 'custom-class'}]
+        });
+
+        expect(screen.getByRole('button', {name: 'Control 1'})).toHaveClass('custom-class');
+    });
+    test('hotkeys work', async () => {
+        const handler1 = vi.fn();
+        render(ControlsMenu, {
+            controls: [
+                {label: 'Control 1', action: handler1, hotkey: 'a'},
+            ]
+        });
+
+        const user = userEvent.setup();
+        await user.keyboard('a');
+        expect(handler1).toHaveBeenCalledTimes(1);
     });
 });

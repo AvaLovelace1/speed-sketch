@@ -7,7 +7,9 @@
     import Timer from './Timer.svelte';
     import StatusAlert from './StatusAlert.svelte';
 
-    let showControls = $state(false);
+    const controlsFade = {duration: 200, easing: cubicOut};
+
+    let controlsShown = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
 
@@ -17,34 +19,34 @@
 
     let nCompleted = $state(0);
 
-    function doShowControls() {
-        showControls = true;
+    function showControls() {
+        controlsShown = true;
         clearTimeout(hideControlsTimeout);
         hideControlsTimeout = setTimeout(() => {
-            showControls = false;
+            controlsShown = false;
         }, 3000);
     }
 
-    function doHideControls() {
-        showControls = false;
+    function hideControls() {
+        controlsShown = false;
         clearTimeout(hideControlsTimeout);
     }
 
-    function doPrevImg() {
+    function goPrevImg() {
         console.log('Previous image');
     }
 
-    function doNextImg() {
+    function goNextImg() {
         console.log('Next image');
     }
 
-    function doPause() {
+    function pause() {
         isPaused = true;
         clearInterval(timerInterval);
-        doShowControls();
+        showControls();
     }
 
-    function doResume() {
+    function resume() {
         isPaused = false;
         timerInterval = setInterval(() => {
             if (timeRemaining > 0) timeRemaining--;
@@ -53,55 +55,46 @@
                 timeRemaining = initialTime;
             }
         }, 1000);
-        doShowControls();
+        showControls();
     }
 
-    function doExit() {
+    function togglePause() {
+        if (isPaused) resume();
+        else pause();
+    }
+
+    function exit() {
         goto('/');
     }
 
-    function onKeyDown(e: KeyboardEvent) {
-        switch (e.key) {
-            case 'ArrowLeft':
-                doPrevImg();
-                break;
-            case 'ArrowRight':
-                doNextImg();
-                break;
-            case ' ':
-                if (isPaused) doResume();
-                else doPause();
-                break;
-            case 'Escape':
-                doExit();
-                break;
-        }
-    }
+    const prevBtn = {
+        label: 'PREV', Icon: ArrowLeft, action: goPrevImg, hotkey: 'ArrowLeft',
+        class: 'btn-primary', title: 'Previous image (left arrow)',
+    };
+    const nextBtn = {
+        label: 'NEXT', Icon: ArrowRight, action: goNextImg, hotkey: 'ArrowRight',
+        class: 'btn-primary', title: 'Next image (right arrow)',
+    };
+    const pauseBtn = $derived({
+        label: isPaused ? 'RESUME' : 'PAUSE', Icon: isPaused ? Play : Pause, action: togglePause, hotkey: ' ',
+        class: isPaused ? 'btn-success' : 'btn-warning', title: isPaused ? 'Resume (space)' : 'Pause (space)',
+    });
+    const exitBtn = {
+        label: 'EXIT', Icon: LogOut, action: exit, hotkey: 'Escape',
+        class: 'btn-error', title: 'Exit session (esc)',
+    };
+    const controls = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 
-    const prevBtn = {label: 'PREV', Icon: ArrowLeft, action: doPrevImg, btnClass: 'btn-primary'};
-    const nextBtn = {label: 'NEXT', Icon: ArrowRight, action: doNextImg, btnClass: 'btn-primary'};
-    const pauseBtn = {label: 'PAUSE', Icon: Pause, action: doPause, btnClass: 'btn-warning'};
-    const resumeBtn = {label: 'RESUME', Icon: Play, action: doResume, btnClass: 'btn-success'};
-    const exitBtn = {label: 'EXIT', Icon: LogOut, action: doExit, btnClass: 'btn-error'};
-    const controls = $derived([
-        prevBtn,
-        nextBtn,
-        isPaused ? resumeBtn : pauseBtn,
-        exitBtn,
-    ]);
-
-    doResume();
+    resume();
 </script>
 
-<svelte:window onkeydown={onKeyDown}/>
-
-<svelte:body onmousemove={doShowControls} onmouseleave={doHideControls}/>
+<svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
 
 <div role="main" class="flex flex-col min-h-dvh items-center justify-center">
     <div class="relative">
         <img src="example.png" alt="Reference used for drawing practice" class="max-w-dvw max-h-dvh"/>
-        {#if showControls}
-            <div class="absolute toast toast-top toast-start" transition:fade={{duration: 200}}>
+        {#if controlsShown}
+            <div class="absolute toast toast-top toast-start" transition:fade={controlsFade}>
                 <StatusAlert class="font-mono alert-success" title="Images completed">
                     <CircleCheck size={20}/>{nCompleted}
                 </StatusAlert>
@@ -119,9 +112,8 @@
             {/if}
         </div>
     </div>
-    {#if showControls}
-        <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
-             transition:fade={{duration: 200, easing: cubicOut}}>
+    {#if controlsShown}
+        <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4" transition:fade={controlsFade}>
             <ControlsMenu {controls}/>
         </div>
     {/if}
