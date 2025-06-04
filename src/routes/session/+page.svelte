@@ -90,27 +90,25 @@
 
 <svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
 
-<div role="main" class="flex flex-col min-h-dvh items-center justify-center">
-    <div class="relative">
-        <img src="example.png" alt="Reference used for drawing practice" class="max-w-dvw max-h-dvh"/>
-        {#if controlsShown}
-            <div class="absolute toast toast-top toast-start" transition:fade={controlsFade}>
-                <StatusAlert class="font-mono alert-success" title="Images completed">
-                    <CircleCheck size={20}/>{nCompleted}
-                </StatusAlert>
-            </div>
-        {/if}
-        <div class="absolute toast toast-top toast-end">
-            <div>
-                <Timer time={timeRemaining} class="font-mono float-right" title="Time remaining"/>
-            </div>
-            {#if isPaused}
-                <StatusAlert class="alert-error font-mono">
-                    <Pause size={20}/>
-                    PAUSED
-                </StatusAlert>
-            {/if}
+<div role="main" class="flex flex-col h-dvh items-center justify-center">
+    <img src="example.png" alt="Reference used for drawing practice" class="size-full object-contain"/>
+    {#if controlsShown}
+        <div class="toast toast-top toast-start" transition:fade={controlsFade}>
+            <StatusAlert class="font-mono alert-success" title="Images completed">
+                <CircleCheck size={20}/>{nCompleted}
+            </StatusAlert>
         </div>
+    {/if}
+    <div class="toast toast-top toast-end">
+        <div>
+            <Timer time={timeRemaining} class="font-mono float-right" title="Time remaining"/>
+        </div>
+        {#if isPaused}
+            <StatusAlert class="alert-error font-mono">
+                <Pause size={20}/>
+                PAUSED
+            </StatusAlert>
+        {/if}
     </div>
     {#if controlsShown}
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4" transition:fade={controlsFade}>
