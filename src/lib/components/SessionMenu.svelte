@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Button from '$lib/components/Button.svelte';
-    import FolderInput from "$lib/components/FolderInput.svelte";
+    import FolderInput from '$lib/components/FolderInput.svelte';
     import RadioButtons from '$lib/components/RadioButtons.svelte';
+    import {shared} from '$lib/shared.svelte.js';
 
     interface Props {
         title?: string;
@@ -9,11 +9,14 @@
         imgShowTimes?: string[];
     }
 
+
     const {
         title = 'SpeedSketch',
         subtitle = 'timed drawing sessions',
         imgShowTimes = ['30s', '45s', '1m', '2m', '5m', '10m']
     }: Props = $props();
+
+    shared.folderInputIsValid = false; // Initialize the folder input validity state
 </script>
 
 <div class="card w-fit bg-base-100 shadow-sm">
@@ -25,7 +28,10 @@
         <form class="grid gap-3">
             <FolderInput/>
             <RadioButtons name="imgShowTime" labels={imgShowTimes}/>
-            <Button label="GO! ▶" class_="btn-success btn-block" href="/session"/>
+            <button type="submit" class="btn btn-success btn-block" formaction="/session"
+                    disabled={!shared.folderInputIsValid}>
+                GO! ▶
+            </button>
         </form>
     </div>
 </div>

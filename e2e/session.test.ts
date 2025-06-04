@@ -91,7 +91,7 @@ function completedStatus(page: Page) {
 }
 
 function timerStatus(page: Page) {
-    return page.getByRole('timer');
+    return page.getByRole('timer', {name: /.*remaining.*/i});
 }
 
 async function expectControlsVisible(page: Page) {

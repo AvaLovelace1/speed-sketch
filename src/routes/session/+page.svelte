@@ -3,9 +3,9 @@
     import {fade} from 'svelte/transition';
     import {cubicOut} from 'svelte/easing';
     import {goto} from '$app/navigation';
-    import ControlsMenu from '$lib/components/ControlsMenu.svelte';
-    import Timer from '$lib/components/Timer.svelte';
-    import StatusAlert from '$lib/components/StatusAlert.svelte';
+    import ControlsMenu from './ControlsMenu.svelte';
+    import Timer from './Timer.svelte';
+    import StatusAlert from './StatusAlert.svelte';
 
     let showControls = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
@@ -101,23 +101,22 @@
     <div class="relative">
         <img src="example.png" alt="Reference used for drawing practice" class="max-w-dvw max-h-dvh"/>
         {#if showControls}
-            <div class="absolute toast toast-top toast-start" title="Images completed"
-                 transition:fade={{duration: 200}}>
-                <StatusAlert alertClass="font-mono alert-success">
+            <div class="absolute toast toast-top toast-start" transition:fade={{duration: 200}}>
+                <StatusAlert class="font-mono alert-success" title="Images completed">
                     <CircleCheck size={20}/>{nCompleted}
                 </StatusAlert>
             </div>
         {/if}
-        <div class="absolute toast toast-top toast-end" title="Time remaining">
-            <Timer time={timeRemaining}/>
+        <div class="absolute toast toast-top toast-end">
+            <div>
+                <Timer time={timeRemaining} class="font-mono float-right" title="Time remaining"/>
+            </div>
             {#if isPaused}
-                <StatusAlert alertClass="alert-error">
+                <StatusAlert class="alert-error font-mono">
                     <Pause size={20}/>
                     PAUSED
                 </StatusAlert>
             {/if}
-        </div>
-        <div class="absolute toast toast-top toast-end" title="Time remaining">
         </div>
     </div>
     {#if showControls}
