@@ -114,6 +114,10 @@
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4" transition:fade={controlsFade}>
             <ControlsMenu {controls}/>
         </div>
+    {:else}
+        <div hidden>
+            <ControlsMenu {controls}/> <!-- Controls must be hidden but still present for keyboard shortcuts to work-->
+        </div>
     {/if}
 </div>
 
