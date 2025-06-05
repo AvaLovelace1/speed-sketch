@@ -21,7 +21,6 @@ describe.concurrent('/session/+page.svelte', () => {
     });
 });
 
-
 describe('Alert.svelte', () => {
     test('alert renders', () => {
         const snippet = () => ({
@@ -35,7 +34,7 @@ describe('Alert.svelte', () => {
         expect(alert).toHaveTextContent('Test Alert');
         expect(alert).toHaveClass('custom-class');
     });
-})
+});
 
 describe('Timer.svelte', () => {
     test('timeRemaining 0', async () => {

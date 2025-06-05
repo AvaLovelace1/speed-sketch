@@ -1,13 +1,12 @@
 <script lang="ts">
-    import {type Component} from 'svelte';
+    import type {Component} from 'svelte';
+    import type {HTMLButtonAttributes} from 'svelte/elements';
 
-    interface Control {
+    interface Control extends HTMLButtonAttributes {
         label: string;
         Icon?: Component;
         action: () => void;
         hotkey?: string;
-
-        [key: string]: any;
     }
 
     interface Props {
@@ -29,8 +28,8 @@
 
 <svelte:window onkeydown={onKeyDown}/>
 
-<div class="join rounded shadow-sm">
-    {#each controls as {label, Icon, action, ...others}}
+<div role="toolbar" class="join rounded shadow-sm">
+    {#each controls as {label, Icon, action, hotkey, ...others}}
         <button onclick={action} {...others} class={['btn join-item btn-soft', others.class]}>
             <Icon size={20}/>{label}
         </button>

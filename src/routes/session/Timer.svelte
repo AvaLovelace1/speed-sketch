@@ -1,14 +1,13 @@
 <script lang="ts">
+    import type {HTMLAttributes} from "svelte/elements";
     import {Timer} from '@lucide/svelte'
     import StatusAlert from './StatusAlert.svelte';
 
-    interface Props {
+    interface Props extends HTMLAttributes<HTMLDivElement> {
         // Time displayed, in seconds
         time?: number;
         // If set, the alert will turn red when timeRemaining is <= criticalTime
         criticalTime?: number | null;
-
-        [key: string]: any;
     }
 
     let {time = 0, criticalTime = 10, ...props}: Props = $props();

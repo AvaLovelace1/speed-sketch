@@ -90,7 +90,7 @@
 
 <svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
 
-<div role="main" class="flex flex-col h-dvh items-center justify-center">
+<div role="main" class="flex h-dvh items-center justify-center">
     <img src="example.png" alt="Reference used for drawing practice" class="size-full object-contain"/>
     {#if controlsShown}
         <div class="toast toast-top toast-start" transition:fade={controlsFade}>
@@ -111,7 +111,8 @@
         {/if}
     </div>
     {#if controlsShown}
-        <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4" transition:fade={controlsFade}>
+        <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
+             transition:fade={controlsFade} onfocusin={showControls}>
             <ControlsMenu {controls}/>
         </div>
     {:else}
