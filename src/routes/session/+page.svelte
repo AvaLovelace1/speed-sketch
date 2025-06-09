@@ -88,6 +88,10 @@
     resume();
 </script>
 
+<svelte:head>
+    <title>SpeedSketch - session in progress</title>
+</svelte:head>
+
 <svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
 
 <div role="main" class="flex h-dvh items-center justify-center">
