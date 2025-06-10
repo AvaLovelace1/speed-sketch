@@ -2,6 +2,7 @@
     import {open} from '@tauri-apps/plugin-dialog';
 
     interface Props {
+        chosenFolder?: string;
         // Callback function to handle the chosen folder
         callback?: (folder: string) => void;
         // Optional messages for user feedback; will appear below the input
@@ -10,13 +11,12 @@
     }
 
     let {
+        chosenFolder = $bindable(''),
         callback = (_) => {
         },
         infoMsg = '',
         errorMsg = '',
     }: Props = $props();
-
-    let chosenFolder = $state('');
 
     async function chooseFolder() {
         const folder = await open({directory: true, multiple: false, title: 'Choose Folder'});

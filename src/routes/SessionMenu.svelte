@@ -48,7 +48,7 @@
         return folderError === '';
     });
 
-    async function folderInputCallback(folder: string) {
+    async function setChosenFolder(folder: string) {
         chosenFolder = folder;
         imgFiles = await invoke('get_img_paths', {dir: folder});
         showFolderError = true;
@@ -57,11 +57,26 @@
     async function handleSubmit() {
         if (!isValid) return;
         const store = await load('store.json', {autoSave: false});
-        await store.set('imgShowTime', imgShowTime);
+        await store.set('chosenFolder', chosenFolder);
         await store.set('imgFiles', imgFiles);
+        await store.set('imgShowTime', imgShowTime);
         await store.save();
         goto('/session');
     }
+
+    async function loadStore() {
+        const store = await load('store.json', {autoSave: false});
+        const chosenFolderStore = await store.get('chosenFolder');
+        if (chosenFolderStore !== undefined) {
+            await setChosenFolder(chosenFolderStore as string);
+        }
+        const imgShowTimeStore = await store.get('imgShowTime');
+        if (imgShowTimeStore !== undefined) {
+            imgShowTime = imgShowTimeStore as number;
+        }
+    }
+
+    loadStore();
 
 </script>
 
@@ -72,7 +87,7 @@
             <span class="opacity-50"><em>{subtitle}</em></span>
         </div>
         <form class="grid gap-3">
-            <FolderInput callback={folderInputCallback}
+            <FolderInput bind:chosenFolder callback={setChosenFolder}
                          errorMsg={showFolderError ? folderError : ''} infoMsg={folderInfoMsg}/>
             {#if imgFiles.length > 0}
                 <div class="-mt-1 grid grid-cols-5 gap-1">
