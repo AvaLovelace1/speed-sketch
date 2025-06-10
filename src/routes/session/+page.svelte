@@ -18,8 +18,8 @@
     let imgFiles: string[] = $state([]);
     let curImgIdx = $state(0);
 
-    const initialTime = 70;
-    let timeRemaining = $state(initialTime);
+    let imgShowTime = 60;
+    let timeRemaining = $state(imgShowTime);
     let timerInterval: NodeJS.Timeout | undefined = undefined;
 
     let nCompleted = $state(0);
@@ -42,7 +42,7 @@
         if (curImgIdx < 0) {
             curImgIdx = imgFiles.length - 1;
         }
-        timeRemaining = initialTime;
+        timeRemaining = imgShowTime;
         clearInterval(timerInterval);
         setTimerInterval();
     }
@@ -52,7 +52,7 @@
         if (curImgIdx >= imgFiles.length) {
             curImgIdx = 0;
         }
-        timeRemaining = initialTime;
+        timeRemaining = imgShowTime;
         clearInterval(timerInterval);
         setTimerInterval();
     }
@@ -63,7 +63,7 @@
                 timeRemaining--;
             } else {
                 nCompleted += 1;
-                timeRemaining = initialTime;
+                timeRemaining = imgShowTime;
             }
         }, 1000);
     }
@@ -112,6 +112,11 @@
         const imgFileStore = await store.get('imgFiles');
         if (imgFileStore !== undefined) {
             imgFiles = imgFileStore as string[];
+        }
+        const imgShowTimeStore = await store.get('imgShowTime');
+        if (imgShowTimeStore !== undefined) {
+            imgShowTime = imgShowTimeStore as number;
+            timeRemaining = imgShowTime;
         }
     }
 

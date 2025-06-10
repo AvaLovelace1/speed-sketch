@@ -1,16 +1,23 @@
 <script lang="ts">
-    interface Props {
-        name: string;
-        labels: string[];
+    interface Option {
+        label: string;
+        value?: unknown; // If not provided, defaults to label
     }
 
-    let imgShowTime = $state('30s');
-    const {name, labels}: Props = $props();
+    interface Props {
+        // Unique name for the radio group
+        name: string;
+        // Array of options for the radio buttons
+        options: Option[];
+        // Group variable to bind the selected value
+        group: unknown;
+    }
+
+    let {name, options, group = $bindable()}: Props = $props();
 </script>
 
 <div class="join">
-    {#each labels as label}
-        <input class="join-item btn" type="radio" name="{name}"
-               value={label} aria-label={label} bind:group={imgShowTime}/>
+    {#each options as {label, value = label}}
+        <input class="join-item btn" type="radio" name={name} value={value} aria-label={label} bind:group={group}/>
     {/each}
 </div>

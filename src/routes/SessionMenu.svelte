@@ -8,14 +8,23 @@
     interface Props {
         title?: string;
         subtitle?: string;
-        imgShowTimes?: string[];
+        imgShowTimes?: number[];
     }
 
     const {
         title = 'SpeedSketch',
         subtitle = 'timed drawing sessions',
-        imgShowTimes = ['30s', '45s', '1m', '2m', '5m', '10m']
+        imgShowTimes = [30, 45, 60, 120, 300, 600],
     }: Props = $props();
+
+    function getLabel(seconds: number) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return (minutes ? `${minutes}m` : '') + (secs ? `${secs}s` : '');
+    }
+
+    const imgShowTimeOptions = imgShowTimes.map(seconds => ({label: getLabel(seconds), value: seconds}));
+    let imgShowTime = $state(imgShowTimeOptions[0].value);
 
     let chosenFolder = $state('');
     let imgFiles: string[] = $state([]);
@@ -48,7 +57,7 @@
     async function handleSubmit() {
         if (!isValid) return;
         const store = await load('store.json', {autoSave: false});
-        await store.set('imgShowTime', imgShowTimes[0]);
+        await store.set('imgShowTime', imgShowTime);
         await store.set('imgFiles', imgFiles);
         await store.save();
         goto('/session');
@@ -75,7 +84,7 @@
                     {/each}
                 </div>
             {/if}
-            <RadioButtons name="imgShowTime" labels={imgShowTimes}/>
+            <RadioButtons name="imgShowTime" options={imgShowTimeOptions} bind:group={imgShowTime}/>
             <input type="submit" class="btn btn-success btn-block" value="GO! ▶" onclick={handleSubmit}
                    disabled={!isValid}/>
         </form>

@@ -4,6 +4,7 @@ import {render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event'
 import Page from './+page.svelte';
 import FolderInput from './FolderInput.svelte';
+import RadioButtons from './RadioButtons.svelte';
 
 describe.concurrent('/+page.svelte', () => {
     render(Page);
@@ -23,7 +24,6 @@ describe.concurrent('/+page.svelte', () => {
         expect(screen.getByRole('button', {name: /.*go.*/i})).toBeVisible();
     });
 });
-
 
 describe('FolderInput.svelte', () => {
     test('folder input renders', () => {
@@ -48,5 +48,21 @@ describe('FolderInput.svelte', () => {
 
         expect(error).toHaveTextContent('Error message');
         expect(info).toHaveTextContent('Info message');
+    });
+});
+
+describe('RadioButtons.svelte', () => {
+    test('should render radio buttons', () => {
+        let group = $state('');
+        render(RadioButtons, {
+            name: 'RadioButtons',
+            options: [{label: 'Option 1'}, {label: 'Option 2', value: 'two'}],
+            group: group,
+        });
+        let button1 = screen.getByRole('radio', {name: 'Option 1'});
+        let button2 = screen.getByRole('radio', {name: 'Option 2'});
+
+        expect(button1).toBeVisible();
+        expect(button2).toBeVisible();
     });
 });
