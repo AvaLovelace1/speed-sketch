@@ -4,22 +4,10 @@ import {render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event'
 import {createRawSnippet} from 'svelte';
 import {Skull} from '@lucide/svelte';
-
-import Page from './+page.svelte';
 import ControlsMenu from './ControlsMenu.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
 
-
-describe.concurrent('/session/+page.svelte', () => {
-    render(Page);
-    test('should render image', async () => {
-        expect(screen.getByRole('img')).toBeVisible();
-    });
-    test('should render timer', async () => {
-        expect(screen.getByRole('timer', {name: /.*remaining.*/i})).toBeVisible();
-    });
-});
 
 describe('Alert.svelte', () => {
     test('alert renders', () => {

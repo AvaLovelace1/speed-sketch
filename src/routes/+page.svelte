@@ -1,5 +1,5 @@
 <script lang="ts">
-    import SessionMenu from '$lib/components/SessionMenu.svelte';
+    import SessionMenu from './SessionMenu.svelte';
 </script>
 
 <svelte:head>

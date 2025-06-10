@@ -13,15 +13,20 @@
     "test": "npm run test:unit -- --run && npm run test:e2e",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
-    "tauri": "tauri dev"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev"
   },
   "license": "MIT",
   "dependencies": {
+    "@lucide/svelte": "^0.513.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.2.2",
-    "@tauri-apps/plugin-opener": "^2"
+    "@tauri-apps/plugin-fs": "^2.3.0",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-store": "^2.2.0"
   },
   "devDependencies": {
+    "@iconify/tailwind4": "^1.0.6",
     "@playwright/test": "^1.49.1",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.16.0",

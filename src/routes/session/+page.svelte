@@ -3,6 +3,8 @@
     import {fade} from 'svelte/transition';
     import {cubicOut} from 'svelte/easing';
     import {goto} from '$app/navigation';
+    import {convertFileSrc} from "@tauri-apps/api/core";
+    import {load} from "@tauri-apps/plugin-store";
     import ControlsMenu from './ControlsMenu.svelte';
     import Timer from './Timer.svelte';
     import StatusAlert from './StatusAlert.svelte';
@@ -12,6 +14,9 @@
     let controlsShown = $state(false);
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
+
+    let imgFiles: string[] = $state([]);
+    let curImgIdx = $state(0);
 
     const initialTime = 70;
     let timeRemaining = $state(initialTime);
@@ -33,11 +38,34 @@
     }
 
     function goPrevImg() {
-        console.log('Previous image');
+        curImgIdx -= 1;
+        if (curImgIdx < 0) {
+            curImgIdx = imgFiles.length - 1;
+        }
+        timeRemaining = initialTime;
+        clearInterval(timerInterval);
+        setTimerInterval();
     }
 
     function goNextImg() {
-        console.log('Next image');
+        curImgIdx += 1;
+        if (curImgIdx >= imgFiles.length) {
+            curImgIdx = 0;
+        }
+        timeRemaining = initialTime;
+        clearInterval(timerInterval);
+        setTimerInterval();
+    }
+
+    function setTimerInterval() {
+        timerInterval = setInterval(() => {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+            } else {
+                nCompleted += 1;
+                timeRemaining = initialTime;
+            }
+        }, 1000);
     }
 
     function pause() {
@@ -48,13 +76,7 @@
 
     function resume() {
         isPaused = false;
-        timerInterval = setInterval(() => {
-            if (timeRemaining > 0) timeRemaining--;
-            else {
-                nCompleted += 1;
-                timeRemaining = initialTime;
-            }
-        }, 1000);
+        setTimerInterval();
         showControls();
     }
 
@@ -85,7 +107,16 @@
     };
     const controls = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 
+    async function loadStore() {
+        const store = await load('store.json', {autoSave: false});
+        const imgFileStore = await store.get('imgFiles');
+        if (imgFileStore !== undefined) {
+            imgFiles = imgFileStore as string[];
+        }
+    }
+
     resume();
+    loadStore();
 </script>
 
 <svelte:head>
@@ -95,7 +126,8 @@
 <svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
 
 <div role="main" class="flex h-dvh items-center justify-center">
-    <img src="example.png" alt="Reference used for drawing practice" class="size-full object-contain"/>
+    <img src={convertFileSrc(imgFiles[curImgIdx])} alt="Reference used for drawing practice"
+         class="size-full object-contain"/>
     {#if controlsShown}
         <div class="toast toast-top toast-start" transition:fade={controlsFade}>
             <StatusAlert class="font-mono alert-success" title="Images completed">
