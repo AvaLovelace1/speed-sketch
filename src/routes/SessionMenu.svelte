@@ -91,11 +91,9 @@
                          errorMsg={showFolderError ? folderError : ''} infoMsg={folderInfoMsg}/>
             {#if imgFiles.length > 0}
                 <div class="-mt-1 grid grid-cols-5 gap-1">
-                    {#each {length: 5} as _, i}
-                        {#if imgFiles[i]}
-                            <img src={convertFileSrc(imgFiles[i])} alt="Preview {i}"
-                                 class="w-16 h-16 object-cover rounded"/>
-                        {/if}
+                    {#each {length: Math.min(imgFiles.length, 5)} as _, i}
+                        <img src={convertFileSrc(imgFiles[i])} alt="Preview {i}"
+                             class="w-16 h-16 object-cover rounded"/>
                     {/each}
                 </div>
             {/if}
