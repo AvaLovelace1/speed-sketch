@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use walkdir::WalkDir;
 
 #[tauri::command]
@@ -22,6 +24,7 @@ fn get_img_paths(dir: &str) -> Vec<String> {
         }
     }
 
+    image_paths.shuffle(&mut thread_rng());
     image_paths
 }
 
