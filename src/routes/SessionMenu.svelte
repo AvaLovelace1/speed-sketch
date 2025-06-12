@@ -1,7 +1,8 @@
 <script lang="ts">
     import {goto} from '$app/navigation';
-    import {convertFileSrc, invoke} from "@tauri-apps/api/core";
+    import {convertFileSrc, invoke} from '@tauri-apps/api/core';
     import {load} from '@tauri-apps/plugin-store';
+    import {sessionStore} from '$lib/globals.svelte';
     import FolderInput from './FolderInput.svelte';
     import RadioButtons from './RadioButtons.svelte';
 
@@ -24,23 +25,20 @@
     }
 
     const imgShowTimeOptions = imgShowTimes.map(seconds => ({label: getLabel(seconds), value: seconds}));
-    let imgShowTime = $state(imgShowTimeOptions[0].value);
 
-    let chosenFolder = $state('');
-    let imgFiles: string[] = $state([]);
     let folderError = $derived.by(() => {
-        if (chosenFolder === '') {
+        if (sessionStore.imgFolder === '') {
             return 'Please choose a folder';
         }
-        if (imgFiles.length === 0) {
+        if (sessionStore.imgFiles.length === 0) {
             return 'No images found in folder';
         }
         return '';
     });
     let showFolderError = $state(false);
     let folderInfoMsg = $derived.by(() => {
-        if (imgFiles.length > 0) {
-            return `Found ${imgFiles.length} images`;
+        if (sessionStore.imgFiles.length > 0) {
+            return `Found ${sessionStore.imgFiles.length} images`;
         }
         return '';
     });
@@ -48,36 +46,31 @@
         return folderError === '';
     });
 
-    async function setChosenFolder(folder: string) {
-        chosenFolder = folder;
-        imgFiles = await invoke('get_img_paths', {dir: folder});
+    async function setImgFolder(folder: string) {
+        sessionStore.imgFolder = folder;
+        await getImgFiles();
         showFolderError = true;
     }
 
+    async function getImgFiles() {
+        if (sessionStore.imgFolder) {
+            sessionStore.imgFiles = await invoke('get_img_paths', {dir: sessionStore.imgFolder});
+            showFolderError = true;
+        } else {
+            sessionStore.imgFiles = [];
+        }
+    }
+    getImgFiles();
+
     async function handleSubmit() {
         if (!isValid) return;
-        const store = await load('store.json', {autoSave: false});
-        await store.set('chosenFolder', chosenFolder);
-        await store.set('imgFiles', imgFiles);
-        await store.set('imgShowTime', imgShowTime);
-        await store.save();
+        const persistentStore = await load('store.json', {autoSave: false});
+        await persistentStore.set('imgFolder', sessionStore.imgFolder);
+        await persistentStore.set('imgFiles', sessionStore.imgFiles);
+        await persistentStore.set('imgShowTime', sessionStore.imgShowTime);
+        await persistentStore.save();
         goto('/session');
     }
-
-    async function loadStore() {
-        const store = await load('store.json', {autoSave: false});
-        const chosenFolderStore = await store.get('chosenFolder');
-        if (chosenFolderStore !== undefined) {
-            await setChosenFolder(chosenFolderStore as string);
-        }
-        const imgShowTimeStore = await store.get('imgShowTime');
-        if (imgShowTimeStore !== undefined) {
-            imgShowTime = imgShowTimeStore as number;
-        }
-    }
-
-    loadStore();
-
 </script>
 
 <div class="card w-fit bg-base-100 shadow-sm">
@@ -87,19 +80,20 @@
             <span class="opacity-50"><em>{subtitle}</em></span>
         </div>
         <form class="grid gap-3">
-            <FolderInput bind:chosenFolder callback={setChosenFolder}
+            <FolderInput bind:chosenFolder={sessionStore.imgFolder} callback={setImgFolder}
                          errorMsg={showFolderError ? folderError : ''} infoMsg={folderInfoMsg}/>
-            {#if imgFiles.length > 0}
+            {#if sessionStore.imgFiles.length > 0}
                 <div class="-mt-1 grid grid-cols-5 gap-1">
-                    {#each {length: Math.min(imgFiles.length, 5)} as _, i}
-                        <img src={convertFileSrc(imgFiles[i])} alt="Preview {i}"
+                    {#each {length: Math.min(sessionStore.imgFiles.length, 5)} as _, i}
+                        <img src={convertFileSrc(sessionStore.imgFiles[i])} alt="Preview {i}"
                              class="w-16 h-16 object-cover rounded"/>
                     {/each}
                 </div>
             {/if}
-            <RadioButtons name="imgShowTime" options={imgShowTimeOptions} bind:group={imgShowTime}/>
-            <input type="submit" class="btn btn-success btn-block" value="GO! ▶" onclick={handleSubmit}
-                   disabled={!isValid}/>
+            <RadioButtons name="imgShowTime" options={imgShowTimeOptions} bind:group={sessionStore.imgShowTime}/>
+            <button type="submit" class="btn btn-success btn-block" onclick={handleSubmit} disabled={!isValid}>
+                GO!
+            </button>
         </form>
     </div>
 </div>

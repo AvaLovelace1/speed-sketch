@@ -38,5 +38,7 @@
             <div role="status" class="validator-hint visible opacity-50" aria-label="Info message">{infoMsg}</div>
         {/if}
     </div>
-    <button class="join-item btn btn-primary" onclick={chooseFolder} aria-label="Choose a folder">CHOOSE…</button>
+    <button type="button" class="join-item btn btn-primary" onclick={chooseFolder} aria-label="Choose a folder">
+        CHOOSE…
+    </button>
 </div>
