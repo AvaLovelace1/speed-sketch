@@ -49,7 +49,7 @@
         }
     }
 
-    getImgFiles();
+    const imgFilesPromise = getImgFiles();
 
     async function handleSubmit() {
         if (!isValid) return;
@@ -77,14 +77,18 @@
             <form class="grid gap-3">
                 <FolderInput bind:chosenFolder={sessionStore.imgFolder} callback={setImgFolder}
                              errorMsg={showFolderError ? folderError : ''} infoMsg={folderInfoMsg}/>
-                {#if sessionStore.imgFiles.length > 0}
-                    <div class="-mt-1 grid grid-cols-5 gap-1">
-                        {#each {length: Math.min(sessionStore.imgFiles.length, 5)} as _, i}
-                            <img src={convertFileSrc(sessionStore.imgFiles[i])} alt="Preview {i}"
-                                 class="w-16 h-16 object-cover rounded"/>
-                        {/each}
-                    </div>
-                {/if}
+                {#await imgFilesPromise}
+                    <div class="-mt-1 h-16 opacity-50">Loading images…</div>
+                {:then _}
+                    {#if sessionStore.imgFiles.length > 0}
+                        <div class="-mt-1 grid grid-cols-5 gap-1">
+                            {#each {length: Math.min(sessionStore.imgFiles.length, 5)} as _, i}
+                                <img src={convertFileSrc(sessionStore.imgFiles[i])} alt="Preview {i}"
+                                     class="w-16 h-16 object-cover rounded"/>
+                            {/each}
+                        </div>
+                    {/if}
+                {/await}
                 <RadioButtons name="imgShowTime" options={imgShowTimeOptions} bind:group={sessionStore.imgShowTime}/>
                 <button type="submit" class="btn btn-success btn-block" onclick={handleSubmit} disabled={!isValid}>
                     GO!
