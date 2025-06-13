@@ -4,7 +4,7 @@ import {render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event'
 import {createRawSnippet} from 'svelte';
 import {Skull} from '@lucide/svelte';
-import ControlsMenu from './ControlsMenu.svelte';
+import ControlMenu from './ControlMenu.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
 
@@ -47,11 +47,11 @@ describe('Timer.svelte', () => {
     });
 });
 
-describe('ControlsMenu.svelte', () => {
+describe('ControlMenu.svelte', () => {
     test('menu buttons work', async () => {
         const handler1 = vi.fn();
         const handler2 = vi.fn();
-        render(ControlsMenu, {
+        render(ControlMenu, {
             controls: [
                 {label: 'Control 1', Icon: Skull, action: handler1},
                 {label: 'Control 2', action: handler2},
@@ -69,7 +69,7 @@ describe('ControlsMenu.svelte', () => {
     });
     test('custom class is applied', () => {
         const handler1 = vi.fn();
-        render(ControlsMenu, {
+        render(ControlMenu, {
             controls: [{label: 'Control 1', action: handler1, class: 'custom-class'}]
         });
 
@@ -77,7 +77,7 @@ describe('ControlsMenu.svelte', () => {
     });
     test('hotkeys work', async () => {
         const handler1 = vi.fn();
-        render(ControlsMenu, {
+        render(ControlMenu, {
             controls: [
                 {label: 'Control 1', action: handler1, hotkey: 'a'},
             ]
