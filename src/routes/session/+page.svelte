@@ -4,7 +4,7 @@
     import {cubicOut} from 'svelte/easing';
     import {goto} from '$app/navigation';
     import {convertFileSrc} from "@tauri-apps/api/core";
-    import {load} from "@tauri-apps/plugin-store";
+    import {sessionStore} from '$lib/globals.svelte';
     import ControlsMenu from './ControlsMenu.svelte';
     import Timer from './Timer.svelte';
     import StatusAlert from './StatusAlert.svelte';
@@ -15,11 +15,8 @@
     let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
 
-    let imgFiles: string[] = $state([]);
     let curImgIdx = $state(0);
-
-    let imgShowTime = 60;
-    let timeRemaining = $state(imgShowTime);
+    let timeRemaining = $state(sessionStore.imgShowTime);
     let timerInterval: NodeJS.Timeout | undefined = undefined;
 
     let nCompleted = $state(0);
@@ -40,19 +37,19 @@
     function goPrevImg() {
         curImgIdx -= 1;
         if (curImgIdx < 0) {
-            curImgIdx = imgFiles.length - 1;
+            curImgIdx = sessionStore.imgFiles.length - 1;
         }
-        timeRemaining = imgShowTime;
+        timeRemaining = sessionStore.imgShowTime;
         clearInterval(timerInterval);
         setTimerInterval();
     }
 
     function goNextImg() {
         curImgIdx += 1;
-        if (curImgIdx >= imgFiles.length) {
+        if (curImgIdx >= sessionStore.imgFiles.length) {
             curImgIdx = 0;
         }
-        timeRemaining = imgShowTime;
+        timeRemaining = sessionStore.imgShowTime;
         clearInterval(timerInterval);
         setTimerInterval();
     }
@@ -63,7 +60,7 @@
                 timeRemaining--;
             } else {
                 nCompleted += 1;
-                timeRemaining = imgShowTime;
+                timeRemaining = sessionStore.imgShowTime;
             }
         }, 1000);
     }
@@ -107,21 +104,7 @@
     };
     const controls = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 
-    async function loadStore() {
-        const store = await load('store.json', {autoSave: false});
-        const imgFileStore = await store.get('imgFiles');
-        if (imgFileStore !== undefined) {
-            imgFiles = imgFileStore as string[];
-        }
-        const imgShowTimeStore = await store.get('imgShowTime');
-        if (imgShowTimeStore !== undefined) {
-            imgShowTime = imgShowTimeStore as number;
-            timeRemaining = imgShowTime;
-        }
-    }
-
     resume();
-    loadStore();
 </script>
 
 <svelte:head>
@@ -131,7 +114,7 @@
 <svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
 
 <div role="main" class="flex h-dvh items-center justify-center">
-    <img src={convertFileSrc(imgFiles[curImgIdx])} alt="Reference used for drawing practice"
+    <img src={convertFileSrc(sessionStore.imgFiles[curImgIdx])} alt="Reference used for drawing practice"
          class="size-full object-contain"/>
     {#if controlsShown}
         <div class="toast toast-top toast-start" transition:fade={controlsFade}>
