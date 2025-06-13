@@ -6,14 +6,19 @@ export const ssr = false;
 
 import type {LayoutLoad} from './$types';
 import {load as loadStore} from '@tauri-apps/plugin-store';
-import {sessionStore} from '$lib/globals.svelte';
+import {maxImgShowTime, sessionStore} from '$lib/globals.svelte';
 
 async function loadPersistentStore() {
     const persistentStore = await loadStore('store.json', {autoSave: false});
-    const imgFolder: string | undefined = await persistentStore.get('imgFolder');
-    const imgShowTime: number | undefined = await persistentStore.get('imgShowTime');
-    if (imgFolder !== undefined) sessionStore.imgFolder = imgFolder;
-    if (imgShowTime !== undefined) sessionStore.imgShowTime = imgShowTime;
+    const imgFolder = await persistentStore.get('imgFolder');
+    const imgShowTime = await persistentStore.get('imgShowTime');
+    if (typeof imgFolder === 'string') {
+        sessionStore.imgFolder = imgFolder;
+    }
+    if (typeof imgShowTime === 'number' && Number.isInteger(imgShowTime)
+        && imgShowTime > 0 && imgShowTime <= maxImgShowTime) {
+        sessionStore.imgShowTime = imgShowTime;
+    }
 }
 
 export const load: LayoutLoad = async () => {
