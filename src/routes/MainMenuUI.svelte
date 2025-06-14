@@ -8,7 +8,7 @@
         imgShowTime: number;
         imgFolder: string;
         imgFiles: string[];
-        folderError: string;
+        folderErr: string;
         folderInfoMsg: string;
         isLoadingImgs: boolean;
         isValid: boolean;
@@ -20,7 +20,7 @@
         imgShowTime = $bindable(),
         imgFolder = $bindable(),
         imgFiles,
-        folderError,
+        folderErr,
         folderInfoMsg,
         isLoadingImgs,
         isValid,
@@ -47,7 +47,7 @@
             </div>
             <form class="grid gap-3">
                 <FolderInput bind:chosenFolder={imgFolder} callback={setImgFolder}
-                             errorMsg={folderError} infoMsg={folderInfoMsg}/>
+                             errorMsg={folderErr} infoMsg={folderInfoMsg}/>
                 {#if isLoadingImgs}
                     <div class="-mt-1 h-16 opacity-50"></div>
                 {:else if imgFiles.length > 0}

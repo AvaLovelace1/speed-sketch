@@ -9,7 +9,7 @@
     "core:default",
     "opener:default",
     "dialog:default",
-    "fs:default",
+    "fs:allow-home-meta-recursive",
     "store:default"
   ]
 }
