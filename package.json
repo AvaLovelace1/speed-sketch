@@ -22,6 +22,7 @@
     "@tauri-apps/plugin-fs": "^2.3.0",
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-store": "^2.2.0",
+    "@tauri-apps/plugin-window-state": "^2.2.2",
     "bits-ui": "^2.6.0"
   },
   "devDependencies": {

@@ -7,9 +7,9 @@
   ],
   "permissions": [
     "core:default",
-    "opener:default",
-    "dialog:default",
+    "dialog:allow-open",
     "fs:allow-home-meta-recursive",
+    "opener:allow-reveal-item-in-dir",
     "store:default"
   ]
 }
