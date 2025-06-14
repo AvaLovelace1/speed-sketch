@@ -50,9 +50,9 @@
             if (isPaused) return;
             if (timeRemaining > 0) {
                 timeRemaining--;
-            } else { // Increment the completed images count when time runs out
+            } else { // The image is completed
                 nCompletedImgs += 1;
-                timeRemaining = sessionStore.imgShowTime;
+                goNextImg();
             }
         }, 1000);
         resume();
