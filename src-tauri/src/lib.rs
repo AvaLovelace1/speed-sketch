@@ -1,11 +1,24 @@
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
+use std::time::Duration;
+use tokio::{task, time};
 use walkdir::{DirEntry, WalkDir};
 
 /// Return a shuffled list of image file paths from the specified directory.
-/// Error if the directory does not exist or is not accessible.
+/// Error if the process takes longer than timeout_duration (specified in seconds).
 #[tauri::command]
-fn get_img_files(dir: &str) -> Result<Vec<String>, String> {
+async fn get_img_files(dir: String, timeout_duration: u64) -> Result<Vec<String>, String> {
+    // Spawn task to call _get_img_files; time out if taking too long
+    let result = task::spawn_blocking(move || _get_img_files(&dir));
+    let timeout = Duration::from_secs(timeout_duration);
+    match time::timeout(timeout, result).await {
+        Ok(Ok(files)) => Ok(files),
+        Ok(Err(_)) => Err("TaskJoinError".to_string()),
+        Err(_) => Err("TimeoutError".to_string()),
+    }
+}
+
+fn _get_img_files(dir: &str) -> Vec<String> {
     let mut result = Vec::new();
     for entry in WalkDir::new(dir)
         .into_iter()
@@ -17,7 +30,7 @@ fn get_img_files(dir: &str) -> Result<Vec<String>, String> {
         }
     }
     result.shuffle(&mut thread_rng());
-    Ok(result)
+    result
 }
 
 /// Check if the given entry is an image file based on its extension.

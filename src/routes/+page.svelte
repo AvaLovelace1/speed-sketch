@@ -48,10 +48,12 @@
         // Load images from the folder
         isLoadingImgs = true;
         try {
-            const files = await invoke('get_img_files', {dir: folder}) as string[];
+            const files = await invoke('get_img_files', {dir: folder, timeoutDuration: 10}) as string[];
             return {files: files, err: files.length === 0 ? 'No images found in folder' : ''};
         } catch (err) {
             console.error('Error loading images:', err);
+            if (err === 'TimeoutError') return {files: [], err: 'Loading images timed out'};
+            if (err === 'TaskJoinError') return {files: [], err: 'Failed to load images'};
             return {files: [], err};
         } finally {
             isLoadingImgs = false;
