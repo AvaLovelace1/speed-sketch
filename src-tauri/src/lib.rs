@@ -1,6 +1,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::time::Duration;
+use tauri::Manager;
 use tokio::{task, time};
 use walkdir::{DirEntry, WalkDir};
 
@@ -50,12 +51,24 @@ fn is_img_file(entry: &DirEntry) -> bool {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_window_state::Builder::new().build())
-        .plugin(tauri_plugin_store::Builder::new().build())
+    let mut builder = tauri::Builder::default();
+    #[cfg(desktop)]
+    {
+        // Enable single instance mode for desktop applications.
+        // IMPORTANT: This should be the first plugin added to the builder.
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _, _| {
+            let _ = app
+                .get_webview_window("main")
+                .expect("no main window")
+                .set_focus();
+        }));
+    }
+    builder
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_window_state::Builder::new().build())
         .invoke_handler(tauri::generate_handler![get_img_files])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
