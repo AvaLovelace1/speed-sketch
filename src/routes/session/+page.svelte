@@ -9,29 +9,34 @@
     let nCompletedImgs = $state(0);
     // Time remaining for the current image to be displayed, in seconds
     let timeRemaining = $state(sessionStore.imgShowTime);
+    // Timer interval that updates the time remaining with each tick
+    let timer: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
-
     let sessionUI: SessionUI;
 
     function goPrevImg() {
         curImgIdx -= 1;
         if (curImgIdx < 0) curImgIdx = sessionStore.imgFiles.length - 1;
         timeRemaining = sessionStore.imgShowTime;
+        if (!isPaused) restartTimer();
     }
 
     function goNextImg() {
         curImgIdx += 1;
         if (curImgIdx >= sessionStore.imgFiles.length) curImgIdx = 0;
         timeRemaining = sessionStore.imgShowTime;
+        if (!isPaused) restartTimer();
     }
 
     function pause() {
         isPaused = true;
+        clearTimer();
         sessionUI.showControls();
     }
 
     function resume() {
         isPaused = false;
+        restartTimer();
         sessionUI.showControls();
     }
 
@@ -44,17 +49,22 @@
         goto('/');
     }
 
-    onMount(() => {
-        // Set a timer interval to update the time remaining every second
-        setInterval(() => {
-            if (isPaused) return;
-            if (timeRemaining > 0) {
-                timeRemaining--;
-            } else { // The image is completed
+    function restartTimer() {
+        clearTimer();
+        timer = setInterval(() => {
+            if (timeRemaining > 0) timeRemaining--;
+            else { // The image is completed
                 nCompletedImgs += 1;
                 goNextImg();
             }
         }, 1000);
+    }
+
+    function clearTimer() {
+        clearInterval(timer);
+    }
+
+    onMount(() => {
         resume();
     });
 </script>
