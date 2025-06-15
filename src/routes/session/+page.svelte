@@ -1,8 +1,8 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
-    import {start, stop} from 'tauri-plugin-keepawake-api';
-    import {goto} from '$app/navigation';
-    import {sessionStore} from '$lib/globals.svelte';
+    import { onMount } from 'svelte';
+    import { start, stop } from 'tauri-plugin-keepawake-api';
+    import { goto } from '$app/navigation';
+    import { sessionStore } from '$lib/globals.svelte';
     import SessionUI from './SessionUI.svelte';
 
     // Index of the current image being displayed
@@ -59,7 +59,8 @@
         clearTimer();
         timer = setInterval(() => {
             if (timeRemaining > 0) timeRemaining--;
-            else { // The image is completed
+            else {
+                // The image is completed
                 nCompletedImgs += 1;
                 goNextImg();
             }
@@ -72,7 +73,7 @@
 
     onMount(async () => {
         try {
-            await start({display: true, idle: true, sleep: true});
+            await start({ display: true, idle: true, sleep: true });
         } catch (e) {
             console.error('Failed to start keep awake:', e);
         }
@@ -84,5 +85,14 @@
     <title>SpeedSketch - session in progress</title>
 </svelte:head>
 
-<SessionUI bind:this={sessionUI} curImg={sessionStore.imgFiles[curImgIdx]} {nCompletedImgs} {timeRemaining} {isPaused}
-           {goPrevImg} {goNextImg} {togglePause} {exit}/>
+<SessionUI
+    bind:this={sessionUI}
+    curImg={sessionStore.imgFiles[curImgIdx]}
+    {nCompletedImgs}
+    {timeRemaining}
+    {isPaused}
+    {goPrevImg}
+    {goNextImg}
+    {togglePause}
+    {exit}
+/>

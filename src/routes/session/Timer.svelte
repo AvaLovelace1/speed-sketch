@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {HTMLAttributes} from "svelte/elements";
+    import type { HTMLAttributes } from 'svelte/elements';
     import StatusAlert from './StatusAlert.svelte';
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -9,7 +9,7 @@
         criticalTime?: number | null;
     }
 
-    let {time = 0, criticalTime = 10, ...props}: Props = $props();
+    let { time = 0, criticalTime = 10, ...props }: Props = $props();
 
     let timerString = $derived.by(() => {
         let negative = time < 0;
@@ -23,6 +23,11 @@
     let timeIsCritical = $derived(criticalTime !== null && time <= criticalTime);
 </script>
 
-<StatusAlert role="timer" aria-live="polite" {...props} class={[{'alert-error': timeIsCritical}, props.class]}>
+<StatusAlert
+    role="timer"
+    aria-live="polite"
+    {...props}
+    class={[{ 'alert-error': timeIsCritical }, props.class]}
+>
     <span class="iconify lucide--timer"></span>{timerString}
 </StatusAlert>

@@ -3,14 +3,14 @@
 The user interface for a drawing session.
 -->
 <script lang="ts">
-    import {fade} from 'svelte/transition';
-    import {cubicOut} from 'svelte/easing';
-    import {convertFileSrc} from '@tauri-apps/api/core';
+    import { fade } from 'svelte/transition';
+    import { cubicOut } from 'svelte/easing';
+    import { convertFileSrc } from '@tauri-apps/api/core';
     import Toolbar from './Toolbar.svelte';
     import Timer from './Timer.svelte';
     import StatusAlert from './StatusAlert.svelte';
 
-    const controlsFade = {duration: 200, easing: cubicOut};
+    const controlsFade = { duration: 200, easing: cubicOut };
     const hideControlsTimeoutDuration = 3000;
 
     interface Props {
@@ -54,12 +54,20 @@ The user interface for a drawing session.
     }
 
     const prevBtn = {
-        label: 'PREV', icon: 'lucide--arrow-left', action: goPrevImg, hotkey: 'ArrowLeft',
-        class: 'btn-primary', title: 'Previous image (left arrow)',
+        label: 'PREV',
+        icon: 'lucide--arrow-left',
+        action: goPrevImg,
+        hotkey: 'ArrowLeft',
+        class: 'btn-primary',
+        title: 'Previous image (left arrow)',
     };
     const nextBtn = {
-        label: 'NEXT', icon: 'lucide--arrow-right', action: goNextImg, hotkey: 'ArrowRight',
-        class: 'btn-primary', title: 'Next image (right arrow)',
+        label: 'NEXT',
+        icon: 'lucide--arrow-right',
+        action: goNextImg,
+        hotkey: 'ArrowRight',
+        class: 'btn-primary',
+        title: 'Next image (right arrow)',
     };
     const pauseBtn = $derived({
         label: isPaused ? 'RESUME' : 'PAUSE',
@@ -70,17 +78,24 @@ The user interface for a drawing session.
         title: isPaused ? 'Resume (space)' : 'Pause (space)',
     });
     const exitBtn = {
-        label: 'EXIT', icon: 'lucide--log-out', action: exit, hotkey: 'Escape',
-        class: 'btn-error', title: 'Exit session (esc)',
+        label: 'EXIT',
+        icon: 'lucide--log-out',
+        action: exit,
+        hotkey: 'Escape',
+        class: 'btn-error',
+        title: 'Exit session (esc)',
     };
     const controls = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 </script>
 
-<svelte:body onmousemove={showControls} onmouseleave={hideControls}/>
+<svelte:body onmousemove={showControls} onmouseleave={hideControls} />
 
 <div role="main" class="flex h-dvh items-center justify-center">
-    <img src={convertFileSrc(curImg)} alt="Reference used for drawing practice"
-         class="size-full object-contain"/>
+    <img
+        src={convertFileSrc(curImg)}
+        alt="Reference used for drawing practice"
+        class="size-full object-contain"
+    />
     {#if controlsShown}
         <div class="toast toast-top toast-start" transition:fade={controlsFade}>
             <StatusAlert class="font-mono alert-success" title="Images completed">
@@ -90,7 +105,7 @@ The user interface for a drawing session.
     {/if}
     <div class="toast toast-top toast-end">
         <div>
-            <Timer time={timeRemaining} class="font-mono float-right" title="Time remaining"/>
+            <Timer time={timeRemaining} class="font-mono float-right" title="Time remaining" />
         </div>
         {#if isPaused}
             <StatusAlert class="alert-error font-mono">
@@ -99,13 +114,17 @@ The user interface for a drawing session.
         {/if}
     </div>
     {#if controlsShown}
-        <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
-             transition:fade={controlsFade} onfocusin={showControls}>
-            <Toolbar {controls}/>
+        <div
+            class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
+            transition:fade={controlsFade}
+            onfocusin={showControls}
+        >
+            <Toolbar {controls} />
         </div>
     {:else}
         <div hidden>
-            <Toolbar {controls}/> <!-- Controls must be hidden but still present for keyboard shortcuts to work-->
+            <Toolbar {controls} />
+            <!-- Controls must be hidden but still present for keyboard shortcuts to work-->
         </div>
     {/if}
 </div>

@@ -5,7 +5,7 @@
 }
 
 @plugin "@iconify/tailwind4" {
-    prefix: "iconify";
+    prefix: 'iconify';
     scale: 1.5;
     prefixes: lucide;
 }

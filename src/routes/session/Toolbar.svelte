@@ -3,7 +3,7 @@
 A toolbar with a set of controls and keyboard shortcuts.
 -->
 <script lang="ts">
-    import {Toolbar, type BitsPrimitiveButtonAttributes} from 'bits-ui';
+    import { Toolbar, type BitsPrimitiveButtonAttributes } from 'bits-ui';
 
     interface Control extends BitsPrimitiveButtonAttributes {
         label: string;
@@ -16,7 +16,7 @@ A toolbar with a set of controls and keyboard shortcuts.
         controls: Control[];
     }
 
-    let {controls}: Props = $props();
+    let { controls }: Props = $props();
 
     function onKeyDown(e: KeyboardEvent) {
         // Ignore key events when the toolbar is focused
@@ -31,11 +31,15 @@ A toolbar with a set of controls and keyboard shortcuts.
     }
 </script>
 
-<svelte:window onkeydown={onKeyDown}/>
+<svelte:window onkeydown={onKeyDown} />
 
 <Toolbar.Root class="join rounded shadow-sm">
-    {#each controls as {label, icon, action, hotkey, ...others}}
-        <Toolbar.Button onclick={action} {...others} class={['btn join-item btn-soft', others.class]}>
+    {#each controls as { label, icon, action, hotkey, ...others }}
+        <Toolbar.Button
+            onclick={action}
+            {...others}
+            class={['btn join-item btn-soft', others.class]}
+        >
             <span class="iconify {icon}"></span>{label}
         </Toolbar.Button>
     {/each}

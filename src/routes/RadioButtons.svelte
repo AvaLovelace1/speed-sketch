@@ -13,11 +13,11 @@
         group: unknown;
     }
 
-    let {name, options, group = $bindable()}: Props = $props();
+    let { name, options, group = $bindable() }: Props = $props();
 </script>
 
 <div class="join">
-    {#each options as {label, value = label}}
-        <input class="join-item btn" type="radio" name={name} value={value} aria-label={label} bind:group={group}/>
+    {#each options as { label, value = label }}
+        <input class="join-item btn" type="radio" {name} {value} aria-label={label} bind:group />
     {/each}
 </div>

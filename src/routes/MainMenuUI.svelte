@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {convertFileSrc} from '@tauri-apps/api/core';
+    import { convertFileSrc } from '@tauri-apps/api/core';
     import { Separator } from 'bits-ui';
-    import {appName, imgShowTimes, tagline} from '$lib/globals.svelte';
+    import { appName, imgShowTimes, tagline } from '$lib/globals.svelte';
     import FolderInput from './FolderInput.svelte';
     import RadioButtons from './RadioButtons.svelte';
 
@@ -26,10 +26,13 @@
         isLoadingImgs,
         isValid,
         setImgFolder,
-        startSession
+        startSession,
     }: Props = $props();
 
-    const imgShowTimeOptions = imgShowTimes.map(seconds => ({label: formatShowTime(seconds), value: seconds}));
+    const imgShowTimeOptions = imgShowTimes.map((seconds) => ({
+        label: formatShowTime(seconds),
+        value: seconds,
+    }));
 
     function formatShowTime(seconds: number) {
         const minutes = Math.floor(seconds / 60);
@@ -38,7 +41,8 @@
     }
 </script>
 
-<div class="bg-primary fixed inset-0"></div> <!-- Background overlay -->
+<div class="bg-primary fixed inset-0"></div>
+<!-- Background overlay -->
 <div class="flex flex-col min-h-dvh items-center justify-center">
     <div class="card w-fit bg-base-100 shadow-sm">
         <div class="card-body items-center">
@@ -47,20 +51,36 @@
                 <span class="italic opacity-50">{tagline}</span>
             </Separator.Root>
             <form class="grid gap-3">
-                <FolderInput bind:chosenFolder={imgFolder} callback={setImgFolder}
-                             errorMsg={folderErr} infoMsg={folderInfoMsg}/>
+                <FolderInput
+                    bind:chosenFolder={imgFolder}
+                    callback={setImgFolder}
+                    errorMsg={folderErr}
+                    infoMsg={folderInfoMsg}
+                />
                 {#if isLoadingImgs}
                     <div class="-mt-1 h-16 opacity-50"></div>
                 {:else if imgFiles.length > 0}
                     <div class="-mt-1 grid grid-cols-5 gap-1">
-                        {#each {length: Math.min(imgFiles.length, 5)} as _, i}
-                            <img src={convertFileSrc(imgFiles[i])} alt="Preview {i}"
-                                 class="w-16 h-16 object-cover rounded"/>
+                        {#each { length: Math.min(imgFiles.length, 5) } as _, i}
+                            <img
+                                src={convertFileSrc(imgFiles[i])}
+                                alt="Preview {i}"
+                                class="w-16 h-16 object-cover rounded"
+                            />
                         {/each}
                     </div>
                 {/if}
-                <RadioButtons name="imgShowTime" options={imgShowTimeOptions} bind:group={imgShowTime}/>
-                <button type="submit" class="btn btn-success btn-block" onclick={startSession} disabled={!isValid}>
+                <RadioButtons
+                    name="imgShowTime"
+                    options={imgShowTimeOptions}
+                    bind:group={imgShowTime}
+                />
+                <button
+                    type="submit"
+                    class="btn btn-success btn-block"
+                    onclick={startSession}
+                    disabled={!isValid}
+                >
                     <span class="iconify lucide--play"></span>GO!
                 </button>
             </form>

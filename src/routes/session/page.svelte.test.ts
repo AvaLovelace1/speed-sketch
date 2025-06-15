@@ -1,22 +1,21 @@
-import {describe, expect, test, vi} from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import {render, screen} from '@testing-library/svelte';
-import userEvent from '@testing-library/user-event'
-import {createRawSnippet} from 'svelte';
+import { render, screen } from '@testing-library/svelte';
+import userEvent from '@testing-library/user-event';
+import { createRawSnippet } from 'svelte';
 import Toolbar from './Toolbar.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
-
 
 describe('Alert.svelte', () => {
     test('alert renders', () => {
         const snippet = () => ({
             render() {
                 return '<span>Test Alert</span>';
-            }
+            },
         });
 
-        render(StatusAlert, {children: createRawSnippet(snippet), class: 'custom-class'});
+        render(StatusAlert, { children: createRawSnippet(snippet), class: 'custom-class' });
         const alert = screen.getByRole('status');
         expect(alert).toHaveTextContent('Test Alert');
         expect(alert).toHaveClass('custom-class');
@@ -25,23 +24,23 @@ describe('Alert.svelte', () => {
 
 describe('Timer.svelte', () => {
     test('timeRemaining 0', async () => {
-        render(Timer, {time: 0});
+        render(Timer, { time: 0 });
         expect(screen.getByRole('timer')).toHaveTextContent(/^0:00$/);
     });
     test('timeRemaining 10.5', async () => {
-        render(Timer, {time: 10.5});
+        render(Timer, { time: 10.5 });
         expect(screen.getByRole('timer')).toHaveTextContent(/^0:10$/);
     });
     test('timeRemaining 3600', async () => {
-        render(Timer, {time: 3600});
+        render(Timer, { time: 3600 });
         expect(screen.getByRole('timer')).toHaveTextContent(/^1:00:00$/);
     });
     test('timeRemaining -3610', async () => {
-        render(Timer, {time: -3610});
+        render(Timer, { time: -3610 });
         expect(screen.getByRole('timer')).toHaveTextContent(/^-1:00:10$/);
     });
     test('custom class is applied', async () => {
-        render(Timer, {time: 10, class: 'custom-class'});
+        render(Timer, { time: 10, class: 'custom-class' });
         expect(screen.getByRole('timer')).toHaveClass('custom-class');
     });
 });
@@ -52,13 +51,13 @@ describe('Toolbar.svelte', () => {
         const handler2 = vi.fn();
         render(Toolbar, {
             controls: [
-                {label: 'Control 1', icon: 'pause', action: handler1},
-                {label: 'Control 2', action: handler2},
-            ]
+                { label: 'Control 1', icon: 'pause', action: handler1 },
+                { label: 'Control 2', action: handler2 },
+            ],
         });
 
-        const control1 = screen.getByRole('button', {name: 'Control 1'});
-        const control2 = screen.getByRole('button', {name: 'Control 2'});
+        const control1 = screen.getByRole('button', { name: 'Control 1' });
+        const control2 = screen.getByRole('button', { name: 'Control 2' });
         const user = userEvent.setup();
         await user.click(control1);
         await user.click(control2);
@@ -69,17 +68,15 @@ describe('Toolbar.svelte', () => {
     test('custom class is applied', () => {
         const handler1 = vi.fn();
         render(Toolbar, {
-            controls: [{label: 'Control 1', action: handler1, class: 'custom-class'}]
+            controls: [{ label: 'Control 1', action: handler1, class: 'custom-class' }],
         });
 
-        expect(screen.getByRole('button', {name: 'Control 1'})).toHaveClass('custom-class');
+        expect(screen.getByRole('button', { name: 'Control 1' })).toHaveClass('custom-class');
     });
     test('hotkeys work', async () => {
         const handler1 = vi.fn();
         render(Toolbar, {
-            controls: [
-                {label: 'Control 1', action: handler1, hotkey: 'a'},
-            ]
+            controls: [{ label: 'Control 1', action: handler1, hotkey: 'a' }],
         });
 
         const user = userEvent.setup();
