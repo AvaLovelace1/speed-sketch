@@ -43,11 +43,11 @@
 
 <div class="bg-primary fixed inset-0"></div>
 <!-- Background overlay -->
-<div class="flex flex-col min-h-dvh items-center justify-center">
-    <div class="card w-fit bg-base-100 shadow-sm">
+<div class="flex min-h-dvh flex-col items-center justify-center">
+    <div class="card bg-base-100 w-fit shadow-sm">
         <div class="card-body items-center">
             <h1 class="card-title text-5xl font-thin">{appName}</h1>
-            <Separator.Root class="divider text-lg mt-1 mb-5 font-light">
+            <Separator.Root class="divider mt-1 mb-5 text-lg font-light">
                 <span class="italic opacity-50">{tagline}</span>
             </Separator.Root>
             <form class="grid gap-3">
@@ -65,7 +65,7 @@
                             <img
                                 src={convertFileSrc(imgFiles[i])}
                                 alt="Preview {i}"
-                                class="w-16 h-16 object-cover rounded"
+                                class="h-16 w-16 rounded object-cover"
                             />
                         {/each}
                     </div>

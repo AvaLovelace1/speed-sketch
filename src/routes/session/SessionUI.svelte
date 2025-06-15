@@ -102,14 +102,14 @@ The user interface for a drawing session.
     />
     {#if controlsShown}
         <div class="toast toast-top toast-start" transition:fade={controlsFade}>
-            <StatusAlert class="font-mono alert-success" title="Images completed">
+            <StatusAlert class="alert-success font-mono" title="Images completed">
                 <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
             </StatusAlert>
         </div>
     {/if}
     <div class="toast toast-top toast-end">
         <div>
-            <Timer time={timeRemaining} class="font-mono float-right" title="Time remaining" />
+            <Timer time={timeRemaining} class="float-right font-mono" title="Time remaining" />
         </div>
         {#if isPaused}
             <StatusAlert class="alert-error font-mono">
@@ -119,7 +119,7 @@ The user interface for a drawing session.
     </div>
     {#if controlsShown}
         <div
-            class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
+            class="fixed bottom-0 flex w-full flex-row justify-center p-4 shadow-sm"
             transition:fade={controlsFade}
             onfocusin={showControls}
         >
