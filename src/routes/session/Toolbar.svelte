@@ -6,6 +6,8 @@ A toolbar with a set of controls and keyboard shortcuts.
     import { Toolbar, type BitsPrimitiveButtonAttributes } from 'bits-ui';
 
     interface Control extends BitsPrimitiveButtonAttributes {
+        // Unique identifier for the control
+        key: string | number;
         label: string;
         icon?: string;
         action: () => void;
@@ -34,13 +36,13 @@ A toolbar with a set of controls and keyboard shortcuts.
 <svelte:window onkeydown={onKeyDown} />
 
 <Toolbar.Root class="join rounded shadow-sm">
-    {#each controls as { label, icon, action, hotkey, ...others }}
+    {#each controls as { key, label, icon, action, ...others } (key)}
         <Toolbar.Button
             onclick={action}
             {...others}
             class={['btn join-item btn-soft', others.class]}
         >
-            <span class="iconify {icon}"></span>{label}
+            {#if icon}<span class="iconify {icon}"></span>{/if}{label}
         </Toolbar.Button>
     {/each}
 </Toolbar.Root>

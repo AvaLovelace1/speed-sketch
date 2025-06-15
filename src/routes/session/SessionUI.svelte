@@ -54,6 +54,7 @@ The user interface for a drawing session.
     }
 
     const prevBtn = {
+        key: 'prev',
         label: 'PREV',
         icon: 'lucide--arrow-left',
         action: goPrevImg,
@@ -62,6 +63,7 @@ The user interface for a drawing session.
         title: 'Previous image (left arrow)',
     };
     const nextBtn = {
+        key: 'next',
         label: 'NEXT',
         icon: 'lucide--arrow-right',
         action: goNextImg,
@@ -70,6 +72,7 @@ The user interface for a drawing session.
         title: 'Next image (right arrow)',
     };
     const pauseBtn = $derived({
+        key: 'pause',
         label: isPaused ? 'RESUME' : 'PAUSE',
         icon: isPaused ? 'lucide--play' : 'lucide--pause',
         action: togglePause,
@@ -78,6 +81,7 @@ The user interface for a drawing session.
         title: isPaused ? 'Resume (space)' : 'Pause (space)',
     });
     const exitBtn = {
+        key: 'exit',
         label: 'EXIT',
         icon: 'lucide--log-out',
         action: exit,

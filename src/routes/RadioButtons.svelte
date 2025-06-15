@@ -17,7 +17,7 @@
 </script>
 
 <div class="join">
-    {#each options as { label, value = label }}
+    {#each options as { label, value = label } (value)}
         <input class="join-item btn" type="radio" {name} {value} aria-label={label} bind:group />
     {/each}
 </div>

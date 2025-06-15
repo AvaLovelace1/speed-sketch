@@ -61,7 +61,7 @@
                     <div class="-mt-1 h-16 opacity-50"></div>
                 {:else if imgFiles.length > 0}
                     <div class="-mt-1 grid grid-cols-5 gap-1">
-                        {#each { length: Math.min(imgFiles.length, 5) } as _, i}
+                        {#each { length: Math.min(imgFiles.length, 5) } as _, i (i)}
                             <img
                                 src={convertFileSrc(imgFiles[i])}
                                 alt="Preview {i}"
