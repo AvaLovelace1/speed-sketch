@@ -60,7 +60,7 @@ The user interface for a drawing session.
         action: goPrevImg,
         hotkey: 'ArrowLeft',
         class: 'btn-primary',
-        tooltip: 'Previous image\n(Left arrow)',
+        tooltip: 'Previous image',
     };
     const nextBtn = {
         key: 'next',
@@ -69,7 +69,7 @@ The user interface for a drawing session.
         action: goNextImg,
         hotkey: 'ArrowRight',
         class: 'btn-primary',
-        tooltip: 'Next image\n(Right arrow)',
+        tooltip: 'Next image',
     };
     const pauseBtn = $derived({
         key: 'pause',
@@ -78,7 +78,7 @@ The user interface for a drawing session.
         action: togglePause,
         hotkey: ' ',
         class: isPaused ? 'btn-success' : 'btn-warning',
-        tooltip: isPaused ? 'Resume\n(Space)' : 'Pause\n(Space)',
+        tooltip: isPaused ? 'Resume' : 'Pause',
     });
     const exitBtn = {
         key: 'exit',
@@ -87,7 +87,7 @@ The user interface for a drawing session.
         action: exit,
         hotkey: 'Escape',
         class: 'btn-error',
-        tooltip: 'Exit session\n(Esc)',
+        tooltip: 'Exit session',
     };
     const tools = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 </script>
