@@ -2,7 +2,7 @@
     import type { LayoutProps } from './$types';
     import '../app.css';
 
-    let { children }: LayoutProps = $props();
+    const { children }: LayoutProps = $props();
 </script>
 
 {@render children()}

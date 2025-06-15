@@ -1,3 +1,7 @@
+<!--
+@component
+A timer that displays a given time.
+-->
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
     import StatusAlert from './StatusAlert.svelte';
@@ -9,18 +13,20 @@
         criticalTime?: number | null;
     }
 
-    let { time = 0, criticalTime = 10, ...props }: Props = $props();
+    const { time = 0, criticalTime = 10, ...props }: Props = $props();
 
-    let timerString = $derived.by(() => {
-        let negative = time < 0;
-        let hrs = Math.floor(Math.abs(time) / 60 / 60);
-        let mins = Math.floor(Math.abs(time) / 60) % 60;
-        let minsFmt = hrs > 0 && mins < 10 ? `0${mins}` : mins;
-        let secs = Math.floor(Math.abs(time) % 60);
-        let secsFmt = secs < 10 ? `0${secs}` : secs;
+    const hrs = $derived.by(() => Math.floor(Math.abs(time) / 60 / 60));
+    const mins = $derived.by(() => Math.floor(Math.abs(time) / 60) % 60);
+    const secs = $derived.by(() => Math.floor(Math.abs(time) % 60));
+
+    const timerString = $derived.by(() => {
+        const negative = time < 0;
+        const minsFmt = hrs > 0 && mins < 10 ? `0${mins}` : mins;
+        const secsFmt = secs < 10 ? `0${secs}` : secs;
         return `${negative ? '-' : ''}${hrs ? hrs + ':' : ''}${minsFmt}:${secsFmt}`;
     });
-    let timeIsCritical = $derived(criticalTime !== null && time <= criticalTime);
+    const durationString = $derived(`PT${hrs}H${mins}M${secs}S`);
+    const timeIsCritical = $derived(criticalTime !== null && time <= criticalTime);
 </script>
 
 <StatusAlert
@@ -29,5 +35,6 @@
     {...props}
     class={[{ 'alert-error': timeIsCritical }, props.class]}
 >
-    <span class="iconify lucide--timer"></span>{timerString}
+    <span class="iconify lucide--timer"></span>
+    <time datetime={durationString}>{timerString}</time>
 </StatusAlert>

@@ -1,3 +1,7 @@
+<!--
+@component
+A simple alert component for displaying status messages.
+-->
 <script lang="ts">
     import type { Snippet } from 'svelte';
     import type { HTMLAttributes } from 'svelte/elements';
@@ -6,9 +10,15 @@
         children: Snippet;
     }
 
-    let { children, ...props }: Props = $props();
+    const { children, ...props }: Props = $props();
 </script>
 
-<div role="status" {...props} class={['alert alert-soft flex gap-2 p-2 shadow-sm', props.class]}>
-    {@render children()}
+<div class="inline-block">
+    <div
+        role="status"
+        {...props}
+        class={['alert alert-soft gap-3 px-3 py-2 font-mono text-lg shadow-sm', props.class]}
+    >
+        {@render children()}
+    </div>
 </div>

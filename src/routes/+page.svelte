@@ -9,14 +9,14 @@
 
     let folderErr = $state('');
     let showFolderErr = $state(false);
-    let folderInfoMsg = $derived.by(() => {
+    const folderInfoMsg = $derived.by(() => {
         if (isLoadingImgs) return 'Loading images…';
         const nImgs = sessionStore.imgFiles.length;
         if (nImgs > 0) return `Found ${nImgs} image${nImgs > 1 ? 's' : ''}`;
         return '';
     });
     let isLoadingImgs = $state(false);
-    let isValid = $derived.by(() => {
+    const isValid = $derived.by(() => {
         return !isLoadingImgs && folderErr === '';
     });
 

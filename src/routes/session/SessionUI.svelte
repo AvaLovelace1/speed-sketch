@@ -6,12 +6,13 @@ The user interface for a drawing session.
     import { fade } from 'svelte/transition';
     import { cubicOut } from 'svelte/easing';
     import { convertFileSrc } from '@tauri-apps/api/core';
-    import Toolbar from './Toolbar.svelte';
     import Timer from './Timer.svelte';
+    import Toolbar from './Toolbar.svelte';
     import StatusAlert from './StatusAlert.svelte';
 
-    const controlsFade = { duration: 200, easing: cubicOut };
-    const hideControlsTimeoutDuration = 3000;
+    const toolbarFade = { duration: 200, easing: cubicOut };
+    // Duration after which toolbar will be hidden automatically
+    const hideToolbarTimeoutDuration = 3000;
 
     interface Props {
         curImg: string;
@@ -24,7 +25,7 @@ The user interface for a drawing session.
         exit: () => void;
     }
 
-    let {
+    const {
         curImg,
         nCompletedImgs,
         timeRemaining,
@@ -35,22 +36,22 @@ The user interface for a drawing session.
         exit,
     }: Props = $props();
 
-    let controlsShown = $state(false);
-    let hideControlsTimeout: NodeJS.Timeout | undefined = undefined;
+    let toolbarShown = $state(false);
+    let hideToolbarTimeout: NodeJS.Timeout | undefined = undefined;
 
-    // Show controls, hiding them after a timeout
-    export function showControls() {
-        controlsShown = true;
-        clearTimeout(hideControlsTimeout);
-        hideControlsTimeout = setTimeout(() => {
-            controlsShown = false;
-        }, hideControlsTimeoutDuration);
+    // Show toolbar, hiding it after a timeout
+    export function showToolbar() {
+        toolbarShown = true;
+        clearTimeout(hideToolbarTimeout);
+        hideToolbarTimeout = setTimeout(() => {
+            toolbarShown = false;
+        }, hideToolbarTimeoutDuration);
     }
 
-    // Hide controls immediately
-    export function hideControls() {
-        controlsShown = false;
-        clearTimeout(hideControlsTimeout);
+    // Hide toolbar immediately
+    export function hideToolbar() {
+        toolbarShown = false;
+        clearTimeout(hideToolbarTimeout);
     }
 
     const prevBtn = {
@@ -60,7 +61,7 @@ The user interface for a drawing session.
         action: goPrevImg,
         hotkey: 'ArrowLeft',
         class: 'btn-primary',
-        title: 'Previous image (left arrow)',
+        tooltip: 'Previous image\n(Left arrow)',
     };
     const nextBtn = {
         key: 'next',
@@ -69,7 +70,7 @@ The user interface for a drawing session.
         action: goNextImg,
         hotkey: 'ArrowRight',
         class: 'btn-primary',
-        title: 'Next image (right arrow)',
+        tooltip: 'Next image\n(Right arrow)',
     };
     const pauseBtn = $derived({
         key: 'pause',
@@ -78,7 +79,7 @@ The user interface for a drawing session.
         action: togglePause,
         hotkey: ' ',
         class: isPaused ? 'btn-success' : 'btn-warning',
-        title: isPaused ? 'Resume (space)' : 'Pause (space)',
+        tooltip: isPaused ? 'Resume\n(Space)' : 'Pause\n(Space)',
     });
     const exitBtn = {
         key: 'exit',
@@ -87,12 +88,12 @@ The user interface for a drawing session.
         action: exit,
         hotkey: 'Escape',
         class: 'btn-error',
-        title: 'Exit session (esc)',
+        tooltip: 'Exit session\n(Esc)',
     };
-    const controls = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
+    const tools = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 </script>
 
-<svelte:body onmousemove={showControls} onmouseleave={hideControls} />
+<svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
 <div role="main" class="flex h-dvh items-center justify-center">
     <img
@@ -100,35 +101,34 @@ The user interface for a drawing session.
         alt="Reference used for drawing practice"
         class="size-full object-contain"
     />
-    {#if controlsShown}
-        <div class="toast toast-top toast-start" transition:fade={controlsFade}>
-            <StatusAlert class="alert-success font-mono" title="Images completed">
-                <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
-            </StatusAlert>
+    {#key toolbarShown}
+        <div
+            class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"
+            transition:fade={toolbarFade}
+        >
+            <div class="tooltip tooltip-right" data-tip="# Images completed">
+                <StatusAlert class="alert-success">
+                    <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
+                </StatusAlert>
+            </div>
         </div>
-    {/if}
-    <div class="toast toast-top toast-end">
-        <div>
-            <Timer time={timeRemaining} class="float-right font-mono" title="Time remaining" />
+    {/key}
+    <div class="toast toast-top toast-end items-end">
+        <div class="tooltip tooltip-left" data-tip="Time remaining">
+            <Timer time={timeRemaining} />
         </div>
         {#if isPaused}
-            <StatusAlert class="alert-error font-mono">
+            <StatusAlert class="alert-error">
                 <span class="iconify lucide--pause"></span>PAUSED
             </StatusAlert>
         {/if}
     </div>
-    {#if controlsShown}
+    {#key toolbarShown}
         <div
-            class="fixed bottom-0 flex w-full flex-row justify-center p-4 shadow-sm"
-            transition:fade={controlsFade}
-            onfocusin={showControls}
+            class="fixed bottom-0 mb-4 flex w-full justify-center {toolbarShown ? '' : 'sr-only'}"
+            transition:fade={toolbarFade}
         >
-            <Toolbar {controls} />
+            <Toolbar {tools} />
         </div>
-    {:else}
-        <div hidden>
-            <Toolbar {controls} />
-            <!-- Controls must be hidden but still present for keyboard shortcuts to work-->
-        </div>
-    {/if}
+    {/key}
 </div>

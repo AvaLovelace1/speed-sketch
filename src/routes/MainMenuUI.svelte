@@ -43,7 +43,7 @@
 
 <div class="bg-primary fixed inset-0"></div>
 <!-- Background overlay -->
-<div class="flex min-h-dvh flex-col items-center justify-center">
+<div class="flex min-h-dvh items-center justify-center">
     <div class="card bg-base-100 w-fit shadow-sm">
         <div class="card-body items-center">
             <h1 class="card-title text-5xl font-thin">{appName}</h1>

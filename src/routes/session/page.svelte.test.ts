@@ -7,7 +7,7 @@ import Toolbar from './Toolbar.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
 
-describe('Alert.svelte', () => {
+describe('StatusAlert.svelte', () => {
     test('alert renders', () => {
         const snippet = () => ({
             render() {
@@ -25,19 +25,26 @@ describe('Alert.svelte', () => {
 describe('Timer.svelte', () => {
     test('timeRemaining 0', async () => {
         render(Timer, { time: 0 });
-        expect(screen.getByRole('timer')).toHaveTextContent(/^0:00$/);
+        const timeElement = screen.getByRole('time');
+        expect(timeElement).toHaveTextContent(/^0:00$/);
+        expect(timeElement).toHaveAttribute('datetime', 'PT0H0M0S');
     });
     test('timeRemaining 10.5', async () => {
         render(Timer, { time: 10.5 });
-        expect(screen.getByRole('timer')).toHaveTextContent(/^0:10$/);
+        const timeElement = screen.getByRole('time');
+        expect(timeElement).toHaveTextContent(/^0:10$/);
+        expect(timeElement).toHaveAttribute('datetime', 'PT0H0M10S');
     });
     test('timeRemaining 3600', async () => {
         render(Timer, { time: 3600 });
-        expect(screen.getByRole('timer')).toHaveTextContent(/^1:00:00$/);
+        const timeElement = screen.getByRole('time');
+        expect(timeElement).toHaveTextContent(/^1:00:00$/);
+        expect(timeElement).toHaveAttribute('datetime', 'PT1H0M0S');
     });
     test('timeRemaining -3610', async () => {
         render(Timer, { time: -3610 });
-        expect(screen.getByRole('timer')).toHaveTextContent(/^-1:00:10$/);
+        const timeElement = screen.getByRole('time');
+        expect(timeElement).toHaveAttribute('datetime', 'PT1H0M10S');
     });
     test('custom class is applied', async () => {
         render(Timer, { time: 10, class: 'custom-class' });
@@ -50,33 +57,33 @@ describe('Toolbar.svelte', () => {
         const handler1 = vi.fn();
         const handler2 = vi.fn();
         render(Toolbar, {
-            controls: [
-                { label: 'Control 1', icon: 'pause', action: handler1 },
-                { label: 'Control 2', action: handler2 },
+            tools: [
+                { key: 1, label: 'Tool 1', icon: 'pause', action: handler1 },
+                { key: 2, label: 'Tool 2', action: handler2 },
             ],
         });
 
-        const control1 = screen.getByRole('button', { name: 'Control 1' });
-        const control2 = screen.getByRole('button', { name: 'Control 2' });
+        const tool1 = screen.getByRole('button', { name: 'Tool 1' });
+        const tool2 = screen.getByRole('button', { name: 'Tool 2' });
         const user = userEvent.setup();
-        await user.click(control1);
-        await user.click(control2);
-        await user.click(control2);
+        await user.click(tool1);
+        await user.click(tool2);
+        await user.click(tool2);
         expect(handler1).toHaveBeenCalledTimes(1);
         expect(handler2).toHaveBeenCalledTimes(2);
     });
     test('custom class is applied', () => {
         const handler1 = vi.fn();
         render(Toolbar, {
-            controls: [{ label: 'Control 1', action: handler1, class: 'custom-class' }],
+            tools: [{ key: 1, label: 'Tool 1', action: handler1, class: 'custom-class' }],
         });
 
-        expect(screen.getByRole('button', { name: 'Control 1' })).toHaveClass('custom-class');
+        expect(screen.getByRole('button', { name: 'Tool 1' })).toHaveClass('custom-class');
     });
     test('hotkeys work', async () => {
         const handler1 = vi.fn();
         render(Toolbar, {
-            controls: [{ label: 'Control 1', action: handler1, hotkey: 'a' }],
+            tools: [{ key: 1, label: 'Tool 1', action: handler1, hotkey: 'a' }],
         });
 
         const user = userEvent.setup();
