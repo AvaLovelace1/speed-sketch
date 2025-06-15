@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { convertFileSrc } from '@tauri-apps/api/core';
     import { Separator } from 'bits-ui';
     import { appName, imgShowTimes, tagline } from '$lib/globals.svelte';
     import FolderInput from './FolderInput.svelte';
@@ -8,7 +7,7 @@
     interface Props {
         imgShowTime: number;
         imgFolder: string;
-        imgFiles: string[];
+        imgPaths: string[];
         folderErr: string;
         folderInfoMsg: string;
         isLoadingImgs: boolean;
@@ -20,7 +19,7 @@
     let {
         imgShowTime = $bindable(),
         imgFolder = $bindable(),
-        imgFiles,
+        imgPaths,
         folderErr,
         folderInfoMsg,
         isLoadingImgs,
@@ -59,11 +58,11 @@
                 />
                 {#if isLoadingImgs}
                     <div class="-mt-1 h-16 opacity-50"></div>
-                {:else if imgFiles.length > 0}
+                {:else if imgPaths.length > 0}
                     <div class="-mt-1 grid grid-cols-5 gap-1">
-                        {#each { length: Math.min(imgFiles.length, 5) } as _, i (i)}
+                        {#each { length: Math.min(imgPaths.length, 5) } as _, i (i)}
                             <img
-                                src={convertFileSrc(imgFiles[i])}
+                                src={imgPaths[i]}
                                 alt="Preview {i}"
                                 class="h-16 w-16 rounded object-cover"
                             />

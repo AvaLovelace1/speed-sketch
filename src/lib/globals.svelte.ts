@@ -8,6 +8,6 @@ export const maxImgShowTime = 99 * 60 * 60 + 59 * 60 + 59; // 99h59m59s
 // Global state for the application
 export const sessionStore = $state({
     imgFolder: '',
-    imgFiles: [] as string[],
+    imgPaths: [] as string[],
     imgShowTime: 30,
 });

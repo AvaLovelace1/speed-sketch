@@ -5,7 +5,6 @@ The user interface for a drawing session.
 <script lang="ts">
     import { fade } from 'svelte/transition';
     import { cubicOut } from 'svelte/easing';
-    import { convertFileSrc } from '@tauri-apps/api/core';
     import Timer from './Timer.svelte';
     import Toolbar from './Toolbar.svelte';
     import StatusAlert from './StatusAlert.svelte';
@@ -96,11 +95,7 @@ The user interface for a drawing session.
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
 <div role="main" class="flex h-dvh items-center justify-center">
-    <img
-        src={convertFileSrc(curImg)}
-        alt="Reference used for drawing practice"
-        class="size-full object-contain"
-    />
+    <img src={curImg} alt="Reference used for drawing practice" class="size-full object-contain" />
     {#key toolbarShown}
         <div
             class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"

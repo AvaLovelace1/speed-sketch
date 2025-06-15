@@ -17,14 +17,14 @@
 
     function goPrevImg() {
         curImgIdx -= 1;
-        if (curImgIdx < 0) curImgIdx = sessionStore.imgFiles.length - 1;
+        if (curImgIdx < 0) curImgIdx = sessionStore.imgPaths.length - 1;
         timeRemaining = sessionStore.imgShowTime;
         if (!isPaused) restartTimer();
     }
 
     function goNextImg() {
         curImgIdx += 1;
-        if (curImgIdx >= sessionStore.imgFiles.length) curImgIdx = 0;
+        if (curImgIdx >= sessionStore.imgPaths.length) curImgIdx = 0;
         timeRemaining = sessionStore.imgShowTime;
         if (!isPaused) restartTimer();
     }
@@ -87,7 +87,7 @@
 
 <SessionUI
     bind:this={sessionUI}
-    curImg={sessionStore.imgFiles[curImgIdx]}
+    curImg={sessionStore.imgPaths[curImgIdx]}
     {nCompletedImgs}
     {timeRemaining}
     {isPaused}
