@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import {render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event'
 import {createRawSnippet} from 'svelte';
-import ControlMenu from './ControlMenu.svelte';
+import Toolbar from './Toolbar.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
 
@@ -46,11 +46,11 @@ describe('Timer.svelte', () => {
     });
 });
 
-describe('ControlMenu.svelte', () => {
+describe('Toolbar.svelte', () => {
     test('menu buttons work', async () => {
         const handler1 = vi.fn();
         const handler2 = vi.fn();
-        render(ControlMenu, {
+        render(Toolbar, {
             controls: [
                 {label: 'Control 1', icon: 'pause', action: handler1},
                 {label: 'Control 2', action: handler2},
@@ -68,7 +68,7 @@ describe('ControlMenu.svelte', () => {
     });
     test('custom class is applied', () => {
         const handler1 = vi.fn();
-        render(ControlMenu, {
+        render(Toolbar, {
             controls: [{label: 'Control 1', action: handler1, class: 'custom-class'}]
         });
 
@@ -76,7 +76,7 @@ describe('ControlMenu.svelte', () => {
     });
     test('hotkeys work', async () => {
         const handler1 = vi.fn();
-        render(ControlMenu, {
+        render(Toolbar, {
             controls: [
                 {label: 'Control 1', action: handler1, hotkey: 'a'},
             ]

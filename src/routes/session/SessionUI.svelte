@@ -6,7 +6,7 @@ The user interface for a drawing session.
     import {fade} from 'svelte/transition';
     import {cubicOut} from 'svelte/easing';
     import {convertFileSrc} from '@tauri-apps/api/core';
-    import ControlMenu from './ControlMenu.svelte';
+    import Toolbar from './Toolbar.svelte';
     import Timer from './Timer.svelte';
     import StatusAlert from './StatusAlert.svelte';
 
@@ -101,11 +101,11 @@ The user interface for a drawing session.
     {#if controlsShown}
         <div class="fixed bottom-0 w-full shadow-sm flex flex-row justify-center p-4"
              transition:fade={controlsFade} onfocusin={showControls}>
-            <ControlMenu {controls}/>
+            <Toolbar {controls}/>
         </div>
     {:else}
         <div hidden>
-            <ControlMenu {controls}/> <!-- Controls must be hidden but still present for keyboard shortcuts to work-->
+            <Toolbar {controls}/> <!-- Controls must be hidden but still present for keyboard shortcuts to work-->
         </div>
     {/if}
 </div>
