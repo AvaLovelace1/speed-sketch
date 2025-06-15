@@ -1,7 +1,4 @@
 {
-  "name": "speed-sketch",
-  "private": true,
-  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -14,7 +11,6 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev"
   },
-  "license": "MIT",
   "dependencies": {
     "@lucide/svelte": "^0.513.0",
     "@tauri-apps/api": "^2",

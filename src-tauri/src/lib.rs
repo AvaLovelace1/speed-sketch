@@ -1,7 +1,9 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::time::Duration;
+use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::Manager;
+use tauri_plugin_opener::OpenerExt;
 use tokio::{task, time};
 use walkdir::{DirEntry, WalkDir};
 
@@ -70,6 +72,45 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .invoke_handler(tauri::generate_handler![get_img_files])
+        .setup(|app| {
+            // Build app menu
+            #[cfg(target_os = "macos")]
+            {
+                let main = SubmenuBuilder::new(app, app.package_info().name.as_str())
+                    .about(None)
+                    .separator()
+                    .hide()
+                    .hide_others()
+                    .separator()
+                    .quit()
+                    .build()?;
+                let view = SubmenuBuilder::new(app, "View").fullscreen().build()?;
+                let window = SubmenuBuilder::new(app, "Window")
+                    .minimize()
+                    .maximize()
+                    .separator()
+                    .close_window()
+                    .build()?;
+                let help = SubmenuBuilder::new(app, "Help")
+                    .text("report_issue", "🔗 Report an Issue on GitHub")
+                    .build()?;
+                let menu = MenuBuilder::new(app)
+                    .items(&[&main, &view, &window, &help])
+                    .build()?;
+                app.set_menu(menu)?;
+            }
+
+            app.on_menu_event(move |app_handle: &tauri::AppHandle, event| {
+                if event.id().0.as_str() == "report_issue" {
+                    let url = "https://github.com/AvaLovelace1/speed-sketch/issues/new";
+                    app_handle
+                        .opener()
+                        .open_url(url, None::<&str>)
+                        .unwrap_or_default()
+                }
+            });
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

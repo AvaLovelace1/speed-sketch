@@ -9,7 +9,7 @@
     "core:default",
     "dialog:allow-open",
     "fs:allow-home-meta-recursive",
-    "opener:allow-reveal-item-in-dir",
+    "opener:default",
     "store:default"
   ]
 }
