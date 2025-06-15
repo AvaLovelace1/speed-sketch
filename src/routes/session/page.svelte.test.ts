@@ -3,9 +3,18 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import { createRawSnippet } from 'svelte';
+import SessionUI from './SessionUI.svelte';
 import Toolbar from './Toolbar.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
+
+describe.concurrent('SessionUI.svelte', () => {
+    test('session UI renders', async () => {
+        render(SessionUI);
+        expect(screen.getByRole('img')).toBeVisible();
+        expect(screen.getByRole('timer', { name: /.*remaining.*/i })).toBeVisible();
+    });
+});
 
 describe('StatusAlert.svelte', () => {
     test('alert renders', () => {

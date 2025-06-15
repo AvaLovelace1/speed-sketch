@@ -102,7 +102,7 @@ The user interface for a drawing session.
             transition:fade={toolbarFade}
         >
             <div class="tooltip tooltip-right" data-tip="# Images completed">
-                <StatusAlert class="alert-success">
+                <StatusAlert class="alert-success" aria-label="Images completed">
                     <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
                 </StatusAlert>
             </div>
@@ -110,7 +110,7 @@ The user interface for a drawing session.
     {/key}
     <div class="toast toast-top toast-end items-end">
         <div class="tooltip tooltip-left" data-tip="Time remaining">
-            <Timer time={timeRemaining} />
+            <Timer time={timeRemaining} aria-label="Time remaining" />
         </div>
         {#if isPaused}
             <StatusAlert class="alert-error">
