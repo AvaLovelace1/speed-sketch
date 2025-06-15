@@ -1,5 +1,6 @@
 <script lang="ts">
     import {onMount} from 'svelte';
+    import {start, stop} from 'tauri-plugin-keepawake-api';
     import {goto} from '$app/navigation';
     import {sessionStore} from '$lib/globals.svelte';
     import SessionUI from './SessionUI.svelte';
@@ -45,7 +46,12 @@
         else pause();
     }
 
-    function exit() {
+    async function exit() {
+        try {
+            await stop(); // Stop keep awake
+        } catch (e) {
+            console.error('Failed to stop keep awake:', e);
+        }
         goto('/');
     }
 
@@ -64,7 +70,12 @@
         clearInterval(timer);
     }
 
-    onMount(() => {
+    onMount(async () => {
+        try {
+            await start({display: true, idle: true, sleep: true});
+        } catch (e) {
+            console.error('Failed to start keep awake:', e);
+        }
         resume();
     });
 </script>

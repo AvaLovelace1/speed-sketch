@@ -9,6 +9,7 @@
     "core:default",
     "dialog:allow-open",
     "fs:allow-home-meta-recursive",
+    "keepawake:default",
     "opener:default",
     "store:default"
   ]
