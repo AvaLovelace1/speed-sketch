@@ -1,5 +1,6 @@
 <script lang="ts">
     import {convertFileSrc} from '@tauri-apps/api/core';
+    import { Separator } from 'bits-ui';
     import {appName, imgShowTimes, tagline} from '$lib/globals.svelte';
     import FolderInput from './FolderInput.svelte';
     import RadioButtons from './RadioButtons.svelte';
@@ -42,9 +43,9 @@
     <div class="card w-fit bg-base-100 shadow-sm">
         <div class="card-body items-center">
             <h1 class="card-title text-5xl font-thin">{appName}</h1>
-            <div class="divider text-lg mt-1 mb-5 font-light">
-                <span class="opacity-50"><em>{tagline}</em></span>
-            </div>
+            <Separator.Root class="divider text-lg mt-1 mb-5 font-light">
+                <span class="italic opacity-50">{tagline}</span>
+            </Separator.Root>
             <form class="grid gap-3">
                 <FolderInput bind:chosenFolder={imgFolder} callback={setImgFolder}
                              errorMsg={folderErr} infoMsg={folderInfoMsg}/>
