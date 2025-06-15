@@ -60,7 +60,7 @@
                 {/if}
                 <RadioButtons name="imgShowTime" options={imgShowTimeOptions} bind:group={imgShowTime}/>
                 <button type="submit" class="btn btn-success btn-block" onclick={startSession} disabled={!isValid}>
-                    GO!
+                    <span class="iconify lucide--play"></span>GO!
                 </button>
             </form>
         </div>

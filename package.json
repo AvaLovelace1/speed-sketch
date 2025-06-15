@@ -12,16 +12,15 @@
     "tauri:dev": "tauri dev"
   },
   "dependencies": {
-    "@lucide/svelte": "^0.513.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.2.2",
     "@tauri-apps/plugin-fs": "^2.3.0",
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-store": "^2.2.0",
-    "@tauri-apps/plugin-window-state": "^2.2.2",
-    "bits-ui": "^2.6.0"
+    "@tauri-apps/plugin-window-state": "^2.2.2"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.48",
     "@iconify/tailwind4": "^1.0.6",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.16.0",
@@ -33,6 +32,7 @@
     "@types/node": "^22",
     "@vitest/browser": "^3.1.4",
     "@vitest/coverage-v8": "^3.1.4",
+    "bits-ui": "^2.6.0",
     "daisyui": "^5.0.43",
     "jsdom": "^26.0.0",
     "svelte": "^5.0.0",

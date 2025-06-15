@@ -3,7 +3,6 @@ import '@testing-library/jest-dom/vitest';
 import {render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event'
 import {createRawSnippet} from 'svelte';
-import {Skull} from '@lucide/svelte';
 import ControlMenu from './ControlMenu.svelte';
 import StatusAlert from './StatusAlert.svelte';
 import Timer from './Timer.svelte';
@@ -13,7 +12,7 @@ describe('Alert.svelte', () => {
     test('alert renders', () => {
         const snippet = () => ({
             render() {
-                return '<span>Test Alert</span>'
+                return '<span>Test Alert</span>';
             }
         });
 
@@ -53,7 +52,7 @@ describe('ControlMenu.svelte', () => {
         const handler2 = vi.fn();
         render(ControlMenu, {
             controls: [
-                {label: 'Control 1', Icon: Skull, action: handler1},
+                {label: 'Control 1', icon: 'pause', action: handler1},
                 {label: 'Control 2', action: handler2},
             ]
         });

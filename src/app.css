@@ -3,3 +3,9 @@
 @plugin "daisyui" {
     themes: dark --default;
 }
+
+@plugin "@iconify/tailwind4" {
+    prefix: "iconify";
+    scale: 1.5;
+    prefixes: lucide;
+}

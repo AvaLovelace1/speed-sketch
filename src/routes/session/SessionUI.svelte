@@ -3,7 +3,6 @@
 The user interface for a drawing session.
 -->
 <script lang="ts">
-    import {ArrowLeft, ArrowRight, CircleCheck, LogOut, Pause, Play} from '@lucide/svelte';
     import {fade} from 'svelte/transition';
     import {cubicOut} from 'svelte/easing';
     import {convertFileSrc} from '@tauri-apps/api/core';
@@ -55,19 +54,23 @@ The user interface for a drawing session.
     }
 
     const prevBtn = {
-        label: 'PREV', Icon: ArrowLeft, action: goPrevImg, hotkey: 'ArrowLeft',
+        label: 'PREV', icon: 'lucide--arrow-left', action: goPrevImg, hotkey: 'ArrowLeft',
         class: 'btn-primary', title: 'Previous image (left arrow)',
     };
     const nextBtn = {
-        label: 'NEXT', Icon: ArrowRight, action: goNextImg, hotkey: 'ArrowRight',
+        label: 'NEXT', icon: 'lucide--arrow-right', action: goNextImg, hotkey: 'ArrowRight',
         class: 'btn-primary', title: 'Next image (right arrow)',
     };
     const pauseBtn = $derived({
-        label: isPaused ? 'RESUME' : 'PAUSE', Icon: isPaused ? Play : Pause, action: togglePause, hotkey: ' ',
-        class: isPaused ? 'btn-success' : 'btn-warning', title: isPaused ? 'Resume (space)' : 'Pause (space)',
+        label: isPaused ? 'RESUME' : 'PAUSE',
+        icon: isPaused ? 'lucide--play' : 'lucide--pause',
+        action: togglePause,
+        hotkey: ' ',
+        class: isPaused ? 'btn-success' : 'btn-warning',
+        title: isPaused ? 'Resume (space)' : 'Pause (space)',
     });
     const exitBtn = {
-        label: 'EXIT', Icon: LogOut, action: exit, hotkey: 'Escape',
+        label: 'EXIT', icon: 'lucide--log-out', action: exit, hotkey: 'Escape',
         class: 'btn-error', title: 'Exit session (esc)',
     };
     const controls = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
@@ -81,7 +84,7 @@ The user interface for a drawing session.
     {#if controlsShown}
         <div class="toast toast-top toast-start" transition:fade={controlsFade}>
             <StatusAlert class="font-mono alert-success" title="Images completed">
-                <CircleCheck size={20}/>{nCompletedImgs}
+                <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
             </StatusAlert>
         </div>
     {/if}
@@ -91,8 +94,7 @@ The user interface for a drawing session.
         </div>
         {#if isPaused}
             <StatusAlert class="alert-error font-mono">
-                <Pause size={20}/>
-                PAUSED
+                <span class="iconify lucide--pause"></span>PAUSED
             </StatusAlert>
         {/if}
     </div>

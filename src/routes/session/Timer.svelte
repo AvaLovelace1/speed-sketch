@@ -1,6 +1,5 @@
 <script lang="ts">
     import type {HTMLAttributes} from "svelte/elements";
-    import {Timer} from '@lucide/svelte'
     import StatusAlert from './StatusAlert.svelte';
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -25,5 +24,5 @@
 </script>
 
 <StatusAlert role="timer" aria-live="polite" {...props} class={[{'alert-error': timeIsCritical}, props.class]}>
-    <Timer size={20}/>{timerString}
+    <span class="iconify lucide--timer"></span>{timerString}
 </StatusAlert>
