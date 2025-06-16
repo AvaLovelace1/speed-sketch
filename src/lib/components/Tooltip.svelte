@@ -29,7 +29,7 @@
                     <div {...wrapperProps}>
                         <div transition:fly={flyTransition}>
                             <div
-                                class="bg-neutral rounded px-2 py-1 text-center text-sm shadow-2xs"
+                                class="bg-neutral text-neutral-content rounded-lg px-2 py-1 text-center text-sm shadow-2xs"
                                 {...props}
                             >
                                 {@render tooltipContent()}
