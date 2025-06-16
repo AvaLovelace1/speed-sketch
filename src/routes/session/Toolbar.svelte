@@ -5,6 +5,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 <script lang="ts">
     import type { HTMLButtonAttributes } from 'svelte/elements';
     import { Toolbar } from 'bits-ui';
+    import Tooltip from '$lib/components/Tooltip.svelte';
 
     interface Tool extends HTMLButtonAttributes {
         // Unique identifier for the tool
@@ -50,15 +51,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
 <Toolbar.Root class="join rounded shadow-sm">
     {#each tools as { key, label, icon, action, hotkey, tooltip, ...others } (key)}
-        <div class="tooltip">
-            {#if tooltip}
-                <div class="tooltip-content">
-                    <p class="mb-1">{tooltip}</p>
-                    {#if hotkey}
-                        <p class="mb-1"><kbd class="kbd kbd-sm">{getHotkeyLabel(hotkey)}</kbd></p>
-                    {/if}
-                </div>
-            {/if}
+        <Tooltip side="top">
             <button
                 onclick={action}
                 {...others}
@@ -66,6 +59,16 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
             >
                 {#if icon}<span class="iconify {icon}"></span>{/if}{label}
             </button>
-        </div>
+            {#snippet tooltipContent()}
+                {#if tooltip}
+                    <p>{tooltip}</p>
+                    {#if hotkey}
+                        <p class="mb-1">
+                            <kbd class="kbd kbd-sm">{getHotkeyLabel(hotkey)}</kbd>
+                        </p>
+                    {/if}
+                {/if}
+            {/snippet}
+        </Tooltip>
     {/each}
 </Toolbar.Root>

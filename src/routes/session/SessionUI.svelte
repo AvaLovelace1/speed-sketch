@@ -8,6 +8,7 @@ The user interface for a drawing session.
     import AlertDialog from '$lib/components/AlertDialog.svelte';
     import Timer from './Timer.svelte';
     import Toolbar from './Toolbar.svelte';
+    import Tooltip from '$lib/components/Tooltip.svelte';
     import StatusAlert from './StatusAlert.svelte';
 
     const toolbarFade = { duration: 200, easing: cubicOut };
@@ -129,17 +130,19 @@ The user interface for a drawing session.
             class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"
             transition:fade={toolbarFade}
         >
-            <div class="tooltip tooltip-right" data-tip="# Images completed">
+            <Tooltip side="right">
                 <StatusAlert class="alert-success font-mono" aria-label="Images completed">
                     <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
                 </StatusAlert>
-            </div>
+                {#snippet tooltipContent()}Images completed{/snippet}
+            </Tooltip>
         </div>
     {/key}
     <div class="toast toast-top toast-end items-end">
-        <div class="tooltip tooltip-left" data-tip="Time remaining">
+        <Tooltip side="left">
             <Timer time={timeRemaining} aria-label="Time remaining" />
-        </div>
+            {#snippet tooltipContent()}Time remaining{/snippet}
+        </Tooltip>
         {#if isPaused}
             <StatusAlert class="alert-error">
                 <span class="iconify lucide--pause"></span>Paused
@@ -160,7 +163,7 @@ The user interface for a drawing session.
 <AlertDialog
     bind:this={confirmExitDialog}
     title="Confirm Exit"
-    description="Are you sure you want to exit the session?"
+    description="Are you sure you want to end the session?"
     cancelText="No"
     confirmText="Yes, exit"
     onOpen={freeze}
