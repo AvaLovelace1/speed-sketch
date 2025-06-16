@@ -17,7 +17,10 @@ A simple alert component for displaying status messages.
     <div
         role="status"
         {...props}
-        class={['alert alert-soft gap-3 px-3 py-2 font-mono text-lg shadow-sm', props.class]}
+        class={[
+            'alert alert-soft gap-3 px-3 py-2 font-mono text-lg uppercase shadow-sm',
+            props.class,
+        ]}
     >
         {@render children()}
     </div>

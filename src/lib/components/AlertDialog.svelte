@@ -71,12 +71,15 @@
                                     >
                                         <AlertDialog.Cancel
                                             type="button"
-                                            class="btn"
+                                            class="btn uppercase"
                                             onclick={onCancel}
                                         >
                                             {cancelText}
                                         </AlertDialog.Cancel>
-                                        <AlertDialog.Action type="submit" class="btn btn-error">
+                                        <AlertDialog.Action
+                                            type="submit"
+                                            class="btn btn-error uppercase"
+                                        >
                                             {confirmText}
                                         </AlertDialog.Action>
                                     </form>

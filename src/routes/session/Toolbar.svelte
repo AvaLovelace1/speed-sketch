@@ -59,7 +59,11 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
                     {/if}
                 </div>
             {/if}
-            <button onclick={action} {...others} class={['btn join-item btn-soft', others.class]}>
+            <button
+                onclick={action}
+                {...others}
+                class={['btn join-item btn-soft uppercase', others.class]}
+            >
                 {#if icon}<span class="iconify {icon}"></span>{/if}{label}
             </button>
         </div>

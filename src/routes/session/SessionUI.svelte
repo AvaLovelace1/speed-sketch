@@ -80,7 +80,7 @@ The user interface for a drawing session.
 
     const prevBtn = {
         key: 'prev',
-        label: 'PREV',
+        label: 'Prev',
         icon: 'lucide--arrow-left',
         action: goPrevImg,
         hotkey: 'ArrowLeft',
@@ -89,7 +89,7 @@ The user interface for a drawing session.
     };
     const nextBtn = {
         key: 'next',
-        label: 'NEXT',
+        label: 'Next',
         icon: 'lucide--arrow-right',
         action: goNextImg,
         hotkey: 'ArrowRight',
@@ -98,7 +98,7 @@ The user interface for a drawing session.
     };
     const pauseBtn = $derived({
         key: 'pause',
-        label: isPaused ? 'RESUME' : 'PAUSE',
+        label: isPaused ? 'Resume' : 'Pause',
         icon: isPaused ? 'lucide--play' : 'lucide--pause',
         action: togglePause,
         hotkey: ' ',
@@ -107,7 +107,7 @@ The user interface for a drawing session.
     });
     const exitBtn = {
         key: 'exit',
-        label: 'EXIT',
+        label: 'Exit',
         icon: 'lucide--log-out',
         action: () => confirmExitDialog.open(),
         hotkey: 'Escape',
@@ -142,7 +142,7 @@ The user interface for a drawing session.
         </div>
         {#if isPaused}
             <StatusAlert class="alert-error">
-                <span class="iconify lucide--pause"></span>PAUSED
+                <span class="iconify lucide--pause"></span>Paused
             </StatusAlert>
         {/if}
     </div>
@@ -161,8 +161,8 @@ The user interface for a drawing session.
     bind:this={confirmExitDialog}
     title="Confirm Exit"
     description="Are you sure you want to exit the session?"
-    cancelText="NO"
-    confirmText="YES, EXIT"
+    cancelText="No"
+    confirmText="Yes, exit"
     onOpen={freeze}
     onCancel={unfreeze}
     onConfirm={exit}

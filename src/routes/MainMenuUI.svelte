@@ -76,11 +76,11 @@
                 />
                 <button
                     type="submit"
-                    class="btn btn-success btn-block"
+                    class="btn btn-success btn-block uppercase"
                     onclick={startSession}
                     disabled={!isValid}
                 >
-                    <span class="iconify lucide--play"></span>GO!
+                    <span class="iconify lucide--play"></span>Go!
                 </button>
             </form>
         </div>

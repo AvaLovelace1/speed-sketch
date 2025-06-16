@@ -48,10 +48,10 @@
     </div>
     <button
         type="button"
-        class="join-item btn btn-primary"
+        class="join-item btn btn-primary uppercase"
         onclick={chooseFolder}
         aria-label="Choose a folder"
     >
-        CHOOSE…
+        Choose…
     </button>
 </div>
