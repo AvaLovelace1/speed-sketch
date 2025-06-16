@@ -48,7 +48,7 @@
     </div>
     <button
         type="button"
-        class="join-item btn btn-primary uppercase"
+        class="join-item btn btn-primary"
         onclick={chooseFolder}
         aria-label="Choose a folder"
     >

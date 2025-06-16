@@ -54,7 +54,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
             <Button.Root
                 onclick={action}
                 {...others}
-                class={['btn join-item btn-soft uppercase', others.class]}
+                class={['btn join-item btn-soft', others.class]}
             >
                 {#if icon}<span class="iconify {icon}"></span>{/if}{label}
             </Button.Root>

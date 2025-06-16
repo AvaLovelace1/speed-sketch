@@ -165,7 +165,7 @@ The user interface for a drawing session.
     title="Confirm Exit"
     description="Are you sure you want to end the session?"
     cancelText="No"
-    confirmText="Yes, exit"
+    confirmText="Yes, Exit"
     onOpen={freeze}
     onCancel={unfreeze}
     onConfirm={exit}

@@ -47,7 +47,7 @@
         <div class="card-body items-center">
             <h1 class="card-title text-5xl font-thin">{appName}</h1>
             <Separator.Root class="divider mt-1 mb-5 text-lg font-light">
-                <span class="italic opacity-50">{tagline}</span>
+                <span class="text-secondary italic">{tagline}</span>
             </Separator.Root>
             <form class="grid gap-3">
                 <FolderInput
@@ -76,7 +76,7 @@
                 />
                 <button
                     type="submit"
-                    class="btn btn-success btn-block uppercase"
+                    class="btn btn-success btn-block"
                     onclick={startSession}
                     disabled={!isValid}
                 >

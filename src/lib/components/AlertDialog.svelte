@@ -71,15 +71,12 @@
                                     <div class="card-actions justify-end">
                                         <AlertDialog.Cancel
                                             type="button"
-                                            class="btn uppercase"
+                                            class="btn"
                                             onclick={onCancel}
                                         >
                                             {cancelText}
                                         </AlertDialog.Cancel>
-                                        <AlertDialog.Action
-                                            type="submit"
-                                            class="btn btn-error uppercase"
-                                        >
+                                        <AlertDialog.Action type="submit" class="btn btn-error">
                                             {confirmText}
                                         </AlertDialog.Action>
                                     </div>
