@@ -130,7 +130,7 @@ The user interface for a drawing session.
             transition:fade={toolbarFade}
         >
             <div class="tooltip tooltip-right" data-tip="# Images completed">
-                <StatusAlert class="alert-success" aria-label="Images completed">
+                <StatusAlert class="alert-success font-mono" aria-label="Images completed">
                     <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
                 </StatusAlert>
             </div>

@@ -33,7 +33,7 @@ A timer that displays a given time.
     role="timer"
     aria-live="polite"
     {...props}
-    class={[{ 'alert-error': timeIsCritical }, props.class]}
+    class={['font-mono', { 'alert-error': timeIsCritical }, props.class]}
 >
     <span class="iconify lucide--timer"></span>
     <time datetime={durationString}>{timerString}</time>
