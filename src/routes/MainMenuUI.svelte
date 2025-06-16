@@ -3,6 +3,7 @@
     import { appName, imgShowTimes, tagline } from '$lib/globals.svelte';
     import FolderInput from './FolderInput.svelte';
     import RadioButtons from './RadioButtons.svelte';
+    import { formatTimeHuman } from '$lib/utils.svelte';
 
     interface Props {
         imgShowTime: number;
@@ -29,25 +30,19 @@
     }: Props = $props();
 
     const imgShowTimeOptions = imgShowTimes.map((seconds) => ({
-        label: formatShowTime(seconds),
+        label: formatTimeHuman(seconds),
         value: seconds,
     }));
-
-    function formatShowTime(seconds: number) {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return (minutes ? `${minutes}m` : '') + (secs ? `${secs}s` : '');
-    }
 </script>
 
 <div class="bg-primary fixed inset-0"></div>
 <!-- Background overlay -->
 <div class="flex min-h-dvh items-center justify-center">
-    <div class="card bg-base-100 w-fit shadow-sm">
+    <div class="card bg-base-100 w-fit shadow-lg">
         <div class="card-body items-center">
-            <h1 class="card-title text-5xl font-thin">{appName}</h1>
-            <Separator.Root class="divider mt-1 mb-5 text-lg font-light">
-                <span class="text-secondary italic">{tagline}</span>
+            <h1 class="card-title text-5xl font-extralight">{appName}</h1>
+            <Separator.Root class="divider mt-1 mb-5 text-lg">
+                <span class="italic opacity-50">{tagline}</span>
             </Separator.Root>
             <form class="grid gap-3">
                 <FolderInput

@@ -10,6 +10,7 @@
     let nCompletedImgs = $state(0);
     // Time remaining for the current image to be displayed, in seconds
     let timeRemaining = $state(sessionStore.imgShowTime);
+    let timeSpent = 0;
     // Timer interval that updates the time remaining with each tick
     let timer: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
@@ -52,14 +53,18 @@
         } catch (e) {
             console.error('Failed to stop keep awake:', e);
         }
-        goto('/');
+        sessionStore.nCompletedImgs = nCompletedImgs;
+        sessionStore.timeSpent = timeSpent;
+        goto('/session/end');
     }
 
     function restartTimer() {
         clearTimer();
         timer = setInterval(() => {
-            if (timeRemaining > 0) timeRemaining--;
-            else {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                timeSpent++;
+            } else {
                 // The image is completed
                 nCompletedImgs += 1;
                 goNextImg();

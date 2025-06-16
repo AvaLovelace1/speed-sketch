@@ -10,4 +10,6 @@ export const sessionStore = $state({
     imgFolder: '',
     imgPaths: [] as string[],
     imgShowTime: 30,
+    nCompletedImgs: 0,
+    timeSpent: 0,
 });

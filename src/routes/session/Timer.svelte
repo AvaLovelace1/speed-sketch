@@ -5,6 +5,7 @@ A timer that displays a given time.
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
     import StatusAlert from './StatusAlert.svelte';
+    import { formatTimeClock, formatTimeISO } from '$lib/utils.svelte';
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         // Time displayed, in seconds
@@ -14,18 +15,8 @@ A timer that displays a given time.
     }
 
     const { time = 0, criticalTime = 10, ...props }: Props = $props();
-
-    const hrs = $derived.by(() => Math.floor(Math.abs(time) / 60 / 60));
-    const mins = $derived.by(() => Math.floor(Math.abs(time) / 60) % 60);
-    const secs = $derived.by(() => Math.floor(Math.abs(time) % 60));
-
-    const timerString = $derived.by(() => {
-        const negative = time < 0;
-        const minsFmt = hrs > 0 && mins < 10 ? `0${mins}` : mins;
-        const secsFmt = secs < 10 ? `0${secs}` : secs;
-        return `${negative ? '-' : ''}${hrs ? hrs + ':' : ''}${minsFmt}:${secsFmt}`;
-    });
-    const durationString = $derived(`PT${hrs}H${mins}M${secs}S`);
+    const timerString = $derived(formatTimeClock(time));
+    const durationString = $derived(formatTimeISO(time));
     const timeIsCritical = $derived(criticalTime !== null && time <= criticalTime);
 </script>
 
