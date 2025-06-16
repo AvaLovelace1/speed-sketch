@@ -9,7 +9,7 @@ export function formatTimeHuman(seconds: number, space: boolean = false) {
     const { hrs, mins, secs } = decomposeTime(seconds);
     const hrsFmt = hrs ? `${hrs}h` : '';
     const minsFmt = mins ? `${mins}m` : '';
-    const secsFmt = secs ? `${secs}s` : '';
+    const secsFmt = `${secs}s`;
     return `${hrsFmt}${space ? ' ' : ''}${minsFmt}${space ? ' ' : ''}${secsFmt}`.trim();
 }
 
