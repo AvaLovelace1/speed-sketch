@@ -32,13 +32,13 @@
     function pause() {
         isPaused = true;
         clearTimer();
-        sessionUI.showToolbar();
+        sessionUI.showToolbarWithTimeout();
     }
 
     function resume() {
         isPaused = false;
         restartTimer();
-        sessionUI.showToolbar();
+        sessionUI.showToolbarWithTimeout();
     }
 
     function togglePause() {
@@ -93,6 +93,8 @@
     {isPaused}
     {goPrevImg}
     {goNextImg}
+    {pause}
+    {resume}
     {togglePause}
     {exit}
 />

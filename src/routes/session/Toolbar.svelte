@@ -18,11 +18,13 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
     interface Props {
         tools: Tool[];
+        enableHotkeys?: boolean;
     }
 
-    const { tools }: Props = $props();
+    const { tools, enableHotkeys = true }: Props = $props();
 
     function onKeyDown(e: KeyboardEvent) {
+        if (!enableHotkeys) return;
         for (const tool of tools) {
             if (tool.hotkey && e.key === tool.hotkey) {
                 e.preventDefault();
