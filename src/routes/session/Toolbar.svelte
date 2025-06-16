@@ -3,11 +3,10 @@
 A toolbar with a set of tools/actions and keyboard shortcuts.
 -->
 <script lang="ts">
-    import type { HTMLButtonAttributes } from 'svelte/elements';
-    import { Toolbar } from 'bits-ui';
+    import { Toolbar, Button, type BitsPrimitiveElementAttributes } from 'bits-ui';
     import Tooltip from '$lib/components/Tooltip.svelte';
 
-    interface Tool extends HTMLButtonAttributes {
+    interface Tool extends BitsPrimitiveElementAttributes {
         // Unique identifier for the tool
         key: string | number;
         label: string;
@@ -52,13 +51,13 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 <Toolbar.Root class="join rounded shadow-sm">
     {#each tools as { key, label, icon, action, hotkey, tooltip, ...others } (key)}
         <Tooltip side="top">
-            <button
+            <Button.Root
                 onclick={action}
                 {...others}
                 class={['btn join-item btn-soft uppercase', others.class]}
             >
                 {#if icon}<span class="iconify {icon}"></span>{/if}{label}
-            </button>
+            </Button.Root>
             {#snippet tooltipContent()}
                 {#if tooltip}
                     <p>{tooltip}</p>
