@@ -59,16 +59,16 @@
                         >
                             <div class="card-body">
                                 <AlertDialog.Title class="card-title">{title}</AlertDialog.Title>
-                                <AlertDialog.Description class="mb-4">
+                                <AlertDialog.Description class="mb-5">
                                     {description}
                                 </AlertDialog.Description>
-                                <div class="card-actions justify-end">
-                                    <form
-                                        onsubmit={() => {
-                                            openBind = false;
-                                            onConfirm();
-                                        }}
-                                    >
+                                <form
+                                    onsubmit={() => {
+                                        openBind = false;
+                                        onConfirm();
+                                    }}
+                                >
+                                    <div class="card-actions justify-end">
                                         <AlertDialog.Cancel
                                             type="button"
                                             class="btn uppercase"
@@ -82,8 +82,8 @@
                                         >
                                             {confirmText}
                                         </AlertDialog.Action>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
