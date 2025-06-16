@@ -3,9 +3,9 @@
 The user interface for a drawing session.
 -->
 <script lang="ts">
-    import { fade, scale } from 'svelte/transition';
+    import { fade } from 'svelte/transition';
     import { cubicOut } from 'svelte/easing';
-    import { AlertDialog } from 'bits-ui';
+    import AlertDialog from '$lib/components/AlertDialog.svelte';
     import Timer from './Timer.svelte';
     import Toolbar from './Toolbar.svelte';
     import StatusAlert from './StatusAlert.svelte';
@@ -42,8 +42,8 @@ The user interface for a drawing session.
 
     let toolbarShown = $state(false);
     let hideToolbarTimeout: NodeJS.Timeout | undefined = undefined;
-    let confirmExitOpen = $state(false);
     let isFrozen = $state(false);
+    let confirmExitDialog: AlertDialog;
 
     // Show toolbar, hiding it after a timeout
     export function showToolbarWithTimeout() {
@@ -78,12 +78,6 @@ The user interface for a drawing session.
         resume();
     }
 
-    // Show exit confirmation dialog
-    function tryExit() {
-        freeze();
-        confirmExitOpen = true;
-    }
-
     const prevBtn = {
         key: 'prev',
         label: 'PREV',
@@ -115,7 +109,7 @@ The user interface for a drawing session.
         key: 'exit',
         label: 'EXIT',
         icon: 'lucide--log-out',
-        action: tryExit,
+        action: () => confirmExitDialog.open(),
         hotkey: 'Escape',
         class: 'btn-error',
         tooltip: 'Exit session',
@@ -163,64 +157,13 @@ The user interface for a drawing session.
     {/key}
 </div>
 
-<AlertDialog.Root
-    bind:open={confirmExitOpen}
-    onOpenChangeComplete={(open) => {
-        if (!open) unfreeze();
-        else freeze();
-    }}
->
-    <AlertDialog.Portal>
-        <AlertDialog.Overlay forceMount>
-            {#snippet child({ props, open })}
-                {#if open}
-                    <div
-                        class="fixed inset-0 z-50 bg-black/75"
-                        transition:fade={{ duration: 200, easing: cubicOut }}
-                        {...props}
-                    ></div>
-                {/if}
-            {/snippet}
-        </AlertDialog.Overlay>
-        <AlertDialog.Content forceMount>
-            {#snippet child({ props, open })}
-                {#if open}
-                    <div class="fixed inset-0 z-50 flex items-center justify-center" {...props}>
-                        <div
-                            class="card bg-base-100 w-fit shadow-lg"
-                            transition:scale={{ start: 0.95, duration: 150, easing: cubicOut }}
-                        >
-                            <div class="card-body">
-                                <AlertDialog.Title class="card-title">
-                                    Confirm Exit
-                                </AlertDialog.Title>
-                                <AlertDialog.Description class="mb-4">
-                                    Are you sure you want to exit the session?
-                                </AlertDialog.Description>
-                                <div class="card-actions justify-end">
-                                    <form
-                                        onsubmit={() => {
-                                            confirmExitOpen = false;
-                                            exit();
-                                        }}
-                                    >
-                                        <AlertDialog.Cancel
-                                            type="button"
-                                            class="btn"
-                                            onclick={unfreeze}
-                                        >
-                                            NO
-                                        </AlertDialog.Cancel>
-                                        <AlertDialog.Action type="submit" class="btn btn-error">
-                                            YES, EXIT
-                                        </AlertDialog.Action>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {/if}
-            {/snippet}
-        </AlertDialog.Content>
-    </AlertDialog.Portal>
-</AlertDialog.Root>
+<AlertDialog
+    bind:this={confirmExitDialog}
+    title="Confirm Exit"
+    description="Are you sure you want to exit the session?"
+    cancelText="NO"
+    confirmText="YES, EXIT"
+    onOpen={freeze}
+    onCancel={unfreeze}
+    onConfirm={exit}
+/>
