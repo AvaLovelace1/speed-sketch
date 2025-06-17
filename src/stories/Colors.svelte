@@ -1,6 +1,4 @@
 <script lang="ts">
-    import "../app.css";
-
     const colors = [
         {
             name: "Base-100",

@@ -2,12 +2,13 @@
     import { cubicOut } from "svelte/easing";
     import { fade, scale } from "svelte/transition";
     import { AlertDialog } from "bits-ui";
+    import Card from "$lib/components/Card.svelte";
 
     interface Props {
         title: string;
         description: string;
-        cancelText: string;
-        confirmText: string;
+        cancelText?: string;
+        confirmText?: string;
         onOpen?: () => void;
         onCancel?: () => void;
         onConfirm?: () => void;
@@ -16,8 +17,8 @@
     let {
         title,
         description,
-        cancelText,
-        confirmText,
+        cancelText = "No",
+        confirmText = "Yes",
         onOpen = () => {},
         onCancel = () => {},
         onConfirm = () => {},
@@ -53,11 +54,8 @@
             {#snippet child({ props, open })}
                 {#if open}
                     <div class="fixed inset-0 z-50 flex items-center justify-center" {...props}>
-                        <div
-                            class="card bg-base-100 w-fit shadow-lg"
-                            transition:scale={{ start: 0.95, duration: 150, easing: cubicOut }}
-                        >
-                            <div class="card-body">
+                        <div transition:scale={{ start: 0.95, duration: 150, easing: cubicOut }}>
+                            <Card>
                                 <AlertDialog.Title class="card-title">{title}</AlertDialog.Title>
                                 <AlertDialog.Description class="mb-5">
                                     {description}
@@ -81,7 +79,7 @@
                                         </AlertDialog.Action>
                                     </div>
                                 </form>
-                            </div>
+                            </Card>
                         </div>
                     </div>
                 {/if}
