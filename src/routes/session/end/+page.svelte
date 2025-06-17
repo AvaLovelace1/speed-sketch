@@ -28,7 +28,7 @@
         <div class="card-body">
             <h1 class="card-title mb-1 text-2xl">Session complete!</h1>
             <div class="stats">
-                {#each stats as { title, value, color, icon }, i (i)}
+                {#each stats as { title, value, color, icon } (title)}
                     <div class="stat">
                         <div class="stat-figure {color} self-end text-3xl">
                             <span class="iconify {icon}"></span>
