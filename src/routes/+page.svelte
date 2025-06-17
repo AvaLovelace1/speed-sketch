@@ -50,7 +50,7 @@
         try {
             const files = (await invoke('get_img_files', {
                 dir: folder,
-                timeoutDuration: 10,
+                timeoutDuration: 60,
             })) as string[];
             const paths = files.map((file) => convertFileSrc(file));
             return { paths: paths, err: paths.length === 0 ? 'No images found in folder' : '' };
