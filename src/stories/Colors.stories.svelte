@@ -1,11 +1,11 @@
 <script module>
-    import { defineMeta } from '@storybook/addon-svelte-csf';
-    import Colors from './Colors.svelte';
+    import { defineMeta } from "@storybook/addon-svelte-csf";
+    import Colors from "./Colors.svelte";
 
     const { Story } = defineMeta({
-        title: 'Colors',
+        title: "Colors",
         component: Colors,
-        tags: ['autodocs'],
+        tags: ["autodocs"],
     });
 </script>
 

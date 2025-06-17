@@ -3,8 +3,8 @@
 A simple alert component for displaying status messages.
 -->
 <script lang="ts">
-    import type { Snippet } from 'svelte';
-    import type { HTMLAttributes } from 'svelte/elements';
+    import type { Snippet } from "svelte";
+    import type { HTMLAttributes } from "svelte/elements";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         children: Snippet;
@@ -17,7 +17,7 @@ A simple alert component for displaying status messages.
     <div
         role="status"
         {...props}
-        class={['alert alert-soft gap-3 px-3 py-2 text-lg shadow-sm', props.class]}
+        class={["alert alert-soft gap-3 px-3 py-2 text-lg shadow-sm", props.class]}
     >
         {@render children()}
     </div>

@@ -1,20 +1,20 @@
 <script lang="ts">
-    import { Button } from 'bits-ui';
-    import { sessionStore } from '$lib/globals.svelte';
-    import { formatTimeHuman } from '$lib/utils.svelte';
+    import { Button } from "bits-ui";
+    import { sessionStore } from "$lib/globals.svelte";
+    import { formatTimeHuman } from "$lib/utils.svelte";
 
     const stats = [
         {
-            title: 'Images completed',
+            title: "Images completed",
             value: sessionStore.nCompletedImgs,
-            icon: 'lucide--image',
-            color: 'text-primary',
+            icon: "lucide--image",
+            color: "text-primary",
         },
         {
-            title: 'Time spent drawing',
+            title: "Time spent drawing",
             value: formatTimeHuman(sessionStore.timeSpent, true),
-            icon: 'lucide--clock',
-            color: 'text-secondary',
+            icon: "lucide--clock",
+            color: "text-secondary",
         },
     ];
 </script>

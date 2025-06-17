@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { open } from '@tauri-apps/plugin-dialog';
+    import { open } from "@tauri-apps/plugin-dialog";
 
     interface Props {
         chosenFolder?: string;
@@ -11,14 +11,14 @@
     }
 
     let {
-        chosenFolder = $bindable(''),
+        chosenFolder = $bindable(""),
         callback = (_) => {},
-        infoMsg = '',
-        errorMsg = '',
+        infoMsg = "",
+        errorMsg = "",
     }: Props = $props();
 
     async function chooseFolder() {
-        const folder = await open({ directory: true, multiple: false, title: 'Choose Folder' });
+        const folder = await open({ directory: true, multiple: false, title: "Choose Folder" });
         if (folder) chosenFolder = folder;
         callback(chosenFolder);
     }
@@ -26,7 +26,7 @@
 
 <div class="join w-full">
     <div class="w-full">
-        <label class="input validator join-item" aria-invalid={errorMsg !== ''}>
+        <label class="input validator join-item" aria-invalid={errorMsg !== ""}>
             <input
                 type="text"
                 class="overflow-ellipsis"

@@ -1,12 +1,12 @@
-import tailwindcss from '@tailwindcss/vite';
-import { svelteTesting } from '@testing-library/svelte/vite';
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import tailwindcss from "@tailwindcss/vite";
+import { svelteTesting } from "@testing-library/svelte/vite";
+import { sveltekit } from "@sveltejs/kit/vite";
+import { defineConfig } from "vite";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 const dirname =
-    typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+    typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const host = process.env.TAURI_DEV_HOST;
@@ -23,37 +23,37 @@ export default defineConfig({
         host: host || false,
         hmr: host
             ? {
-                  protocol: 'ws',
+                  protocol: "ws",
                   host,
                   port: 1421,
               }
             : undefined,
         watch: {
             // 3. tell vite to ignore watching `src-tauri`
-            ignored: ['**/src-tauri/**'],
+            ignored: ["**/src-tauri/**"],
         },
     },
     test: {
         workspace: [
             {
-                extends: './vite.config.ts',
+                extends: "./vite.config.ts",
                 plugins: [svelteTesting()],
                 test: {
-                    name: 'client',
-                    environment: 'jsdom',
+                    name: "client",
+                    environment: "jsdom",
                     clearMocks: true,
-                    include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-                    exclude: ['src/lib/server/**'],
-                    setupFiles: ['./vitest-setup-client.ts'],
+                    include: ["src/**/*.svelte.{test,spec}.{js,ts}"],
+                    exclude: ["src/lib/server/**"],
+                    setupFiles: ["./vitest-setup-client.ts"],
                 },
             },
             {
-                extends: './vite.config.ts',
+                extends: "./vite.config.ts",
                 test: {
-                    name: 'server',
-                    environment: 'node',
-                    include: ['src/**/*.{test,spec}.{js,ts}'],
-                    exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+                    name: "server",
+                    environment: "node",
+                    include: ["src/**/*.{test,spec}.{js,ts}"],
+                    exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
                 },
             },
             {
@@ -62,22 +62,22 @@ export default defineConfig({
                     // The plugin will run tests for the stories defined in your Storybook config
                     // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
                     storybookTest({
-                        configDir: path.join(dirname, '.storybook'),
+                        configDir: path.join(dirname, ".storybook"),
                     }),
                 ],
                 test: {
-                    name: 'storybook',
+                    name: "storybook",
                     browser: {
                         enabled: true,
                         headless: true,
-                        provider: 'playwright',
+                        provider: "playwright",
                         instances: [
                             {
-                                browser: 'chromium',
+                                browser: "chromium",
                             },
                         ],
                     },
-                    setupFiles: ['.storybook/vitest.setup.ts'],
+                    setupFiles: [".storybook/vitest.setup.ts"],
                 },
             },
         ],

@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { start, stop } from 'tauri-plugin-keepawake-api';
-    import { goto } from '$app/navigation';
-    import { sessionStore } from '$lib/globals.svelte';
-    import SessionUI from './SessionUI.svelte';
+    import { onMount } from "svelte";
+    import { start, stop } from "tauri-plugin-keepawake-api";
+    import { goto } from "$app/navigation";
+    import { sessionStore } from "$lib/globals.svelte";
+    import SessionUI from "./SessionUI.svelte";
 
     // Index of the current image being displayed
     let curImgIdx = $state(0);
@@ -51,11 +51,11 @@
         try {
             await stop(); // Stop keep awake
         } catch (e) {
-            console.error('Failed to stop keep awake:', e);
+            console.error("Failed to stop keep awake:", e);
         }
         sessionStore.nCompletedImgs = nCompletedImgs;
         sessionStore.timeSpent = timeSpent;
-        goto('/session/end');
+        goto("/session/end");
     }
 
     function restartTimer() {
@@ -80,7 +80,7 @@
         try {
             await start({ display: true, idle: true, sleep: true });
         } catch (e) {
-            console.error('Failed to start keep awake:', e);
+            console.error("Failed to start keep awake:", e);
         }
         resume();
     });

@@ -3,13 +3,13 @@
 The user interface for a drawing session.
 -->
 <script lang="ts">
-    import { fade } from 'svelte/transition';
-    import { cubicOut } from 'svelte/easing';
-    import AlertDialog from '$lib/components/AlertDialog.svelte';
-    import Timer from './Timer.svelte';
-    import Toolbar from './Toolbar.svelte';
-    import Tooltip from '$lib/components/Tooltip.svelte';
-    import StatusAlert from './StatusAlert.svelte';
+    import { fade } from "svelte/transition";
+    import { cubicOut } from "svelte/easing";
+    import AlertDialog from "$lib/components/AlertDialog.svelte";
+    import Timer from "./Timer.svelte";
+    import Toolbar from "./Toolbar.svelte";
+    import Tooltip from "$lib/components/Tooltip.svelte";
+    import StatusAlert from "./StatusAlert.svelte";
 
     const toolbarFade = { duration: 200, easing: cubicOut };
     // Duration after which toolbar will be hidden automatically
@@ -80,40 +80,40 @@ The user interface for a drawing session.
     }
 
     const prevBtn = {
-        key: 'prev',
-        label: 'Prev',
-        icon: 'lucide--arrow-left',
+        key: "prev",
+        label: "Prev",
+        icon: "lucide--arrow-left",
         action: goPrevImg,
-        hotkey: 'ArrowLeft',
-        class: 'btn-primary',
-        tooltip: 'Previous image',
+        hotkey: "ArrowLeft",
+        class: "btn-primary",
+        tooltip: "Previous image",
     };
     const nextBtn = {
-        key: 'next',
-        label: 'Next',
-        icon: 'lucide--arrow-right',
+        key: "next",
+        label: "Next",
+        icon: "lucide--arrow-right",
         action: goNextImg,
-        hotkey: 'ArrowRight',
-        class: 'btn-primary',
-        tooltip: 'Next image',
+        hotkey: "ArrowRight",
+        class: "btn-primary",
+        tooltip: "Next image",
     };
     const pauseBtn = $derived({
-        key: 'pause',
-        label: isPaused ? 'Resume' : 'Pause',
-        icon: isPaused ? 'lucide--play' : 'lucide--pause',
+        key: "pause",
+        label: isPaused ? "Resume" : "Pause",
+        icon: isPaused ? "lucide--play" : "lucide--pause",
         action: togglePause,
-        hotkey: ' ',
-        class: isPaused ? 'btn-success' : 'btn-warning',
-        tooltip: isPaused ? 'Resume' : 'Pause',
+        hotkey: " ",
+        class: isPaused ? "btn-success" : "btn-warning",
+        tooltip: isPaused ? "Resume" : "Pause",
     });
     const exitBtn = {
-        key: 'exit',
-        label: 'Exit',
-        icon: 'lucide--log-out',
+        key: "exit",
+        label: "Exit",
+        icon: "lucide--log-out",
         action: () => confirmExitDialog.open(),
-        hotkey: 'Escape',
-        class: 'btn-error',
-        tooltip: 'Exit session',
+        hotkey: "Escape",
+        class: "btn-error",
+        tooltip: "Exit session",
     };
     const tools = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
 </script>

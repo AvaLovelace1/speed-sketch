@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { cubicOut } from 'svelte/easing';
-    import { fade, scale } from 'svelte/transition';
-    import { AlertDialog } from 'bits-ui';
+    import { cubicOut } from "svelte/easing";
+    import { fade, scale } from "svelte/transition";
+    import { AlertDialog } from "bits-ui";
 
     interface Props {
         title: string;

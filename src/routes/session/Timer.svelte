@@ -3,9 +3,9 @@
 A timer that displays a given time.
 -->
 <script lang="ts">
-    import type { HTMLAttributes } from 'svelte/elements';
-    import StatusAlert from './StatusAlert.svelte';
-    import { formatTimeClock, formatTimeISO } from '$lib/utils.svelte';
+    import type { HTMLAttributes } from "svelte/elements";
+    import StatusAlert from "./StatusAlert.svelte";
+    import { formatTimeClock, formatTimeISO } from "$lib/utils.svelte";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         // Time displayed, in seconds
@@ -24,7 +24,7 @@ A timer that displays a given time.
     role="timer"
     aria-live="polite"
     {...props}
-    class={['font-mono', { 'alert-error': timeIsCritical }, props.class]}
+    class={["font-mono", { "alert-error": timeIsCritical }, props.class]}
 >
     <span class="iconify lucide--timer"></span>
     <time datetime={durationString}>{timerString}</time>

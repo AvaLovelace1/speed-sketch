@@ -3,8 +3,8 @@
 A toolbar with a set of tools/actions and keyboard shortcuts.
 -->
 <script lang="ts">
-    import { Toolbar, Button, type BitsPrimitiveElementAttributes } from 'bits-ui';
-    import Tooltip from '$lib/components/Tooltip.svelte';
+    import { Toolbar, Button, type BitsPrimitiveElementAttributes } from "bits-ui";
+    import Tooltip from "$lib/components/Tooltip.svelte";
 
     interface Tool extends BitsPrimitiveElementAttributes {
         // Unique identifier for the tool
@@ -35,10 +35,10 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     }
 
     const hotkeyLabels = new Map([
-        ['ArrowLeft', 'Left arrow'],
-        ['ArrowRight', 'Right arrow'],
-        [' ', 'Space'],
-        ['Escape', 'Esc'],
+        ["ArrowLeft", "Left arrow"],
+        ["ArrowRight", "Right arrow"],
+        [" ", "Space"],
+        ["Escape", "Esc"],
     ]);
 
     function getHotkeyLabel(hotkey: string): string {
@@ -54,7 +54,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
             <Button.Root
                 onclick={action}
                 {...others}
-                class={['btn join-item btn-soft', others.class]}
+                class={["btn join-item btn-soft", others.class]}
             >
                 {#if icon}<span class="iconify {icon}"></span>{/if}{label}
             </Button.Root>

@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Separator } from 'bits-ui';
-    import { appName, imgShowTimes, tagline } from '$lib/globals.svelte';
-    import FolderInput from './FolderInput.svelte';
-    import RadioButtons from './RadioButtons.svelte';
-    import { formatTimeHuman } from '$lib/utils.svelte';
+    import { Separator } from "bits-ui";
+    import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
+    import FolderInput from "./FolderInput.svelte";
+    import RadioButtons from "./RadioButtons.svelte";
+    import { formatTimeHuman } from "$lib/utils.svelte";
 
     interface Props {
         imgShowTime: number;

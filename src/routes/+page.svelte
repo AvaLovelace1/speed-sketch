@@ -1,23 +1,23 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { goto } from '$app/navigation';
-    import { invoke, convertFileSrc } from '@tauri-apps/api/core';
-    import { load } from '@tauri-apps/plugin-store';
-    import { stat } from '@tauri-apps/plugin-fs';
-    import { sessionStore } from '$lib/globals.svelte';
-    import MainMenuUI from './MainMenuUI.svelte';
+    import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
+    import { invoke, convertFileSrc } from "@tauri-apps/api/core";
+    import { load } from "@tauri-apps/plugin-store";
+    import { stat } from "@tauri-apps/plugin-fs";
+    import { sessionStore } from "$lib/globals.svelte";
+    import MainMenuUI from "./MainMenuUI.svelte";
 
-    let folderErr = $state('');
+    let folderErr = $state("");
     let showFolderErr = $state(false);
     const folderInfoMsg = $derived.by(() => {
-        if (isLoadingImgs) return 'Loading images…';
+        if (isLoadingImgs) return "Loading images…";
         const nImgs = sessionStore.imgPaths.length;
-        if (nImgs > 0) return `Found ${nImgs} image${nImgs > 1 ? 's' : ''}`;
-        return '';
+        if (nImgs > 0) return `Found ${nImgs} image${nImgs > 1 ? "s" : ""}`;
+        return "";
     });
     let isLoadingImgs = $state(false);
     const isValid = $derived.by(() => {
-        return !isLoadingImgs && folderErr === '';
+        return !isLoadingImgs && folderErr === "";
     });
 
     // Set the current folder and image paths, along with any error messages.
@@ -35,29 +35,29 @@
     // Get all image paths from the specified folder, converted to path URLs.
     async function getImgPaths(folder: string) {
         // Check if the folder is set
-        if (folder === '') return { paths: [], err: 'Please choose a folder' };
+        if (folder === "") return { paths: [], err: "Please choose a folder" };
         // Check if the folder exists and is a directory
         try {
             const metadata = await stat(folder);
-            if (!metadata.isDirectory) return { paths: [], err: 'Path is not a folder' };
+            if (!metadata.isDirectory) return { paths: [], err: "Path is not a folder" };
         } catch (err) {
-            console.error('Error accessing folder:', err);
-            return { paths: [], err: 'Cannot access folder' };
+            console.error("Error accessing folder:", err);
+            return { paths: [], err: "Cannot access folder" };
         }
 
         // Load images from the folder
         isLoadingImgs = true;
         try {
-            const files = (await invoke('get_img_files', {
+            const files = (await invoke("get_img_files", {
                 dir: folder,
                 timeoutDuration: 60,
             })) as string[];
             const paths = files.map((file) => convertFileSrc(file));
-            return { paths: paths, err: paths.length === 0 ? 'No images found in folder' : '' };
+            return { paths: paths, err: paths.length === 0 ? "No images found in folder" : "" };
         } catch (err) {
-            console.error('Error loading images:', err);
-            if (err === 'TimeoutError') return { paths: [], err: 'Loading images timed out' };
-            if (err === 'TaskJoinError') return { paths: [], err: 'Failed to load images' };
+            console.error("Error loading images:", err);
+            if (err === "TimeoutError") return { paths: [], err: "Loading images timed out" };
+            if (err === "TaskJoinError") return { paths: [], err: "Failed to load images" };
             return { paths: [], err };
         } finally {
             isLoadingImgs = false;
@@ -67,18 +67,18 @@
     async function startSession() {
         if (!isValid) return;
         // Save current session settings to persistent store
-        const persistentStore = await load('store.json', { autoSave: false });
-        await persistentStore.set('imgFolder', sessionStore.imgFolder);
-        await persistentStore.set('imgPaths', sessionStore.imgPaths);
-        await persistentStore.set('imgShowTime', sessionStore.imgShowTime);
+        const persistentStore = await load("store.json", { autoSave: false });
+        await persistentStore.set("imgFolder", sessionStore.imgFolder);
+        await persistentStore.set("imgPaths", sessionStore.imgPaths);
+        await persistentStore.set("imgShowTime", sessionStore.imgShowTime);
         await persistentStore.save();
-        goto('/session');
+        goto("/session");
     }
 
     onMount(async () => {
         await setImgFolder(sessionStore.imgFolder);
         // Turn off the error message if no folder is set initially
-        if (sessionStore.imgFolder === '') showFolderErr = false;
+        if (sessionStore.imgFolder === "") showFolderErr = false;
     });
 </script>
 
@@ -90,7 +90,7 @@
     bind:imgShowTime={sessionStore.imgShowTime}
     bind:imgFolder={sessionStore.imgFolder}
     imgPaths={sessionStore.imgPaths}
-    folderErr={showFolderErr ? folderErr : ''}
+    folderErr={showFolderErr ? folderErr : ""}
     {folderInfoMsg}
     {isLoadingImgs}
     {isValid}

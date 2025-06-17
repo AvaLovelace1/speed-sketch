@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { LayoutProps } from './$types';
-    import '../app.css';
-    import { Tooltip } from 'bits-ui';
+    import type { LayoutProps } from "./$types";
+    import "../app.css";
+    import { Tooltip } from "bits-ui";
 
     const { children }: LayoutProps = $props();
 </script>
