@@ -50,14 +50,13 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
 <Toolbar.Root class="join rounded-field shadow-sm">
     {#each tools as { key, label, icon, action, hotkey, tooltip, ...others } (key)}
-        <Tooltip side="top">
-            <Button.Root
-                onclick={action}
-                {...others}
-                class={["btn join-item btn-soft", others.class]}
-            >
-                {#if icon}<span class="iconify {icon}"></span>{/if}{label}
-            </Button.Root>
+        <Tooltip
+            side="top"
+            onclick={action}
+            {...others}
+            class={["btn join-item btn-soft", others.class]}
+        >
+            {#if icon}<span class="iconify {icon}"></span>{/if}{label}
             {#snippet tooltipContent()}
                 {#if tooltip}
                     <p>{tooltip}</p>

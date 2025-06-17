@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { Tooltip } from "bits-ui";
+    import { type BitsPrimitiveElementAttributes, Tooltip } from "bits-ui";
     import { fly } from "svelte/transition";
     import type { Snippet } from "svelte";
 
-    interface Props {
+    interface Props extends BitsPrimitiveElementAttributes {
         children: Snippet;
         tooltipContent: Snippet;
         side?: "top" | "right" | "bottom" | "left";
     }
 
-    const { children, tooltipContent, side = "bottom" }: Props = $props();
+    const { children, tooltipContent, side = "bottom", ...triggerProps }: Props = $props();
     const flyAmount = 4;
     const flyTransition = {
         x: side === "left" ? flyAmount : side === "right" ? -flyAmount : 0,
@@ -19,7 +19,7 @@
 </script>
 
 <Tooltip.Root>
-    <Tooltip.Trigger>
+    <Tooltip.Trigger {...triggerProps}>
         {@render children()}
     </Tooltip.Trigger>
     <Tooltip.Portal>
