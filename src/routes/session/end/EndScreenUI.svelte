@@ -10,7 +10,7 @@
 
     const { nCompletedImgs, timeSpent }: Props = $props();
 
-    const stats = [
+    const stats = $derived([
         {
             title: "Images completed",
             value: nCompletedImgs,
@@ -23,7 +23,7 @@
             icon: "lucide--clock",
             color: "text-secondary",
         },
-    ];
+    ]);
 </script>
 
 <div role="main" class="bg-accent flex min-h-dvh items-center justify-center">

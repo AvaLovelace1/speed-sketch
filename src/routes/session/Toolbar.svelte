@@ -3,7 +3,7 @@
 A toolbar with a set of tools/actions and keyboard shortcuts.
 -->
 <script lang="ts">
-    import { Toolbar, Button, type BitsPrimitiveElementAttributes } from "bits-ui";
+    import { Toolbar, type BitsPrimitiveElementAttributes } from "bits-ui";
     import Tooltip from "$lib/components/Tooltip.svelte";
 
     interface Tool extends BitsPrimitiveElementAttributes {
