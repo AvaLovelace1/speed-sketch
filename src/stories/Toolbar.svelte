@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Toolbar from "../routes/session/Toolbar.svelte";
+    import Toolbar from "$lib/components/Toolbar.svelte";
     import { Tooltip } from "bits-ui";
 
     const prevBtn = {

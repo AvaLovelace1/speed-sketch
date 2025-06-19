@@ -4,7 +4,7 @@ A timer that displays a given time.
 -->
 <script lang="ts">
     import type { HTMLAttributes } from "svelte/elements";
-    import StatusAlert from "./StatusAlert.svelte";
+    import StatusAlert from "$lib/components/StatusAlert.svelte";
     import prettyMilliseconds from "pretty-ms";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {

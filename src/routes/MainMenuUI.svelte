@@ -1,11 +1,11 @@
 <script lang="ts">
     import { Separator, Button } from "bits-ui";
     import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
-    import FolderInput from "./FolderInput.svelte";
-    import RadioButtons from "./RadioButtons.svelte";
+    import FolderInput from "$lib/components/FolderInput.svelte";
+    import RadioButtons from "$lib/components/RadioButtons.svelte";
     import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
-    import ImageGrid from "./ImageGrid.svelte";
+    import ImageGrid from "$lib/components/ImageGrid.svelte";
 
     interface Props {
         imgShowTime: number;

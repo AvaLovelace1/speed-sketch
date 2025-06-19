@@ -2,8 +2,8 @@ import { describe, expect, test, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
-import FolderInput from "./FolderInput.svelte";
-import RadioButtons from "./RadioButtons.svelte";
+import FolderInput from "$lib/components/FolderInput.svelte";
+import RadioButtons from "$lib/components/RadioButtons.svelte";
 
 describe("FolderInput.svelte", () => {
     test("folder input renders", () => {

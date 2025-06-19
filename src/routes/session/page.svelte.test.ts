@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
 import { createRawSnippet } from "svelte";
-import StatusAlert from "./StatusAlert.svelte";
-import Timer from "./Timer.svelte";
+import StatusAlert from "$lib/components/StatusAlert.svelte";
+import Timer from "$lib/components/Timer.svelte";
 
 describe("StatusAlert.svelte", () => {
     test("alert renders", () => {

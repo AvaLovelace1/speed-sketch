@@ -6,10 +6,10 @@ The user interface for a drawing session.
     import { fade } from "svelte/transition";
     import { cubicOut } from "svelte/easing";
     import AlertDialog from "$lib/components/AlertDialog.svelte";
-    import Timer from "./Timer.svelte";
-    import Toolbar from "./Toolbar.svelte";
+    import Timer from "$lib/components/Timer.svelte";
+    import Toolbar from "$lib/components/Toolbar.svelte";
     import Tooltip from "$lib/components/Tooltip.svelte";
-    import StatusAlert from "./StatusAlert.svelte";
+    import StatusAlert from "$lib/components/StatusAlert.svelte";
 
     const toolbarFade = { duration: 200, easing: cubicOut };
     // Duration after which toolbar will be hidden automatically
