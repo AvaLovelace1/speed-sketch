@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button } from "bits-ui";
-    import { formatTimeHuman } from "$lib/utils.svelte";
+    import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
 
     interface Props {
@@ -19,7 +19,7 @@
         },
         {
             title: "Time spent drawing",
-            value: formatTimeHuman(timeSpent, true),
+            value: prettyMilliseconds(Math.max(timeSpent, 1) * 1000),
             icon: "lucide--clock",
             color: "text-secondary",
         },

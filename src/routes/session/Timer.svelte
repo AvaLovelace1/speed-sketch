@@ -5,7 +5,7 @@ A timer that displays a given time.
 <script lang="ts">
     import type { HTMLAttributes } from "svelte/elements";
     import StatusAlert from "./StatusAlert.svelte";
-    import { formatTimeClock, formatTimeISO } from "$lib/utils.svelte";
+    import prettyMilliseconds from "pretty-ms";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         // Time displayed, in seconds
@@ -15,8 +15,8 @@ A timer that displays a given time.
     }
 
     const { time = 0, criticalTime = 10, ...props }: Props = $props();
-    const timerString = $derived(formatTimeClock(time));
-    const durationString = $derived(formatTimeISO(time));
+    const timerString = $derived(prettyMilliseconds(time * 1000, { colonNotation: true }));
+    const durationString = $derived(prettyMilliseconds(time * 1000));
     const timeIsCritical = $derived(criticalTime !== null && time <= criticalTime);
 </script>
 

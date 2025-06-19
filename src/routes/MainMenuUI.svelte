@@ -3,7 +3,7 @@
     import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
     import FolderInput from "./FolderInput.svelte";
     import RadioButtons from "./RadioButtons.svelte";
-    import { formatTimeHuman } from "$lib/utils.svelte";
+    import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "./ImageGrid.svelte";
 
@@ -35,7 +35,7 @@
 
     const imgShowTimeOptions = imgShowTimes
         .map((seconds) => ({
-            label: formatTimeHuman(seconds),
+            label: prettyMilliseconds(seconds * 1000),
             value: seconds.toString(),
         }))
         .concat([{ label: "Custom", value: "custom" }]);
@@ -55,7 +55,7 @@
                 <span class="text-muted tracking-widest">{tagline}</span>
             </Separator.Root>
         </div>
-        <div class="mb-8">
+        <div class="mb-8 px-2">
             <ImageGrid {imgPaths} isLoading={isLoadingImgs} />
         </div>
         <Card class="mx-auto" cardBodyClass="p-0">
