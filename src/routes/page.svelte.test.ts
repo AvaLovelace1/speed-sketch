@@ -8,7 +8,7 @@ import RadioButtons from "./RadioButtons.svelte";
 describe("FolderInput.svelte", () => {
     test("folder input renders", () => {
         const callback = vi.fn();
-        render(FolderInput, { callback: callback });
+        render(FolderInput, { label: "Folder Input", callback: callback });
         const field = screen.getByRole("textbox", { name: /.*folder.*/i });
         const button = screen.getByRole("button", { name: /.*folder.*/i });
 
@@ -22,7 +22,11 @@ describe("FolderInput.svelte", () => {
         user.click(button);
     });
     test("folder input renders info messages", () => {
-        render(FolderInput, { errorMsg: "Error message", infoMsg: "Info message" });
+        render(FolderInput, {
+            label: "Folder Input",
+            errorMsg: "Error message",
+            infoMsg: "Info message",
+        });
         const error = screen.getByRole("alert", { name: /.*error.*/i });
         const info = screen.getByRole("status", { name: /.*info.*/i });
 
@@ -33,11 +37,10 @@ describe("FolderInput.svelte", () => {
 
 describe("RadioButtons.svelte", () => {
     test("should render radio buttons", () => {
-        const group = $state("");
         render(RadioButtons, {
-            name: "RadioButtons",
+            groupLabel: "RadioButtons",
             options: [{ label: "Option 1" }, { label: "Option 2", value: "two" }],
-            group: group,
+            group: "",
         });
         const button1 = screen.getByRole("radio", { name: "Option 1" });
         const button2 = screen.getByRole("radio", { name: "Option 2" });
