@@ -1,23 +1,30 @@
 <script lang="ts">
+    import { RadioGroup } from "bits-ui";
+
     interface Option {
         label: string;
-        value?: unknown; // If not provided, defaults to label
+        value?: string; // If not provided, defaults to label
     }
 
-    interface Props {
-        // Unique name for the radio group
-        name: string;
+    interface Props extends RadioGroup.RootProps {
+        // Label for the radio group
+        groupLabel: string;
         // Array of options for the radio buttons
         options: Option[];
         // Group variable to bind the selected value
-        group: unknown;
+        group: string;
     }
 
-    let { name, options, group = $bindable() }: Props = $props();
+    let { groupLabel, options, group = $bindable(), ...props }: Props = $props();
 </script>
 
-<div class="join">
-    {#each options as { label, value = label } (value)}
-        <input class="join-item btn" type="radio" {name} {value} aria-label={label} bind:group />
-    {/each}
-</div>
+<fieldset>
+    <legend class="label mb-2 block">{groupLabel}</legend>
+    <RadioGroup.Root bind:value={group} required {...props} class={["join", props.class]}>
+        {#each options as { label, value = label } (label)}
+            <RadioGroup.Item class="join-item btn aria-checked:btn-primary" {value}>
+                {label}
+            </RadioGroup.Item>
+        {/each}
+    </RadioGroup.Root>
+</fieldset>

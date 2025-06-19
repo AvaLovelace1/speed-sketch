@@ -26,7 +26,7 @@
     ]);
 </script>
 
-<div role="main" class="bg-accent flex min-h-dvh items-center justify-center">
+<main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
     <Card>
         <h1 class="card-title mb-1 text-2xl">Session complete!</h1>
         <div class="stats">
@@ -44,4 +44,4 @@
             <Button.Root class="btn" href="/">Return to Main Menu</Button.Root>
         </div>
     </Card>
-</div>
+</main>

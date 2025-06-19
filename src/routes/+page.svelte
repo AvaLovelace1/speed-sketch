@@ -9,12 +9,6 @@
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
-    const folderInfoMsg = $derived.by(() => {
-        if (isLoadingImgs) return "Loading images…";
-        const nImgs = sessionStore.imgPaths.length;
-        if (nImgs > 0) return `Found ${nImgs} image${nImgs > 1 ? "s" : ""}`;
-        return "";
-    });
     let isLoadingImgs = $state(false);
     const isValid = $derived.by(() => {
         return !isLoadingImgs && folderErr === "";
@@ -26,6 +20,10 @@
 
         sessionStore.imgFolder = folder;
         const { paths, err } = await getImgPaths(folder);
+        if (sessionStore.imgFolder != folder) {
+            // If the folder has changed while loading, ignore the result
+            return;
+        }
         sessionStore.imgPaths = paths;
         folderErr = err as string;
 
@@ -91,7 +89,6 @@
     bind:imgFolder={sessionStore.imgFolder}
     imgPaths={sessionStore.imgPaths}
     folderErr={showFolderErr ? folderErr : ""}
-    {folderInfoMsg}
     {isLoadingImgs}
     {isValid}
     {setImgFolder}

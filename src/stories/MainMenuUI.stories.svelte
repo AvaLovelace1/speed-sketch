@@ -1,6 +1,9 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
     import MainMenuUI from "../routes/MainMenuUI.svelte";
+    import Sample1 from "./assets/pexels-by-hong-son.jpg";
+    import Sample2 from "./assets/pexels-by-sasha-kim.jpg";
+    import Sample3 from "./assets/pexels-by-andrew-sindt.jpg";
 
     const { Story } = defineMeta({
         title: "MainMenuUI",
@@ -9,22 +12,72 @@
     });
 </script>
 
-<!-- The main menu. -->
+<!-- The user sees this on first startup. -->
+<Story name="Default" args={{ imgShowTime: 30 }} />
+
+<!-- Loading images. -->
 <Story
-    name="MainMenuUI"
+    name="Loading Images"
     args={{
         imgShowTime: 45,
-        imgFolder: "",
-        imgPaths: [],
-        folderErr: "",
-        folderInfoMsg: "",
-        isLoadingImgs: false,
+        imgFolder: "/Users/alice/Pictures",
+        isLoadingImgs: true,
+    }}
+/>
+
+<!-- 12 images loaded. -->
+<Story
+    name="Twelve Images"
+    args={{
+        imgShowTime: 45,
+        imgFolder: "/Users/alice/Pictures",
+        imgPaths: [
+            Sample1,
+            Sample2,
+            Sample3,
+            Sample1,
+            Sample2,
+            Sample3,
+            Sample1,
+            Sample2,
+            Sample3,
+            Sample1,
+            Sample2,
+            Sample3,
+        ],
         isValid: true,
-        setImgFolder: async (folder) => {
-            console.log("setImgFolder called with:", folder);
-        },
-        startSession: async () => {
-            console.log("startSession called");
-        },
+    }}
+/>
+
+<!-- 6 images loaded. -->
+<Story
+    name="Six Images"
+    args={{
+        imgShowTime: 45,
+        imgFolder: "/Users/alice/Pictures",
+        imgPaths: [Sample1, Sample2, Sample3, Sample1, Sample2, Sample3],
+        isValid: true,
+    }}
+/>
+
+<!-- 1 image loaded. -->
+<Story
+    name="One Image"
+    args={{
+        imgShowTime: 45,
+        imgFolder: "/Users/alice/Pictures",
+        imgPaths: [Sample1],
+        isValid: true,
+    }}
+/>
+
+<!-- Invalid image folder chosen. -->
+<Story
+    name="Invalid"
+    args={{
+        imgShowTime: 45,
+        imgFolder: "/Users/alice/Pictures/wrong-folder",
+        folderErr: "No images found in folder",
+        isValid: false,
     }}
 />

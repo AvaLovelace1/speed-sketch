@@ -1,7 +1,10 @@
 <script lang="ts">
     import { open } from "@tauri-apps/plugin-dialog";
+    import type { HTMLAttributes } from "svelte/elements";
+    import { Button, Label } from "bits-ui";
 
-    interface Props {
+    interface Props extends HTMLAttributes<HTMLDivElement> {
+        label: string;
         chosenFolder?: string;
         // Callback function to handle the chosen folder
         callback?: (folder: string) => void;
@@ -11,10 +14,12 @@
     }
 
     let {
+        label,
         chosenFolder = $bindable(""),
         callback = (_) => {},
         infoMsg = "",
         errorMsg = "",
+        ...props
     }: Props = $props();
 
     async function chooseFolder() {
@@ -24,34 +29,39 @@
     }
 </script>
 
-<div class="join w-full">
+<Label.Root class="label mb-2 block" for={label}>{label}</Label.Root>
+<div {...props} class={["join", props.class]}>
     <div class="w-full">
-        <label class="input validator join-item" aria-invalid={errorMsg !== ""}>
+        <div class="input validator join-item w-full" aria-invalid={errorMsg !== ""}>
+            <span class="iconify lucide--folder opacity-60"></span>
             <input
+                id={label}
                 type="text"
                 class="overflow-ellipsis"
-                placeholder="Image folder"
                 bind:value={chosenFolder}
-                aria-label="Chosen folder"
+                aria-invalid={errorMsg !== ""}
+                aria-describedby={errorMsg ? "error-message" : infoMsg ? "info-message" : undefined}
                 required
                 readonly
             />
-        </label>
+        </div>
         {#if errorMsg}
-            <div role="alert" class="validator-hint" aria-label="Error message">{errorMsg}</div>
+            <div role="alert" class="validator-hint" aria-label="Error message">
+                {errorMsg}
+            </div>
         {/if}
         {#if infoMsg}
-            <div role="status" class="validator-hint visible opacity-50" aria-label="Info message">
+            <div role="status" class="validator-hint visible opacity-60" aria-label="Info message">
                 {infoMsg}
             </div>
         {/if}
     </div>
-    <button
+    <Button.Root
         type="button"
         class="join-item btn btn-primary"
         onclick={chooseFolder}
         aria-label="Choose a folder"
     >
         Choose…
-    </button>
+    </Button.Root>
 </div>

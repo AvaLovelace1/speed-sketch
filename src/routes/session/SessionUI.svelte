@@ -123,7 +123,7 @@ The user interface for a drawing session.
     onmouseleave={isFrozen ? () => {} : hideToolbar}
 />
 
-<div role="main" class="flex h-dvh items-center justify-center">
+<main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
     <img src={curImg} alt="Reference used for drawing practice" class="size-full object-contain" />
     {#key toolbarShown}
         <div
@@ -158,7 +158,7 @@ The user interface for a drawing session.
             <Toolbar {tools} enableHotkeys={!isFrozen} />
         </div>
     {/key}
-</div>
+</main>
 
 <AlertDialog
     bind:this={confirmExitDialog}

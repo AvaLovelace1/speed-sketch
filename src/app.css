@@ -25,7 +25,7 @@
     --color-success-content: oklch(from var(--color-success) 0.19 0.05 calc(h + 10));
     --color-warning: #ebcb8b;
     --color-warning-content: oklch(from var(--color-warning) 0.19 0.05 calc(h - 10));
-    --color-error: #bf616a;
+    --color-error: oklch(from #bf616a calc(l + 0.1) c h);
     --color-error-content: oklch(from var(--color-error) 0.19 0.05 calc(h - 10));
 
     /* border radius */
@@ -48,4 +48,8 @@
     prefix: "iconify";
     scale: 1.2;
     prefixes: lucide;
+}
+
+@theme {
+    --color-muted: oklch(from #4c566a 0.7 0.02 h);
 }
