@@ -6,22 +6,33 @@ export const ssr = false;
 
 import type { LayoutLoad } from "./$types";
 import { load as loadStore } from "@tauri-apps/plugin-store";
-import { maxImgShowTime, sessionStore } from "$lib/globals.svelte";
+import { imgShowTimes, maxImgShowTime, sessionStore } from "$lib/globals.svelte";
 
 async function loadPersistentStore() {
     const persistentStore = await loadStore("store.json", { autoSave: false });
     const imgFolder = await persistentStore.get("imgFolder");
-    const imgShowTime = await persistentStore.get("imgShowTime");
+    const imgShowTimeSelected = await persistentStore.get("imgShowTimeSelected");
+    const imgShowTimeCustom = await persistentStore.get("imgShowTimeCustom");
+
+    const imgShowTimeStrs = imgShowTimes.map((time) => time.toString());
+
+    // Validate session store values
     if (typeof imgFolder === "string") {
         sessionStore.imgFolder = imgFolder;
     }
     if (
-        typeof imgShowTime === "number" &&
-        Number.isInteger(imgShowTime) &&
-        imgShowTime > 0 &&
-        imgShowTime <= maxImgShowTime
+        typeof imgShowTimeSelected === "string" &&
+        (imgShowTimeSelected === "custom" || imgShowTimeStrs.includes(imgShowTimeSelected))
     ) {
-        sessionStore.imgShowTime = imgShowTime;
+        sessionStore.imgShowTimeSelected = imgShowTimeSelected;
+    }
+    if (
+        typeof imgShowTimeCustom === "number" &&
+        Number.isInteger(imgShowTimeCustom) &&
+        imgShowTimeCustom > 0 &&
+        imgShowTimeCustom <= maxImgShowTime
+    ) {
+        sessionStore.imgShowTimeCustom = imgShowTimeCustom;
     }
 }
 

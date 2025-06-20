@@ -13,13 +13,20 @@
 </script>
 
 <!-- The user sees this on first startup. -->
-<Story name="Default" args={{ imgShowTime: 30 }} />
+<Story name="Default" args={{ imgShowTimeSelected: "30", imgShowTimeCustom: 30 }} />
+
+<!-- Custom time entry. -->
+<Story
+    name="Custom Image Show Time"
+    args={{ imgShowTimeSelected: "custom", imgShowTimeCustom: 4414 }}
+/>
 
 <!-- Loading images. -->
 <Story
     name="Loading Images"
     args={{
-        imgShowTime: 45,
+        imgShowTimeSelected: "30",
+        imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
         isLoadingImgs: true,
     }}
@@ -29,7 +36,8 @@
 <Story
     name="Twelve Images"
     args={{
-        imgShowTime: 45,
+        imgShowTimeSelected: "30",
+        imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
         imgPaths: [
             Sample1,
@@ -53,7 +61,8 @@
 <Story
     name="Six Images"
     args={{
-        imgShowTime: 45,
+        imgShowTimeSelected: "30",
+        imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
         imgPaths: [Sample1, Sample2, Sample3, Sample1, Sample2, Sample3],
         isValid: true,
@@ -64,7 +73,8 @@
 <Story
     name="One Image"
     args={{
-        imgShowTime: 45,
+        imgShowTimeSelected: "30",
+        imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
         imgPaths: [Sample1],
         isValid: true,
@@ -75,7 +85,8 @@
 <Story
     name="Invalid"
     args={{
-        imgShowTime: 45,
+        imgShowTimeSelected: "30",
+        imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures/wrong-folder",
         folderErr: "No images found in folder",
         isValid: false,

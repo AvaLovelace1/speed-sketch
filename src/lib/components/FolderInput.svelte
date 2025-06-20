@@ -29,11 +29,11 @@
     }
 </script>
 
-<Label.Root class="label mb-2 block" for={label}>{label}</Label.Root>
+<Label.Root class="text-muted mb-2 block" for={label}>{label}</Label.Root>
 <div {...props} class={["join", props.class]}>
     <div class="w-full">
         <div class="input validator join-item w-full" aria-invalid={errorMsg !== ""}>
-            <span class="iconify lucide--folder opacity-60"></span>
+            <span class="iconify lucide--folder text-muted"></span>
             <input
                 id={label}
                 type="text"

@@ -64,12 +64,20 @@
 
     async function startSession() {
         if (!isValid) return;
+
+        sessionStore.imgShowTime =
+            sessionStore.imgShowTimeSelected === "custom"
+                ? sessionStore.imgShowTimeCustom
+                : parseInt(sessionStore.imgShowTimeSelected, 10);
+
         // Save current session settings to persistent store
         const persistentStore = await load("store.json", { autoSave: false });
         await persistentStore.set("imgFolder", sessionStore.imgFolder);
         await persistentStore.set("imgPaths", sessionStore.imgPaths);
-        await persistentStore.set("imgShowTime", sessionStore.imgShowTime);
+        await persistentStore.set("imgShowTimeSelected", sessionStore.imgShowTimeSelected);
+        await persistentStore.set("imgShowTimeCustom", sessionStore.imgShowTimeCustom);
         await persistentStore.save();
+
         goto("/session");
     }
 
@@ -85,7 +93,8 @@
 </svelte:head>
 
 <MainMenuUI
-    bind:imgShowTime={sessionStore.imgShowTime}
+    bind:imgShowTimeSelected={sessionStore.imgShowTimeSelected}
+    bind:imgShowTimeCustom={sessionStore.imgShowTimeCustom}
     bind:imgFolder={sessionStore.imgFolder}
     imgPaths={sessionStore.imgPaths}
     folderErr={showFolderErr ? folderErr : ""}

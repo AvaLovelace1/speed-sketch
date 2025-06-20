@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { slide } from "svelte/transition";
+    import { cubicOut } from "svelte/easing";
     import { Separator, Button } from "bits-ui";
     import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
     import FolderInput from "$lib/components/FolderInput.svelte";
@@ -6,9 +8,13 @@
     import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
+    import DurationField from "$lib/components/DurationField.svelte";
 
     interface Props {
-        imgShowTime: number;
+        // The selected image show time as a string, or "custom".
+        imgShowTimeSelected: string;
+        // The value of the custom image show time in seconds.
+        imgShowTimeCustom: number;
         imgFolder?: string;
         imgPaths?: string[];
         folderErr?: string;
@@ -19,7 +25,8 @@
     }
 
     let {
-        imgShowTime = $bindable(),
+        imgShowTimeSelected = $bindable(),
+        imgShowTimeCustom = $bindable(),
         imgFolder = $bindable(""),
         imgPaths = [],
         folderErr = "",
@@ -39,12 +46,6 @@
             value: seconds.toString(),
         }))
         .concat([{ label: "Custom", value: "custom" }]);
-
-    let imgShowTimeSelected = $state(imgShowTimeOptions[0].value);
-
-    function imgShowTimeOnValueChange(value: string) {
-        imgShowTime = value === "custom" ? 42 : parseInt(value, 10);
-    }
 </script>
 
 <main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
@@ -60,25 +61,32 @@
         </div>
         <Card class="mx-auto" cardBodyClass="p-0">
             <form>
-                <div class="mb-6 space-y-6 p-6">
+                <div class="mb-2 p-6">
                     <FolderInput
-                        class="w-full"
+                        class="mb-6 w-full"
                         label="Image folder"
                         bind:chosenFolder={imgFolder}
                         callback={setImgFolder}
                         errorMsg={folderErr}
+                        onkeydown={(e) => {
+                            // Prevent form submission on Enter key press
+                            if (e.key === "Enter") e.preventDefault();
+                        }}
                     />
-                    <div class="space-y-2">
-                        <RadioButtons
-                            groupLabel="Time per image"
-                            options={imgShowTimeOptions}
-                            bind:group={imgShowTimeSelected}
-                            onValueChange={imgShowTimeOnValueChange}
-                        />
-                        {#if imgShowTimeSelected === "custom"}
-                            <div>Custom time {imgShowTime}</div>
-                        {/if}
-                    </div>
+                    <RadioButtons
+                        class="mb-6"
+                        groupLabel="Time per image"
+                        options={imgShowTimeOptions}
+                        bind:group={imgShowTimeSelected}
+                    />
+                    {#if imgShowTimeSelected === "custom"}
+                        <div
+                            class="flex justify-center"
+                            transition:slide={{ duration: 250, easing: cubicOut }}
+                        >
+                            <DurationField bind:seconds={imgShowTimeCustom} />
+                        </div>
+                    {/if}
                 </div>
                 <Button.Root
                     type="submit"

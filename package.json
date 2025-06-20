@@ -30,6 +30,7 @@
         "@eslint/js": "^9.18.0",
         "@iconify-json/lucide": "^1.2.51",
         "@iconify/tailwind4": "^1.0.6",
+        "@internationalized/date": "^3.8.2",
         "@storybook/addon-a11y": "^9.0.12",
         "@storybook/addon-docs": "^9.0.12",
         "@storybook/addon-svelte-csf": "^5.0.3",

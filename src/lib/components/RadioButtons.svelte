@@ -19,7 +19,7 @@
 </script>
 
 <fieldset>
-    <legend class="label mb-2 block">{groupLabel}</legend>
+    <legend class="text-muted mb-2 block">{groupLabel}</legend>
     <RadioGroup.Root bind:value={group} required {...props} class={["join", props.class]}>
         {#each options as { label, value = label } (label)}
             <RadioGroup.Item class="join-item btn aria-checked:btn-primary" {value}>
