@@ -10,6 +10,7 @@ The user interface for a drawing session.
     import Toolbar from "$lib/components/Toolbar.svelte";
     import Tooltip from "$lib/components/Tooltip.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
+    import { onMount } from "svelte";
 
     const toolbarFade = { duration: 200, easing: cubicOut };
     // Duration after which toolbar will be hidden automatically
@@ -41,30 +42,30 @@ The user interface for a drawing session.
         exit,
     }: Props = $props();
 
-    let toolbarShown = $state(false);
-    let hideToolbarTimeout: NodeJS.Timeout | undefined = undefined;
     let isFrozen = $state(false);
+
+    let toolbarShown = $state(false);
+    let toolbarIsHovered = $state(false);
+    let toolbarShouldAutoHide = $derived(!isFrozen && !toolbarIsHovered);
+    let hideToolbarTimeout: NodeJS.Timeout | undefined = undefined;
+
     let confirmExitDialog: AlertDialog;
 
-    // Show toolbar, hiding it after a timeout
-    export function showToolbarWithTimeout() {
-        toolbarShown = true;
-        clearTimeout(hideToolbarTimeout);
-        hideToolbarTimeout = setTimeout(() => {
-            toolbarShown = false;
-        }, hideToolbarTimeoutDuration);
-    }
-
-    // Show toolbar without timeout
     export function showToolbar() {
         toolbarShown = true;
-        clearTimeout(hideToolbarTimeout);
+        resetToolbarTimeout();
     }
 
-    // Hide toolbar immediately
     export function hideToolbar() {
         toolbarShown = false;
+    }
+
+    function resetToolbarTimeout() {
         clearTimeout(hideToolbarTimeout);
+        hideToolbarTimeout = setTimeout(() => {
+            if (toolbarShouldAutoHide) hideToolbar();
+            else resetToolbarTimeout();
+        }, hideToolbarTimeoutDuration);
     }
 
     // Prevent any further interaction with the UI
@@ -116,12 +117,11 @@ The user interface for a drawing session.
         tooltip: "Exit session",
     };
     const tools = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
+
+    onMount(resetToolbarTimeout);
 </script>
 
-<svelte:body
-    onmousemove={isFrozen ? () => {} : showToolbarWithTimeout}
-    onmouseleave={isFrozen ? () => {} : hideToolbar}
-/>
+<svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
 <main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
     <img src={curImg} alt="Reference used for drawing practice" class="size-full object-contain" />
@@ -130,7 +130,16 @@ The user interface for a drawing session.
             class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"
             transition:fade={toolbarFade}
         >
-            <Tooltip side="right">
+            <Tooltip
+                side="right"
+                onmouseenter={() => {
+                    toolbarIsHovered = true;
+                }}
+                onmouseleave={() => {
+                    toolbarIsHovered = false;
+                    resetToolbarTimeout();
+                }}
+            >
                 <StatusAlert class="alert-success font-mono" aria-label="Images completed">
                     <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
                 </StatusAlert>
@@ -152,10 +161,20 @@ The user interface for a drawing session.
     {#key toolbarShown}
         <div
             class="fixed bottom-0 mb-4 flex w-full justify-center {toolbarShown ? '' : 'sr-only'}"
-            onfocusin={showToolbarWithTimeout}
+            onfocusin={showToolbar}
             transition:fade={toolbarFade}
         >
-            <Toolbar {tools} enableHotkeys={!isFrozen} />
+            <Toolbar
+                {tools}
+                enableHotkeys={!isFrozen}
+                onmouseenter={() => {
+                    toolbarIsHovered = true;
+                }}
+                onmouseleave={() => {
+                    toolbarIsHovered = false;
+                    resetToolbarTimeout();
+                }}
+            />
         </div>
     {/key}
 </main>

@@ -4,6 +4,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 -->
 <script lang="ts">
     import { Toolbar, type BitsPrimitiveElementAttributes } from "bits-ui";
+
     import Tooltip from "$lib/components/Tooltip.svelte";
 
     interface Tool extends BitsPrimitiveElementAttributes {
@@ -16,12 +17,12 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
         tooltip?: string;
     }
 
-    interface Props {
+    interface Props extends BitsPrimitiveElementAttributes {
         tools: Tool[];
         enableHotkeys?: boolean;
     }
 
-    const { tools, enableHotkeys = true }: Props = $props();
+    const { tools, enableHotkeys = true, ...props }: Props = $props();
 
     function onKeyDown(e: KeyboardEvent) {
         if (!enableHotkeys) return;
@@ -48,7 +49,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
 <svelte:window onkeydown={onKeyDown} />
 
-<Toolbar.Root class="join rounded-field shadow-sm">
+<Toolbar.Root {...props} class={["join rounded-field shadow-sm", props.class]}>
     {#each tools as { key, label, icon, action, hotkey, tooltip, ...others } (key)}
         <Tooltip
             side="top"

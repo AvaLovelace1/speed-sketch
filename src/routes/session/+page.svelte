@@ -33,13 +33,13 @@
     function pause() {
         isPaused = true;
         clearTimer();
-        sessionUI.showToolbarWithTimeout();
+        sessionUI.showToolbar();
     }
 
     function resume() {
         isPaused = false;
         restartTimer();
-        sessionUI.showToolbarWithTimeout();
+        sessionUI.showToolbar();
     }
 
     function togglePause() {
