@@ -18,28 +18,28 @@ The user interface for a drawing session.
 
     interface Props {
         curImg: string;
-        nCompletedImgs: number;
-        timeRemaining: number;
-        isPaused: boolean;
-        goPrevImg: () => void;
-        goNextImg: () => void;
-        pause: () => void;
-        resume: () => void;
-        togglePause: () => void;
-        exit: () => void;
+        nCompletedImgs?: number;
+        timeRemaining?: number;
+        isPaused?: boolean;
+        goPrevImg?: () => void;
+        goNextImg?: () => void;
+        pause?: () => void;
+        resume?: () => void;
+        togglePause?: () => void;
+        exit?: () => void;
     }
 
     const {
         curImg,
-        nCompletedImgs,
-        timeRemaining,
-        isPaused,
-        goPrevImg,
-        goNextImg,
-        pause,
-        resume,
-        togglePause,
-        exit,
+        nCompletedImgs = 0,
+        timeRemaining = 60,
+        isPaused = false,
+        goPrevImg = () => {},
+        goNextImg = () => {},
+        pause = () => {},
+        resume = () => {},
+        togglePause = () => {},
+        exit = () => {},
     }: Props = $props();
 
     let isFrozen = $state(false);
