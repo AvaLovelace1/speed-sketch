@@ -60,8 +60,9 @@ A field that allows the user to input a time duration.
                                 {part}
                                 class="bg-base-200 hover:bg-base-300
                                        focus:bg-primary focus:text-primary-content
-                                       aria-[valuetext=Empty]:text-muted block
-                                       rounded px-1 tabular-nums inset-shadow-2xs"
+                                       aria-[valuetext=Empty]:text-muted
+                                       outline-primary block rounded px-1 tabular-nums inset-shadow-2xs
+                                       outline-offset-2 focus-visible:outline-2"
                             >
                                 {value}
                             </TimeField.Segment>
