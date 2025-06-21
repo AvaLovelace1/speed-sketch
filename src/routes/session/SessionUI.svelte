@@ -46,10 +46,15 @@ The user interface for a drawing session.
 
     let isFrozen = $state(false);
 
+    // Toolbar state management
     let toolbarShown = $state(false);
     let toolbarIsHovered = $state(false);
     let toolbarShouldAutoHide = $derived(!isFrozen && !toolbarIsHovered);
     let hideToolbarTimeout: NodeJS.Timeout | undefined = undefined;
+
+    // Image state management
+    let isFlippedHorizontal = $state(false);
+    let isFlippedVertical = $state(false);
 
     let confirmExitDialog: AlertDialog;
 
@@ -115,7 +120,29 @@ The user interface for a drawing session.
         class: "btn-error",
         tooltip: "Exit session",
     };
-    const toolsets = $derived([[prevBtn, pauseBtn, nextBtn], [exitBtn]]);
+    const flipHorizontalBtn = {
+        key: "flip-horizontal",
+        label: "Flip horizontal",
+        icon: "lucide--flip-horizontal-2",
+        action: () => (isFlippedHorizontal = !isFlippedHorizontal),
+        hotkey: "f",
+        class: "btn-primary",
+        tooltip: "Flip horizontally",
+    };
+    const flipVerticalBtn = {
+        key: "flip-vertical",
+        label: "Flip vertical",
+        icon: "lucide--flip-vertical-2",
+        action: () => (isFlippedVertical = !isFlippedVertical),
+        hotkey: "F",
+        class: "btn-primary",
+        tooltip: "Flip vertically",
+    };
+    const toolsets = $derived([
+        [prevBtn, pauseBtn, nextBtn],
+        [flipHorizontalBtn, flipVerticalBtn],
+        [exitBtn],
+    ]);
 
     onMount(resetToolbarTimeout);
 </script>
@@ -123,7 +150,13 @@ The user interface for a drawing session.
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
 <main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
-    <img src={curImg} alt="Reference used for drawing practice" class="size-full object-contain" />
+    <img
+        src={curImg}
+        alt="Reference used for drawing practice"
+        class="size-full object-contain
+               {isFlippedVertical ? 'rotate-x-180' : ''}
+               {isFlippedHorizontal ? 'rotate-y-180' : ''}"
+    />
     {#key toolbarShown}
         <div
             class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"

@@ -36,14 +36,16 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     }
 
     const hotkeyLabels = new Map([
-        ["ArrowLeft", "Left arrow"],
-        ["ArrowRight", "Right arrow"],
-        [" ", "Space"],
-        ["Escape", "Esc"],
+        ["ArrowLeft", ["Left arrow"]],
+        ["ArrowRight", ["Right arrow"]],
+        [" ", ["Space"]],
+        ["Escape", ["Esc"]],
     ]);
 
-    function getHotkeyLabel(hotkey: string): string {
-        return hotkeyLabels.get(hotkey) || hotkey;
+    function getHotkeyLabel(hotkey: string): string[] {
+        if (hotkey.match(/^[a-z]$/)) return [hotkey.toUpperCase()];
+        if (hotkey.match(/^[A-Z]$/)) return ["Shift", hotkey];
+        return hotkeyLabels.get(hotkey) || [hotkey];
     }
 </script>
 
@@ -64,7 +66,10 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
                     <p>{tooltip}</p>
                     {#if hotkey}
                         <p class="mb-1">
-                            <kbd class="kbd kbd-sm">{getHotkeyLabel(hotkey)}</kbd>
+                            {#each getHotkeyLabel(hotkey) as part, i (i)}
+                                {#if i > 0}<span class="text-muted">&nbsp;+</span>{/if}
+                                <kbd class="kbd kbd-sm">{part}</kbd>
+                            {/each}
                         </p>
                     {/if}
                 {/if}
