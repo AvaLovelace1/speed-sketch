@@ -59,6 +59,9 @@ The user interface for a drawing session.
     let isHighContrast = $state(false);
     let isBlurred = $state(false);
 
+    // UI state management
+    let timerShown = $state(true);
+
     let confirmExitDialog: AlertDialog;
 
     export function showToolbar() {
@@ -169,10 +172,19 @@ The user interface for a drawing session.
         class: ["btn-secondary", isHighContrast ? "btn-active" : ""],
         tooltip: "High contrast",
     });
+    const hideTimerBtn = $derived({
+        key: "hide-timer",
+        label: timerShown ? "Hide timer" : "Show timer",
+        icon: "lucide--timer-off",
+        action: () => (timerShown = !timerShown),
+        hotkey: "t",
+        class: ["btn-info", !timerShown ? "btn-active" : ""],
+        tooltip: timerShown ? "Hide timer" : "Show timer",
+    });
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
-        [exitBtn],
+        [hideTimerBtn, exitBtn],
     ]);
 
     onMount(resetToolbarTimeout);
@@ -214,15 +226,17 @@ The user interface for a drawing session.
         </div>
     {/key}
     <div class="toast toast-top toast-end items-end">
-        <Tooltip side="left">
-            <Timer
-                label="Time remaining"
-                time={timeRemaining}
-                {maxTime}
-                class={isPaused ? "text-muted!" : ""}
-            />
-            {#snippet tooltipContent()}Time remaining{/snippet}
-        </Tooltip>
+        {#if timerShown}
+            <Tooltip side="left">
+                <Timer
+                    label="Time remaining"
+                    time={timeRemaining}
+                    {maxTime}
+                    class={isPaused ? "text-muted!" : ""}
+                />
+                {#snippet tooltipContent()}Time remaining{/snippet}
+            </Tooltip>
+        {/if}
         {#if isPaused}
             <StatusAlert class="alert-error">
                 <span class="iconify lucide--pause"></span>Paused
