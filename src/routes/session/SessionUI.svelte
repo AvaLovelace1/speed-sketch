@@ -19,6 +19,7 @@ The user interface for a drawing session.
     interface Props {
         curImg: string;
         nCompletedImgs?: number;
+        maxTime?: number;
         timeRemaining?: number;
         isPaused?: boolean;
         goPrevImg?: () => void;
@@ -32,6 +33,7 @@ The user interface for a drawing session.
     const {
         curImg,
         nCompletedImgs = 0,
+        maxTime = 60,
         timeRemaining = 60,
         isPaused = false,
         goPrevImg = () => {},
@@ -140,7 +142,7 @@ The user interface for a drawing session.
                     resetToolbarTimeout();
                 }}
             >
-                <StatusAlert class="alert-success font-mono" aria-label="Images completed">
+                <StatusAlert class="alert-success" aria-label="Images completed">
                     <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
                 </StatusAlert>
                 {#snippet tooltipContent()}Images completed{/snippet}
@@ -149,11 +151,11 @@ The user interface for a drawing session.
     {/key}
     <div class="toast toast-top toast-end items-end">
         <Tooltip side="left">
-            <Timer time={timeRemaining} aria-label="Time remaining" />
+            <Timer label="Time remaining" time={timeRemaining} {maxTime} />
             {#snippet tooltipContent()}Time remaining{/snippet}
         </Tooltip>
         {#if isPaused}
-            <StatusAlert class="alert-error">
+            <StatusAlert class="alert-error uppercase">
                 <span class="iconify lucide--pause"></span>Paused
             </StatusAlert>
         {/if}

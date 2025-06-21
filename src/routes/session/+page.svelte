@@ -94,6 +94,7 @@
     bind:this={sessionUI}
     curImg={sessionStore.imgPaths[curImgIdx]}
     {nCompletedImgs}
+    maxTime={sessionStore.imgShowTime}
     {timeRemaining}
     {isPaused}
     {goPrevImg}
