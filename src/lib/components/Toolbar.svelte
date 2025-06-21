@@ -51,7 +51,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
 <svelte:window onkeydown={onKeyDown} />
 
-<Toolbar.Root {...props} class={["join rounded-field shadow-sm", props.class]}>
+<Toolbar.Root {...props} class={["join rounded-field shadow-md", props.class]}>
     {#each tools as { key, label, icon, action, hotkey, tooltip, ...others } (key)}
         <Tooltip
             side="top"

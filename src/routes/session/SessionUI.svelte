@@ -55,6 +55,9 @@ The user interface for a drawing session.
     // Image state management
     let isFlippedHorizontal = $state(false);
     let isFlippedVertical = $state(false);
+    let isGreyscale = $state(false);
+    let isHighContrast = $state(false);
+    let isBlurred = $state(false);
 
     let confirmExitDialog: AlertDialog;
 
@@ -120,27 +123,55 @@ The user interface for a drawing session.
         class: "btn-error",
         tooltip: "Exit session",
     };
-    const flipHorizontalBtn = {
+    const flipHorizontalBtn = $derived({
         key: "flip-horizontal",
         label: "Flip horizontal",
         icon: "lucide--flip-horizontal-2",
         action: () => (isFlippedHorizontal = !isFlippedHorizontal),
         hotkey: "f",
-        class: "btn-primary",
+        class: ["btn-primary", isFlippedHorizontal ? "btn-active" : ""],
         tooltip: "Flip horizontally",
-    };
-    const flipVerticalBtn = {
+    });
+    const flipVerticalBtn = $derived({
         key: "flip-vertical",
         label: "Flip vertical",
         icon: "lucide--flip-vertical-2",
         action: () => (isFlippedVertical = !isFlippedVertical),
         hotkey: "F",
-        class: "btn-primary",
+        class: ["btn-primary", isFlippedVertical ? "btn-active" : ""],
         tooltip: "Flip vertically",
-    };
+    });
+    const greyscaleBtn = $derived({
+        key: "greyscale",
+        label: "Greyscale",
+        icon: "lucide--blend",
+        action: () => (isGreyscale = !isGreyscale),
+        hotkey: "g",
+        class: ["btn-secondary", isGreyscale ? "btn-active" : ""],
+        tooltip: "Greyscale",
+    });
+    const blurBtn = $derived({
+        key: "blur",
+        label: "Blur",
+        icon: "lucide--droplet",
+        action: () => (isBlurred = !isBlurred),
+        pressed: isBlurred,
+        hotkey: "b",
+        class: ["btn-secondary", isBlurred ? "btn-active" : ""],
+        tooltip: "Blur",
+    });
+    const highContrastBtn = $derived({
+        key: "high-contrast",
+        label: "High contrast",
+        icon: "lucide--contrast",
+        action: () => (isHighContrast = !isHighContrast),
+        hotkey: "c",
+        class: ["btn-secondary", isHighContrast ? "btn-active" : ""],
+        tooltip: "High contrast",
+    });
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
-        [flipHorizontalBtn, flipVerticalBtn],
+        [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
         [exitBtn],
     ]);
 
@@ -155,7 +186,10 @@ The user interface for a drawing session.
         alt="Reference used for drawing practice"
         class="size-full object-contain
                {isFlippedVertical ? 'rotate-x-180' : ''}
-               {isFlippedHorizontal ? 'rotate-y-180' : ''}"
+               {isFlippedHorizontal ? 'rotate-y-180' : ''}
+               {isGreyscale ? 'grayscale' : ''}
+               {isHighContrast ? 'contrast-500' : ''}
+               {isBlurred ? 'blur-sm' : ''}"
     />
     {#key toolbarShown}
         <div
@@ -181,7 +215,12 @@ The user interface for a drawing session.
     {/key}
     <div class="toast toast-top toast-end items-end">
         <Tooltip side="left">
-            <Timer label="Time remaining" time={timeRemaining} {maxTime} />
+            <Timer
+                label="Time remaining"
+                time={timeRemaining}
+                {maxTime}
+                class={isPaused ? "text-muted!" : ""}
+            />
             {#snippet tooltipContent()}Time remaining{/snippet}
         </Tooltip>
         {#if isPaused}
