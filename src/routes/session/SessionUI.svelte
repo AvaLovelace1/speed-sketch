@@ -88,7 +88,6 @@ The user interface for a drawing session.
         icon: "lucide--arrow-left",
         action: goPrevImg,
         hotkey: "ArrowLeft",
-        class: "btn-primary",
         tooltip: "Previous image",
     };
     const nextBtn = {
@@ -97,7 +96,6 @@ The user interface for a drawing session.
         icon: "lucide--arrow-right",
         action: goNextImg,
         hotkey: "ArrowRight",
-        class: "btn-primary",
         tooltip: "Next image",
     };
     const pauseBtn = $derived({
@@ -106,7 +104,6 @@ The user interface for a drawing session.
         icon: isPaused ? "lucide--play" : "lucide--pause",
         action: togglePause,
         hotkey: " ",
-        class: isPaused ? "btn-success" : "btn-warning",
         tooltip: isPaused ? "Resume" : "Pause",
     });
     const exitBtn = {
@@ -118,7 +115,7 @@ The user interface for a drawing session.
         class: "btn-error",
         tooltip: "Exit session",
     };
-    const tools = $derived([prevBtn, nextBtn, pauseBtn, exitBtn]);
+    const toolsets = $derived([[prevBtn, pauseBtn, nextBtn], [exitBtn]]);
 
     onMount(resetToolbarTimeout);
 </script>
@@ -142,7 +139,7 @@ The user interface for a drawing session.
                     resetToolbarTimeout();
                 }}
             >
-                <StatusAlert class="alert-success" aria-label="Images completed">
+                <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
                     <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
                 </StatusAlert>
                 {#snippet tooltipContent()}Images completed{/snippet}
@@ -155,28 +152,31 @@ The user interface for a drawing session.
             {#snippet tooltipContent()}Time remaining{/snippet}
         </Tooltip>
         {#if isPaused}
-            <StatusAlert class="alert-error uppercase">
+            <StatusAlert class="alert-error">
                 <span class="iconify lucide--pause"></span>Paused
             </StatusAlert>
         {/if}
     </div>
     {#key toolbarShown}
         <div
-            class="fixed bottom-0 mb-4 flex w-full justify-center {toolbarShown ? '' : 'sr-only'}"
+            class="fixed bottom-0 mb-4 flex w-full justify-center space-x-4
+                   {toolbarShown ? '' : 'sr-only'}"
             onfocusin={showToolbar}
             transition:fade={toolbarFade}
         >
-            <Toolbar
-                {tools}
-                enableHotkeys={!isFrozen}
-                onmouseenter={() => {
-                    toolbarIsHovered = true;
-                }}
-                onmouseleave={() => {
-                    toolbarIsHovered = false;
-                    resetToolbarTimeout();
-                }}
-            />
+            {#each toolsets as tools, i (i)}
+                <Toolbar
+                    {tools}
+                    enableHotkeys={!isFrozen}
+                    onmouseenter={() => {
+                        toolbarIsHovered = true;
+                    }}
+                    onmouseleave={() => {
+                        toolbarIsHovered = false;
+                        resetToolbarTimeout();
+                    }}
+                />
+            {/each}
         </div>
     {/key}
 </main>
