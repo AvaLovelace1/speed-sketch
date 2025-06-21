@@ -22,12 +22,14 @@ The user interface for a drawing session.
         maxTime?: number;
         timeRemaining?: number;
         isPaused?: boolean;
+        isAlwaysOnTop?: boolean;
         goPrevImg?: () => void;
         goNextImg?: () => void;
         pause?: () => void;
         resume?: () => void;
         togglePause?: () => void;
         exit?: () => void;
+        toggleAlwaysOnTop?(): Promise<void>;
     }
 
     const {
@@ -36,12 +38,14 @@ The user interface for a drawing session.
         maxTime = 60,
         timeRemaining = 60,
         isPaused = false,
+        isAlwaysOnTop = false,
         goPrevImg = () => {},
         goNextImg = () => {},
         pause = () => {},
         resume = () => {},
         togglePause = () => {},
         exit = () => {},
+        toggleAlwaysOnTop = async () => {},
     }: Props = $props();
 
     let isFrozen = $state(false);
@@ -181,10 +185,18 @@ The user interface for a drawing session.
         class: ["btn-info", !timerShown ? "btn-active" : ""],
         tooltip: timerShown ? "Hide timer" : "Show timer",
     });
+    const alwaysOnTopBtn = $derived({
+        key: "always-on-top",
+        label: "Always on top",
+        icon: "lucide--pin",
+        action: toggleAlwaysOnTop,
+        class: ["btn-info", isAlwaysOnTop ? "btn-active" : ""],
+        tooltip: "Always on top",
+    });
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
-        [hideTimerBtn, exitBtn],
+        [hideTimerBtn, alwaysOnTopBtn, exitBtn],
     ]);
 
     onMount(resetToolbarTimeout);

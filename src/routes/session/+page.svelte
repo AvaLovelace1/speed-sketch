@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { getCurrentWindow } from "@tauri-apps/api/window";
     import { start, stop } from "tauri-plugin-keepawake-api";
     import { goto } from "$app/navigation";
     import { sessionStore } from "$lib/globals.svelte";
@@ -14,6 +15,7 @@
     // Timer interval that updates the time remaining with each tick
     let timer: NodeJS.Timeout | undefined = undefined;
     let isPaused = $state(false);
+    let isAlwaysOnTop = $state(false);
     let sessionUI: SessionUI;
 
     function goPrevImg() {
@@ -53,9 +55,27 @@
         } catch (e) {
             console.error("Failed to stop keep awake:", e);
         }
+        try {
+            await setAlwaysOnTop(false);
+        } catch (e) {
+            console.error("Failed to set always on top:", e);
+        }
         sessionStore.nCompletedImgs = nCompletedImgs;
         sessionStore.timeSpent = timeSpent;
         goto("/session/end");
+    }
+
+    async function toggleAlwaysOnTop() {
+        try {
+            await setAlwaysOnTop(!isAlwaysOnTop);
+            isAlwaysOnTop = !isAlwaysOnTop;
+        } catch (e) {
+            console.error("Failed to toggle always on top:", e);
+        }
+    }
+
+    async function setAlwaysOnTop(value: boolean) {
+        await getCurrentWindow().setAlwaysOnTop(value);
     }
 
     function restartTimer() {
@@ -97,10 +117,12 @@
     maxTime={sessionStore.imgShowTime}
     {timeRemaining}
     {isPaused}
+    {isAlwaysOnTop}
     {goPrevImg}
     {goNextImg}
     {pause}
     {resume}
     {togglePause}
     {exit}
+    {toggleAlwaysOnTop}
 />
