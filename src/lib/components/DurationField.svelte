@@ -58,7 +58,10 @@ A field that allows the user to input a time duration.
                         <div class="">
                             <TimeField.Segment
                                 {part}
-                                class="bg-base-200 hover:bg-base-300 focus:bg-primary focus:text-primary-content aria-[valuetext=Empty]:text-muted block rounded px-1 inset-shadow-2xs"
+                                class="bg-base-200 hover:bg-base-300
+                                       focus:bg-primary focus:text-primary-content
+                                       aria-[valuetext=Empty]:text-muted block
+                                       rounded px-1 tabular-nums inset-shadow-2xs"
                             >
                                 {value}
                             </TimeField.Segment>
