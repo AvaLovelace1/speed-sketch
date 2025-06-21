@@ -32,7 +32,7 @@ Shows a grid of image thumbnails.
                 <div
                     class="bg-base-100 text-muted flex aspect-square items-center justify-center rounded {shadow}"
                 >
-                    + <span class="font-bold">{imgPaths.length - (nCols - 1)}</span>
+                    + <span class="text-lg font-bold">{imgPaths.length - (nCols - 1)}</span>
                 </div>
             {/if}
         {/if}

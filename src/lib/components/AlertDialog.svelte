@@ -56,8 +56,10 @@
                     <div class="fixed inset-0 z-50 flex items-center justify-center" {...props}>
                         <div transition:scale={{ start: 0.95, duration: 150, easing: cubicOut }}>
                             <Card>
-                                <AlertDialog.Title class="card-title">{title}</AlertDialog.Title>
-                                <AlertDialog.Description class="mb-5">
+                                <AlertDialog.Title class="card-title mb-2">
+                                    {title}
+                                </AlertDialog.Title>
+                                <AlertDialog.Description class="mb-8">
                                     {description}
                                 </AlertDialog.Description>
                                 <form

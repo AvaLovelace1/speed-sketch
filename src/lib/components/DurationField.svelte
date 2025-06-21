@@ -49,9 +49,11 @@ A field that allows the user to input a time duration.
             {#snippet children({ segments })}
                 {#each segments as { part, value }, i (part + i)}
                     {#if part === "literal"}
-                        <TimeField.Segment {part} class="text-muted px-1">
-                            {value}
-                        </TimeField.Segment>
+                        {#if value.trim() !== ""}
+                            <TimeField.Segment {part} class="text-muted px-1">
+                                {value}
+                            </TimeField.Segment>
+                        {/if}
                     {:else}
                         <div class="">
                             <TimeField.Segment

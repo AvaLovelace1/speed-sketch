@@ -50,7 +50,7 @@
 
 <main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
     <div class="w-lg">
-        <div class="mb-10 text-center text-shadow-sm">
+        <div class="mb-8 text-center text-shadow-sm">
             <h1 class="text-6xl font-thin">{appName}</h1>
             <Separator.Root class="divider mt-3 text-lg">
                 <span class="text-muted tracking-widest">{tagline}</span>
@@ -61,9 +61,9 @@
         </div>
         <Card class="mx-auto" cardBodyClass="p-0">
             <form>
-                <div class="mb-2 p-6">
+                <div class="p-6 pb-8">
                     <FolderInput
-                        class="mb-6 w-full"
+                        class="mb-4 w-full"
                         label="Image folder"
                         bind:chosenFolder={imgFolder}
                         callback={setImgFolder}
@@ -74,7 +74,7 @@
                         }}
                     />
                     <RadioButtons
-                        class="mb-6"
+                        class="mb-4"
                         groupLabel="Time per image"
                         options={imgShowTimeOptions}
                         bind:group={imgShowTimeSelected}
