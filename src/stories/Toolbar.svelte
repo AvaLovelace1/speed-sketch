@@ -17,7 +17,7 @@
         icon: "lucide--arrow-right",
         action: () => {},
         hotkey: "ArrowRight",
-        class: "btn-primary",
+        class: "btn-info",
         tooltip: "Next image",
     };
     const pauseBtn = $derived({
