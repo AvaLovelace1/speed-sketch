@@ -41,9 +41,10 @@ A field that allows the user to input a time duration.
     minValue={new Time(0, 0, 1)}
     {onValueChange}
 >
-    <div class="flex gap-3">
-        <TimeField.Label class="text-muted text-end text-xs leading-tight font-bold">
-            Custom<br />time
+    <div class="flex gap-2">
+        <TimeField.Label class="text-muted pt-1 text-lg">
+            <span class="iconify lucide--timer"></span>
+            <span class="sr-only">Custom time</span>
         </TimeField.Label>
         <TimeField.Input class="flex text-2xl">
             {#snippet children({ segments })}
