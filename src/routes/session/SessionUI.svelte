@@ -5,6 +5,8 @@ The user interface for a drawing session.
 <script lang="ts">
     import { fade } from "svelte/transition";
     import { cubicOut } from "svelte/easing";
+    import type { Attachment } from "svelte/attachments";
+    import createPanZoom, { type PanZoom } from "panzoom";
     import AlertDialog from "$lib/components/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
@@ -59,6 +61,9 @@ The user interface for a drawing session.
     let hideToolbarTimeout: NodeJS.Timeout | undefined = undefined;
 
     // Image state management
+    let imgWidth = $state(0);
+    let imgHeight = $state(0);
+    let panzoom: PanZoom;
     let isFlippedHorizontal = $state(false);
     let isFlippedVertical = $state(false);
     let isGreyscale = $state(false);
@@ -99,6 +104,30 @@ The user interface for a drawing session.
         resume();
     }
 
+    const panzoomAttachment: Attachment = (element) => {
+        const node = element as HTMLElement | SVGElement;
+        panzoom = createPanZoom(node, {
+            bounds: true,
+            maxZoom: 10,
+            minZoom: 0.1,
+            smoothScroll: false,
+            filterKey: () => true,
+        });
+        return () => {
+            panzoom.dispose();
+        };
+    };
+
+    // From panzoom/index.js
+    function getScaleMultiplier(delta: number) {
+        const sign = Math.sign(delta);
+        const deltaAdjustedSpeed = Math.min(
+            0.25,
+            Math.abs((panzoom.getZoomSpeed() * delta) / 1.28),
+        );
+        return 1 - sign * deltaAdjustedSpeed;
+    }
+
     const prevBtn = {
         key: "prev",
         label: "Prev",
@@ -131,6 +160,36 @@ The user interface for a drawing session.
         hotkey: "Escape",
         class: "btn-error",
         tooltip: "Exit session",
+    };
+    const resetZoomBtn = {
+        key: "reset-zoom",
+        label: "Reset zoom",
+        icon: "lucide--scan",
+        action: () => {
+            panzoom.moveTo(0, 0);
+            panzoom.zoomAbs(0, 0, 1);
+        },
+        hotkey: "0",
+        class: "btn-accent",
+        tooltip: "Reset zoom",
+    };
+    const zoomOutBtn = {
+        key: "zoom-out",
+        label: "Zoom out",
+        icon: "lucide--zoom-out",
+        action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(1)),
+        hotkey: "-",
+        class: "btn-accent",
+        tooltip: "Zoom out",
+    };
+    const zoomInBtn = {
+        key: "zoom-in",
+        label: "Zoom in",
+        icon: "lucide--zoom-in",
+        action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(-1)),
+        hotkey: "=",
+        class: "btn-accent",
+        tooltip: "Zoom in",
     };
     const flipHorizontalBtn = $derived({
         key: "flip-horizontal",
@@ -205,6 +264,7 @@ The user interface for a drawing session.
     };
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
+        [resetZoomBtn, zoomOutBtn, zoomInBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
         [hideTimerBtn, alwaysOnTopBtn, showImageFolderBtn, exitBtn],
     ]);
@@ -215,16 +275,22 @@ The user interface for a drawing session.
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
 <main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
-    <img
-        src={curImgUrl}
-        alt="Reference used for drawing practice"
-        class="size-full object-contain
-               {isFlippedVertical ? 'rotate-x-180' : ''}
-               {isFlippedHorizontal ? 'rotate-y-180' : ''}
-               {isGreyscale ? 'grayscale' : ''}
-               {isHighContrast ? 'contrast-500' : ''}
-               {isBlurred ? 'blur-sm' : ''}"
-    />
+    <!-- Wrap image in container so panzoom mouse events only fire on the image -->
+    <div class="size-full">
+        <img
+            {@attach panzoomAttachment}
+            src={curImgUrl}
+            alt="Reference used for drawing practice"
+            class="size-full object-contain
+                   {isFlippedVertical ? 'rotate-x-180' : ''}
+                   {isFlippedHorizontal ? 'rotate-y-180' : ''}
+                   {isGreyscale ? 'grayscale' : ''}
+                   {isHighContrast ? 'contrast-500' : ''}
+                   {isBlurred ? 'blur-sm' : ''}"
+            bind:clientWidth={imgWidth}
+            bind:clientHeight={imgHeight}
+        />
+    </div>
     {#key toolbarShown}
         <div
             class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"
