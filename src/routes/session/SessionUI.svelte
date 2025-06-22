@@ -275,19 +275,21 @@ The user interface for a drawing session.
 <main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
     <!-- Wrap image in container so panzoom mouse events only fire on the image -->
     <div class="size-full">
-        <img
-            {@attach panzoomAttachment}
-            src={curImgUrl}
-            alt="Reference used for drawing practice"
-            class="size-full object-contain
-                   {isFlippedVertical ? 'rotate-x-180' : ''}
-                   {isFlippedHorizontal ? 'rotate-y-180' : ''}
-                   {isGreyscale ? 'grayscale' : ''}
-                   {isHighContrast ? 'contrast-500' : ''}
-                   {isBlurred ? 'blur-sm' : ''}"
-            bind:clientWidth={imgWidth}
-            bind:clientHeight={imgHeight}
-        />
+        <!-- Wrap in another container so flipping works correctly -->
+        <div class="size-full" {@attach panzoomAttachment}>
+            <img
+                src={curImgUrl}
+                alt="Reference used for drawing practice"
+                class="size-full object-contain
+                       {isFlippedVertical ? 'rotate-x-180' : ''}
+                       {isFlippedHorizontal ? 'rotate-y-180' : ''}
+                       {isGreyscale ? 'grayscale' : ''}
+                       {isHighContrast ? 'contrast-500' : ''}
+                       {isBlurred ? 'blur-sm' : ''}"
+                bind:clientWidth={imgWidth}
+                bind:clientHeight={imgHeight}
+            />
+        </div>
     </div>
     <div class="toast toast-top toast-start {toolbarTransition} {toolbarShown ? '' : 'opacity-0'}">
         <Tooltip
