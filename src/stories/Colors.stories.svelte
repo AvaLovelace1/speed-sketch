@@ -9,5 +9,8 @@
     });
 </script>
 
-<!-- All theme colors used in the app. -->
-<Story name="Colors" />
+<!-- Dark Theme colours -->
+<Story name="Dark Theme" />
+
+<!-- Light Theme colours -->
+<Story name="Light Theme" args={{ theme: "light" }} />
