@@ -3,8 +3,6 @@
 The user interface for a drawing session.
 -->
 <script lang="ts">
-    import { fade } from "svelte/transition";
-    import { cubicOut } from "svelte/easing";
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
     import AlertDialog from "$lib/components/AlertDialog.svelte";
@@ -14,7 +12,7 @@ The user interface for a drawing session.
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import { onMount } from "svelte";
 
-    const toolbarFade = { duration: 200, easing: cubicOut };
+    const toolbarTransition = "duration-300 ease-out";
     // Duration after which toolbar will be hidden automatically
     const hideToolbarTimeoutDuration = 3000;
 
@@ -291,28 +289,23 @@ The user interface for a drawing session.
             bind:clientHeight={imgHeight}
         />
     </div>
-    {#key toolbarShown}
-        <div
-            class="toast toast-top toast-start {toolbarShown ? '' : 'sr-only'}"
-            transition:fade={toolbarFade}
+    <div class="toast toast-top toast-start {toolbarTransition} {toolbarShown ? '' : 'opacity-0'}">
+        <Tooltip
+            side="right"
+            onmouseenter={() => {
+                toolbarIsHovered = true;
+            }}
+            onmouseleave={() => {
+                toolbarIsHovered = false;
+                resetToolbarTimeout();
+            }}
         >
-            <Tooltip
-                side="right"
-                onmouseenter={() => {
-                    toolbarIsHovered = true;
-                }}
-                onmouseleave={() => {
-                    toolbarIsHovered = false;
-                    resetToolbarTimeout();
-                }}
-            >
-                <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
-                    <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
-                </StatusAlert>
-                {#snippet tooltipContent()}Images completed{/snippet}
-            </Tooltip>
-        </div>
-    {/key}
+            <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
+                <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
+            </StatusAlert>
+            {#snippet tooltipContent()}Images completed{/snippet}
+        </Tooltip>
+    </div>
     <div class="toast toast-top toast-end items-end">
         {#if timerShown}
             <Tooltip side="left">
@@ -331,28 +324,25 @@ The user interface for a drawing session.
             </StatusAlert>
         {/if}
     </div>
-    {#key toolbarShown}
-        <div
-            class="fixed bottom-0 mb-4 flex w-full justify-center space-x-4
-                   {toolbarShown ? '' : 'sr-only'}"
-            onfocusin={showToolbar}
-            transition:fade={toolbarFade}
-        >
-            {#each toolsets as tools, i (i)}
-                <Toolbar
-                    {tools}
-                    enableHotkeys={!isFrozen}
-                    onmouseenter={() => {
-                        toolbarIsHovered = true;
-                    }}
-                    onmouseleave={() => {
-                        toolbarIsHovered = false;
-                        resetToolbarTimeout();
-                    }}
-                />
-            {/each}
-        </div>
-    {/key}
+    <div
+        class="fixed bottom-0 mb-4 flex w-full justify-center space-x-4 transition-all {toolbarTransition}
+               {toolbarShown ? '' : 'opacity-0'}"
+        onfocusin={showToolbar}
+    >
+        {#each toolsets as tools, i (i)}
+            <Toolbar
+                {tools}
+                enableHotkeys={!isFrozen}
+                onmouseenter={() => {
+                    toolbarIsHovered = true;
+                }}
+                onmouseleave={() => {
+                    toolbarIsHovered = false;
+                    resetToolbarTimeout();
+                }}
+            />
+        {/each}
+    </div>
 </main>
 
 <AlertDialog
