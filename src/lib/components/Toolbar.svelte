@@ -57,7 +57,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
             side="top"
             onclick={action}
             {...others}
-            class={["btn join-item btn-soft btn-square text-lg", others.class]}
+            class={["btn join-item btn-soft px-3 py-5 text-lg", others.class]}
             aria-label={label}
         >
             {#if icon}<span class="iconify {icon}"></span>{/if}

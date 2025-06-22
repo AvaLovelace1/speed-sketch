@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { getCurrentWindow } from "@tauri-apps/api/window";
+    import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { start, stop } from "tauri-plugin-keepawake-api";
     import { goto } from "$app/navigation";
     import { sessionStore } from "$lib/globals.svelte";
@@ -20,14 +21,14 @@
 
     function goPrevImg() {
         curImgIdx -= 1;
-        if (curImgIdx < 0) curImgIdx = sessionStore.imgPaths.length - 1;
+        if (curImgIdx < 0) curImgIdx = sessionStore.imgs.length - 1;
         timeRemaining = sessionStore.imgShowTime;
         if (!isPaused) restartTimer();
     }
 
     function goNextImg() {
         curImgIdx += 1;
-        if (curImgIdx >= sessionStore.imgPaths.length) curImgIdx = 0;
+        if (curImgIdx >= sessionStore.imgs.length) curImgIdx = 0;
         timeRemaining = sessionStore.imgShowTime;
         if (!isPaused) restartTimer();
     }
@@ -78,6 +79,19 @@
         await getCurrentWindow().setAlwaysOnTop(value);
     }
 
+    async function showImageFolder() {
+        const curImgPath = sessionStore.imgs[curImgIdx].path;
+        if (!curImgPath) {
+            console.error("No image filepath available to reveal in folder.");
+            return;
+        }
+        try {
+            await revealItemInDir(curImgPath);
+        } catch (e) {
+            console.error(`Failed to reveal image ${curImgPath} in folder:`, e);
+        }
+    }
+
     function restartTimer() {
         clearTimer();
         timer = setInterval(() => {
@@ -112,7 +126,7 @@
 
 <SessionUI
     bind:this={sessionUI}
-    curImg={sessionStore.imgPaths[curImgIdx]}
+    curImgUrl={sessionStore.imgs[curImgIdx].url}
     {nCompletedImgs}
     maxTime={sessionStore.imgShowTime}
     {timeRemaining}
@@ -125,4 +139,5 @@
     {togglePause}
     {exit}
     {toggleAlwaysOnTop}
+    {showImageFolder}
 />

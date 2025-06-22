@@ -39,7 +39,7 @@
         imgShowTimeSelected: "30",
         imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
-        imgPaths: [
+        imgUrls: [
             Sample1,
             Sample2,
             Sample3,
@@ -64,7 +64,7 @@
         imgShowTimeSelected: "30",
         imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
-        imgPaths: [Sample1, Sample2, Sample3, Sample1, Sample2, Sample3],
+        imgUrls: [Sample1, Sample2, Sample3, Sample1, Sample2, Sample3],
         isValid: true,
     }}
 />
@@ -76,7 +76,7 @@
         imgShowTimeSelected: "30",
         imgShowTimeCustom: 45,
         imgFolder: "/Users/alice/Pictures",
-        imgPaths: [Sample1],
+        imgUrls: [Sample1],
         isValid: true,
     }}
 />

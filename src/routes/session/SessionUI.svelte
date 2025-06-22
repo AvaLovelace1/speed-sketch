@@ -17,7 +17,7 @@ The user interface for a drawing session.
     const hideToolbarTimeoutDuration = 3000;
 
     interface Props {
-        curImg: string;
+        curImgUrl: string;
         nCompletedImgs?: number;
         maxTime?: number;
         timeRemaining?: number;
@@ -29,11 +29,12 @@ The user interface for a drawing session.
         resume?: () => void;
         togglePause?: () => void;
         exit?: () => void;
-        toggleAlwaysOnTop?(): Promise<void>;
+        toggleAlwaysOnTop?: () => Promise<void>;
+        showImageFolder?: () => Promise<void>;
     }
 
     const {
-        curImg,
+        curImgUrl,
         nCompletedImgs = 0,
         maxTime = 60,
         timeRemaining = 60,
@@ -46,6 +47,7 @@ The user interface for a drawing session.
         togglePause = () => {},
         exit = () => {},
         toggleAlwaysOnTop = async () => {},
+        showImageFolder = async () => {},
     }: Props = $props();
 
     let isFrozen = $state(false);
@@ -187,16 +189,24 @@ The user interface for a drawing session.
     });
     const alwaysOnTopBtn = $derived({
         key: "always-on-top",
-        label: "Always on top",
+        label: isAlwaysOnTop ? "Unpin" : "Pin",
         icon: "lucide--pin",
         action: toggleAlwaysOnTop,
         class: ["btn-info", isAlwaysOnTop ? "btn-active" : ""],
-        tooltip: "Always on top",
+        tooltip: isAlwaysOnTop ? "Unpin window" : "Pin window to top",
     });
+    const showImageFolderBtn = {
+        key: "show-image-folder",
+        label: "Show image folder",
+        icon: "lucide--folder-open",
+        action: showImageFolder,
+        class: "btn-info",
+        tooltip: "Show image folder",
+    };
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
-        [hideTimerBtn, alwaysOnTopBtn, exitBtn],
+        [hideTimerBtn, alwaysOnTopBtn, showImageFolderBtn, exitBtn],
     ]);
 
     onMount(resetToolbarTimeout);
@@ -206,7 +216,7 @@ The user interface for a drawing session.
 
 <main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
     <img
-        src={curImg}
+        src={curImgUrl}
         alt="Reference used for drawing practice"
         class="size-full object-contain
                {isFlippedVertical ? 'rotate-x-180' : ''}

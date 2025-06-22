@@ -11,4 +11,4 @@
 </script>
 
 <!-- The main UI for the drawing session. -->
-<Story name="SessionUI" args={{ curImg: Sample1 }} />
+<Story name="SessionUI" args={{ curImgUrl: Sample1 }} />

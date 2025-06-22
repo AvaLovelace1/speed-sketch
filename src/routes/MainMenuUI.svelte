@@ -16,7 +16,7 @@
         // The value of the custom image show time in seconds.
         imgShowTimeCustom: number;
         imgFolder?: string;
-        imgPaths?: string[];
+        imgUrls?: string[];
         folderErr?: string;
         isLoadingImgs?: boolean;
         isValid?: boolean;
@@ -28,7 +28,7 @@
         imgShowTimeSelected = $bindable(),
         imgShowTimeCustom = $bindable(),
         imgFolder = $bindable(""),
-        imgPaths = [],
+        imgUrls = [],
         folderErr = "",
         isLoadingImgs = false,
         isValid = false,
@@ -57,7 +57,7 @@
             </Separator.Root>
         </div>
         <div class="mb-8 px-2">
-            <ImageGrid {imgPaths} isLoading={isLoadingImgs} />
+            <ImageGrid {imgUrls} isLoading={isLoadingImgs} />
         </div>
         <Card class="mx-auto" cardBodyClass="p-0">
             <form>

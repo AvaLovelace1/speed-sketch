@@ -19,28 +19,28 @@
         showFolderErr = false;
 
         sessionStore.imgFolder = folder;
-        const { paths, err } = await getImgPaths(folder);
+        const { imgs, err } = await getImgs(folder);
         if (sessionStore.imgFolder != folder) {
             // If the folder has changed while loading, ignore the result
             return;
         }
-        sessionStore.imgPaths = paths;
+        sessionStore.imgs = imgs;
         folderErr = err as string;
 
         showFolderErr = true;
     }
 
     // Get all image paths from the specified folder, converted to path URLs.
-    async function getImgPaths(folder: string) {
+    async function getImgs(folder: string) {
         // Check if the folder is set
-        if (folder === "") return { paths: [], err: "Please choose a folder" };
+        if (folder === "") return { imgs: [], err: "Please choose a folder" };
         // Check if the folder exists and is a directory
         try {
             const metadata = await stat(folder);
-            if (!metadata.isDirectory) return { paths: [], err: "Path is not a folder" };
+            if (!metadata.isDirectory) return { imgs: [], err: "Path is not a folder" };
         } catch (err) {
             console.error("Error accessing folder:", err);
-            return { paths: [], err: "Cannot access folder" };
+            return { imgs: [], err: "Cannot access folder" };
         }
 
         // Load images from the folder
@@ -50,13 +50,13 @@
                 dir: folder,
                 timeoutDuration: 60,
             })) as string[];
-            const paths = files.map((file) => convertFileSrc(file));
-            return { paths: paths, err: paths.length === 0 ? "No images found in folder" : "" };
+            const imgs = files.map((file) => ({ url: convertFileSrc(file), path: file }));
+            return { imgs, err: imgs.length === 0 ? "No images found in folder" : "" };
         } catch (err) {
             console.error("Error loading images:", err);
-            if (err === "TimeoutError") return { paths: [], err: "Loading images timed out" };
-            if (err === "TaskJoinError") return { paths: [], err: "Failed to load images" };
-            return { paths: [], err };
+            if (err === "TimeoutError") return { imgs: [], err: "Loading images timed out" };
+            if (err === "TaskJoinError") return { imgs: [], err: "Failed to load images" };
+            return { imgs: [], err };
         } finally {
             isLoadingImgs = false;
         }
@@ -73,7 +73,6 @@
         // Save current session settings to persistent store
         const persistentStore = await load("store.json", { autoSave: false });
         await persistentStore.set("imgFolder", sessionStore.imgFolder);
-        await persistentStore.set("imgPaths", sessionStore.imgPaths);
         await persistentStore.set("imgShowTimeSelected", sessionStore.imgShowTimeSelected);
         await persistentStore.set("imgShowTimeCustom", sessionStore.imgShowTimeCustom);
         await persistentStore.save();
@@ -96,7 +95,7 @@
     bind:imgShowTimeSelected={sessionStore.imgShowTimeSelected}
     bind:imgShowTimeCustom={sessionStore.imgShowTimeCustom}
     bind:imgFolder={sessionStore.imgFolder}
-    imgPaths={sessionStore.imgPaths}
+    imgUrls={sessionStore.imgs.map((img) => img.url)}
     folderErr={showFolderErr ? folderErr : ""}
     {isLoadingImgs}
     {isValid}
