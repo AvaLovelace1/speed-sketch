@@ -5,10 +5,11 @@ The user interface for a drawing session.
 <script lang="ts">
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
-    import AlertDialog from "$lib/components/AlertDialog.svelte";
+    import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
     import Tooltip from "$lib/components/Tooltip.svelte";
+    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import { onMount } from "svelte";
 
@@ -260,12 +261,22 @@ The user interface for a drawing session.
         class: "btn-info",
         tooltip: "Show image folder",
     };
+    const settingsBtn = {
+        key: "settings",
+        label: "Settings",
+        icon: "lucide--settings",
+        action: () => settingsDialog.open(),
+        tooltip: "Settings",
+    };
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
         [resetZoomBtn, zoomOutBtn, zoomInBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
-        [hideTimerBtn, alwaysOnTopBtn, showImageFolderBtn, exitBtn],
+        [hideTimerBtn, alwaysOnTopBtn, showImageFolderBtn],
+        [settingsBtn, exitBtn],
     ]);
+
+    let settingsDialog: SettingsDialog;
 
     onMount(resetToolbarTimeout);
 </script>
@@ -357,3 +368,5 @@ The user interface for a drawing session.
     onCancel={unfreeze}
     onConfirm={exit}
 />
+
+<SettingsDialog bind:this={settingsDialog} onOpen={freeze} onClose={unfreeze} />

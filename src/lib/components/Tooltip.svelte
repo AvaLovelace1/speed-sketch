@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { type BitsPrimitiveElementAttributes, Tooltip } from "bits-ui";
+    import { Tooltip } from "bits-ui";
     import { fly } from "svelte/transition";
     import type { Snippet } from "svelte";
 
-    interface Props extends BitsPrimitiveElementAttributes {
+    interface Props extends Tooltip.TriggerProps {
         children: Snippet;
         tooltipContent: Snippet;
         side?: "top" | "right" | "bottom" | "left";

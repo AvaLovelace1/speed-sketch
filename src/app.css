@@ -39,7 +39,7 @@
     --border: 1px;
 
     /* effects */
-    --depth: 0;
+    --depth: 1;
     --noise: 1;
 }
 
@@ -82,7 +82,7 @@
     --border: 1px;
 
     /* effects */
-    --depth: 0;
+    --depth: 1;
     --noise: 1;
 }
 

@@ -17,7 +17,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
         tooltip?: string;
     }
 
-    interface Props extends BitsPrimitiveElementAttributes {
+    interface Props extends Toolbar.RootProps {
         tools: Tool[];
         enableHotkeys?: boolean;
     }
@@ -36,8 +36,8 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     }
 
     const hotkeyLabels = new Map([
-        ["ArrowLeft", ["Left arrow"]],
-        ["ArrowRight", ["Right arrow"]],
+        ["ArrowLeft", ["←"]],
+        ["ArrowRight", ["→"]],
         [" ", ["Space"]],
         ["Escape", ["Esc"]],
     ]);
