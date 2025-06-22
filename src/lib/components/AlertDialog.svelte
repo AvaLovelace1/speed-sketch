@@ -81,6 +81,13 @@
                                         </AlertDialog.Action>
                                     </div>
                                 </form>
+                                <AlertDialog.Cancel
+                                    class="btn btn-link text-muted absolute top-0 right-0 px-3"
+                                    onclick={onCancel}
+                                >
+                                    <span class="iconify lucide--x"></span>
+                                    <span class="sr-only">Cancel</span>
+                                </AlertDialog.Cancel>
                             </Card>
                         </div>
                     </div>
