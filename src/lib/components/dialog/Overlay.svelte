@@ -4,7 +4,7 @@ A dark overlay that covers the entire viewport.
 -->
 <script lang="ts">
     import { cubicOut } from "svelte/easing";
-    import { fade } from "svelte/transition";
+    import { fade } from "svelte-reduced-motion/transition";
     import type { HTMLAttributes } from "svelte/elements";
 
     const props: HTMLAttributes<HTMLDivElement> = $props();

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Select } from "bits-ui";
-    import { fly } from "svelte/transition";
+    import { fly } from "svelte-reduced-motion/transition";
 
     interface Item {
         value: string;

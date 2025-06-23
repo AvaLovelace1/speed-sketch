@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { slide } from "svelte/transition";
+    import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
     import { Separator, Button } from "bits-ui";
     import { appName, imgShowTimes, tagline, settings } from "$lib/globals.svelte";

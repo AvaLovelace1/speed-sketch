@@ -6,7 +6,7 @@ Centers its children in the viewport and applies a scale transition.
     import type { Snippet } from "svelte";
     import type { HTMLAttributes } from "svelte/elements";
     import { cubicOut } from "svelte/easing";
-    import { scale } from "svelte/transition";
+    import { scale } from "svelte-reduced-motion/transition";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         children: Snippet;
