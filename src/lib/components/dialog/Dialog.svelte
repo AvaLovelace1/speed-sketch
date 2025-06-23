@@ -39,7 +39,7 @@
                 {#if open}
                     <Popup {...props}>
                         <Card>
-                            <Dialog.Title class="card-title mb-4 text-2xl">{title}</Dialog.Title>
+                            <Dialog.Title class="card-title mb-6 text-2xl">{title}</Dialog.Title>
                             <Dialog.Description>{@render children()}</Dialog.Description>
                             <Dialog.Close
                                 class="text-muted absolute top-1 right-1 cursor-pointer p-2"

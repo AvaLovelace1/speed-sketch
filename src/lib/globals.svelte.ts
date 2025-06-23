@@ -4,6 +4,18 @@ export const appName = "SpeedSketch";
 export const tagline = "timed drawing sessions";
 export const imgShowTimes = [30, 45, 60, 120, 300, 600];
 export const maxImgShowTime = 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
+export const contrastOptions = [
+    "contrast-200",
+    "contrast-300",
+    "contrast-400",
+    "contrast-500",
+    "contrast-600",
+    "contrast-700",
+    "contrast-800",
+    "contrast-900",
+    "contrast-1000",
+];
+export const blurOptions = ["blur-xs", "blur-sm", "blur-md", "blur-lg"];
 
 export interface Theme {
     // Unique identifier for the theme
@@ -28,6 +40,8 @@ export interface Image {
 // Global settings
 export const settings = $state({
     theme: "system",
+    contrastStrength: 3,
+    blurStrength: 1,
 });
 
 // Global state for the application

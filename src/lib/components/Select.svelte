@@ -9,16 +9,18 @@
         icon?: string;
     }
 
-    interface Props {
-        value: string;
+    interface Props extends Select.TriggerProps {
+        label: string;
         items: Map<string, Item>;
+        value: string;
     }
 
-    let { value = $bindable(), items }: Props = $props();
+    let { label, items, value = $bindable(), ...triggerProps }: Props = $props();
 </script>
 
+<label class="text-muted mb-2 block" for={label}>{label}</label>
 <Select.Root type="single" bind:value items={[...items.values()]}>
-    <Select.Trigger class="select w-3xs">
+    <Select.Trigger id={label} {...triggerProps} class={["select w-3xs", triggerProps.class]}>
         {#if items.get(value)?.icon}
             <span class="iconify {items.get(value)?.icon} text-muted"></span>
         {/if}

@@ -94,7 +94,7 @@ pub fn run() {
                     .close_window()
                     .build()?;
                 let help = SubmenuBuilder::new(app, "Help")
-                    .text("report_issue", "🔗 Report an Issue on GitHub")
+                    .text("report_issue", "🔗 Report an Issue on GitHub…")
                     .build()?;
                 let menu = MenuBuilder::new(app)
                     .items(&[&main, &view, &window, &help])

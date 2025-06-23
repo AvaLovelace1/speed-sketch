@@ -5,6 +5,7 @@ The user interface for a drawing session.
 <script lang="ts">
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
+    import { contrastOptions, blurOptions, settings } from "$lib/globals.svelte";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
@@ -291,12 +292,14 @@ The user interface for a drawing session.
             <img
                 src={curImgUrl}
                 alt="Reference used for drawing practice"
-                class="size-full object-contain
-                       {isFlippedVertical ? 'rotate-x-180' : ''}
-                       {isFlippedHorizontal ? 'rotate-y-180' : ''}
-                       {isGreyscale ? 'grayscale' : ''}
-                       {isHighContrast ? 'contrast-500' : ''}
-                       {isBlurred ? 'blur-sm' : ''}"
+                class={[
+                    "size-full object-contain",
+                    isFlippedVertical ? "rotate-x-180" : "",
+                    isFlippedHorizontal ? "rotate-y-180" : "",
+                    isGreyscale ? "grayscale" : "",
+                    isHighContrast ? contrastOptions[settings.contrastStrength] : "",
+                    isBlurred ? blurOptions[settings.blurStrength] : "",
+                ]}
                 bind:clientWidth={imgWidth}
                 bind:clientHeight={imgHeight}
             />
