@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Button } from "bits-ui";
     import prettyMilliseconds from "pretty-ms";
+    import { settings } from "$lib/globals.svelte";
     import Card from "$lib/components/Card.svelte";
 
     interface Props {
@@ -44,4 +45,11 @@
             <Button.Root class="btn" href="/">Return to Main Menu</Button.Root>
         </div>
     </Card>
+    <button
+        class="btn btn-circle absolute top-4 right-4 size-12 rounded-full text-xl"
+        onclick={() => settings.dialog?.open()}
+    >
+        <span class="iconify lucide--settings"></span>
+        <span class="sr-only">Settings</span>
+    </button>
 </main>

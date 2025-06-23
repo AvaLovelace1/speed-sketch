@@ -10,9 +10,8 @@ The user interface for a drawing session.
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
     import Tooltip from "$lib/components/Tooltip.svelte";
-    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
     const toolbarTransition = "duration-300 ease-out";
     // Duration after which toolbar will be hidden automatically
@@ -266,7 +265,7 @@ The user interface for a drawing session.
         key: "settings",
         label: "Settings",
         icon: "lucide--settings",
-        action: () => settingsDialog.open(),
+        action: () => settings.dialog?.open(),
         tooltip: "Settings",
     };
     const toolsets = $derived([
@@ -277,9 +276,16 @@ The user interface for a drawing session.
         [settingsBtn, exitBtn],
     ]);
 
-    let settingsDialog: SettingsDialog;
+    onMount(() => {
+        resetToolbarTimeout();
+        settings.dialog?.setOnOpen(freeze);
+        settings.dialog?.setOnClose(unfreeze);
+    });
 
-    onMount(resetToolbarTimeout);
+    onDestroy(() => {
+        settings.dialog?.setOnOpen(() => {});
+        settings.dialog?.setOnClose(() => {});
+    });
 </script>
 
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
@@ -371,5 +377,3 @@ The user interface for a drawing session.
     onCancel={unfreeze}
     onConfirm={exit}
 />
-
-<SettingsDialog bind:this={settingsDialog} onOpen={freeze} onClose={unfreeze} />

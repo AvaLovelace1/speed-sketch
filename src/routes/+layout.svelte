@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Tooltip } from "bits-ui";
     import type { LayoutProps } from "./$types";
+    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
     import { settings } from "$lib/globals.svelte";
     import "../app.css";
 
@@ -14,4 +15,5 @@
 
 <Tooltip.Provider>
     {@render children()}
+    <SettingsDialog bind:this={settings.dialog} />
 </Tooltip.Provider>

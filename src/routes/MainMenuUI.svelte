@@ -2,14 +2,13 @@
     import { slide } from "svelte/transition";
     import { cubicOut } from "svelte/easing";
     import { Separator, Button } from "bits-ui";
-    import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
+    import { appName, imgShowTimes, tagline, settings } from "$lib/globals.svelte";
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
     import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
-    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
 
     interface Props {
         // The selected image show time as a string, or "custom".
@@ -47,8 +46,6 @@
             value: seconds.toString(),
         }))
         .concat([{ label: "Custom", value: "custom" }]);
-
-    let settingsDialog: SettingsDialog;
 </script>
 
 <main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
@@ -104,11 +101,9 @@
     </div>
     <button
         class="btn btn-circle absolute top-4 right-4 size-12 rounded-full text-xl"
-        onclick={() => settingsDialog.open()}
+        onclick={() => settings.dialog?.open()}
     >
         <span class="iconify lucide--settings"></span>
         <span class="sr-only">Settings</span>
     </button>
 </main>
-
-<SettingsDialog bind:this={settingsDialog}></SettingsDialog>

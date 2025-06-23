@@ -16,6 +16,14 @@
     export function open() {
         dialog.open();
     }
+
+    export function setOnOpen(fn: () => void) {
+        dialog.setOnOpen(fn);
+    }
+
+    export function setOnClose(fn: () => void) {
+        dialog.setOnClose(fn);
+    }
 </script>
 
 <Dialog bind:this={dialog} title="Settings" {onOpen} {onClose}>

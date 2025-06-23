@@ -1,4 +1,6 @@
 // Appears on the title screen
+import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
+
 export const appName = "SpeedSketch";
 // Appears on the title screen below the app name
 export const tagline = "timed drawing sessions";
@@ -42,6 +44,7 @@ export const settings = $state({
     theme: "system",
     contrastStrength: 3,
     blurStrength: 1,
+    dialog: undefined as SettingsDialog | undefined,
 });
 
 // Global state for the application

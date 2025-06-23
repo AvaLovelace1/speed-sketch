@@ -19,6 +19,14 @@
     export function open() {
         openBind = true;
     }
+
+    export function setOnOpen(fn: () => void) {
+        onOpen = fn;
+    }
+
+    export function setOnClose(fn: () => void) {
+        onClose = fn;
+    }
 </script>
 
 <Dialog.Root
