@@ -4,7 +4,7 @@
     import { invoke, convertFileSrc } from "@tauri-apps/api/core";
     import { load } from "@tauri-apps/plugin-store";
     import { stat } from "@tauri-apps/plugin-fs";
-    import { sessionStore } from "$lib/globals.svelte";
+    import { settings, sessionStore } from "$lib/globals.svelte";
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
 
@@ -66,7 +66,9 @@
     async function startSession() {
         if (!isValid) return;
 
-        await new Audio(startAudioFile).play().catch((e) => {
+        const startAudio = new Audio(startAudioFile);
+        startAudio.volume = settings.volume;
+        await startAudio.play().catch((e) => {
             console.error("Failed to play start audio:", e);
         });
 

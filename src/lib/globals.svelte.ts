@@ -42,6 +42,7 @@ export interface Image {
 // Global settings
 export const settings = $state({
     theme: "system",
+    volume: 1,
     contrastStrength: 3,
     blurStrength: 1,
     dialog: undefined as SettingsDialog | undefined,

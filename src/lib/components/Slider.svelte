@@ -4,11 +4,11 @@
         icon?: string;
         min?: number;
         max?: number;
-        step: number;
+        step?: number;
         value: number;
     }
 
-    let { label, icon, min = 0, max = 100, step, value = $bindable() }: Props = $props();
+    let { label, icon, min = 0, max = 100, step = 1, value = $bindable() }: Props = $props();
 </script>
 
 <label class="text-muted mb-2 block" for="contrast-setting">{label}</label>
