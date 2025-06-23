@@ -9,10 +9,25 @@ import { load as loadStore } from "@tauri-apps/plugin-store";
 import { imgShowTimes, maxImgShowTime, sessionStore } from "$lib/globals.svelte";
 
 async function loadPersistentStore() {
-    const persistentStore = await loadStore("store.json", { autoSave: false });
-    const imgFolder = await persistentStore.get("imgFolder");
-    const imgShowTimeSelected = await persistentStore.get("imgShowTimeSelected");
-    const imgShowTimeCustom = await persistentStore.get("imgShowTimeCustom");
+    let persistentStore;
+    try {
+        persistentStore = await loadStore("store.json", { autoSave: false });
+    } catch (e) {
+        console.error("Failed to load persistent store:", e);
+        return;
+    }
+    const imgFolder = await persistentStore.get("imgFolder").catch((e) => {
+        console.error("Failed to get imgFolder from persistent store:", e);
+        return null;
+    });
+    const imgShowTimeSelected = await persistentStore.get("imgShowTimeSelected").catch((e) => {
+        console.error("Failed to get imgShowTimeSelected from persistent store:", e);
+        return null;
+    });
+    const imgShowTimeCustom = await persistentStore.get("imgShowTimeCustom").catch((e) => {
+        console.error("Failed to get imgShowTimeCustom from persistent store:", e);
+        return null;
+    });
 
     const imgShowTimeStrs = imgShowTimes.map((time) => time.toString());
 
