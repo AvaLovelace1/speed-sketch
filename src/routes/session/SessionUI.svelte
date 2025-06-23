@@ -283,6 +283,7 @@ The user interface for a drawing session.
     });
 
     onDestroy(() => {
+        clearTimeout(hideToolbarTimeout);
         settings.dialog?.setOnOpen(() => {});
         settings.dialog?.setOnClose(() => {});
     });
