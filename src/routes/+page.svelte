@@ -6,6 +6,7 @@
     import { stat } from "@tauri-apps/plugin-fs";
     import { sessionStore } from "$lib/globals.svelte";
     import MainMenuUI from "./MainMenuUI.svelte";
+    import startAudioFile from "$lib/assets/audio/start.wav";
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
@@ -65,17 +66,25 @@
     async function startSession() {
         if (!isValid) return;
 
+        await new Audio(startAudioFile).play().catch((e) => {
+            console.error("Failed to play start audio:", e);
+        });
+
         sessionStore.imgShowTime =
             sessionStore.imgShowTimeSelected === "custom"
                 ? sessionStore.imgShowTimeCustom
                 : parseInt(sessionStore.imgShowTimeSelected, 10);
 
         // Save current session settings to persistent store
-        const persistentStore = await load("store.json", { autoSave: false });
-        await persistentStore.set("imgFolder", sessionStore.imgFolder);
-        await persistentStore.set("imgShowTimeSelected", sessionStore.imgShowTimeSelected);
-        await persistentStore.set("imgShowTimeCustom", sessionStore.imgShowTimeCustom);
-        await persistentStore.save();
+        try {
+            const persistentStore = await load("store.json", { autoSave: false });
+            await persistentStore.set("imgFolder", sessionStore.imgFolder);
+            await persistentStore.set("imgShowTimeSelected", sessionStore.imgShowTimeSelected);
+            await persistentStore.set("imgShowTimeCustom", sessionStore.imgShowTimeCustom);
+            await persistentStore.save();
+        } catch (e) {
+            console.error("Failed to save session settings:", e);
+        }
 
         goto("/session");
     }

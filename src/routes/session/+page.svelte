@@ -1,11 +1,16 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { start, stop } from "tauri-plugin-keepawake-api";
     import { goto } from "$app/navigation";
     import { sessionStore } from "$lib/globals.svelte";
     import SessionUI from "./SessionUI.svelte";
+    import countdownBeepFile from "$lib/assets/audio/countdown-beep.wav";
+    import countdownDoneFile from "$lib/assets/audio/countdown-done.wav";
+    import endAudioFile from "$lib/assets/audio/end.wav";
+
+    const countdownBeepTime = 3; // seconds before the end of the image to start beeping
 
     // Index of the current image being displayed
     let curImgIdx = $state(0);
@@ -51,28 +56,22 @@
     }
 
     async function exit() {
-        try {
-            await stop(); // Stop keep awake
-        } catch (e) {
-            console.error("Failed to stop keep awake:", e);
-        }
-        try {
-            await setAlwaysOnTop(false);
-        } catch (e) {
-            console.error("Failed to set always on top:", e);
-        }
+        await new Audio(endAudioFile).play().catch((e) => {
+            console.error("Failed to play end audio:", e);
+        });
         sessionStore.nCompletedImgs = nCompletedImgs;
         sessionStore.timeSpent = timeSpent;
         goto("/session/end");
     }
 
     async function toggleAlwaysOnTop() {
-        try {
-            await setAlwaysOnTop(!isAlwaysOnTop);
-            isAlwaysOnTop = !isAlwaysOnTop;
-        } catch (e) {
-            console.error("Failed to toggle always on top:", e);
-        }
+        await setAlwaysOnTop(!isAlwaysOnTop)
+            .then(() => {
+                isAlwaysOnTop = !isAlwaysOnTop;
+            })
+            .catch((e) => {
+                console.error("Failed to toggle always on top:", e);
+            });
     }
 
     async function setAlwaysOnTop(value: boolean) {
@@ -85,21 +84,27 @@
             console.error("No image filepath available to reveal in folder.");
             return;
         }
-        try {
-            await revealItemInDir(curImgPath);
-        } catch (e) {
-            console.error(`Failed to reveal image ${curImgPath} in folder:`, e);
-        }
+        await revealItemInDir(curImgPath).catch((e) => {
+            console.error("Failed to reveal item in directory:", e);
+        });
     }
 
     function restartTimer() {
         clearTimer();
-        timer = setInterval(() => {
+        timer = setInterval(async () => {
             if (timeRemaining > 0) {
+                if (timeRemaining <= countdownBeepTime) {
+                    await new Audio(countdownBeepFile)
+                        .play()
+                        .catch((e) => console.error("Failed to play countdown beep:", e));
+                }
                 timeRemaining--;
                 timeSpent++;
             } else {
                 // The image is completed
+                await new Audio(countdownDoneFile)
+                    .play()
+                    .catch((e) => console.error("Failed to play countdown done:", e));
                 nCompletedImgs += 1;
                 goNextImg();
             }
@@ -111,12 +116,20 @@
     }
 
     onMount(async () => {
-        try {
-            await start({ display: true, idle: true, sleep: true });
-        } catch (e) {
+        await start({ display: true, idle: true, sleep: true }).catch((e) => {
             console.error("Failed to start keep awake:", e);
-        }
+        });
         resume();
+    });
+
+    onDestroy(async () => {
+        clearTimer();
+        await stop().catch((e) => {
+            console.error("Failed to stop keep awake:", e);
+        });
+        await setAlwaysOnTop(false).catch((e) => {
+            console.error("Failed to reset always on top:", e);
+        });
     });
 </script>
 
