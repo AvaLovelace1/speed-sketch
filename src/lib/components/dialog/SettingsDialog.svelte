@@ -7,9 +7,10 @@
     interface Props {
         onOpen?: () => void;
         onClose?: () => void;
+        save?: () => Promise<void>;
     }
 
-    let { onOpen = () => {}, onClose = () => {} }: Props = $props();
+    let { onOpen = () => {}, onClose = () => {}, save = async () => {} }: Props = $props();
 
     let volumeIcon = $derived.by(() => {
         if (settings.volume === 0) return "lucide--volume-x";
@@ -17,6 +18,11 @@
         return "lucide--volume-2";
     });
     let dialog: Dialog;
+
+    async function onCloseWithSave() {
+        await save();
+        onClose();
+    }
 
     export function open() {
         dialog.open();
@@ -27,11 +33,14 @@
     }
 
     export function setOnClose(fn: () => void) {
-        dialog.setOnClose(fn);
+        dialog.setOnClose(async () => {
+            await save();
+            fn();
+        });
     }
 </script>
 
-<Dialog bind:this={dialog} title="Settings" {onOpen} {onClose}>
+<Dialog bind:this={dialog} title="Settings" {onOpen} onClose={onCloseWithSave}>
     <!-- Theme picker -->
     <div class="mb-4">
         <Select
@@ -65,7 +74,7 @@
         />
     </div>
     <!-- Blur -->
-    <div class="mb-4">
+    <div class="mb-6">
         <Slider
             label="Blur strength"
             icon="lucide--droplet"
