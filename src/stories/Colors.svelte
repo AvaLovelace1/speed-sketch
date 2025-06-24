@@ -89,7 +89,7 @@
     {#each colors as { name, class_ } (name)}
         <div class="flex size-32 items-center justify-center rounded {class_}">
             <div class="text-center">
-                <p class="text-xl font-bold">{name}</p>
+                <p class="text-xl font-semibold">{name}</p>
                 <p>{name}</p>
             </div>
         </div>

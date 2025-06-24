@@ -90,7 +90,7 @@
                 </div>
                 <Button.Root
                     type="submit"
-                    class="btn btn-success btn-block rounded-b-box rounded-t-none p-6 text-lg font-bold uppercase"
+                    class="btn btn-success btn-block rounded-b-box rounded-t-none p-6 text-lg font-semibold uppercase"
                     onclick={startSession}
                     disabled={!isValid}
                 >
