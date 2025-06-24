@@ -46,7 +46,7 @@
             {#snippet child({ props, open })}
                 {#if open}
                     <Popup {...props}>
-                        <Card>
+                        <Card cardBodyClass="p-8">
                             <Dialog.Title class="card-title mb-6 text-2xl">{title}</Dialog.Title>
                             <Dialog.Description>{@render children()}</Dialog.Description>
                             <Dialog.Close

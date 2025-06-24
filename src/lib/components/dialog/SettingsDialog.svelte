@@ -3,6 +3,7 @@
     import Select from "$lib/components/Select.svelte";
     import Slider from "$lib/components/Slider.svelte";
     import { contrastOptions, blurOptions, themes, settings } from "$lib/globals.svelte";
+    import startAudioFile from "$lib/assets/audio/start.wav";
 
     interface Props {
         onOpen?: () => void;
@@ -60,6 +61,14 @@
             max={1}
             step={0.1}
             bind:value={settings.volume}
+            onmouseup={() => {
+                console.log("Volume changed to:", settings.volume);
+                const startAudio = new Audio(startAudioFile);
+                startAudio.volume = settings.volume;
+                startAudio.play().catch((e) => {
+                    console.error("Failed to play start audio:", e);
+                });
+            }}
         />
     </div>
     <!-- Contrast -->
