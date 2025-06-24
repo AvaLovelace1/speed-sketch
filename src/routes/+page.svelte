@@ -4,9 +4,10 @@
     import { invoke, convertFileSrc } from "@tauri-apps/api/core";
     import { load } from "@tauri-apps/plugin-store";
     import { stat } from "@tauri-apps/plugin-fs";
-    import { settings, sessionStore } from "$lib/globals.svelte";
+    import { sessionStore } from "$lib/globals.svelte";
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
+    import { appSettings } from "$lib/app-settings.svelte";
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
@@ -67,7 +68,7 @@
         if (!isValid) return;
 
         const startAudio = new Audio(startAudioFile);
-        startAudio.volume = settings.volume;
+        startAudio.volume = appSettings.volume;
         await startAudio.play().catch((e) => {
             console.error("Failed to play start audio:", e);
         });

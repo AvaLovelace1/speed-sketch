@@ -1,12 +1,14 @@
 // Tauri doesn't have a Node.js server to do proper SSR
 // so we will use adapter-static to prerender the app (SSG)
 // See: https://v2.tauri.app/start/frontend/sveltekit/ for more info
+import { appSettings } from "$lib/app-settings.svelte";
+
 export const prerender = true;
 export const ssr = false;
 
 import type { LayoutLoad } from "./$types";
 import { load as loadStore } from "@tauri-apps/plugin-store";
-import { imgShowTimes, maxImgShowTime, settings, sessionStore } from "$lib/globals.svelte";
+import { imgShowTimes, maxImgShowTime, sessionStore } from "$lib/globals.svelte";
 
 async function loadPersistentStore() {
     let persistentStore;
@@ -67,10 +69,10 @@ async function loadPersistentStore() {
     }
 
     if (theme === "system" || theme === "light" || theme === "dark") {
-        settings.theme = theme;
+        appSettings.theme = theme;
     }
     if (typeof volume === "number" && volume >= 0 && volume <= 1) {
-        settings.volume = volume;
+        appSettings.volume = volume;
     }
     if (
         typeof contrastStrength === "number" &&
@@ -78,7 +80,7 @@ async function loadPersistentStore() {
         contrastStrength >= 0 &&
         contrastStrength <= 9
     ) {
-        settings.contrastStrength = contrastStrength;
+        appSettings.contrastStrength = contrastStrength;
     }
     if (
         typeof blurStrength === "number" &&
@@ -86,7 +88,7 @@ async function loadPersistentStore() {
         blurStrength >= 0 &&
         blurStrength <= 3
     ) {
-        settings.blurStrength = blurStrength;
+        appSettings.blurStrength = blurStrength;
     }
 }
 

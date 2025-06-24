@@ -5,7 +5,7 @@ The user interface for a drawing session.
 <script lang="ts">
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
-    import { contrastOptions, blurOptions, settings } from "$lib/globals.svelte";
+    import { contrastOptions, blurOptions, appSettings } from "$lib/app-settings.svelte.js";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
@@ -265,7 +265,7 @@ The user interface for a drawing session.
         key: "settings",
         label: "Settings",
         icon: "lucide--settings",
-        action: () => settings.dialog?.open(),
+        action: () => appSettings.dialog?.open(),
         tooltip: "Settings",
     };
     const toolsets = $derived([
@@ -278,14 +278,14 @@ The user interface for a drawing session.
 
     onMount(() => {
         resetToolbarTimeout();
-        settings.dialog?.setOnOpen(freeze);
-        settings.dialog?.setOnClose(unfreeze);
+        appSettings.dialog?.setOnOpen(freeze);
+        appSettings.dialog?.setOnClose(unfreeze);
     });
 
     onDestroy(() => {
         clearTimeout(hideToolbarTimeout);
-        settings.dialog?.setOnOpen(() => {});
-        settings.dialog?.setOnClose(() => {});
+        appSettings.dialog?.setOnOpen(() => {});
+        appSettings.dialog?.setOnClose(() => {});
     });
 </script>
 
@@ -304,8 +304,8 @@ The user interface for a drawing session.
                     isFlippedVertical ? "rotate-x-180" : "",
                     isFlippedHorizontal ? "rotate-y-180" : "",
                     isGreyscale ? "grayscale" : "",
-                    isHighContrast ? contrastOptions[settings.contrastStrength] : "",
-                    isBlurred ? blurOptions[settings.blurStrength] : "",
+                    isHighContrast ? contrastOptions[appSettings.contrastStrength] : "",
+                    isBlurred ? blurOptions[appSettings.blurStrength] : "",
                 ]}
                 bind:clientWidth={imgWidth}
                 bind:clientHeight={imgHeight}

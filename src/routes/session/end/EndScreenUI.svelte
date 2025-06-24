@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Button } from "bits-ui";
     import prettyMilliseconds from "pretty-ms";
-    import { settings } from "$lib/globals.svelte";
     import Card from "$lib/components/Card.svelte";
+    import { appSettings } from "$lib/app-settings.svelte";
 
     interface Props {
         nCompletedImgs: number;
@@ -47,7 +47,7 @@
     </Card>
     <Button.Root
         class="btn btn-circle absolute top-4 right-4 size-12 rounded-full text-xl"
-        onclick={() => settings.dialog?.open()}
+        onclick={() => appSettings.dialog?.open()}
     >
         <span class="iconify lucide--settings"></span>
         <span class="sr-only">Settings</span>

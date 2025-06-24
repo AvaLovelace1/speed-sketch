@@ -2,7 +2,8 @@
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
     import { Separator, Button } from "bits-ui";
-    import { appName, imgShowTimes, tagline, settings } from "$lib/globals.svelte";
+    import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
+    import { appSettings } from "$lib/app-settings.svelte";
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
     import prettyMilliseconds from "pretty-ms";
@@ -101,7 +102,7 @@
     </div>
     <Button.Root
         class="btn btn-circle absolute top-4 right-4 size-12 rounded-full text-xl"
-        onclick={() => settings.dialog?.open()}
+        onclick={() => appSettings.dialog?.open()}
     >
         <span class="iconify lucide--settings"></span>
         <span class="sr-only">Settings</span>

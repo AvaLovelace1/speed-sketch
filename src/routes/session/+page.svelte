@@ -4,7 +4,8 @@
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { start, stop } from "tauri-plugin-keepawake-api";
     import { goto } from "$app/navigation";
-    import { settings, sessionStore } from "$lib/globals.svelte";
+    import { sessionStore } from "$lib/globals.svelte";
+    import { appSettings } from "$lib/app-settings.svelte";
     import SessionUI from "./SessionUI.svelte";
     import countdownBeepFile from "$lib/assets/audio/countdown-beep.wav";
     import countdownDoneFile from "$lib/assets/audio/countdown-done.wav";
@@ -57,7 +58,7 @@
 
     async function exit() {
         const endAudio = new Audio(endAudioFile);
-        endAudio.volume = settings.volume;
+        endAudio.volume = appSettings.volume;
         await endAudio.play().catch((e) => {
             console.error("Failed to play end audio:", e);
         });
@@ -97,7 +98,7 @@
             if (timeRemaining > 0) {
                 if (timeRemaining <= countdownBeepTime) {
                     const countdownBeep = new Audio(countdownBeepFile);
-                    countdownBeep.volume = settings.volume;
+                    countdownBeep.volume = appSettings.volume;
                     await countdownBeep
                         .play()
                         .catch((e) => console.error("Failed to play countdown beep:", e));
@@ -107,7 +108,7 @@
             } else {
                 // The image is completed
                 const countdownDone = new Audio(countdownDoneFile);
-                countdownDone.volume = settings.volume;
+                countdownDone.volume = appSettings.volume;
                 await countdownDone
                     .play()
                     .catch((e) => console.error("Failed to play countdown done:", e));

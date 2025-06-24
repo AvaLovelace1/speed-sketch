@@ -2,7 +2,7 @@
     import Dialog from "$lib/components/dialog/Dialog.svelte";
     import Select from "$lib/components/Select.svelte";
     import Slider from "$lib/components/Slider.svelte";
-    import { contrastOptions, blurOptions, themes, settings } from "$lib/globals.svelte";
+    import { contrastOptions, blurOptions, themes, appSettings } from "$lib/app-settings.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
 
     interface Props {
@@ -14,8 +14,8 @@
     let { onOpen = () => {}, onClose = () => {}, save = async () => {} }: Props = $props();
 
     let volumeIcon = $derived.by(() => {
-        if (settings.volume === 0) return "lucide--volume-x";
-        if (settings.volume < 0.5) return "lucide--volume-1";
+        if (appSettings.volume === 0) return "lucide--volume-x";
+        if (appSettings.volume < 0.5) return "lucide--volume-1";
         return "lucide--volume-2";
     });
     let dialog: Dialog;
@@ -46,7 +46,7 @@
     <div class="mb-4">
         <Select
             label="Theme"
-            bind:value={settings.theme}
+            bind:value={appSettings.theme}
             items={new Map(
                 themes.map((t) => [t.name, { value: t.name, label: t.label, icon: t.icon }]),
             )}
@@ -60,11 +60,11 @@
             min={0}
             max={1}
             step={0.1}
-            bind:value={settings.volume}
+            bind:value={appSettings.volume}
             onmouseup={() => {
-                console.log("Volume changed to:", settings.volume);
+                console.log("Volume changed to:", appSettings.volume);
                 const startAudio = new Audio(startAudioFile);
-                startAudio.volume = settings.volume;
+                startAudio.volume = appSettings.volume;
                 startAudio.play().catch((e) => {
                     console.error("Failed to play start audio:", e);
                 });
@@ -79,7 +79,7 @@
             min={0}
             max={contrastOptions.length - 1}
             step={1}
-            bind:value={settings.contrastStrength}
+            bind:value={appSettings.contrastStrength}
         />
     </div>
     <!-- Blur -->
@@ -90,7 +90,7 @@
             min={0}
             max={blurOptions.length - 1}
             step={1}
-            bind:value={settings.blurStrength}
+            bind:value={appSettings.blurStrength}
         />
     </div>
 </Dialog>
