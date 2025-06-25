@@ -1,6 +1,6 @@
-// Appears on the title screen
-import { imgShowTimes } from "$lib/session-settings.svelte";
+import { getImgShowTime } from "$lib/session-settings.svelte";
 
+// Appears on the title screen
 export const appName = "SpeedSketch";
 // Appears on the title screen below the app name
 export const tagline = "timed drawing sessions";
@@ -14,7 +14,7 @@ export interface Image {
 // Global state for the application
 export const sessionStore = $state({
     imgs: [] as Image[],
-    imgShowTime: imgShowTimes[0],
+    imgShowTime: getImgShowTime(),
     nCompletedImgs: 0,
     timeSpent: 0,
 });

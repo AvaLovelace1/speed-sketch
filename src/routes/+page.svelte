@@ -7,7 +7,11 @@
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
     import { appSettings } from "$lib/app-settings.svelte";
-    import { sessionSettings, saveSessionSettings } from "$lib/session-settings.svelte";
+    import {
+        sessionSettings,
+        saveSessionSettings,
+        getImgShowTime,
+    } from "$lib/session-settings.svelte";
     import { getStore } from "$lib/persistent-store.svelte";
 
     let folderErr = $state("");
@@ -74,10 +78,7 @@
             console.error("Failed to play start audio:", e);
         });
 
-        sessionStore.imgShowTime =
-            sessionSettings.imgShowTimeSelected === "custom"
-                ? sessionSettings.imgShowTimeCustom
-                : parseInt(sessionSettings.imgShowTimeSelected, 10);
+        sessionStore.imgShowTime = getImgShowTime();
 
         // Save current session settings to persistent store
         await getStore()
@@ -103,7 +104,7 @@
 </svelte:head>
 
 <MainMenuUI
-    bind:imgShowTimeSelected={sessionSettings.imgShowTimeSelected}
+    bind:imgShowTimeOption={sessionSettings.imgShowTimeOption}
     bind:imgShowTimeCustom={sessionSettings.imgShowTimeCustom}
     bind:imgFolder={sessionSettings.imgFolder}
     imgUrls={sessionStore.imgs.map((img) => img.url)}

@@ -5,17 +5,16 @@
     import { appName, tagline } from "$lib/globals.svelte";
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
-    import prettyMilliseconds from "pretty-ms";
     import Background from "$lib/components/Background.svelte";
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
-    import { imgShowTimes } from "$lib/session-settings.svelte";
+    import { imgShowTimeOptions } from "$lib/session-settings.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
 
     interface Props {
-        // The selected image show time as a string, or "custom".
-        imgShowTimeSelected: string;
+        // The selected image show time as a string, or "Custom".
+        imgShowTimeOption: string;
         // The value of the custom image show time in seconds.
         imgShowTimeCustom: number;
         imgFolder?: string;
@@ -28,7 +27,7 @@
     }
 
     let {
-        imgShowTimeSelected = $bindable(),
+        imgShowTimeOption = $bindable(),
         imgShowTimeCustom = $bindable(),
         imgFolder = $bindable(""),
         imgUrls = [],
@@ -43,12 +42,10 @@
         },
     }: Props = $props();
 
-    const imgShowTimeOptions = imgShowTimes
-        .map((seconds) => ({
-            label: prettyMilliseconds(seconds * 1000),
-            value: seconds.toString(),
-        }))
-        .concat({ label: "Custom", value: "custom" });
+    const imgShowTimeOptionsBind = imgShowTimeOptions.map((option) => ({
+        label: option,
+        value: option,
+    }));
 </script>
 
 <main class="flex h-dvh items-center-safe justify-center-safe">
@@ -80,10 +77,10 @@
                     <RadioButtons
                         class="mb-4"
                         groupLabel="Time per image"
-                        options={imgShowTimeOptions}
-                        bind:group={imgShowTimeSelected}
+                        options={imgShowTimeOptionsBind}
+                        bind:group={imgShowTimeOption}
                     />
-                    {#if imgShowTimeSelected === "custom"}
+                    {#if imgShowTimeOption === "Custom"}
                         <div
                             class="flex justify-center"
                             transition:slide={{ duration: 250, easing: cubicOut }}
