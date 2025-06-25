@@ -10,7 +10,6 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     interface Tool extends BitsPrimitiveElementAttributes {
         // Unique identifier for the tool
         key: string | number;
-        label: string;
         icon?: string;
         action: () => void;
         hotkey?: string;
@@ -52,13 +51,12 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 <svelte:window onkeydown={onKeyDown} />
 
 <Toolbar.Root {...props} class={["join rounded-field shadow-md", props.class]}>
-    {#each tools as { key, label, icon, action, hotkey, tooltip, ...others } (key)}
+    {#each tools as { key, icon, action, hotkey, tooltip, ...others } (key)}
         <Tooltip
             side="top"
             onclick={action}
             {...others}
             class={["btn join-item btn-soft px-3 py-5 text-lg", others.class]}
-            aria-label={label}
         >
             {#if icon}<span class="iconify {icon}"></span>{/if}
             {#snippet tooltipContent()}

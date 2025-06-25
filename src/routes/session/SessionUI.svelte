@@ -129,7 +129,6 @@ The user interface for a drawing session.
 
     const prevBtn = {
         key: "prev",
-        label: "Prev",
         icon: "lucide--arrow-left",
         action: goPrevImg,
         hotkey: "ArrowLeft",
@@ -137,7 +136,6 @@ The user interface for a drawing session.
     };
     const nextBtn = {
         key: "next",
-        label: "Next",
         icon: "lucide--arrow-right",
         action: goNextImg,
         hotkey: "ArrowRight",
@@ -145,7 +143,6 @@ The user interface for a drawing session.
     };
     const pauseBtn = $derived({
         key: "pause",
-        label: isPaused ? "Resume" : "Pause",
         icon: isPaused ? "lucide--play" : "lucide--pause",
         action: togglePause,
         hotkey: " ",
@@ -153,7 +150,6 @@ The user interface for a drawing session.
     });
     const exitBtn = {
         key: "exit",
-        label: "Exit",
         icon: "lucide--log-out",
         action: () => confirmExitDialog.open(),
         hotkey: "Escape",
@@ -162,7 +158,6 @@ The user interface for a drawing session.
     };
     const resetZoomBtn = {
         key: "reset-zoom",
-        label: "Reset zoom",
         icon: "lucide--scan",
         action: () => {
             panzoom.moveTo(0, 0);
@@ -174,7 +169,6 @@ The user interface for a drawing session.
     };
     const zoomOutBtn = {
         key: "zoom-out",
-        label: "Zoom out",
         icon: "lucide--zoom-out",
         action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(1)),
         hotkey: "-",
@@ -183,7 +177,6 @@ The user interface for a drawing session.
     };
     const zoomInBtn = {
         key: "zoom-in",
-        label: "Zoom in",
         icon: "lucide--zoom-in",
         action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(-1)),
         hotkey: "=",
@@ -192,7 +185,6 @@ The user interface for a drawing session.
     };
     const flipHorizontalBtn = $derived({
         key: "flip-horizontal",
-        label: "Flip horizontal",
         icon: "lucide--flip-horizontal-2",
         action: () => (isFlippedHorizontal = !isFlippedHorizontal),
         hotkey: "f",
@@ -201,7 +193,6 @@ The user interface for a drawing session.
     });
     const flipVerticalBtn = $derived({
         key: "flip-vertical",
-        label: "Flip vertical",
         icon: "lucide--flip-vertical-2",
         action: () => (isFlippedVertical = !isFlippedVertical),
         hotkey: "F",
@@ -210,7 +201,6 @@ The user interface for a drawing session.
     });
     const greyscaleBtn = $derived({
         key: "greyscale",
-        label: "Greyscale",
         icon: "lucide--blend",
         action: () => (isGreyscale = !isGreyscale),
         hotkey: "g",
@@ -219,7 +209,6 @@ The user interface for a drawing session.
     });
     const blurBtn = $derived({
         key: "blur",
-        label: "Blur",
         icon: "lucide--droplet",
         action: () => (isBlurred = !isBlurred),
         pressed: isBlurred,
@@ -229,7 +218,6 @@ The user interface for a drawing session.
     });
     const highContrastBtn = $derived({
         key: "high-contrast",
-        label: "High contrast",
         icon: "lucide--contrast",
         action: () => (isHighContrast = !isHighContrast),
         hotkey: "c",
@@ -238,7 +226,6 @@ The user interface for a drawing session.
     });
     const hideTimerBtn = $derived({
         key: "hide-timer",
-        label: timerShown ? "Hide timer" : "Show timer",
         icon: "lucide--timer-off",
         action: () => (timerShown = !timerShown),
         hotkey: "t",
@@ -247,7 +234,6 @@ The user interface for a drawing session.
     });
     const alwaysOnTopBtn = $derived({
         key: "always-on-top",
-        label: isAlwaysOnTop ? "Unpin" : "Pin",
         icon: "lucide--pin",
         action: toggleAlwaysOnTop,
         class: ["btn-info", isAlwaysOnTop ? "btn-active" : ""],
@@ -255,7 +241,6 @@ The user interface for a drawing session.
     });
     const showImageFolderBtn = {
         key: "show-image-folder",
-        label: "Show image folder",
         icon: "lucide--folder-open",
         action: showImageFolder,
         class: "btn-info",
@@ -263,7 +248,6 @@ The user interface for a drawing session.
     };
     const settingsBtn = {
         key: "settings",
-        label: "Settings",
         icon: "lucide--settings",
         action: () => appSettings.dialog?.open(),
         tooltip: "Settings",
