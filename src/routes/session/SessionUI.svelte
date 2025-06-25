@@ -19,9 +19,9 @@ The user interface for a drawing session.
     import { onDestroy, onMount } from "svelte";
     import Background from "$lib/components/Background.svelte";
 
-    const toolbarTransition = "duration-300 ease-out";
+    const TOOLBAR_TRANSITION = "duration-300 ease-out";
     // Duration after which toolbar will be hidden automatically
-    const hideToolbarTimeoutDuration = 3000;
+    const HIDE_TOOLBAR_TIMEOUT_DURATION = 3000;
 
     interface Props {
         curImgUrl: string;
@@ -94,7 +94,7 @@ The user interface for a drawing session.
         hideToolbarTimeout = setTimeout(() => {
             if (toolbarShouldAutoHide) hideToolbar();
             else resetToolbarTimeout();
-        }, hideToolbarTimeoutDuration);
+        }, HIDE_TOOLBAR_TIMEOUT_DURATION);
     }
 
     // Prevent any further interaction with the UI
@@ -303,7 +303,7 @@ The user interface for a drawing session.
             />
         </div>
     </div>
-    <div class="toast toast-top toast-start {toolbarTransition} {toolbarShown ? '' : 'opacity-0'}">
+    <div class="toast toast-top toast-start {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
         <Tooltip
             side="right"
             onmouseenter={() => {
@@ -339,7 +339,7 @@ The user interface for a drawing session.
         {/if}
     </div>
     <div
-        class="fixed bottom-0 mb-4 flex w-full justify-center-safe space-x-4 overflow-auto transition-all {toolbarTransition}
+        class="fixed bottom-0 mb-4 flex w-full justify-center-safe space-x-4 overflow-auto transition-all {TOOLBAR_TRANSITION}
                {toolbarShown ? '' : 'opacity-0'}"
         onfocusin={showToolbar}
     >
