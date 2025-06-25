@@ -3,7 +3,6 @@
     import { cubicOut } from "svelte/easing";
     import { Separator, Button } from "bits-ui";
     import { appName, tagline } from "$lib/globals.svelte";
-    import { appSettings } from "$lib/app-settings.svelte";
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
     import prettyMilliseconds from "pretty-ms";
@@ -12,6 +11,7 @@
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
     import { imgShowTimes } from "$lib/session-settings.svelte";
+    import SettingsButton from "$lib/components/SettingsButton.svelte";
 
     interface Props {
         // The selected image show time as a string, or "custom".
@@ -103,11 +103,5 @@
             </form>
         </Card>
     </div>
-    <Button.Root
-        class="btn btn-circle fixed top-4 right-4 size-12 rounded-full text-xl"
-        onclick={() => appSettings.dialog?.open()}
-    >
-        <span class="iconify lucide--settings"></span>
-        <span class="sr-only">Settings</span>
-    </Button.Root>
+    <SettingsButton />
 </main>

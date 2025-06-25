@@ -2,8 +2,8 @@
     import { Button } from "bits-ui";
     import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
-    import { appSettings } from "$lib/app-settings.svelte";
     import Background from "$lib/components/Background.svelte";
+    import SettingsButton from "$lib/components/SettingsButton.svelte";
 
     interface Props {
         nCompletedImgs: number;
@@ -47,11 +47,5 @@
             <Button.Root class="btn" href="/">Return to Main Menu</Button.Root>
         </div>
     </Card>
-    <Button.Root
-        class="btn btn-circle fixed top-4 right-4 size-12 rounded-full text-xl"
-        onclick={() => appSettings.dialog?.open()}
-    >
-        <span class="iconify lucide--settings"></span>
-        <span class="sr-only">Settings</span>
-    </Button.Root>
+    <SettingsButton />
 </main>
