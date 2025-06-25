@@ -5,7 +5,12 @@ The user interface for a drawing session.
 <script lang="ts">
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
-    import { contrastOptions, blurOptions, appSettings } from "$lib/app-settings.svelte.js";
+    import {
+        contrastOptions,
+        blurOptions,
+        appSettings,
+        appSettingsDialog,
+    } from "$lib/app-settings.svelte.js";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
@@ -250,7 +255,7 @@ The user interface for a drawing session.
     const settingsBtn = {
         key: "settings",
         icon: "lucide--settings",
-        action: () => appSettings.dialog?.open(),
+        action: () => appSettingsDialog.component?.open(),
         tooltip: "Settings",
     };
     const toolsets = $derived([
@@ -263,14 +268,14 @@ The user interface for a drawing session.
 
     onMount(() => {
         resetToolbarTimeout();
-        appSettings.dialog?.setOnOpen(freeze);
-        appSettings.dialog?.setOnClose(unfreeze);
+        appSettingsDialog.component?.setOnOpen(freeze);
+        appSettingsDialog.component?.setOnClose(unfreeze);
     });
 
     onDestroy(() => {
         clearTimeout(hideToolbarTimeout);
-        appSettings.dialog?.setOnOpen(() => {});
-        appSettings.dialog?.setOnClose(() => {});
+        appSettingsDialog.component?.setOnOpen(() => {});
+        appSettingsDialog.component?.setOnClose(() => {});
     });
 </script>
 

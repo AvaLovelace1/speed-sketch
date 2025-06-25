@@ -4,7 +4,7 @@
     import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
     import "../app.css";
     import { getStore } from "$lib/persistent-store.svelte";
-    import { appSettings, saveAppSettings } from "$lib/app-settings.svelte";
+    import { appSettings, appSettingsDialog, saveAppSettings } from "$lib/app-settings.svelte";
 
     const { children }: LayoutProps = $props();
 
@@ -17,7 +17,7 @@
 <Tooltip.Provider>
     {@render children()}
     <SettingsDialog
-        bind:this={appSettings.dialog}
+        bind:this={appSettingsDialog.component}
         onClose={async () => {
             await getStore()
                 .then(async (store) => {

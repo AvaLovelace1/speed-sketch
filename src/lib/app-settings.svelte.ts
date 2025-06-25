@@ -47,7 +47,10 @@ export const appSettings: AppSettings = $state({
     volume: 1,
     contrastStrength: 3,
     blurStrength: 1,
-    dialog: undefined as SettingsDialog | undefined,
+});
+
+export const appSettingsDialog = $state({
+    component: null as SettingsDialog | null,
 });
 
 // Load session settings from a store with validation
