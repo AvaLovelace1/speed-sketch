@@ -3,6 +3,7 @@
     import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
     import { appSettings } from "$lib/app-settings.svelte";
+    import Background from "$lib/components/Background.svelte";
 
     interface Props {
         nCompletedImgs: number;
@@ -27,7 +28,8 @@
     ]);
 </script>
 
-<main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
+<main class="flex h-dvh items-center-safe justify-center-safe">
+    <Background />
     <Card cardBodyClass="p-8">
         <h1 class="card-title mb-6 text-2xl">Session complete!</h1>
         <div class="stats mb-4">
@@ -46,7 +48,7 @@
         </div>
     </Card>
     <Button.Root
-        class="btn btn-circle absolute top-4 right-4 size-12 rounded-full text-xl"
+        class="btn btn-circle fixed top-4 right-4 size-12 rounded-full text-xl"
         onclick={() => appSettings.dialog?.open()}
     >
         <span class="iconify lucide--settings"></span>

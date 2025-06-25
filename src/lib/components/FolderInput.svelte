@@ -46,14 +46,10 @@
             />
         </div>
         {#if errorMsg}
-            <div role="alert" class="validator-hint" aria-label="Error message">
-                {errorMsg}
-            </div>
+            <div role="alert" class="validator-hint">{errorMsg}</div>
         {/if}
         {#if infoMsg}
-            <div role="status" class="validator-hint visible opacity-60" aria-label="Info message">
-                {infoMsg}
-            </div>
+            <div role="status" class="validator-hint visible opacity-60">{infoMsg}</div>
         {/if}
     </div>
     <Button.Root

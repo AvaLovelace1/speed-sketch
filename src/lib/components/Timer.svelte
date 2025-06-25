@@ -36,9 +36,9 @@ A timer that displays a given time.
     <Progress.Root
         class="radial-progress"
         style="--value:{progressValue}; --size:1em; --thickness:2px;"
-        aria-label={label}
         value={progressValue}
         max={100}
-    ></Progress.Root>
+    />
+    <span class="sr-only">{label}</span>
     <time datetime={durationString}>{timerString}</time>
 </StatusAlert>

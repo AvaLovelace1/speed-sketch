@@ -7,6 +7,7 @@
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
     import prettyMilliseconds from "pretty-ms";
+    import Background from "$lib/components/Background.svelte";
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
@@ -50,7 +51,8 @@
         .concat({ label: "Custom", value: "custom" });
 </script>
 
-<main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
+<main class="flex h-dvh items-center-safe justify-center-safe">
+    <Background />
     <div class="w-lg">
         <div class="mb-8 text-center text-shadow-sm">
             <h1 class="text-6xl font-thin">{appName}</h1>
@@ -102,7 +104,7 @@
         </Card>
     </div>
     <Button.Root
-        class="btn btn-circle absolute top-4 right-4 size-12 rounded-full text-xl"
+        class="btn btn-circle fixed top-4 right-4 size-12 rounded-full text-xl"
         onclick={() => appSettings.dialog?.open()}
     >
         <span class="iconify lucide--settings"></span>

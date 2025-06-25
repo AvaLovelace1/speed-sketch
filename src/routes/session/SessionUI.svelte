@@ -12,6 +12,7 @@ The user interface for a drawing session.
     import Tooltip from "$lib/components/Tooltip.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import { onDestroy, onMount } from "svelte";
+    import Background from "$lib/components/Background.svelte";
 
     const toolbarTransition = "duration-300 ease-out";
     // Duration after which toolbar will be hidden automatically
@@ -275,7 +276,8 @@ The user interface for a drawing session.
 
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
-<main class="bg-base-100 flex h-dvh items-center justify-center bg-(image:--fx-noise)">
+<main class="flex h-dvh items-center-safe justify-center-safe">
+    <Background />
     <!-- Wrap image in container so panzoom mouse events only fire on the image -->
     <div class="size-full">
         <!-- Wrap in another container so flipping works correctly -->
@@ -332,7 +334,7 @@ The user interface for a drawing session.
         {/if}
     </div>
     <div
-        class="fixed bottom-0 mb-4 flex w-full justify-center space-x-4 transition-all {toolbarTransition}
+        class="fixed bottom-0 mb-4 flex w-full justify-center-safe space-x-4 overflow-auto transition-all {toolbarTransition}
                {toolbarShown ? '' : 'opacity-0'}"
         onfocusin={showToolbar}
     >

@@ -15,7 +15,7 @@ Centers its children in the viewport and applies a scale transition.
     const { children, ...props }: Props = $props();
 </script>
 
-<div class="fixed inset-0 z-50 flex items-center justify-center" {...props}>
+<div class="fixed inset-0 z-50 flex items-center-safe justify-center-safe overflow-auto" {...props}>
     <div transition:scale={{ start: 0.95, duration: 150, easing: cubicOut }}>
         {@render children()}
     </div>
