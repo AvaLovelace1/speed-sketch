@@ -62,7 +62,6 @@
             step={0.1}
             bind:value={appSettings.volume}
             onmouseup={() => {
-                console.log("Volume changed to:", appSettings.volume);
                 const startAudio = new Audio(startAudioFile);
                 startAudio.volume = appSettings.volume;
                 startAudio.play().catch((e) => {

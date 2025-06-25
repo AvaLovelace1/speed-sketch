@@ -28,9 +28,9 @@
 </script>
 
 <main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">
-    <Card>
-        <h1 class="card-title mb-4 text-2xl">Session complete!</h1>
-        <div class="stats mb-2">
+    <Card cardBodyClass="p-8">
+        <h1 class="card-title mb-6 text-2xl">Session complete!</h1>
+        <div class="stats mb-4">
             {#each stats as { title, value, color, icon } (title)}
                 <div class="stat">
                     <div class="stat-figure {color} self-end text-3xl">

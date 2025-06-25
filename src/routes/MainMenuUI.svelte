@@ -63,7 +63,7 @@
         </div>
         <Card class="mx-auto" cardBodyClass="p-0">
             <form>
-                <div class="p-6 pb-8">
+                <div class="p-8 pb-12">
                     <FolderInput
                         class="mb-4 w-full"
                         label="Image folder"
