@@ -18,40 +18,23 @@ The user interface for a drawing session.
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import { onDestroy, onMount } from "svelte";
     import Background from "$lib/components/Background.svelte";
+    import type { DrawingSession } from "$lib/drawing-session.svelte";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";
     // Duration after which toolbar will be hidden automatically
     const HIDE_TOOLBAR_TIMEOUT_DURATION = 3000;
 
     interface Props {
-        curImgUrl: string;
-        nCompletedImgs?: number;
-        maxTime?: number;
-        timeRemaining?: number;
-        isPaused?: boolean;
+        drawingSession: DrawingSession;
         isAlwaysOnTop?: boolean;
-        goPrevImg?: () => void;
-        goNextImg?: () => void;
-        pause?: () => void;
-        resume?: () => void;
-        togglePause?: () => void;
         exit?: () => void;
         toggleAlwaysOnTop?: () => Promise<void>;
         showImageFolder?: () => Promise<void>;
     }
 
     const {
-        curImgUrl,
-        nCompletedImgs = 0,
-        maxTime = 60,
-        timeRemaining = 60,
-        isPaused = false,
+        drawingSession,
         isAlwaysOnTop = false,
-        goPrevImg = () => {},
-        goNextImg = () => {},
-        pause = () => {},
-        resume = () => {},
-        togglePause = () => {},
         exit = () => {},
         toggleAlwaysOnTop = async () => {},
         showImageFolder = async () => {},
@@ -100,13 +83,13 @@ The user interface for a drawing session.
     // Prevent any further interaction with the UI
     function freeze() {
         isFrozen = true;
-        pause();
+        drawingSession.pause();
         showToolbar();
     }
 
     function unfreeze() {
         isFrozen = false;
-        resume();
+        drawingSession.resume();
     }
 
     const panzoomAttachment: Attachment = (element) => {
@@ -136,23 +119,26 @@ The user interface for a drawing session.
     const prevBtn = {
         key: "prev",
         icon: "lucide--arrow-left",
-        action: goPrevImg,
+        action: drawingSession.goPrevImg,
         hotkey: "ArrowLeft",
         tooltip: "Previous image",
     };
     const nextBtn = {
         key: "next",
         icon: "lucide--arrow-right",
-        action: goNextImg,
+        action: drawingSession.goNextImg,
         hotkey: "ArrowRight",
         tooltip: "Next image",
     };
     const pauseBtn = $derived({
         key: "pause",
-        icon: isPaused ? "lucide--play" : "lucide--pause",
-        action: togglePause,
+        icon: drawingSession.isPaused ? "lucide--play" : "lucide--pause",
+        action: () => {
+            drawingSession.togglePause();
+            showToolbar();
+        },
         hotkey: " ",
-        tooltip: isPaused ? "Resume" : "Pause",
+        tooltip: drawingSession.isPaused ? "Resume" : "Pause",
     });
     const exitBtn = {
         key: "exit",
@@ -288,7 +274,7 @@ The user interface for a drawing session.
         <!-- Wrap in another container so flipping works correctly -->
         <div class="size-full" {@attach panzoomAttachment}>
             <img
-                src={curImgUrl}
+                src={drawingSession.getCurImg().url}
                 alt="Reference used for drawing practice"
                 class={[
                     "size-full object-contain",
@@ -315,7 +301,7 @@ The user interface for a drawing session.
             }}
         >
             <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
-                <span class="iconify lucide--circle-check"></span>{nCompletedImgs}
+                <span class="iconify lucide--circle-check"></span>{drawingSession.nCompletedImgs}
             </StatusAlert>
             {#snippet tooltipContent()}Images completed{/snippet}
         </Tooltip>
@@ -325,14 +311,14 @@ The user interface for a drawing session.
             <Tooltip side="left">
                 <Timer
                     label="Time remaining"
-                    time={timeRemaining}
-                    {maxTime}
-                    class={isPaused ? "text-muted!" : ""}
+                    time={drawingSession.timeRemaining}
+                    maxTime={drawingSession.imgShowTime}
+                    class={drawingSession.isPaused ? "text-muted!" : ""}
                 />
                 {#snippet tooltipContent()}Time remaining{/snippet}
             </Tooltip>
         {/if}
-        {#if isPaused}
+        {#if drawingSession.isPaused}
             <StatusAlert class="alert-error">
                 <span class="iconify lucide--pause"></span>Paused
             </StatusAlert>

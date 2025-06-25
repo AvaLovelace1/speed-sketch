@@ -3,10 +3,10 @@
     import { goto } from "$app/navigation";
     import { invoke, convertFileSrc } from "@tauri-apps/api/core";
     import { stat } from "@tauri-apps/plugin-fs";
-    import { sessionStore } from "$lib/globals.svelte";
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
     import { appSettings } from "$lib/app-settings.svelte";
+    import { type Image, DrawingSession, currentSession } from "$lib/drawing-session.svelte";
     import {
         sessionSettings,
         saveSessionSettings,
@@ -17,6 +17,7 @@
     let folderErr = $state("");
     let showFolderErr = $state(false);
     let isLoadingImgs = $state(false);
+    let folderImgs = $state<Image[]>([]);
     const isValid = $derived.by(() => {
         return !isLoadingImgs && folderErr === "";
     });
@@ -31,7 +32,7 @@
             // If the folder has changed while loading, ignore the result
             return;
         }
-        sessionStore.imgs = imgs;
+        folderImgs = imgs;
         folderErr = err as string;
 
         showFolderErr = true;
@@ -78,8 +79,6 @@
             console.error("Failed to play start audio:", e);
         });
 
-        sessionStore.imgShowTime = getImgShowTime();
-
         // Save current session settings to persistent store
         await getStore()
             .then(async (store) => {
@@ -89,6 +88,7 @@
                 console.error("Failed to load persistent store and save session settings:", e);
             });
 
+        currentSession.object = new DrawingSession(folderImgs, getImgShowTime());
         goto("/session");
     }
 
@@ -107,7 +107,7 @@
     bind:imgShowTimeOption={sessionSettings.imgShowTimeOption}
     bind:imgShowTimeCustom={sessionSettings.imgShowTimeCustom}
     bind:imgFolder={sessionSettings.imgFolder}
-    imgUrls={sessionStore.imgs.map((img) => img.url)}
+    imgUrls={folderImgs.map((img) => img.url)}
     folderErr={showFolderErr ? folderErr : ""}
     {isLoadingImgs}
     {isValid}
