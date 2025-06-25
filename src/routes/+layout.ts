@@ -5,12 +5,12 @@ export const prerender = true;
 export const ssr = false;
 
 import type { LayoutLoad } from "./$types";
-import { loadStore } from "$lib/persistent-store.svelte";
+import { getStore } from "$lib/persistent-store.svelte";
 import { loadSessionSettings } from "$lib/session-settings.svelte";
 import { loadAppSettings } from "$lib/app-settings.svelte";
 
 export const load: LayoutLoad = async () => {
-    await loadStore()
+    await getStore()
         .then(async (store) => {
             await loadSessionSettings(store);
             await loadAppSettings(store);

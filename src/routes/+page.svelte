@@ -2,13 +2,13 @@
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import { invoke, convertFileSrc } from "@tauri-apps/api/core";
-    import { load } from "@tauri-apps/plugin-store";
     import { stat } from "@tauri-apps/plugin-fs";
     import { sessionStore } from "$lib/globals.svelte";
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
     import { appSettings } from "$lib/app-settings.svelte";
-    import { sessionSettings } from "$lib/session-settings.svelte";
+    import { sessionSettings, saveSessionSettings } from "$lib/session-settings.svelte";
+    import { getStore } from "$lib/persistent-store.svelte";
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
@@ -80,15 +80,13 @@
                 : parseInt(sessionSettings.imgShowTimeSelected, 10);
 
         // Save current session settings to persistent store
-        try {
-            const persistentStore = await load("store.json", { autoSave: false });
-            await persistentStore.set("imgFolder", sessionSettings.imgFolder);
-            await persistentStore.set("imgShowTimeSelected", sessionSettings.imgShowTimeSelected);
-            await persistentStore.set("imgShowTimeCustom", sessionSettings.imgShowTimeCustom);
-            await persistentStore.save();
-        } catch (e) {
-            console.error("Failed to save session settings:", e);
-        }
+        await getStore()
+            .then(async (store) => {
+                await saveSessionSettings(store);
+            })
+            .catch((e) => {
+                console.error("Failed to load persistent store and save session settings:", e);
+            });
 
         goto("/session");
     }

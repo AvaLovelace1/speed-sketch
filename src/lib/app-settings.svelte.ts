@@ -83,3 +83,14 @@ async function loadWithValidation(
             console.error(`Failed to get ${settingName} from persistent store:`, e);
         });
 }
+
+export async function saveAppSettings(store: PersistentStore) {
+    for (const key in appSettings) {
+        await store.set(key, appSettings[key as keyof AppSettings]).catch((e) => {
+            console.error(`Failed to save ${key} to persistent store:`, e);
+        });
+    }
+    await store.save().catch((e) => {
+        console.error("Failed to save persistent store to disk:", e);
+    });
+}
