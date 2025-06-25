@@ -8,6 +8,7 @@
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
     import { appSettings } from "$lib/app-settings.svelte";
+    import { sessionSettings } from "$lib/session-settings.svelte";
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
@@ -20,9 +21,9 @@
     async function setImgFolder(folder: string) {
         showFolderErr = false;
 
-        sessionStore.imgFolder = folder;
+        sessionSettings.imgFolder = folder;
         const { imgs, err } = await getImgs(folder);
-        if (sessionStore.imgFolder != folder) {
+        if (sessionSettings.imgFolder != folder) {
             // If the folder has changed while loading, ignore the result
             return;
         }
@@ -74,16 +75,16 @@
         });
 
         sessionStore.imgShowTime =
-            sessionStore.imgShowTimeSelected === "custom"
-                ? sessionStore.imgShowTimeCustom
-                : parseInt(sessionStore.imgShowTimeSelected, 10);
+            sessionSettings.imgShowTimeSelected === "custom"
+                ? sessionSettings.imgShowTimeCustom
+                : parseInt(sessionSettings.imgShowTimeSelected, 10);
 
         // Save current session settings to persistent store
         try {
             const persistentStore = await load("store.json", { autoSave: false });
-            await persistentStore.set("imgFolder", sessionStore.imgFolder);
-            await persistentStore.set("imgShowTimeSelected", sessionStore.imgShowTimeSelected);
-            await persistentStore.set("imgShowTimeCustom", sessionStore.imgShowTimeCustom);
+            await persistentStore.set("imgFolder", sessionSettings.imgFolder);
+            await persistentStore.set("imgShowTimeSelected", sessionSettings.imgShowTimeSelected);
+            await persistentStore.set("imgShowTimeCustom", sessionSettings.imgShowTimeCustom);
             await persistentStore.save();
         } catch (e) {
             console.error("Failed to save session settings:", e);
@@ -93,9 +94,9 @@
     }
 
     onMount(async () => {
-        await setImgFolder(sessionStore.imgFolder);
+        await setImgFolder(sessionSettings.imgFolder);
         // Turn off the error message if no folder is set initially
-        if (sessionStore.imgFolder === "") showFolderErr = false;
+        if (sessionSettings.imgFolder === "") showFolderErr = false;
     });
 </script>
 
@@ -104,9 +105,9 @@
 </svelte:head>
 
 <MainMenuUI
-    bind:imgShowTimeSelected={sessionStore.imgShowTimeSelected}
-    bind:imgShowTimeCustom={sessionStore.imgShowTimeCustom}
-    bind:imgFolder={sessionStore.imgFolder}
+    bind:imgShowTimeSelected={sessionSettings.imgShowTimeSelected}
+    bind:imgShowTimeCustom={sessionSettings.imgShowTimeCustom}
+    bind:imgFolder={sessionSettings.imgFolder}
     imgUrls={sessionStore.imgs.map((img) => img.url)}
     folderErr={showFolderErr ? folderErr : ""}
     {isLoadingImgs}

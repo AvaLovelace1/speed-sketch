@@ -2,7 +2,7 @@
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
     import { Separator, Button } from "bits-ui";
-    import { appName, imgShowTimes, tagline } from "$lib/globals.svelte";
+    import { appName, tagline } from "$lib/globals.svelte";
     import { appSettings } from "$lib/app-settings.svelte";
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
@@ -10,6 +10,7 @@
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
+    import { imgShowTimes } from "$lib/session-settings.svelte";
 
     interface Props {
         // The selected image show time as a string, or "custom".
@@ -46,7 +47,7 @@
             label: prettyMilliseconds(seconds * 1000),
             value: seconds.toString(),
         }))
-        .concat([{ label: "Custom", value: "custom" }]);
+        .concat({ label: "Custom", value: "custom" });
 </script>
 
 <main class="bg-base-100 flex min-h-dvh items-center justify-center bg-(image:--fx-noise)">

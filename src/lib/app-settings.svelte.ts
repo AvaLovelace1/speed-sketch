@@ -1,4 +1,6 @@
+import { type PersistentStore } from "$lib/persistent-store.svelte";
 import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
+import { validateInteger, validateNumber, validateString } from "$lib/utils.svelte";
 
 export interface Theme {
     // Unique identifier for the theme
@@ -27,10 +29,57 @@ export const contrastOptions = [
 ];
 export const blurOptions = ["blur-xs", "blur-sm", "blur-md", "blur-lg"];
 
-export const appSettings = $state({
+interface AppSettings {
+    // Theme selected by the user
+    theme: string;
+    // Volume level for audio playback
+    volume: number;
+    // Strength of contrast filter applied to images
+    contrastStrength: number;
+    // Strength of blur filter applied to images
+    blurStrength: number;
+    // Currently open settings dialog, if any
+    dialog?: SettingsDialog;
+}
+
+export const appSettings: AppSettings = $state({
     theme: "system",
     volume: 1,
     contrastStrength: 3,
     blurStrength: 1,
     dialog: undefined as SettingsDialog | undefined,
 });
+
+// Load session settings from a store with validation
+export async function loadAppSettings(store: PersistentStore) {
+    await loadWithValidation(store, "theme", (v: unknown) =>
+        validateString(
+            v,
+            themes.map((theme) => theme.name),
+        ),
+    );
+    await loadWithValidation(store, "volume", (v: unknown) => validateNumber(v, 0, 1));
+    await loadWithValidation(store, "contrastStrength", (v: unknown) =>
+        validateInteger(v, 0, contrastOptions.length - 1),
+    );
+    await loadWithValidation(store, "blurStrength", (v: unknown) =>
+        validateInteger(v, 0, blurOptions.length - 1),
+    );
+}
+
+async function loadWithValidation(
+    store: PersistentStore,
+    settingName: keyof AppSettings,
+    validateFn: (v: unknown) => boolean,
+) {
+    await store
+        .get(settingName)
+        .then((value) => {
+            // @ts-expect-error assumes validateFn validates the type of value
+            if (validateFn(value)) appSettings[settingName] = value;
+            else console.warn(`Skipped loading ${settingName} because of invalid value:`, value);
+        })
+        .catch((e) => {
+            console.error(`Failed to get ${settingName} from persistent store:`, e);
+        });
+}
