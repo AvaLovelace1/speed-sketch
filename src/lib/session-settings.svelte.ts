@@ -30,6 +30,8 @@ export const sessionSettings: SessionSettings = $state({
 // Load session settings from a store with validation
 export async function loadSessionSettings(store: PersistentStore) {
     await loadWithValidation(store, "imgFolder", (v: unknown) => typeof v === "string");
+    await loadWithValidation(store, "includeSubfolders", (v: unknown) => typeof v === "boolean");
+    await loadWithValidation(store, "shuffleImgs", (v: unknown) => typeof v === "boolean");
     await loadWithValidation(store, "imgShowTimeOption", (v: unknown) =>
         validateString(v, imgShowTimeOptions),
     );
