@@ -4,30 +4,34 @@
     import Sample1 from "./assets/pexels-by-hong-son.jpg";
     import Sample2 from "./assets/pexels-by-sasha-kim.jpg";
     import Sample3 from "./assets/pexels-by-andrew-sindt.jpg";
+    import type { SessionSettings } from "$lib/session-settings.svelte";
 
     const { Story } = defineMeta({
         title: "MainMenuUI",
         component: MainMenuUI,
         tags: ["autodocs"],
     });
+
+    const sessionSettings: SessionSettings = {
+        imgFolder: "/Users/alice/Pictures",
+        includeSubfolders: false,
+        shuffleImgs: true,
+        imgShowTimeOption: "30s",
+        imgShowTimeCustom: 102,
+    };
 </script>
 
 <!-- The user sees this on first startup. -->
-<Story name="Default" args={{ imgShowTimeOption: "30s", imgShowTimeCustom: 30 }} />
+<Story name="Default" args={{ sessionSettings }} />
 
 <!-- Custom time entry. -->
-<Story
-    name="Custom Image Show Time"
-    args={{ imgShowTimeOption: "Custom", imgShowTimeCustom: 4414 }}
-/>
+<Story name="Custom Image Show Time" args={{ sessionSettings }} />
 
 <!-- Loading images. -->
 <Story
     name="Loading Images"
     args={{
-        imgShowTimeOption: "30s",
-        imgShowTimeCustom: 45,
-        imgFolder: "/Users/alice/Pictures",
+        sessionSettings,
         isLoadingImgs: true,
     }}
 />
@@ -36,9 +40,7 @@
 <Story
     name="Twelve Images"
     args={{
-        imgShowTimeOption: "30s",
-        imgShowTimeCustom: 45,
-        imgFolder: "/Users/alice/Pictures",
+        sessionSettings,
         imgUrls: [
             Sample1,
             Sample2,
@@ -61,9 +63,7 @@
 <Story
     name="Six Images"
     args={{
-        imgShowTimeOption: "30s",
-        imgShowTimeCustom: 45,
-        imgFolder: "/Users/alice/Pictures",
+        sessionSettings,
         imgUrls: [Sample1, Sample2, Sample3, Sample1, Sample2, Sample3],
         isValid: true,
     }}
@@ -73,9 +73,7 @@
 <Story
     name="One Image"
     args={{
-        imgShowTimeOption: "30s",
-        imgShowTimeCustom: 45,
-        imgFolder: "/Users/alice/Pictures",
+        sessionSettings,
         imgUrls: [Sample1],
         isValid: true,
     }}
@@ -85,9 +83,7 @@
 <Story
     name="Invalid"
     args={{
-        imgShowTimeOption: "30s",
-        imgShowTimeCustom: 45,
-        imgFolder: "/Users/alice/Pictures/wrong-folder",
+        sessionSettings,
         folderErr: "No images found in folder",
         isValid: false,
     }}
