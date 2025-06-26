@@ -17,15 +17,15 @@ export const themes = [
 ] as Theme[];
 
 export const contrastOptions = [
+    "contrast-125",
+    "contrast-150",
+    "contrast-175",
     "contrast-200",
+    "contrast-250",
     "contrast-300",
-    "contrast-400",
+    "contrast-375",
     "contrast-500",
-    "contrast-600",
-    "contrast-700",
     "contrast-800",
-    "contrast-900",
-    "contrast-1000",
 ];
 export const blurOptions = ["blur-xs", "blur-sm", "blur-md", "blur-lg"];
 
@@ -45,7 +45,7 @@ interface AppSettings {
 export const appSettings: AppSettings = $state({
     theme: "system",
     volume: 1,
-    contrastStrength: 3,
+    contrastStrength: 4,
     blurStrength: 1,
 });
 
