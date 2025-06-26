@@ -6,9 +6,13 @@ import parse from "parse-duration";
 export const imgShowTimeOptions = ["30s", "45s", "1m", "2m", "5m", "10m", "Custom"];
 export const maxImgShowTime = 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
 
-interface SessionSettings {
+export interface SessionSettings {
     // Path to the folder containing images
     imgFolder: string;
+    // Whether to include subfolders when searching for images
+    includeSubfolders: boolean;
+    // Whether session images should be shuffled
+    shuffleImgs: boolean;
     // User's selected image show time (a premade time or "Custom")
     imgShowTimeOption: string;
     // Custom image show time in seconds (if "Custom" is selected)
@@ -17,6 +21,8 @@ interface SessionSettings {
 
 export const sessionSettings: SessionSettings = $state({
     imgFolder: "",
+    includeSubfolders: false,
+    shuffleImgs: true,
     imgShowTimeOption: imgShowTimeOptions[0],
     imgShowTimeCustom: Math.floor((parse(imgShowTimeOptions[0]) as number) / 1000),
 });

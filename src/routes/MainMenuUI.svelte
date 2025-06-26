@@ -1,14 +1,14 @@
 <script lang="ts">
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
-    import { Separator, Button } from "bits-ui";
+    import { Separator, Button, Checkbox, Label } from "bits-ui";
     import FolderInput from "$lib/components/FolderInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";
     import Background from "$lib/components/Background.svelte";
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
-    import { imgShowTimeOptions } from "$lib/session-settings.svelte";
+    import { type SessionSettings, imgShowTimeOptions } from "$lib/session-settings.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
 
     const APP_NAME = "SpeedSketch";
@@ -17,23 +17,18 @@
     const COPYRIGHT = "© 2024–2025 Ava Pun";
 
     interface Props {
-        // The selected image show time as a string, or "Custom".
-        imgShowTimeOption: string;
-        // The value of the custom image show time in seconds.
-        imgShowTimeCustom: number;
-        imgFolder?: string;
+        sessionSettings: SessionSettings;
         imgUrls?: string[];
         folderErr?: string;
         isLoadingImgs?: boolean;
         isValid?: boolean;
+        // Callback to be called when image folder is updated.
         setImgFolder?: (folder: string) => Promise<void>;
         startSession?: () => Promise<void>;
     }
 
     let {
-        imgShowTimeOption = $bindable(),
-        imgShowTimeCustom = $bindable(),
-        imgFolder = $bindable(""),
+        sessionSettings = $bindable(),
         imgUrls = [],
         folderErr = "",
         isLoadingImgs = false,
@@ -70,10 +65,42 @@
             <Card class="mx-auto" cardBodyClass="p-0">
                 <form>
                     <div class="p-8 pb-12">
+                        <div class="mb-2">
+                            <Label.Root class="text-muted" for="img-folder">
+                                Image folder
+                            </Label.Root>
+                            <div class="float-end">
+                                <Checkbox.Root
+                                    id="include-subfolders"
+                                    bind:checked={sessionSettings.includeSubfolders}
+                                    onCheckedChange={(_) => setImgFolder(sessionSettings.imgFolder)}
+                                    class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
+                                />
+                                <Label.Root
+                                    class="text-muted cursor-pointer text-xs"
+                                    for="include-subfolders"
+                                >
+                                    Include subfolders
+                                </Label.Root>
+                                &nbsp;&nbsp;
+                                <Checkbox.Root
+                                    id="shuffle-images"
+                                    bind:checked={sessionSettings.shuffleImgs}
+                                    onCheckedChange={(_) => setImgFolder(sessionSettings.imgFolder)}
+                                    class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
+                                />
+                                <Label.Root
+                                    class="text-muted cursor-pointer text-xs"
+                                    for="shuffle-images"
+                                >
+                                    Shuffle images
+                                </Label.Root>
+                            </div>
+                        </div>
                         <FolderInput
-                            class="mb-4 w-full"
-                            label="Image folder"
-                            bind:chosenFolder={imgFolder}
+                            id="img-folder"
+                            class="mb-6 w-full"
+                            bind:chosenFolder={sessionSettings.imgFolder}
                             callback={setImgFolder}
                             errorMsg={folderErr}
                             onkeydown={(e) => {
@@ -85,14 +112,14 @@
                             class="mb-4"
                             groupLabel="Time per image"
                             options={imgShowTimeOptionsBind}
-                            bind:group={imgShowTimeOption}
+                            bind:group={sessionSettings.imgShowTimeOption}
                         />
-                        {#if imgShowTimeOption === "Custom"}
+                        {#if sessionSettings.imgShowTimeOption === "Custom"}
                             <div
                                 class="flex justify-center"
                                 transition:slide={{ duration: 250, easing: cubicOut }}
                             >
-                                <DurationField bind:seconds={imgShowTimeCustom} />
+                                <DurationField bind:seconds={sessionSettings.imgShowTimeCustom} />
                             </div>
                         {/if}
                     </div>

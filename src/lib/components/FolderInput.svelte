@@ -1,10 +1,10 @@
 <script lang="ts">
     import { open } from "@tauri-apps/plugin-dialog";
     import type { HTMLAttributes } from "svelte/elements";
-    import { Button, Label } from "bits-ui";
+    import { Button } from "bits-ui";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
-        label: string;
+        id: string;
         chosenFolder?: string;
         // Callback function to handle the chosen folder
         callback?: (folder: string) => void;
@@ -14,7 +14,7 @@
     }
 
     let {
-        label,
+        id,
         chosenFolder = $bindable(""),
         callback = (_) => {},
         infoMsg = "",
@@ -29,13 +29,12 @@
     }
 </script>
 
-<Label.Root class="text-muted mb-2 block" for={label}>{label}</Label.Root>
 <div {...props} class={["join", props.class]}>
     <div class="w-full">
         <div class="input validator join-item w-full" aria-invalid={errorMsg !== ""}>
             <span class="iconify lucide--folder text-muted"></span>
             <input
-                id={label}
+                {id}
                 type="text"
                 class="overflow-ellipsis"
                 bind:value={chosenFolder}

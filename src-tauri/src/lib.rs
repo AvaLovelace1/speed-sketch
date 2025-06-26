@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::time::Duration;
-use tauri::menu::{MenuBuilder, SubmenuBuilder, MenuItemBuilder};
+use tauri::menu::{MenuBuilder, MenuItemBuilder, SubmenuBuilder};
 use tauri::Manager;
 use tauri::{AppHandle, Emitter};
 use tauri_plugin_opener::OpenerExt;
@@ -11,9 +11,14 @@ use walkdir::{DirEntry, WalkDir};
 /// Return a shuffled list of image file paths from the specified directory.
 /// Error if the process takes longer than timeout_duration (specified in seconds).
 #[tauri::command]
-async fn get_img_files(dir: String, timeout_duration: u64) -> Result<Vec<String>, String> {
+async fn get_img_files(
+    dir: String,
+    include_subdirs: bool,
+    shuffle: bool,
+    timeout_duration: u64,
+) -> Result<Vec<String>, String> {
     // Spawn task to call _get_img_files; time out if taking too long
-    let result = task::spawn_blocking(move || _get_img_files(&dir));
+    let result = task::spawn_blocking(move || _get_img_files(&dir, include_subdirs, shuffle));
     let timeout = Duration::from_secs(timeout_duration);
     match time::timeout(timeout, result).await {
         Ok(Ok(files)) => Ok(files),
@@ -22,18 +27,25 @@ async fn get_img_files(dir: String, timeout_duration: u64) -> Result<Vec<String>
     }
 }
 
-fn _get_img_files(dir: &str) -> Vec<String> {
-    let mut result = Vec::new();
-    for entry in WalkDir::new(dir)
+fn _get_img_files(dir: &str, include_subdirs: bool, shuffle: bool) -> Vec<String> {
+    let walk_dir = if include_subdirs {
+        WalkDir::new(dir)
+    } else {
+        WalkDir::new(dir).max_depth(1)
+    };
+
+    let mut result: Vec<String> = walk_dir
         .into_iter()
         .filter_map(Result::ok)
         .filter(is_img_file)
-    {
-        if let Some(path_str) = entry.path().to_str() {
-            result.push(path_str.to_string());
-        }
+        .filter_map(|entry| entry.path().to_str().map(String::from))
+        .collect();
+
+    if shuffle {
+        result.shuffle(&mut thread_rng());
+    } else {
+        result.sort_unstable();
     }
-    result.shuffle(&mut thread_rng());
     result
 }
 
@@ -137,7 +149,9 @@ pub fn run() {
                 app.handle().plugin(
                     tauri_plugin_global_shortcut::Builder::new()
                         .with_handler(move |app_handle, shortcut, event| {
-                            if shortcut == &settings_shortcut && event.state() == ShortcutState::Released {
+                            if shortcut == &settings_shortcut
+                                && event.state() == ShortcutState::Released
+                            {
                                 app_handle.emit("do-open-settings", "").unwrap_or_default();
                             }
                         })

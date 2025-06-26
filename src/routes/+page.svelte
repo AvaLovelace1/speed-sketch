@@ -56,6 +56,8 @@
         try {
             const files = (await invoke("get_img_files", {
                 dir: folder,
+                includeSubdirs: sessionSettings.includeSubfolders,
+                shuffle: sessionSettings.shuffleImgs,
                 timeoutDuration: 60,
             })) as string[];
             const imgs = files.map((file) => ({ url: convertFileSrc(file), path: file }));
@@ -104,9 +106,7 @@
 </svelte:head>
 
 <MainMenuUI
-    bind:imgShowTimeOption={sessionSettings.imgShowTimeOption}
-    bind:imgShowTimeCustom={sessionSettings.imgShowTimeCustom}
-    bind:imgFolder={sessionSettings.imgFolder}
+    {sessionSettings}
     imgUrls={folderImgs.map((img) => img.url)}
     folderErr={showFolderErr ? folderErr : ""}
     {isLoadingImgs}
