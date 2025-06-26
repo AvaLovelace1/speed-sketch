@@ -21,7 +21,7 @@
     {@render children()}
     <SettingsDialog
         bind:this={appSettingsDialog.component}
-        onClose={async () => {
+        save={async () => {
             await getStore()
                 .then(async (store) => {
                     await saveAppSettings(store);
