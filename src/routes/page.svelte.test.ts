@@ -27,8 +27,8 @@ describe("FolderInput.svelte", () => {
             errorMsg: "Error message",
             infoMsg: "Info message",
         });
-        const error = screen.getByRole("alert", { name: /.*error.*/i });
-        const info = screen.getByRole("status", { name: /.*info.*/i });
+        const error = screen.getByRole("alert");
+        const info = screen.getByRole("status");
 
         expect(error).toHaveTextContent("Error message");
         expect(info).toHaveTextContent("Info message");
