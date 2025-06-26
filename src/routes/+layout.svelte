@@ -1,10 +1,11 @@
 <script lang="ts">
     import { Tooltip } from "bits-ui";
     import type { LayoutProps } from "./$types";
-    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
-    import "../app.css";
+    import { listen } from "@tauri-apps/api/event";
     import { getStore } from "$lib/persistent-store.svelte";
     import { appSettings, appSettingsDialog, saveAppSettings } from "$lib/app-settings.svelte";
+    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
+    import "../app.css";
 
     const { children }: LayoutProps = $props();
 
@@ -12,6 +13,8 @@
         // Set global theme based on user settings
         document.documentElement.setAttribute("data-theme", appSettings.theme);
     });
+
+    listen("do-open-settings", (_) => appSettingsDialog.component?.open());
 </script>
 
 <Tooltip.Provider>
