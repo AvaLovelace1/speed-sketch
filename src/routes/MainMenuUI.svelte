@@ -8,7 +8,7 @@
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
-    import { type SessionSettings, imgShowTimeOptions } from "$lib/session-settings.svelte";
+    import { sessionSettings, imgShowTimeOptions } from "$lib/session-settings.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
 
     const APP_NAME = "SpeedSketch";
@@ -17,7 +17,6 @@
     const COPYRIGHT = "© 2024–2025 Ava Pun";
 
     interface Props {
-        sessionSettings: SessionSettings;
         imgUrls?: string[];
         folderErr?: string;
         isLoadingImgs?: boolean;
@@ -28,7 +27,6 @@
     }
 
     let {
-        sessionSettings = $bindable(),
         imgUrls = [],
         folderErr = "",
         isLoadingImgs = false,
@@ -75,6 +73,7 @@
                                     bind:checked={sessionSettings.includeSubfolders}
                                     onCheckedChange={(_) => setImgFolder(sessionSettings.imgFolder)}
                                     class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
+                                    tabindex={0}
                                 />
                                 <Label.Root
                                     class="text-muted cursor-pointer text-xs"
@@ -88,6 +87,7 @@
                                     bind:checked={sessionSettings.shuffleImgs}
                                     onCheckedChange={(_) => setImgFolder(sessionSettings.imgFolder)}
                                     class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
+                                    tabindex={0}
                                 />
                                 <Label.Root
                                     class="text-muted cursor-pointer text-xs"

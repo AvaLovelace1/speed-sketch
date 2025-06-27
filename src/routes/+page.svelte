@@ -106,7 +106,6 @@
 </svelte:head>
 
 <MainMenuUI
-    {sessionSettings}
     imgUrls={folderImgs.map((img) => img.url)}
     folderErr={showFolderErr ? folderErr : ""}
     {isLoadingImgs}
