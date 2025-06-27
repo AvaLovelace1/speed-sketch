@@ -310,7 +310,6 @@ The user interface for a drawing session.
         {#if timerShown}
             <Tooltip side="left">
                 <Timer
-                    label="Time remaining"
                     time={drawingSession.timeRemaining}
                     maxTime={drawingSession.imgShowTime}
                     class={drawingSession.isPaused ? "text-muted!" : ""}

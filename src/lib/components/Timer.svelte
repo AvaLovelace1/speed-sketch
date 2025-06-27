@@ -9,8 +9,6 @@ A timer that displays a given time.
     import prettyMilliseconds from "pretty-ms";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
-        // Unique ID for the label element
-        label: string;
         // Time displayed, in seconds
         time?: number;
         // If set, the alert will turn red when timeRemaining is <= criticalTime
@@ -19,7 +17,7 @@ A timer that displays a given time.
         maxTime?: number;
     }
 
-    const { label, time = 0, criticalTime = 10, maxTime = 60, ...props }: Props = $props();
+    const { time = 0, criticalTime = 10, maxTime = 60, ...props }: Props = $props();
 
     const timerString = $derived(prettyMilliseconds(time * 1000, { colonNotation: true }));
     const durationString = $derived(prettyMilliseconds(time * 1000));
@@ -29,16 +27,14 @@ A timer that displays a given time.
 
 <StatusAlert
     role="timer"
-    aria-live="polite"
     {...props}
     class={["tabular-nums", { "alert-error": timeIsCritical }, props.class]}
 >
     <Progress.Root
         class="radial-progress"
         style="--value:{progressValue}; --size:1em; --thickness:2px;"
-        value={progressValue}
+        value={100 - progressValue}
         max={100}
     />
-    <span class="sr-only">{label}</span>
     <time datetime={durationString}>{timerString}</time>
 </StatusAlert>
