@@ -60,11 +60,7 @@
                                 }}
                             >
                                 <div class="card-actions justify-end">
-                                    <AlertDialog.Cancel
-                                        type="button"
-                                        class="btn"
-                                        onclick={onCancel}
-                                    >
+                                    <AlertDialog.Cancel type="button" class="btn">
                                         {cancelText}
                                     </AlertDialog.Cancel>
                                     <AlertDialog.Action type="submit" class="btn btn-error">
@@ -74,7 +70,6 @@
                             </form>
                             <AlertDialog.Cancel
                                 class="text-muted absolute top-1 right-1 cursor-pointer p-2"
-                                onclick={onCancel}
                             >
                                 <span class="iconify lucide--x"></span>
                                 <span class="sr-only">Close</span>
