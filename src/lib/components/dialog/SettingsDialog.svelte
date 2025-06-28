@@ -2,16 +2,21 @@
     import Dialog from "$lib/components/dialog/Dialog.svelte";
     import Select from "$lib/components/Select.svelte";
     import Slider from "$lib/components/Slider.svelte";
-    import { contrastOptions, blurOptions, themes, appSettings } from "$lib/app-settings.svelte";
+    import {
+        contrastOptions,
+        blurOptions,
+        themes,
+        appSettings,
+        saveAppSettings,
+    } from "$lib/store/app-settings.svelte.js";
     import startAudioFile from "$lib/assets/audio/start.wav";
 
     interface Props {
         onOpen?: () => void;
         onClose?: () => void;
-        save?: () => Promise<void>;
     }
 
-    let { onOpen = () => {}, onClose = () => {}, save = async () => {} }: Props = $props();
+    let { onOpen = () => {}, onClose = () => {} }: Props = $props();
 
     let volumeIcon = $derived.by(() => {
         if (appSettings.volume === 0) return "lucide--volume-x";
@@ -21,7 +26,7 @@
     let dialog: Dialog;
 
     async function onCloseWithSave() {
-        await save();
+        await saveAppSettings();
         onClose();
     }
 
@@ -35,7 +40,7 @@
 
     export function setOnClose(fn: () => void) {
         dialog.setOnClose(async () => {
-            await save();
+            await saveAppSettings();
             fn();
         });
     }

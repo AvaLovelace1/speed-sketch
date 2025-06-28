@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button } from "bits-ui";
-    import { appSettingsDialog } from "$lib/app-settings.svelte";
+    import { appSettingsDialog } from "$lib/store/app-settings.svelte";
 </script>
 
 <Button.Root

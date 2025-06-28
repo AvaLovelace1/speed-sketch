@@ -8,7 +8,7 @@
     import Card from "$lib/components/Card.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
-    import { sessionSettings, imgShowTimeOptions } from "$lib/session-settings.svelte";
+    import { sessionSettings, imgShowTimeOptions } from "$lib/store/session-settings.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
 
     const APP_NAME = "SpeedSketch";

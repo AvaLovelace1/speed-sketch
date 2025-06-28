@@ -4,7 +4,7 @@
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { start, stop } from "tauri-plugin-keepawake-api";
     import { goto } from "$app/navigation";
-    import { appSettings } from "$lib/app-settings.svelte";
+    import { appSettings } from "$lib/store/app-settings.svelte";
     import { currentSession } from "$lib/drawing-session.svelte";
     import SessionUI from "./SessionUI.svelte";
     import countdownBeepFile from "$lib/assets/audio/countdown-beep.wav";

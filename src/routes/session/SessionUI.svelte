@@ -10,7 +10,7 @@ The user interface for a drawing session.
         blurOptions,
         appSettings,
         appSettingsDialog,
-    } from "$lib/app-settings.svelte.js";
+    } from "$lib/store/app-settings.svelte.js";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";

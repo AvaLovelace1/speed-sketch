@@ -5,14 +5,13 @@
     import { stat } from "@tauri-apps/plugin-fs";
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
-    import { appSettings } from "$lib/app-settings.svelte";
+    import { appSettings } from "$lib/store/app-settings.svelte";
     import { type Image, DrawingSession, currentSession } from "$lib/drawing-session.svelte";
     import {
         sessionSettings,
         saveSessionSettings,
         getImgShowTime,
-    } from "$lib/session-settings.svelte";
-    import { getStore } from "$lib/persistent-store.svelte";
+    } from "$lib/store/session-settings.svelte";
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
@@ -81,14 +80,7 @@
             console.error("Failed to play start audio:", e);
         });
 
-        // Save current session settings to persistent store
-        await getStore()
-            .then(async (store) => {
-                await saveSessionSettings(store);
-            })
-            .catch((e) => {
-                console.error("Failed to load persistent store and save session settings:", e);
-            });
+        await saveSessionSettings();
 
         currentSession.object = new DrawingSession(folderImgs, getImgShowTime());
         goto("/session");

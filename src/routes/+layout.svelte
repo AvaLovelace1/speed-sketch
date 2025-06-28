@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Tooltip } from "bits-ui";
     import type { LayoutProps } from "./$types";
+    import { isTauri } from "@tauri-apps/api/core";
     import { listen } from "@tauri-apps/api/event";
-    import { getStore } from "$lib/persistent-store.svelte";
-    import { appSettings, appSettingsDialog, saveAppSettings } from "$lib/app-settings.svelte";
+    import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte.js";
     import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
     import "../app.css";
 
@@ -14,21 +14,10 @@
         document.documentElement.setAttribute("data-theme", appSettings.theme);
     });
 
-    listen("do-open-settings", (_) => appSettingsDialog.component?.open());
+    if (isTauri()) listen("do-open-settings", (_) => appSettingsDialog.component?.open());
 </script>
 
 <Tooltip.Provider>
     {@render children()}
-    <SettingsDialog
-        bind:this={appSettingsDialog.component}
-        save={async () => {
-            await getStore()
-                .then(async (store) => {
-                    await saveAppSettings(store);
-                })
-                .catch((e) => {
-                    console.error("Failed to load persistent store and save app settings:", e);
-                });
-        }}
-    />
+    <SettingsDialog bind:this={appSettingsDialog.component} />
 </Tooltip.Provider>
