@@ -309,8 +309,8 @@ The user interface for a drawing session.
                     alt="Reference used for drawing practice"
                     class={[
                         "size-full object-contain",
-                        isFlippedVertical ? "rotate-x-180" : "",
-                        isFlippedHorizontal ? "rotate-y-180" : "",
+                        isFlippedVertical ? "-scale-y-100" : "",
+                        isFlippedHorizontal ? "-scale-x-100" : "",
                         isGreyscale ? "grayscale" : "",
                         isHighContrast ? contrastOptions[appSettings.contrastStrength] : "",
                         isBlurred ? blurOptions[appSettings.blurStrength] : "",
@@ -335,9 +335,10 @@ The user interface for a drawing session.
                     resetToolbarTimeout();
                 }}
             >
-                <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
-                    <span class="iconify lucide--circle-check"
-                    ></span>{drawingSession.nCompletedImgs}
+                <StatusAlert class="alert-success tabular-nums">
+                    <span class="iconify lucide--circle-check"></span>
+                    <span class="sr-only">Images completed:</span>
+                    {drawingSession.nCompletedImgs}
                 </StatusAlert>
                 {#snippet tooltipContent()}Images completed{/snippet}
             </CustomTooltip>

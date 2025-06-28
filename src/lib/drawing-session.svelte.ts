@@ -16,7 +16,7 @@ export class DrawingSession {
     timeSpent: number;
     isPaused: boolean;
     // Index of the current image being displayed
-    #curImgIdx: number;
+    curImgIdx: number;
     // Timer interval that updates the time remaining with each tick
     #timer: NodeJS.Timeout | undefined = undefined;
 
@@ -28,24 +28,24 @@ export class DrawingSession {
         this.timeSpent = 0;
         this.isPaused = $state(true);
 
-        this.#curImgIdx = $state(0);
+        this.curImgIdx = $state(0);
         this.#timer = undefined;
     }
 
     getCurImg = () => {
-        return this.imgs[this.#curImgIdx];
+        return this.imgs[this.curImgIdx];
     };
 
     goPrevImg = () => {
-        this.#curImgIdx -= 1;
-        if (this.#curImgIdx < 0) this.#curImgIdx = this.imgs.length - 1;
+        this.curImgIdx -= 1;
+        if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
         this.timeRemaining = this.imgShowTime;
         if (!this.isPaused) this.#restartTimer();
     };
 
     goNextImg = () => {
-        this.#curImgIdx += 1;
-        if (this.#curImgIdx >= this.imgs.length) this.#curImgIdx = 0;
+        this.curImgIdx += 1;
+        if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
         this.timeRemaining = this.imgShowTime;
         if (!this.isPaused) this.#restartTimer();
     };

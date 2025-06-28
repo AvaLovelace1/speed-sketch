@@ -36,5 +36,6 @@ A timer that displays a given time.
         value={100 - progressValue}
         max={100}
     />
+    <span class="sr-only">Time remaining:</span>
     <time datetime={durationString}>{timerString}</time>
 </StatusAlert>

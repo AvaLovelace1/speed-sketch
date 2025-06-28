@@ -47,14 +47,24 @@ const testSessionUI = test.extend<SessionUIFixture>({
 });
 
 describe("SessionUI.svelte", () => {
+    function expectToolbarTemporarilyShown(sessionUI: SessionUI) {
+        expect(sessionUI.toolbarIsShown()).toBe(true);
+        vi.advanceTimersByTime(HIDE_TOOLBAR_TIMEOUT);
+        expect(sessionUI.toolbarIsShown()).toBe(false);
+    }
+
+    function expectToolbarPermanentlyShown(sessionUI: SessionUI) {
+        expect(sessionUI.toolbarIsShown()).toBe(true);
+        vi.advanceTimersByTime(HIDE_TOOLBAR_TIMEOUT);
+        expect(sessionUI.toolbarIsShown()).toBe(true);
+    }
+
     testSessionUI(
         "toolbar shows on hover and hides after delay",
         async ({ fixture: { sessionUI, user } }) => {
             expect(sessionUI.toolbarIsShown()).toBe(false);
             await user.hover(document.body);
-            expect(sessionUI.toolbarIsShown()).toBe(true);
-            vi.advanceTimersByTime(HIDE_TOOLBAR_TIMEOUT);
-            expect(sessionUI.toolbarIsShown()).toBe(false);
+            expectToolbarTemporarilyShown(sessionUI);
         },
     );
 
@@ -63,9 +73,10 @@ describe("SessionUI.svelte", () => {
         async ({ fixture: { sessionUI, user } }) => {
             expect(sessionUI.toolbarIsShown()).toBe(false);
             await user.hover(screen.getAllByRole("toolbar")[0]);
-            expect(sessionUI.toolbarIsShown()).toBe(true);
-            vi.advanceTimersByTime(HIDE_TOOLBAR_TIMEOUT);
-            expect(sessionUI.toolbarIsShown()).toBe(true);
+            expectToolbarPermanentlyShown(sessionUI);
+
+            await user.unhover(document.body);
+            expectToolbarTemporarilyShown(sessionUI);
         },
     );
 
@@ -73,24 +84,73 @@ describe("SessionUI.svelte", () => {
         // Freeze
         expect(sessionUI.toolbarIsShown()).toBe(false);
         sessionUI.freeze();
-        // Drawing session should be paused
         expect(drawingSession.isPaused).toBe(true);
         // Tools should be disabled - doesn't work in testing environment
         // expect(screen.getByRole("button", { name: "Exit session" })).toBeDisabled();
-        // Toolbar should be shown immediately and stay shown
-        expect(sessionUI.toolbarIsShown()).toBe(true);
-        vi.advanceTimersByTime(HIDE_TOOLBAR_TIMEOUT);
-        expect(sessionUI.toolbarIsShown()).toBe(true);
+        expectToolbarPermanentlyShown(sessionUI);
 
         // Unfreeze
         sessionUI.unfreeze();
-        // Drawing session should be resumed
         expect(drawingSession.isPaused).toBe(false);
-        // Tools should be enabled
         expect(screen.getByRole("button", { name: "Exit session" })).toBeEnabled();
-        // Toolbar should hide after the timeout
-        expect(sessionUI.toolbarIsShown()).toBe(true);
-        vi.advanceTimersByTime(HIDE_TOOLBAR_TIMEOUT);
-        expect(sessionUI.toolbarIsShown()).toBe(false);
+        expectToolbarTemporarilyShown(sessionUI);
+    });
+
+    testSessionUI("prev and next buttons", async ({ fixture: { drawingSession, user } }) => {
+        expect(drawingSession.curImgIdx).toBe(0);
+        await user.click(screen.getByRole("button", { name: /next/i }));
+        expect(drawingSession.curImgIdx).toBe(1);
+        await user.click(screen.getByRole("button", { name: /previous/i }));
+        expect(drawingSession.curImgIdx).toBe(0);
+    });
+
+    testSessionUI("pause and resume", async ({ fixture: { sessionUI, drawingSession, user } }) => {
+        expect(drawingSession.isPaused).toBe(true);
+        await user.click(screen.getByRole("button", { name: /resume/i }));
+        await user.unhover(document.body);
+        expect(drawingSession.isPaused).toBe(false);
+        expectToolbarTemporarilyShown(sessionUI);
+
+        await user.click(screen.getByRole("button", { name: /pause/i }));
+        await user.unhover(document.body);
+        expect(drawingSession.isPaused).toBe(true);
+        expectToolbarTemporarilyShown(sessionUI);
+    });
+
+    testSessionUI("image manipulation", async ({ fixture: { user } }) => {
+        // Flip horizontal
+        const flipHorizontalButton = screen.getByRole("button", { name: /flip horizontal/i });
+        await user.click(flipHorizontalButton);
+        expect(screen.getByRole("img")).toHaveClass("-scale-x-100");
+        await user.click(flipHorizontalButton);
+        expect(screen.getByRole("img")).not.toHaveClass("-scale-x-100");
+
+        // Flip vertical
+        const flipVerticalButton = screen.getByRole("button", { name: /flip vertical/i });
+        await user.click(flipVerticalButton);
+        expect(screen.getByRole("img")).toHaveClass("-scale-y-100");
+        await user.click(flipVerticalButton);
+        expect(screen.getByRole("img")).not.toHaveClass("-scale-y-100");
+
+        // Greyscale
+        const greyscaleButton = screen.getByRole("button", { name: /greyscale/i });
+        await user.click(greyscaleButton);
+        expect(screen.getByRole("img")).toHaveClass("grayscale");
+        await user.click(greyscaleButton);
+        expect(screen.getByRole("img")).not.toHaveClass("grayscale");
+
+        // Contrast
+        const contrastButton = screen.getByRole("button", { name: /contrast/i });
+        await user.click(contrastButton);
+        expect(screen.getByRole("img")).toHaveClass(/contrast/);
+        await user.click(contrastButton);
+        expect(screen.getByRole("img")).not.toHaveClass(/contrast/);
+
+        // Blur
+        const blurButton = screen.getByRole("button", { name: /blur/i });
+        await user.click(blurButton);
+        expect(screen.getByRole("img")).toHaveClass(/blur/);
+        await user.click(blurButton);
+        expect(screen.getByRole("img")).not.toHaveClass(/blur/);
     });
 });
