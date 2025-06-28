@@ -9,10 +9,10 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     interface Tool extends BitsPrimitiveElementAttributes {
         // Unique identifier for the tool
         key: string | number;
-        icon?: string;
+        icon: string;
+        tooltip: string;
         action: () => void;
         hotkey?: string;
-        tooltip?: string;
     }
 
     interface Props extends Toolbar.RootProps {
@@ -65,18 +65,17 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
                 {...others}
                 class={["btn join-item btn-soft px-3 py-5 text-lg", others.class]}
             >
-                {#if icon}<span class="iconify {icon}"></span>{/if}
+                <span class="sr-only">{tooltip}</span>
+                <span class="iconify {icon}"></span>
                 {#snippet tooltipContent()}
-                    {#if tooltip}
-                        <p>{tooltip}</p>
-                        {#if hotkey}
-                            <p class="mb-1">
-                                {#each getHotkeyLabel(hotkey) as part, i (i)}
-                                    {#if i > 0}<span class="text-muted">&nbsp;+</span>{/if}
-                                    <kbd class="kbd kbd-sm">{part}</kbd>
-                                {/each}
-                            </p>
-                        {/if}
+                    <p>{tooltip}</p>
+                    {#if hotkey}
+                        <p class="mb-1">
+                            {#each getHotkeyLabel(hotkey) as part, i (i)}
+                                {#if i > 0}<span class="text-muted">&nbsp;+</span>{/if}
+                                <kbd class="kbd kbd-sm">{part}</kbd>
+                            {/each}
+                        </p>
                     {/if}
                 {/snippet}
             </CustomTooltip>
