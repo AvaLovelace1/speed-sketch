@@ -1,6 +1,6 @@
 import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
 import { validateInteger, validateNumber, validateString } from "$lib/utils.svelte";
-import { getStore } from "$lib/store/persistent-store.svelte";
+import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 
 export interface Theme {
@@ -71,14 +71,14 @@ const appSettingsKeys = [
     },
 ];
 
-export async function loadAppSettings() {
-    const persistentStore = await getStore();
+export async function loadAppSettings(persistentStore?: PersistentStore) {
+    if (!persistentStore) persistentStore = await getStore();
     const appSettingsStore = new ValidatedStore(persistentStore, appSettingsKeys);
     await appSettingsStore.loadInto(appSettings);
 }
 
-export async function saveAppSettings() {
-    const persistentStore = await getStore();
+export async function saveAppSettings(persistentStore?: PersistentStore) {
+    if (!persistentStore) persistentStore = await getStore();
     const appSettingsStore = new ValidatedStore(persistentStore, appSettingsKeys);
     await appSettingsStore.save(appSettings);
 }

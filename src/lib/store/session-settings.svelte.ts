@@ -1,6 +1,6 @@
 import parse from "parse-duration";
 import { validateString, validateInteger } from "$lib/utils.svelte";
-import { getStore } from "$lib/store/persistent-store.svelte";
+import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 
 // Exactly 0 or 1 of these should be "Custom", and the rest should be a valid duration string
@@ -38,14 +38,14 @@ const sessionSettingsKeys = [
     },
 ];
 
-export async function loadSessionSettings() {
-    const persistentStore = await getStore();
+export async function loadSessionSettings(persistentStore?: PersistentStore) {
+    if (!persistentStore) persistentStore = await getStore();
     const appSettingsStore = new ValidatedStore(persistentStore, sessionSettingsKeys);
     await appSettingsStore.loadInto(sessionSettings);
 }
 
-export async function saveSessionSettings() {
-    const persistentStore = await getStore();
+export async function saveSessionSettings(persistentStore?: PersistentStore) {
+    if (!persistentStore) persistentStore = await getStore();
     const appSettingsStore = new ValidatedStore(persistentStore, sessionSettingsKeys);
     await appSettingsStore.save(sessionSettings);
 }

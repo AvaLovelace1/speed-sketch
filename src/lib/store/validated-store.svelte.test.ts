@@ -30,10 +30,11 @@ const testValidatedStore = test.extend<ValidatedStoreFixture>({
 
 describe("validated-store.svelte.ts", () => {
     testValidatedStore("save and load", async ({ validatedStore }) => {
+        // Test with extra and missing keys
         const record = {
             aString: "test string",
             aNumberEqualling42: 42,
-            aBoolean: true,
+            // aBoolean is missing
             unknownKey: "should be ignored", // This key is not defined in the validation keys
         };
         await validatedStore.save(record);
@@ -43,7 +44,6 @@ describe("validated-store.svelte.ts", () => {
         expect(loadedRecord).toEqual({
             aString: "test string",
             aNumberEqualling42: 42,
-            aBoolean: true,
         });
     });
 
