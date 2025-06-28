@@ -34,6 +34,9 @@ export default defineConfig({
         },
     },
     test: {
+        coverage: {
+            include: ["src/**"],
+        },
         projects: [
             {
                 extends: "./vite.config.ts",

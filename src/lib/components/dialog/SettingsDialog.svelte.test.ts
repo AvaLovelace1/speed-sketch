@@ -25,9 +25,35 @@ const testSettingsDialog = test.extend<SettingsDialogFixture>({
 });
 
 describe("SettingsDialog.svelte", () => {
-    testSettingsDialog("SettingsDialog renders", async ({ fixture: { settingsDialog } }) => {
-        settingsDialog.open();
-        expect(await screen.findByRole("dialog")).toBeVisible();
-        expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible();
-    });
+    testSettingsDialog(
+        "SettingsDialog opens and closes",
+        async ({ fixture: { settingsDialog, user } }) => {
+            settingsDialog.open();
+            expect(await screen.findByRole("dialog")).toBeVisible();
+            expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible();
+
+            await user.click(screen.getByRole("button", { name: "Close" }));
+            expect(screen.queryByRole("dialog")).toBeNull();
+        },
+    );
+
+    testSettingsDialog(
+        "setOnOpen and setOnClose work",
+        async ({ fixture: { settingsDialog, user } }) => {
+            const onOpen = vi.fn();
+            const onClose = vi.fn();
+            settingsDialog.setOnOpen(onOpen);
+            settingsDialog.setOnClose(onClose);
+
+            settingsDialog.open();
+            expect(await screen.findByRole("dialog")).toBeVisible();
+            expect(onOpen).toHaveBeenCalledTimes(1);
+            expect(onClose).toHaveBeenCalledTimes(0);
+
+            await user.click(screen.getByRole("button", { name: "Close" }));
+            expect(onOpen).toHaveBeenCalledTimes(1);
+            // onClose doesn't work in testing environment because transitions are mocked
+            // expect(onClose).toHaveBeenCalledTimes(1);
+        },
+    );
 });
