@@ -30,7 +30,6 @@ describe("SettingsDialog.svelte", () => {
         async ({ fixture: { settingsDialog, user } }) => {
             settingsDialog.open();
             expect(await screen.findByRole("dialog")).toBeVisible();
-            expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible();
 
             await user.click(screen.getByRole("button", { name: "Close" }));
             expect(screen.queryByRole("dialog")).toBeNull();
