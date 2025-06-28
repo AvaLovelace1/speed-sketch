@@ -6,57 +6,58 @@ export interface Image {
 
 export class DrawingSession {
     // Array of images to be displayed in the session
-    public imgs: Image[];
-    // Index of the current image being displayed
-    public curImgIdx: number;
-    public nCompletedImgs: number;
+    imgs: Image[];
     // Time each image is displayed for, in seconds
-    public imgShowTime: number;
+    imgShowTime: number;
+    nCompletedImgs: number;
     // Time remaining for the current image to be displayed, in seconds
-    public timeRemaining: number;
-    // Total time drawing (not paused), in seconds
-    public timeSpent: number;
+    timeRemaining: number;
+    // Total time spent drawing (not paused), in seconds
+    timeSpent: number;
+    isPaused: boolean;
+    // Index of the current image being displayed
+    private _curImgIdx: number;
     // Timer interval that updates the time remaining with each tick
-    public timer: NodeJS.Timeout | undefined = undefined;
-    public isPaused: boolean;
+    private _timer: NodeJS.Timeout | undefined = undefined;
 
     constructor(imgs: Image[], imgShowTime: number) {
         this.imgs = imgs;
-        this.curImgIdx = $state(0);
-        this.nCompletedImgs = $state(0);
         this.imgShowTime = imgShowTime;
+        this.nCompletedImgs = $state(0);
         this.timeRemaining = $state(imgShowTime);
         this.timeSpent = 0;
-        this.timer = undefined;
-        this.isPaused = $state(false);
+        this.isPaused = $state(true);
+
+        this._curImgIdx = $state(0);
+        this._timer = undefined;
     }
 
     getCurImg = () => {
-        return this.imgs[this.curImgIdx];
+        return this.imgs[this._curImgIdx];
     };
 
     goPrevImg = () => {
-        this.curImgIdx -= 1;
-        if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
+        this._curImgIdx -= 1;
+        if (this._curImgIdx < 0) this._curImgIdx = this.imgs.length - 1;
         this.timeRemaining = this.imgShowTime;
-        if (!this.isPaused) this.restartTimer();
+        if (!this.isPaused) this._restartTimer();
     };
 
     goNextImg = () => {
-        this.curImgIdx += 1;
-        if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
+        this._curImgIdx += 1;
+        if (this._curImgIdx >= this.imgs.length) this._curImgIdx = 0;
         this.timeRemaining = this.imgShowTime;
-        if (!this.isPaused) this.restartTimer();
+        if (!this.isPaused) this._restartTimer();
     };
 
     pause = () => {
         this.isPaused = true;
-        this.clearTimer();
+        this._clearTimer();
     };
 
     resume = () => {
         this.isPaused = false;
-        this.restartTimer();
+        this._restartTimer();
     };
 
     togglePause = () => {
@@ -64,9 +65,9 @@ export class DrawingSession {
         else this.pause();
     };
 
-    restartTimer = () => {
-        this.clearTimer();
-        this.timer = setInterval(async () => {
+    private _restartTimer = () => {
+        this._clearTimer();
+        this._timer = setInterval(async () => {
             if (this.timeRemaining > 0) {
                 this.timeRemaining--;
                 this.timeSpent++;
@@ -77,8 +78,8 @@ export class DrawingSession {
         }, 1000);
     };
 
-    clearTimer = () => {
-        clearInterval(this.timer);
+    private _clearTimer = () => {
+        clearInterval(this._timer);
     };
 }
 
