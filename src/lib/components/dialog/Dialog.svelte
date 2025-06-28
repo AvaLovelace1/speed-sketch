@@ -51,7 +51,6 @@
                             <Dialog.Description>{@render children()}</Dialog.Description>
                             <Dialog.Close
                                 class="text-muted absolute top-1 right-1 cursor-pointer p-2"
-                                onclick={onClose}
                             >
                                 <span class="iconify lucide--x"></span>
                                 <span class="sr-only">Close</span>
