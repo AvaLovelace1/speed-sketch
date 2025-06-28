@@ -16,9 +16,9 @@ export class DrawingSession {
     timeSpent: number;
     isPaused: boolean;
     // Index of the current image being displayed
-    private _curImgIdx: number;
+    #curImgIdx: number;
     // Timer interval that updates the time remaining with each tick
-    private _timer: NodeJS.Timeout | undefined = undefined;
+    #timer: NodeJS.Timeout | undefined = undefined;
 
     constructor(imgs: Image[], imgShowTime: number) {
         this.imgs = imgs;
@@ -28,36 +28,36 @@ export class DrawingSession {
         this.timeSpent = 0;
         this.isPaused = $state(true);
 
-        this._curImgIdx = $state(0);
-        this._timer = undefined;
+        this.#curImgIdx = $state(0);
+        this.#timer = undefined;
     }
 
     getCurImg = () => {
-        return this.imgs[this._curImgIdx];
+        return this.imgs[this.#curImgIdx];
     };
 
     goPrevImg = () => {
-        this._curImgIdx -= 1;
-        if (this._curImgIdx < 0) this._curImgIdx = this.imgs.length - 1;
+        this.#curImgIdx -= 1;
+        if (this.#curImgIdx < 0) this.#curImgIdx = this.imgs.length - 1;
         this.timeRemaining = this.imgShowTime;
-        if (!this.isPaused) this._restartTimer();
+        if (!this.isPaused) this.#restartTimer();
     };
 
     goNextImg = () => {
-        this._curImgIdx += 1;
-        if (this._curImgIdx >= this.imgs.length) this._curImgIdx = 0;
+        this.#curImgIdx += 1;
+        if (this.#curImgIdx >= this.imgs.length) this.#curImgIdx = 0;
         this.timeRemaining = this.imgShowTime;
-        if (!this.isPaused) this._restartTimer();
+        if (!this.isPaused) this.#restartTimer();
     };
 
     pause = () => {
         this.isPaused = true;
-        this._clearTimer();
+        this.#clearTimer();
     };
 
     resume = () => {
         this.isPaused = false;
-        this._restartTimer();
+        this.#restartTimer();
     };
 
     togglePause = () => {
@@ -65,9 +65,9 @@ export class DrawingSession {
         else this.pause();
     };
 
-    private _restartTimer = () => {
-        this._clearTimer();
-        this._timer = setInterval(async () => {
+    #restartTimer = () => {
+        this.#clearTimer();
+        this.#timer = setInterval(async () => {
             if (this.timeRemaining > 0) {
                 this.timeRemaining--;
                 this.timeSpent++;
@@ -78,8 +78,8 @@ export class DrawingSession {
         }, 1000);
     };
 
-    private _clearTimer = () => {
-        clearInterval(this._timer);
+    #clearTimer = () => {
+        clearInterval(this.#timer);
     };
 }
 
