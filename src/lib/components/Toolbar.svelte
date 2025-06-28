@@ -3,10 +3,10 @@
 A toolbar with a set of tools/actions and keyboard shortcuts.
 -->
 <script lang="ts">
-    import { Toolbar, Tooltip, type BitsPrimitiveElementAttributes } from "bits-ui";
+    import { Toolbar, Tooltip } from "bits-ui";
     import CustomTooltip from "$lib/components/Tooltip.svelte";
 
-    interface Tool extends BitsPrimitiveElementAttributes {
+    interface Tool extends Tooltip.TriggerProps {
         // Unique identifier for the tool
         key: string | number;
         icon: string;
@@ -17,22 +17,15 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
     interface Props extends Toolbar.RootProps {
         tools: Tool[];
-        enableHotkeys?: boolean;
         // Whether to wrap in a Tooltip.Provider (necessary if ancestor is not already wrapped)
         includeTooltipProvider?: boolean;
     }
 
-    const {
-        tools,
-        enableHotkeys = true,
-        includeTooltipProvider = false,
-        ...props
-    }: Props = $props();
+    const { tools, includeTooltipProvider = false, ...props }: Props = $props();
 
     function onKeyDown(e: KeyboardEvent) {
-        if (!enableHotkeys) return;
         for (const tool of tools) {
-            if (tool.hotkey && e.key === tool.hotkey) {
+            if (tool.hotkey && !tool.disabled && e.key === tool.hotkey) {
                 e.preventDefault();
                 tool.action();
                 break;
@@ -57,7 +50,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 <svelte:window onkeydown={onKeyDown} />
 
 {#snippet main()}
-    <Toolbar.Root {...props} class={["join rounded-field shadow-md", props.class]}>
+    <Toolbar.Root {...props} class={["join rounded-field bg-base-100 shadow-md", props.class]}>
         {#each tools as { key, icon, action, hotkey, tooltip, ...others } (key)}
             <CustomTooltip
                 side="top"

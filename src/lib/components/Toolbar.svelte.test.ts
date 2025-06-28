@@ -40,13 +40,36 @@ describe("Toolbar.svelte", () => {
 
     test("hotkeys work", async () => {
         const handler1 = vi.fn();
+        const handler2 = vi.fn();
         render(Toolbar, {
-            tools: [{ key: 1, tooltip: "Tool 1", icon: "2", action: handler1, hotkey: "a" }],
+            tools: [
+                {
+                    key: 1,
+                    tooltip: "Tool 1",
+                    icon: "2",
+                    action: handler1,
+                    hotkey: "a",
+                    disabled: false,
+                },
+                {
+                    key: 2,
+                    tooltip: "Tool 1",
+                    icon: "2",
+                    action: handler2,
+                    hotkey: "b",
+                    disabled: true,
+                },
+            ],
             includeTooltipProvider: true,
         });
 
+        // Button 1 works
         const user = userEvent.setup();
         await user.keyboard("a");
         expect(handler1).toHaveBeenCalledTimes(1);
+
+        // Button 2 is disabled, so it should not work
+        await user.keyboard("b");
+        expect(handler2).toHaveBeenCalledTimes(0);
     });
 });
