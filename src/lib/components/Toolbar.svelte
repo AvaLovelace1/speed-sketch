@@ -6,12 +6,12 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     import { Toolbar, Tooltip } from "bits-ui";
     import CustomTooltip from "$lib/components/Tooltip.svelte";
 
-    interface Tool extends Tooltip.TriggerProps {
+    export interface Tool extends Tooltip.TriggerProps {
         // Unique identifier for the tool
         key: string | number;
         icon: string;
         tooltip: string;
-        action: () => void;
+        action: (() => void) | (() => Promise<void>);
         hotkey?: string;
     }
 
