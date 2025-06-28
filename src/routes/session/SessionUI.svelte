@@ -22,8 +22,6 @@ The user interface for a drawing session.
     import type { DrawingSession } from "$lib/drawing-session.svelte";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";
-    // Duration after which toolbar will be hidden automatically
-    const HIDE_TOOLBAR_TIMEOUT_DURATION = 3000;
 
     interface Props {
         drawingSession: DrawingSession;
@@ -33,6 +31,8 @@ The user interface for a drawing session.
         showImageFolder?: () => Promise<void>;
         // Whether to wrap in a Tooltip.Provider (necessary if ancestor is not already wrapped)
         includeTooltipProvider?: boolean;
+        // Duration after which toolbar will be hidden automatically
+        hideToolbarTimeoutDuration: number;
     }
 
     const {
@@ -42,6 +42,7 @@ The user interface for a drawing session.
         toggleAlwaysOnTop = async () => {},
         showImageFolder = async () => {},
         includeTooltipProvider = false,
+        hideToolbarTimeoutDuration = 3000,
     }: Props = $props();
 
     let isFrozen = $state(false);
@@ -76,22 +77,26 @@ The user interface for a drawing session.
         toolbarShown = false;
     }
 
+    export function toolbarIsShown() {
+        return toolbarShown;
+    }
+
     function resetToolbarTimeout() {
         clearTimeout(hideToolbarTimeout);
         hideToolbarTimeout = setTimeout(() => {
             if (toolbarShouldAutoHide) hideToolbar();
             else resetToolbarTimeout();
-        }, HIDE_TOOLBAR_TIMEOUT_DURATION);
+        }, hideToolbarTimeoutDuration);
     }
 
     // Prevent any further interaction with the UI
-    function freeze() {
+    export function freeze() {
         isFrozen = true;
         drawingSession.pause();
         showToolbar();
     }
 
-    function unfreeze() {
+    export function unfreeze() {
         isFrozen = false;
         drawingSession.resume();
     }
@@ -120,20 +125,22 @@ The user interface for a drawing session.
         return 1 - sign * deltaAdjustedSpeed;
     }
 
-    const prevBtn = {
+    const prevBtn = $derived({
         key: "prev",
         icon: "lucide--arrow-left",
         action: drawingSession.goPrevImg,
         hotkey: "ArrowLeft",
         tooltip: "Previous image",
-    };
-    const nextBtn = {
+        disabled: isFrozen,
+    });
+    const nextBtn = $derived({
         key: "next",
         icon: "lucide--arrow-right",
         action: drawingSession.goNextImg,
         hotkey: "ArrowRight",
         tooltip: "Next image",
-    };
+        disabled: isFrozen,
+    });
     const pauseBtn = $derived({
         key: "pause",
         icon: drawingSession.isPaused ? "lucide--play" : "lucide--pause",
@@ -143,16 +150,18 @@ The user interface for a drawing session.
         },
         hotkey: " ",
         tooltip: drawingSession.isPaused ? "Resume" : "Pause",
+        disabled: isFrozen,
     });
-    const exitBtn = {
+    const exitBtn = $derived({
         key: "exit",
         icon: "lucide--log-out",
         action: () => confirmExitDialog.open(),
         hotkey: "Escape",
         class: "btn-error",
         tooltip: "Exit session",
-    };
-    const resetZoomBtn = {
+        disabled: isFrozen,
+    });
+    const resetZoomBtn = $derived({
         key: "reset-zoom",
         icon: "lucide--scan",
         action: () => {
@@ -162,23 +171,26 @@ The user interface for a drawing session.
         hotkey: "0",
         class: "btn-accent",
         tooltip: "Reset zoom",
-    };
-    const zoomOutBtn = {
+        disabled: isFrozen,
+    });
+    const zoomOutBtn = $derived({
         key: "zoom-out",
         icon: "lucide--zoom-out",
         action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(1)),
         hotkey: "-",
         class: "btn-accent",
         tooltip: "Zoom out",
-    };
-    const zoomInBtn = {
+        disabled: isFrozen,
+    });
+    const zoomInBtn = $derived({
         key: "zoom-in",
         icon: "lucide--zoom-in",
         action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(-1)),
         hotkey: "=",
         class: "btn-accent",
         tooltip: "Zoom in",
-    };
+        disabled: isFrozen,
+    });
     const flipHorizontalBtn = $derived({
         key: "flip-horizontal",
         icon: "lucide--flip-horizontal-2",
@@ -186,6 +198,7 @@ The user interface for a drawing session.
         hotkey: "f",
         class: ["btn-primary", isFlippedHorizontal ? "btn-active" : ""],
         tooltip: "Flip horizontally",
+        disabled: isFrozen,
     });
     const flipVerticalBtn = $derived({
         key: "flip-vertical",
@@ -194,6 +207,7 @@ The user interface for a drawing session.
         hotkey: "F",
         class: ["btn-primary", isFlippedVertical ? "btn-active" : ""],
         tooltip: "Flip vertically",
+        disabled: isFrozen,
     });
     const greyscaleBtn = $derived({
         key: "greyscale",
@@ -202,6 +216,7 @@ The user interface for a drawing session.
         hotkey: "g",
         class: ["btn-secondary", isGreyscale ? "btn-active" : ""],
         tooltip: "Greyscale",
+        disabled: isFrozen,
     });
     const blurBtn = $derived({
         key: "blur",
@@ -211,6 +226,7 @@ The user interface for a drawing session.
         hotkey: "b",
         class: ["btn-secondary", isBlurred ? "btn-active" : ""],
         tooltip: "Blur",
+        disabled: isFrozen,
     });
     const highContrastBtn = $derived({
         key: "high-contrast",
@@ -219,6 +235,7 @@ The user interface for a drawing session.
         hotkey: "c",
         class: ["btn-secondary", isHighContrast ? "btn-active" : ""],
         tooltip: "High contrast",
+        disabled: isFrozen,
     });
     const hideTimerBtn = $derived({
         key: "hide-timer",
@@ -227,6 +244,7 @@ The user interface for a drawing session.
         hotkey: "t",
         class: ["btn-info", !timerShown ? "btn-active" : ""],
         tooltip: timerShown ? "Hide timer" : "Show timer",
+        disabled: isFrozen,
     });
     const alwaysOnTopBtn = $derived({
         key: "always-on-top",
@@ -234,20 +252,23 @@ The user interface for a drawing session.
         action: toggleAlwaysOnTop,
         class: ["btn-info", isAlwaysOnTop ? "btn-active" : ""],
         tooltip: isAlwaysOnTop ? "Unpin window" : "Pin window to top",
+        disabled: isFrozen,
     });
-    const showImageFolderBtn = {
+    const showImageFolderBtn = $derived({
         key: "show-image-folder",
         icon: "lucide--folder-open",
         action: showImageFolder,
         class: "btn-info",
         tooltip: "Show image folder",
-    };
-    const settingsBtn = {
+        disabled: isFrozen,
+    });
+    const settingsBtn = $derived({
         key: "settings",
         icon: "lucide--settings",
         action: () => appSettingsDialog.component?.open(),
         tooltip: "Settings",
-    };
+        disabled: isFrozen,
+    });
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
         [resetZoomBtn, zoomOutBtn, zoomInBtn],
@@ -341,7 +362,6 @@ The user interface for a drawing session.
             {#each toolsets as tools, i (i)}
                 <Toolbar
                     {tools}
-                    enableHotkeys={!isFrozen}
                     onmouseenter={() => {
                         toolbarIsHovered = true;
                     }}
