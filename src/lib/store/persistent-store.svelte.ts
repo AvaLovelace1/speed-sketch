@@ -12,6 +12,7 @@ export interface PersistentStore {
 
 export let persistentStore: PersistentStore;
 
+// Get the single persistent store instance.
 export async function getStore() {
     if (!persistentStore) {
         try {

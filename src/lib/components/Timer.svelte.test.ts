@@ -14,12 +14,12 @@ describe("Timer.svelte", () => {
         expect(timeElement).toHaveAttribute("datetime", datetime);
     });
 
-    test("custom class is applied", async () => {
+    test("custom class is applied", () => {
         render(Timer, { time: 10, class: "custom-class" });
         expect(screen.getByRole("timer")).toHaveClass("custom-class");
     });
 
-    test("radial progress is correct", async () => {
+    test("radial progress is correct", () => {
         render(Timer, { time: 30, maxTime: 120 });
         expect(screen.getByRole("progressbar")).toHaveValue(75);
     });

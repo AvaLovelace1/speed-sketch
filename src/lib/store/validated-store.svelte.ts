@@ -14,13 +14,17 @@ export class ValidatedStore {
         this.keys = keys;
     }
 
-    // Saves all key-value pairs in a record to the persistent store.
+    // Saves all specified keys (if present) and their values in a record to the persistent store.
     async save(record: Record<string, unknown>): Promise<void> {
-        for (const [key, value] of Object.entries(record)) {
+        for (const { key } of this.keys) {
+            if (!(key in record)) {
+                console.warn(`Key ${key} not found in record, skipping save.`);
+                continue;
+            }
             try {
-                await this.persistentStore.set(key, value);
+                await this.persistentStore.set(key, record[key]);
             } catch (e) {
-                console.error(`Failed to save setting ${key} with value ${value}:`, e);
+                console.error(`Failed to save setting ${key} with value ${record[key]}:`, e);
             }
         }
         try {

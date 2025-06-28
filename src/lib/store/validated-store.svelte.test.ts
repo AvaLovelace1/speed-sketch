@@ -34,12 +34,17 @@ describe("validated-store.svelte.ts", () => {
             aString: "test string",
             aNumberEqualling42: 42,
             aBoolean: true,
+            unknownKey: "should be ignored", // This key is not defined in the validation keys
         };
         await validatedStore.save(record);
 
         const loadedRecord = {};
         await validatedStore.loadInto(loadedRecord);
-        expect(loadedRecord).toEqual(record);
+        expect(loadedRecord).toEqual({
+            aString: "test string",
+            aNumberEqualling42: 42,
+            aBoolean: true,
+        });
     });
 
     testValidatedStore("load with invalid values", async ({ validatedStore }) => {
