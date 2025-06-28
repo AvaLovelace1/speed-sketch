@@ -14,7 +14,8 @@ The user interface for a drawing session.
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
-    import Tooltip from "$lib/components/Tooltip.svelte";
+    import { Tooltip } from "bits-ui";
+    import CustomTooltip from "$lib/components/Tooltip.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import { onDestroy, onMount } from "svelte";
     import Background from "$lib/components/Background.svelte";
@@ -30,6 +31,8 @@ The user interface for a drawing session.
         exit?: () => void;
         toggleAlwaysOnTop?: () => Promise<void>;
         showImageFolder?: () => Promise<void>;
+        // Whether to wrap in a Tooltip.Provider (necessary if ancestor is not already wrapped)
+        includeTooltipProvider?: boolean;
     }
 
     const {
@@ -38,6 +41,7 @@ The user interface for a drawing session.
         exit = () => {},
         toggleAlwaysOnTop = async () => {},
         showImageFolder = async () => {},
+        includeTooltipProvider = false,
     }: Props = $props();
 
     let isFrozen = $state(false);
@@ -267,71 +271,36 @@ The user interface for a drawing session.
 
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
-<main class="flex h-dvh items-center-safe justify-center-safe">
-    <Background />
-    <!-- Wrap image in container so panzoom mouse events only fire on the image -->
-    <div class="size-full">
-        <!-- Wrap in another container so flipping works correctly -->
-        <div class="size-full" {@attach panzoomAttachment}>
-            <img
-                src={drawingSession.getCurImg().url}
-                alt="Reference used for drawing practice"
-                class={[
-                    "size-full object-contain",
-                    isFlippedVertical ? "rotate-x-180" : "",
-                    isFlippedHorizontal ? "rotate-y-180" : "",
-                    isGreyscale ? "grayscale" : "",
-                    isHighContrast ? contrastOptions[appSettings.contrastStrength] : "",
-                    isBlurred ? blurOptions[appSettings.blurStrength] : "",
-                ]}
-                bind:clientWidth={imgWidth}
-                bind:clientHeight={imgHeight}
-            />
-        </div>
-    </div>
-    <div class="toast toast-top toast-start {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
-        <Tooltip
-            side="right"
-            onmouseenter={() => {
-                toolbarIsHovered = true;
-            }}
-            onmouseleave={() => {
-                toolbarIsHovered = false;
-                resetToolbarTimeout();
-            }}
-        >
-            <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
-                <span class="iconify lucide--circle-check"></span>{drawingSession.nCompletedImgs}
-            </StatusAlert>
-            {#snippet tooltipContent()}Images completed{/snippet}
-        </Tooltip>
-    </div>
-    <div class="toast toast-top toast-end items-end">
-        {#if timerShown}
-            <Tooltip side="left">
-                <Timer
-                    time={drawingSession.timeRemaining}
-                    maxTime={drawingSession.imgShowTime}
-                    class={drawingSession.isPaused ? "text-muted!" : ""}
+{#snippet main()}
+    <main class="flex h-dvh items-center-safe justify-center-safe">
+        <Background />
+        <!-- Wrap image in container so panzoom mouse events only fire on the image -->
+        <div class="size-full">
+            <!-- Wrap in another container so flipping works correctly -->
+            <div class="size-full" {@attach panzoomAttachment}>
+                <img
+                    src={drawingSession.getCurImg().url}
+                    alt="Reference used for drawing practice"
+                    class={[
+                        "size-full object-contain",
+                        isFlippedVertical ? "rotate-x-180" : "",
+                        isFlippedHorizontal ? "rotate-y-180" : "",
+                        isGreyscale ? "grayscale" : "",
+                        isHighContrast ? contrastOptions[appSettings.contrastStrength] : "",
+                        isBlurred ? blurOptions[appSettings.blurStrength] : "",
+                    ]}
+                    bind:clientWidth={imgWidth}
+                    bind:clientHeight={imgHeight}
                 />
-                {#snippet tooltipContent()}Time remaining{/snippet}
-            </Tooltip>
-        {/if}
-        {#if drawingSession.isPaused}
-            <StatusAlert class="alert-error">
-                <span class="iconify lucide--pause"></span>Paused
-            </StatusAlert>
-        {/if}
-    </div>
-    <div
-        class="fixed bottom-0 mb-4 flex w-full justify-center-safe space-x-4 overflow-auto transition-all {TOOLBAR_TRANSITION}
-               {toolbarShown ? '' : 'opacity-0'}"
-        onfocusin={showToolbar}
-    >
-        {#each toolsets as tools, i (i)}
-            <Toolbar
-                {tools}
-                enableHotkeys={!isFrozen}
+            </div>
+        </div>
+        <div
+            class="toast toast-top toast-start {TOOLBAR_TRANSITION} {toolbarShown
+                ? ''
+                : 'opacity-0'}"
+        >
+            <CustomTooltip
+                side="right"
                 onmouseenter={() => {
                     toolbarIsHovered = true;
                 }}
@@ -339,18 +308,68 @@ The user interface for a drawing session.
                     toolbarIsHovered = false;
                     resetToolbarTimeout();
                 }}
-            />
-        {/each}
-    </div>
-</main>
+            >
+                <StatusAlert class="alert-success tabular-nums" aria-label="Images completed">
+                    <span class="iconify lucide--circle-check"
+                    ></span>{drawingSession.nCompletedImgs}
+                </StatusAlert>
+                {#snippet tooltipContent()}Images completed{/snippet}
+            </CustomTooltip>
+        </div>
+        <div class="toast toast-top toast-end items-end">
+            {#if timerShown}
+                <CustomTooltip side="left">
+                    <Timer
+                        time={drawingSession.timeRemaining}
+                        maxTime={drawingSession.imgShowTime}
+                        class={drawingSession.isPaused ? "text-muted!" : ""}
+                    />
+                    {#snippet tooltipContent()}Time remaining{/snippet}
+                </CustomTooltip>
+            {/if}
+            {#if drawingSession.isPaused}
+                <StatusAlert class="alert-error">
+                    <span class="iconify lucide--pause"></span>Paused
+                </StatusAlert>
+            {/if}
+        </div>
+        <div
+            class="fixed bottom-0 mb-4 flex w-full justify-center-safe space-x-4 overflow-auto transition-all {TOOLBAR_TRANSITION}
+               {toolbarShown ? '' : 'opacity-0'}"
+            onfocusin={showToolbar}
+        >
+            {#each toolsets as tools, i (i)}
+                <Toolbar
+                    {tools}
+                    enableHotkeys={!isFrozen}
+                    onmouseenter={() => {
+                        toolbarIsHovered = true;
+                    }}
+                    onmouseleave={() => {
+                        toolbarIsHovered = false;
+                        resetToolbarTimeout();
+                    }}
+                />
+            {/each}
+        </div>
+    </main>
 
-<AlertDialog
-    bind:this={confirmExitDialog}
-    title="Confirm Exit"
-    description="Are you sure you want to end the session?"
-    cancelText="No"
-    confirmText="Yes"
-    onOpen={freeze}
-    onCancel={unfreeze}
-    onConfirm={exit}
-/>
+    <AlertDialog
+        bind:this={confirmExitDialog}
+        title="Confirm Exit"
+        description="Are you sure you want to end the session?"
+        cancelText="No"
+        confirmText="Yes"
+        onOpen={freeze}
+        onCancel={unfreeze}
+        onConfirm={exit}
+    />
+{/snippet}
+
+{#if includeTooltipProvider}
+    <Tooltip.Provider>
+        {@render main()}
+    </Tooltip.Provider>
+{:else}
+    {@render main()}
+{/if}
