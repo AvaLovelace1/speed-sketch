@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { DrawingSession } from "$lib/drawing-session.svelte";
+import { DrawingSession } from "./drawing-session.svelte";
 
 const IMGS = [{ url: "img1.jpg" }, { url: "img2.jpg" }, { url: "img3.jpg" }];
 const IMG_SHOW_TIME = 60;

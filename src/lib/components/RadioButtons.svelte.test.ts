@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/svelte";
-import RadioButtons from "$lib/components/RadioButtons.svelte";
+import RadioButtons from "./RadioButtons.svelte";
 
 describe("RadioButtons.svelte", () => {
     test("should render radio buttons", () => {

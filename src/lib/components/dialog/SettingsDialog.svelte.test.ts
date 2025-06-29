@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/svelte";
-import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
+import SettingsDialog from "./SettingsDialog.svelte";
 import userEvent, { type UserEvent } from "@testing-library/user-event";
 
 interface SettingsDialogFixture {

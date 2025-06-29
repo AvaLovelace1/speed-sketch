@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event";
 import { render, screen } from "@testing-library/svelte";
-import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
+import AlertDialog from "./AlertDialog.svelte";
 
 interface AlertDialogFixture {
     fixture: {
@@ -55,15 +55,26 @@ describe("AlertDialog.svelte", () => {
     );
 
     testAlertDialog.for([
-        async (user: UserEvent) => await user.click(screen.getByRole("button", { name: "Cancel" })),
-        async (user: UserEvent) => await user.click(screen.getByRole("button", { name: "Close" })),
-        async (user: UserEvent) => await user.keyboard("{Escape}"),
+        {
+            name: "X button",
+            action: async (user: UserEvent) =>
+                await user.click(screen.getByRole("button", { name: "Close" })),
+        },
+        {
+            name: "cancel button",
+            action: async (user: UserEvent) =>
+                await user.click(screen.getByRole("button", { name: "Cancel" })),
+        },
+        {
+            name: "escape key",
+            action: async (user: UserEvent) => await user.keyboard("{Escape}"),
+        },
     ])(
         "cancel actions work",
-        async (cancelFn, { fixture: { alertDialog, user, onOpen, onConfirm } }) => {
+        async ({ action }, { fixture: { alertDialog, user, onOpen, onConfirm } }) => {
             alertDialog.open();
             expect(await screen.findByRole("alertdialog")).toBeVisible();
-            await cancelFn(user);
+            await action(user);
             expect(screen.queryByRole("alertdialog")).toBeNull();
 
             expect(onOpen).toHaveBeenCalledTimes(1);

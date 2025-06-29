@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { ValidatedStore } from "$lib/store/validated-store.svelte";
+import { ValidatedStore } from "./validated-store.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
 interface ValidatedStoreFixture {

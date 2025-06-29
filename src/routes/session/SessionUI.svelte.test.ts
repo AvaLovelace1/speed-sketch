@@ -80,19 +80,20 @@ describe("SessionUI.svelte", () => {
         },
     );
 
-    testSessionUI(
-        "toolbar does not hide if mouse is still over it",
-        async ({ fixture: { sessionUI, user } }) => {
+    testSessionUI.for([
+        {
+            name: "toolbar",
+            region: () => screen.getAllByRole("toolbar")[0],
+        },
+        {
+            name: "images completed",
+            region: () => screen.getByText(/images completed/i),
+        },
+    ])(
+        "toolbar does not hide if mouse is still over $name",
+        async ({ region }, { fixture: { sessionUI, user } }) => {
             expect(sessionUI.toolbarIsShown()).toBe(false);
-
-            // Hover on toolbar
-            await user.hover(screen.getAllByRole("toolbar")[0]);
-            expectToolbarPermanentlyShown(sessionUI);
-            await user.unhover(document.body);
-            expectToolbarTemporarilyShown(sessionUI);
-
-            // Hover on "images completed" status
-            await user.hover(screen.getByText(/images completed/i));
+            await user.hover(region());
             expectToolbarPermanentlyShown(sessionUI);
             await user.unhover(document.body);
             expectToolbarTemporarilyShown(sessionUI);
@@ -123,14 +124,17 @@ describe("SessionUI.svelte", () => {
         expect(drawingSession.curImgIdx).toBe(0);
     });
 
-    testSessionUI("pause and resume", async ({ fixture: { sessionUI, drawingSession, user } }) => {
+    testSessionUI("resume and pause", async ({ fixture: { sessionUI, drawingSession, user } }) => {
         expect(drawingSession.isPaused).toBe(true);
+
+        // Resume
         await user.click(screen.getByRole("button", { name: /resume/i }));
         await user.unhover(document.body);
         expect(drawingSession.isPaused).toBe(false);
         expect(screen.queryByText(/paused/i)).toBeNull();
         expectToolbarTemporarilyShown(sessionUI);
 
+        // Pause
         await user.click(screen.getByRole("button", { name: /pause/i }));
         await user.unhover(document.body);
         expect(drawingSession.isPaused).toBe(true);
@@ -158,41 +162,38 @@ describe("SessionUI.svelte", () => {
         expect(sessionUI.getImgTransform().scale).toBe(1);
     });
 
-    testSessionUI("image manipulation", async ({ fixture: { user } }) => {
-        // Flip horizontal
-        const flipHorizontalButton = screen.getByRole("button", { name: /flip horizontal/i });
-        await user.click(flipHorizontalButton);
-        expect(screen.getByRole("img")).toHaveClass("-scale-x-100");
-        await user.click(flipHorizontalButton);
-        expect(screen.getByRole("img")).not.toHaveClass("-scale-x-100");
-
-        // Flip vertical
-        const flipVerticalButton = screen.getByRole("button", { name: /flip vertical/i });
-        await user.click(flipVerticalButton);
-        expect(screen.getByRole("img")).toHaveClass("-scale-y-100");
-        await user.click(flipVerticalButton);
-        expect(screen.getByRole("img")).not.toHaveClass("-scale-y-100");
-
-        // Greyscale
-        const greyscaleButton = screen.getByRole("button", { name: /greyscale/i });
-        await user.click(greyscaleButton);
-        expect(screen.getByRole("img")).toHaveClass("grayscale");
-        await user.click(greyscaleButton);
-        expect(screen.getByRole("img")).not.toHaveClass("grayscale");
-
-        // Contrast
-        const contrastButton = screen.getByRole("button", { name: /contrast/i });
-        await user.click(contrastButton);
-        expect(screen.getByRole("img")).toHaveClass(/contrast/);
-        await user.click(contrastButton);
-        expect(screen.getByRole("img")).not.toHaveClass(/contrast/);
-
-        // Blur
-        const blurButton = screen.getByRole("button", { name: /blur/i });
-        await user.click(blurButton);
-        expect(screen.getByRole("img")).toHaveClass(/blur/);
-        await user.click(blurButton);
-        expect(screen.getByRole("img")).not.toHaveClass(/blur/);
+    testSessionUI.for([
+        {
+            name: "flip horizontal",
+            button: () => screen.getByRole("button", { name: /flip horizontal/i }),
+            className: "-scale-x-100",
+        },
+        {
+            name: "flip vertical",
+            button: () => screen.getByRole("button", { name: /flip vertical/i }),
+            className: "-scale-y-100",
+        },
+        {
+            name: "greyscale",
+            button: () => screen.getByRole("button", { name: /greyscale/i }),
+            className: "grayscale",
+        },
+        {
+            name: "contrast",
+            button: () => screen.getByRole("button", { name: /contrast/i }),
+            className: /contrast/,
+        },
+        {
+            name: "blur",
+            button: () => screen.getByRole("button", { name: /blur/i }),
+            className: /blur/,
+        },
+    ])("image manipulation: $name", async ({ button, className }, { fixture: { user } }) => {
+        const btn = button();
+        await user.click(btn);
+        expect(screen.getByRole("img")).toHaveClass(className);
+        await user.click(btn);
+        expect(screen.getByRole("img")).not.toHaveClass(className);
     });
 
     testSessionUI("hide timer button", async ({ fixture: { user } }) => {

@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event";
 import { render, screen } from "@testing-library/svelte";
-import Dialog from "$lib/components/dialog/Dialog.svelte";
+import Dialog from "./Dialog.svelte";
 import { createRawSnippet } from "svelte";
 
 interface DialogFixture {
@@ -53,12 +53,19 @@ describe("Dialog.svelte", () => {
     });
 
     testDialog.for([
-        async (user: UserEvent) => await user.click(screen.getByRole("button", { name: "Close" })),
-        async (user: UserEvent) => await user.keyboard("{Escape}"),
-    ])("cancel actions work", async (cancelFn, { fixture: { dialog, user, onOpen } }) => {
+        {
+            name: "X button",
+            action: async (user: UserEvent) =>
+                await user.click(screen.getByRole("button", { name: "Close" })),
+        },
+        {
+            name: "escape key",
+            action: async (user: UserEvent) => await user.keyboard("{Escape}"),
+        },
+    ])("dialog closes with $name", async ({ action }, { fixture: { dialog, user, onOpen } }) => {
         dialog.open();
         expect(await screen.findByRole("dialog")).toBeVisible();
-        await cancelFn(user);
+        await action(user);
         expect(screen.queryByRole("dialog")).toBeNull();
 
         expect(onOpen).toHaveBeenCalledTimes(1);

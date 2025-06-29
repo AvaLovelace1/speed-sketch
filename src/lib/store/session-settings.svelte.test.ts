@@ -3,7 +3,7 @@ import {
     sessionSettings,
     loadSessionSettings,
     saveSessionSettings,
-} from "$lib/store/session-settings.svelte";
+} from "./session-settings.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
 describe("session-settings.svelte.ts", () => {

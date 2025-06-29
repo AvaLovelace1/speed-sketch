@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { appSettings, loadAppSettings, saveAppSettings } from "$lib/store/app-settings.svelte";
+import { appSettings, loadAppSettings, saveAppSettings } from "./app-settings.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
 describe("app-settings.svelte.ts", () => {

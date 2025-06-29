@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/svelte";
-import StatusAlert from "$lib/components/StatusAlert.svelte";
+import StatusAlert from "./StatusAlert.svelte";
 import { createRawSnippet } from "svelte";
 
 describe("StatusAlert.svelte", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { render, screen } from "@testing-library/svelte";
-import Timer from "$lib/components/Timer.svelte";
+import Timer from "./Timer.svelte";
 
 describe("Timer.svelte", () => {
     test.each([
