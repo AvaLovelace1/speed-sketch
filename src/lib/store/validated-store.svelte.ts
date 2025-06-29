@@ -40,8 +40,10 @@ export class ValidatedStore {
         for (const { key, isValid } of this.keys) {
             try {
                 const value = await this.persistentStore.get(key);
-                if (isValid(value)) record[key] = value;
-                else console.warn(`Skipped loading ${key} because of invalid value:`, value);
+                if (value === undefined) console.warn(`Key ${key} not found in store.`);
+                else if (!isValid(value))
+                    console.warn(`Skipped loading ${key} because of invalid value:`, value);
+                else record[key] = value;
             } catch (e) {
                 console.error(`Failed to load ${key} from store:`, e);
             }

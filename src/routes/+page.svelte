@@ -7,11 +7,7 @@
     import startAudioFile from "$lib/assets/audio/start.wav";
     import { appSettings } from "$lib/store/app-settings.svelte";
     import { type Image, DrawingSession, currentSession } from "$lib/drawing-session.svelte";
-    import {
-        sessionSettings,
-        saveSessionSettings,
-        getImgShowTime,
-    } from "$lib/store/session-settings.svelte";
+    import { sessionSettings } from "$lib/store/session-settings.svelte";
 
     let folderErr = $state("");
     let showFolderErr = $state(false);
@@ -80,9 +76,9 @@
             console.error("Failed to play start audio:", e);
         });
 
-        await saveSessionSettings();
+        await sessionSettings.saveToStore();
 
-        currentSession.object = new DrawingSession(folderImgs, getImgShowTime());
+        currentSession.object = new DrawingSession(folderImgs, sessionSettings.getImgShowTime());
         goto("/session");
     }
 

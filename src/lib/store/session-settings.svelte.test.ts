@@ -1,33 +1,65 @@
 import { describe, test, expect } from "vitest";
-import {
-    sessionSettings,
-    loadSessionSettings,
-    saveSessionSettings,
-} from "./session-settings.svelte";
-import { createMapStore } from "$lib/store/persistent-store.svelte";
+import { SessionSettings } from "./session-settings.svelte";
+import { createMapStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
+
+interface SessionSettingsFixture {
+    fixture: {
+        sessionSettings: SessionSettings;
+        persistentStore: PersistentStore;
+    };
+}
+
+const testSessionSettings = test.extend<SessionSettingsFixture>({
+    fixture: async ({ task: _task }, use) => {
+        const persistentStore = createMapStore();
+        const sessionSettings = new SessionSettings();
+        await use({ sessionSettings, persistentStore });
+    },
+});
 
 describe("session-settings.svelte.ts", () => {
-    test("saveSessionSettings and loadSessionSettings", async () => {
-        const persistentStore = createMapStore();
+    testSessionSettings(
+        "saveSessionSettings and loadSessionSettings",
+        async ({ fixture: { sessionSettings, persistentStore } }) => {
+            // Save settings
+            const desiredImgFolder = "folder1";
+            sessionSettings.imgFolder = desiredImgFolder;
+            await sessionSettings.saveToStore(persistentStore);
 
-        // Save settings
-        const desiredImgFolder = "folder1";
-        sessionSettings.imgFolder = desiredImgFolder;
-        await saveSessionSettings(persistentStore);
+            sessionSettings.imgFolder = "folder2"; // Change to a different setting
 
-        sessionSettings.imgFolder = "folder2"; // Change to a different setting
+            // Load settings
+            await sessionSettings.loadFromStore(persistentStore);
+            expect(sessionSettings.imgFolder).toBe(desiredImgFolder);
+        },
+    );
 
-        // Load settings
-        await loadSessionSettings(persistentStore);
-        expect(sessionSettings.imgFolder).toBe(desiredImgFolder);
-    });
+    testSessionSettings(
+        "loading before settings are saved does nothing",
+        async ({ fixture: { sessionSettings, persistentStore } }) => {
+            const desiredImgFolder = "folder3";
+            sessionSettings.imgFolder = desiredImgFolder;
+            await sessionSettings.loadFromStore(persistentStore);
+            expect(sessionSettings.imgFolder).toBe(desiredImgFolder);
+        },
+    );
 
-    test("loading before settings are saved does nothing", async () => {
-        const persistentStore = createMapStore();
-
-        const desiredImgFolder = "folder3";
-        sessionSettings.imgFolder = desiredImgFolder;
-        await loadSessionSettings(persistentStore);
-        expect(sessionSettings.imgFolder).toBe(desiredImgFolder);
+    testSessionSettings.for([
+        {
+            option: "30s",
+            expected: 30,
+        },
+        {
+            option: "2m",
+            expected: 120,
+        },
+        {
+            option: "Custom",
+            expected: 1337,
+        },
+    ])("getImgShowTime for %s", ({ option, expected }, { fixture: { sessionSettings } }) => {
+        sessionSettings.imgShowTimeOption = option;
+        if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
+        expect(sessionSettings.getImgShowTime()).toBe(expected);
     });
 });

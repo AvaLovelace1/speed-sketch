@@ -5,10 +5,10 @@ export const prerender = true;
 export const ssr = false;
 
 import type { LayoutLoad } from "./$types";
-import { loadSessionSettings } from "$lib/store/session-settings.svelte";
+import { sessionSettings } from "$lib/store/session-settings.svelte";
 import { loadAppSettings } from "$lib/store/app-settings.svelte";
 
 export const load: LayoutLoad = async () => {
-    await loadSessionSettings();
+    await sessionSettings.loadFromStore();
     await loadAppSettings();
 };
