@@ -62,4 +62,9 @@ describe("session-settings.svelte.ts", () => {
         if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
         expect(sessionSettings.imgShowTime).toBe(expected);
     });
+
+    testSessionSettings("getImgs", async ({ fixture: { sessionSettings } }) => {
+        sessionSettings.imgFolder = "";
+        await expect(sessionSettings.getImgsTauri()).rejects.toThrow("Please choose a folder");
+    });
 });

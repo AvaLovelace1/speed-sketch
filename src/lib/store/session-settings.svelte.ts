@@ -2,6 +2,8 @@ import parse from "parse-duration";
 import { validateString, validateInteger } from "$lib/utils.svelte";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
+import { stat } from "@tauri-apps/plugin-fs";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 
 export class SessionSettings implements Record<string, unknown> {
     // Exactly 0 or 1 of these should be "Custom", and the rest should be a valid duration string
@@ -76,6 +78,35 @@ export class SessionSettings implements Record<string, unknown> {
             return Math.floor((parse(this.imgShowTimeOption) as number) / 1000);
         }
     }
+
+    // Get all image paths from the specified folder, converted to path URLs.
+    getImgsTauri = async () => {
+        // Check if the folder is set
+        if (this.imgFolder === "") throw new Error("Please choose a folder");
+
+        // Check if the folder exists and is a directory
+        const metadata = await stat(this.imgFolder).catch((err) => {
+            console.error("Error getting folder metadata:", err);
+            throw new Error("Cannot access folder", { cause: err });
+        });
+        if (!metadata.isDirectory) throw new Error("Path is not a folder");
+
+        // Load images from the folder
+        const files = (await invoke("get_img_files", {
+            dir: this.imgFolder,
+            includeSubdirs: sessionSettings.includeSubfolders,
+            shuffle: sessionSettings.shuffleImgs,
+            timeoutDuration: 60,
+        }).catch((e) => {
+            console.error("Error loading images:", e);
+            if (e === "TimeoutError") throw new Error("Loading images timed out", { cause: e });
+            if (e === "TaskJoinError") throw new Error("Failed to load images", { cause: e });
+            throw e;
+        })) as string[];
+        const imgs = files.map((file) => ({ url: convertFileSrc(file), path: file }));
+        if (imgs.length === 0) throw new Error("No images found in folder");
+        return imgs;
+    };
 }
 
 export const sessionSettings = $state(new SessionSettings());
