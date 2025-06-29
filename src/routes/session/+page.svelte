@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onDestroy, onMount } from "svelte";
+    import { isTauri } from "@tauri-apps/api/core";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { start, stop } from "tauri-plugin-keepawake-api";
@@ -61,9 +62,12 @@
         await stop().catch((e) => {
             console.error("Failed to stop keep awake:", e);
         });
-        await setAlwaysOnTop(false).catch((e) => {
-            console.error("Failed to reset always on top:", e);
-        });
+
+        if (isTauri()) {
+            await setAlwaysOnTop(false).catch((e) => {
+                console.error("Failed to reset always on top:", e);
+            });
+        }
     });
 </script>
 
@@ -71,4 +75,9 @@
     <title>SpeedSketch - session in progress</title>
 </svelte:head>
 
-<SessionUI drawingSession={currentSession.object} {exit} {setAlwaysOnTop} {showImageFolder} />
+<SessionUI
+    drawingSession={currentSession.object}
+    {exit}
+    setAlwaysOnTop={isTauri() ? setAlwaysOnTop : null}
+    showImageFolder={isTauri() ? showImageFolder : null}
+/>
