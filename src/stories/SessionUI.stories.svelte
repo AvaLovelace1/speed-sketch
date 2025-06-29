@@ -19,4 +19,12 @@
 </script>
 
 <!-- The main UI for the drawing session. -->
-<Story name="SessionUI" args={{ drawingSession, includeTooltipProvider: true }} />
+<Story
+    name="SessionUI"
+    args={{
+        drawingSession,
+        setAlwaysOnTop: async (_) => {},
+        showImageFolder: async () => {},
+        includeTooltipProvider: true,
+    }}
+/>

@@ -12,7 +12,6 @@
     import endAudioFile from "$lib/assets/audio/end.wav";
 
     const COUNTDOWN_BEEP_TIME = 3; // seconds before the end of the image to start beeping
-    let isAlwaysOnTop = $state(false);
 
     async function exit() {
         const endAudio = new Audio(endAudioFile);
@@ -21,16 +20,6 @@
             console.error("Failed to play end audio:", e);
         });
         goto("/session/end");
-    }
-
-    async function toggleAlwaysOnTop() {
-        await setAlwaysOnTop(!isAlwaysOnTop)
-            .then(() => {
-                isAlwaysOnTop = !isAlwaysOnTop;
-            })
-            .catch((e) => {
-                console.error("Failed to toggle always on top:", e);
-            });
     }
 
     async function setAlwaysOnTop(value: boolean) {
@@ -82,10 +71,4 @@
     <title>SpeedSketch - session in progress</title>
 </svelte:head>
 
-<SessionUI
-    drawingSession={currentSession.object}
-    {isAlwaysOnTop}
-    {exit}
-    {toggleAlwaysOnTop}
-    {showImageFolder}
-/>
+<SessionUI drawingSession={currentSession.object} {exit} {setAlwaysOnTop} {showImageFolder} />

@@ -26,21 +26,19 @@ The user interface for a drawing session.
 
     interface Props {
         drawingSession: DrawingSession;
-        isAlwaysOnTop?: boolean;
         exit?: () => void;
-        toggleAlwaysOnTop?: (() => Promise<void>) | null;
+        setAlwaysOnTop?: ((value: boolean) => Promise<void>) | null;
         showImageFolder?: (() => Promise<void>) | null;
         // Whether to wrap in a Tooltip.Provider (necessary if ancestor is not already wrapped)
         includeTooltipProvider?: boolean;
         // Duration after which toolbar will be hidden automatically
-        hideToolbarTimeoutDuration: number;
+        hideToolbarTimeoutDuration?: number;
     }
 
     const {
         drawingSession,
-        isAlwaysOnTop = false,
         exit = () => {},
-        toggleAlwaysOnTop = null,
+        setAlwaysOnTop = null,
         showImageFolder = null,
         includeTooltipProvider = false,
         hideToolbarTimeoutDuration = 3000,
@@ -63,6 +61,7 @@ The user interface for a drawing session.
     let isGreyscale = $state(false);
     let isHighContrast = $state(false);
     let isBlurred = $state(false);
+    let isAlwaysOnTop = $state(false);
 
     // UI state management
     let timerShown = $state(true);
@@ -126,6 +125,11 @@ The user interface for a drawing session.
         return 1 - sign * deltaAdjustedSpeed;
     }
 
+    // For testing purposes only.
+    export function getImgTransform() {
+        return panzoom.getTransform();
+    }
+
     const prevBtn: Tool = $derived({
         key: "prev",
         icon: "lucide--arrow-left",
@@ -151,15 +155,6 @@ The user interface for a drawing session.
         },
         hotkey: " ",
         tooltip: drawingSession.isPaused ? "Resume" : "Pause",
-        disabled: isFrozen,
-    });
-    const exitBtn: Tool = $derived({
-        key: "exit",
-        icon: "lucide--log-out",
-        action: () => confirmExitDialog.open(),
-        hotkey: "Escape",
-        class: "btn-error",
-        tooltip: "Exit session",
         disabled: isFrozen,
     });
     const resetZoomBtn: Tool = $derived({
@@ -250,7 +245,16 @@ The user interface for a drawing session.
     const alwaysOnTopBtn: Tool = $derived({
         key: "always-on-top",
         icon: "lucide--pin",
-        action: toggleAlwaysOnTop ? toggleAlwaysOnTop : () => {},
+        action: setAlwaysOnTop
+            ? async () => {
+                  try {
+                      await setAlwaysOnTop(!isAlwaysOnTop);
+                      isAlwaysOnTop = !isAlwaysOnTop;
+                  } catch (e) {
+                      console.error("Failed to toggle always on top:", e);
+                  }
+              }
+            : () => {},
         hotkey: "",
         class: ["btn-info", isAlwaysOnTop ? "btn-active" : ""],
         tooltip: isAlwaysOnTop ? "Unpin window" : "Pin window to top",
@@ -272,12 +276,21 @@ The user interface for a drawing session.
         tooltip: "Settings",
         disabled: isFrozen,
     });
+    const exitBtn: Tool = $derived({
+        key: "exit",
+        icon: "lucide--log-out",
+        action: () => confirmExitDialog.open(),
+        hotkey: "Escape",
+        class: "btn-error",
+        tooltip: "Exit session",
+        disabled: isFrozen,
+    });
     const toolsets = $derived([
         [prevBtn, pauseBtn, nextBtn],
         [resetZoomBtn, zoomOutBtn, zoomInBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
         [hideTimerBtn]
-            .concat(toggleAlwaysOnTop ? [alwaysOnTopBtn] : [])
+            .concat(setAlwaysOnTop ? [alwaysOnTopBtn] : [])
             .concat(showImageFolder ? [showImageFolderBtn] : []),
         [settingsBtn, exitBtn],
     ]);
