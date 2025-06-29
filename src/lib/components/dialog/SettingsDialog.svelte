@@ -2,13 +2,7 @@
     import Dialog from "$lib/components/dialog/Dialog.svelte";
     import Select from "$lib/components/Select.svelte";
     import Slider from "$lib/components/Slider.svelte";
-    import {
-        contrastOptions,
-        blurOptions,
-        themes,
-        appSettings,
-        saveAppSettings,
-    } from "$lib/store/app-settings.svelte.js";
+    import { appSettings } from "$lib/store/app-settings.svelte.js";
     import startAudioFile from "$lib/assets/audio/start.wav";
 
     interface Props {
@@ -26,7 +20,7 @@
     let dialog: Dialog;
 
     async function onCloseWithSave() {
-        await saveAppSettings();
+        await appSettings.saveToStore();
         onClose();
     }
 
@@ -40,7 +34,7 @@
 
     export function setOnClose(fn: () => void) {
         dialog.setOnClose(async () => {
-            await saveAppSettings();
+            await appSettings.saveToStore();
             fn();
         });
     }
@@ -53,7 +47,10 @@
             label="Theme"
             bind:value={appSettings.theme}
             items={new Map(
-                themes.map((t) => [t.name, { value: t.name, label: t.label, icon: t.icon }]),
+                appSettings.THEMES.map((t) => [
+                    t.name,
+                    { value: t.name, label: t.label, icon: t.icon },
+                ]),
             )}
         />
     </div>
@@ -81,7 +78,7 @@
             label="Contrast filter strength"
             icon="lucide--contrast"
             min={0}
-            max={contrastOptions.length - 1}
+            max={appSettings.CONTRAST_OPTIONS.length - 1}
             step={1}
             bind:value={appSettings.contrastStrength}
         />
@@ -92,7 +89,7 @@
             label="Blur strength"
             icon="lucide--droplet"
             min={0}
-            max={blurOptions.length - 1}
+            max={appSettings.BLUR_OPTIONS.length - 1}
             step={1}
             bind:value={appSettings.blurStrength}
         />

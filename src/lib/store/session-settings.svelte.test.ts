@@ -60,6 +60,6 @@ describe("session-settings.svelte.ts", () => {
     ])("getImgShowTime for %s", ({ option, expected }, { fixture: { sessionSettings } }) => {
         sessionSettings.imgShowTimeOption = option;
         if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
-        expect(sessionSettings.getImgShowTime()).toBe(expected);
+        expect(sessionSettings.imgShowTime).toBe(expected);
     });
 });

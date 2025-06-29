@@ -78,7 +78,7 @@
 
         await sessionSettings.saveToStore();
 
-        currentSession.object = new DrawingSession(folderImgs, sessionSettings.getImgShowTime());
+        currentSession.object = new DrawingSession(folderImgs, sessionSettings.imgShowTime);
         goto("/session");
     }
 

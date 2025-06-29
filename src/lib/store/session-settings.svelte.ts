@@ -59,23 +59,23 @@ export class SessionSettings implements Record<string, unknown> {
 
     loadFromStore = async (persistentStore?: PersistentStore) => {
         if (!persistentStore) persistentStore = await getStore();
-        const appSettingsStore = new ValidatedStore(persistentStore, this.#KEYS);
-        await appSettingsStore.loadInto(this);
+        const validatedStore = new ValidatedStore(persistentStore, this.#KEYS);
+        await validatedStore.loadInto(this);
     };
 
     saveToStore = async (persistentStore?: PersistentStore) => {
         if (!persistentStore) persistentStore = await getStore();
-        const appSettingsStore = new ValidatedStore(persistentStore, this.#KEYS);
-        await appSettingsStore.save(this);
+        const validatedStore = new ValidatedStore(persistentStore, this.#KEYS);
+        await validatedStore.save(this);
     };
 
-    getImgShowTime = () => {
+    get imgShowTime() {
         if (this.imgShowTimeOption === "Custom") {
             return this.imgShowTimeCustom;
         } else {
             return Math.floor((parse(this.imgShowTimeOption) as number) / 1000);
         }
-    };
+    }
 }
 
 export const sessionSettings = $state(new SessionSettings());

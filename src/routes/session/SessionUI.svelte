@@ -5,12 +5,7 @@ The user interface for a drawing session.
 <script lang="ts">
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
-    import {
-        contrastOptions,
-        blurOptions,
-        appSettings,
-        appSettingsDialog,
-    } from "$lib/store/app-settings.svelte.js";
+    import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte.js";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
@@ -325,8 +320,8 @@ The user interface for a drawing session.
                         isFlippedVertical ? "-scale-y-100" : "",
                         isFlippedHorizontal ? "-scale-x-100" : "",
                         isGreyscale ? "grayscale" : "",
-                        isHighContrast ? contrastOptions[appSettings.contrastStrength] : "",
-                        isBlurred ? blurOptions[appSettings.blurStrength] : "",
+                        isHighContrast ? appSettings.contrastClass : "",
+                        isBlurred ? appSettings.blurClass : "",
                     ]}
                     bind:clientWidth={imgWidth}
                     bind:clientHeight={imgHeight}
