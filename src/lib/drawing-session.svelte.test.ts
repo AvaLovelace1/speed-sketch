@@ -19,7 +19,7 @@ const testDrawingSession = test.extend<DrawingSessionFixture>({
 
 describe("drawing-session.svelte.ts", () => {
     testDrawingSession("initialization", ({ session }) => {
-        expect(session.imgs).toBe(IMGS);
+        expect(session.imgs).toEqual(IMGS);
         expect(session.nCompletedImgs).toBe(0);
         expect(session.imgShowTime).toBe(IMG_SHOW_TIME);
         expect(session.timeRemaining).toBe(IMG_SHOW_TIME);
@@ -29,15 +29,15 @@ describe("drawing-session.svelte.ts", () => {
 
     testDrawingSession("goPrevImg and goNextImg", ({ session }) => {
         session.goNextImg();
-        expect(session.getCurImg()).toBe(IMGS[1]);
+        expect(session.getCurImg()).toEqual(IMGS[1]);
         session.goNextImg();
-        expect(session.getCurImg()).toBe(IMGS[2]);
+        expect(session.getCurImg()).toEqual(IMGS[2]);
         session.goNextImg();
-        expect(session.getCurImg()).toBe(IMGS[0]);
+        expect(session.getCurImg()).toEqual(IMGS[0]);
         session.goPrevImg();
-        expect(session.getCurImg()).toBe(IMGS[2]);
+        expect(session.getCurImg()).toEqual(IMGS[2]);
         session.goPrevImg();
-        expect(session.getCurImg()).toBe(IMGS[1]);
+        expect(session.getCurImg()).toEqual(IMGS[1]);
     });
 
     testDrawingSession("goNextImg and goPrevImg reset timer", ({ session }) => {
@@ -92,7 +92,7 @@ describe("drawing-session.svelte.ts", () => {
         session.resume();
         vi.advanceTimersByTime((IMG_SHOW_TIME + 1) * 1000);
         expect(session.nCompletedImgs).toBe(1);
-        expect(session.getCurImg()).toBe(IMGS[1]);
+        expect(session.getCurImg()).toEqual(IMGS[1]);
         expect(session.timeRemaining).toBe(IMG_SHOW_TIME);
     });
 

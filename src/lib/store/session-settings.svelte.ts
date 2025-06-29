@@ -1,9 +1,10 @@
 import parse from "parse-duration";
-import { validateString, validateInteger } from "$lib/utils.svelte";
+import { validateString, validateInteger, fisherYatesShuffle } from "$lib/utils.svelte";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { stat } from "@tauri-apps/plugin-fs";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { compareImages, type Image } from "$lib/types.svelte";
 
 export class SessionSettings implements Record<string, unknown> {
     // Exactly 0 or 1 of these should be "Custom", and the rest should be a valid duration string
@@ -38,21 +39,38 @@ export class SessionSettings implements Record<string, unknown> {
         ];
     }
 
+    // Folder containing images to show
     imgFolder: string;
+    // Array of images to show, to be used if imgFolder is not set
+    #imgs: Image[];
+    // Whether to include images from subfolders. Has no effect if imgFolder is not set
     includeSubfolders: boolean;
+    // Whether to shuffle images before showing them
     shuffleImgs: boolean;
     imgShowTimeOption: string;
     imgShowTimeCustom: number;
     [key: string]: unknown;
 
+    get imgs(): Image[] {
+        return [...this.#imgs];
+    }
+
+    set imgs(value: Image[]) {
+        // Sort images before setting them
+        this.#imgs = [...value].sort(compareImages);
+    }
+
     constructor({
         imgFolder = "",
+        imgs = [],
         includeSubfolders = true,
         shuffleImgs = true,
         imgShowTimeOption = this.IMG_SHOW_TIME_OPTIONS[0],
         imgShowTimeCustom = Math.floor((parse(this.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000),
     } = {}) {
         this.imgFolder = $state(imgFolder);
+        this.#imgs = [];
+        this.imgs = imgs;
         this.includeSubfolders = $state(includeSubfolders);
         this.shuffleImgs = $state(shuffleImgs);
         this.imgShowTimeOption = $state(imgShowTimeOption);
@@ -80,7 +98,7 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     // Get all image paths from the specified folder, converted to path URLs.
-    getImgsTauri = async () => {
+    getImgsFromFolder = async () => {
         // Check if the folder is set
         if (this.imgFolder === "") throw new Error("Please choose a folder");
 
@@ -104,7 +122,15 @@ export class SessionSettings implements Record<string, unknown> {
             throw e;
         })) as string[];
         const imgs = files.map((file) => ({ url: convertFileSrc(file), path: file }));
-        if (imgs.length === 0) throw new Error("No images found in folder");
+        if (imgs.length === 0) throw new Error("No images found");
+        return imgs;
+    };
+
+    getImgs = async () => {
+        if (this.imgFolder !== "") return this.getImgsFromFolder();
+        const imgs = this.imgs;
+        if (imgs.length === 0) throw new Error("No images found");
+        if (this.shuffleImgs) fisherYatesShuffle(imgs);
         return imgs;
     };
 }

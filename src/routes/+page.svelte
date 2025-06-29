@@ -6,7 +6,8 @@
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.wav";
     import { appSettings } from "$lib/store/app-settings.svelte";
-    import { type Image, DrawingSession, currentSession } from "$lib/drawing-session.svelte";
+    import { type Image } from "$lib/types.svelte";
+    import { DrawingSession, currentSession } from "$lib/drawing-session.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
 
     let folderErr = $state("");

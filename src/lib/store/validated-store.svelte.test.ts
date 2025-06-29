@@ -22,6 +22,11 @@ const testValidatedStore = test.extend<ValidatedStoreFixture>({
                 key: "aBoolean",
                 isValid: (value: unknown): value is boolean => typeof value === "boolean",
             },
+            {
+                key: "anObject",
+                isValid: (value: unknown): value is Record<string, unknown> =>
+                    typeof value === "object" && value !== null && !Array.isArray(value),
+            },
         ];
         const validatedStore = new ValidatedStore(createMapStore(), keys);
         await use(validatedStore);
@@ -35,6 +40,7 @@ describe("validated-store.svelte.ts", () => {
             aString: "test string",
             aNumberEqualling42: 42,
             // aBoolean is missing
+            anObject: { key1: "value1", key2: 2 },
             unknownKey: "should be ignored", // This key is not defined in the validation keys
         };
         await validatedStore.save(record);
@@ -44,6 +50,7 @@ describe("validated-store.svelte.ts", () => {
         expect(loadedRecord).toEqual({
             aString: "test string",
             aNumberEqualling42: 42,
+            anObject: { key1: "value1", key2: 2 },
         });
     });
 
@@ -52,6 +59,7 @@ describe("validated-store.svelte.ts", () => {
             aString: "test string",
             aNumberEqualling42: 24, // Invalid value, should be 42
             aBoolean: true,
+            anObject: { key1: "value1", key2: 2 },
         };
         await validatedStore.save(record);
 
@@ -60,6 +68,7 @@ describe("validated-store.svelte.ts", () => {
         expect(loadedRecord).toEqual({
             aString: "test string",
             aBoolean: true,
+            anObject: { key1: "value1", key2: 2 },
         });
     });
 });

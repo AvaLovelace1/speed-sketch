@@ -63,8 +63,25 @@ describe("session-settings.svelte.ts", () => {
         expect(sessionSettings.imgShowTime).toBe(expected);
     });
 
+    testSessionSettings("getImgsFromFolder", async ({ fixture: { sessionSettings } }) => {
+        sessionSettings.imgFolder = "";
+        await expect(sessionSettings.getImgsFromFolder()).rejects.toThrow("Please choose a folder");
+    });
+
     testSessionSettings("getImgs", async ({ fixture: { sessionSettings } }) => {
         sessionSettings.imgFolder = "";
-        await expect(sessionSettings.getImgsTauri()).rejects.toThrow("Please choose a folder");
+
+        // Empty image list
+        sessionSettings.imgs = [];
+        await expect(sessionSettings.getImgs()).rejects.toThrow("No images found");
+
+        // Valid image list
+        const sortedImgs = [{ url: "image1.jpg" }, { url: "image2.jpg" }, { url: "image3.jpg" }];
+        const imgs = [{ url: "image3.jpg" }, { url: "image2.jpg" }, { url: "image1.jpg" }];
+        sessionSettings.imgs = imgs;
+        sessionSettings.shuffleImgs = false;
+        await expect(sessionSettings.getImgs()).resolves.toEqual(sortedImgs);
+        sessionSettings.shuffleImgs = true;
+        await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
     });
 });

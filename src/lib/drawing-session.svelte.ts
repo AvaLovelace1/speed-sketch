@@ -1,8 +1,4 @@
-export interface Image {
-    url: string;
-    // Path to the image file (for local files). Can be converted to a URL using convertFileSrc.
-    path?: string;
-}
+import { type Image } from "$lib/types.svelte";
 
 export class DrawingSession {
     // Array of images to be displayed in the session
