@@ -53,12 +53,7 @@
                             <AlertDialog.Description class="mb-8">
                                 {description}
                             </AlertDialog.Description>
-                            <form
-                                onsubmit={() => {
-                                    openBind = false;
-                                    onConfirm();
-                                }}
-                            >
+                            <form onsubmit={onConfirm}>
                                 <div class="card-actions justify-end">
                                     <AlertDialog.Cancel type="button" class="btn">
                                         {cancelText}

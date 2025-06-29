@@ -79,7 +79,6 @@ describe("AlertDialog.svelte", () => {
             alertDialog.open();
             expect(await screen.findByRole("alertdialog")).toBeVisible();
             await user.click(screen.getByRole("button", { name: "Confirm" }));
-            expect(screen.queryByRole("alertdialog")).toBeNull();
 
             expect(onOpen).toHaveBeenCalledTimes(1);
             expect(onCancel).toHaveBeenCalledTimes(0);
