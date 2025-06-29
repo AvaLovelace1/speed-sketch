@@ -29,7 +29,11 @@ const testSessionUI = test.extend<SessionUIFixture>({
         vi.mock("svelte-reduced-motion/transition");
         vi.useFakeTimers();
 
-        const imgs = [{ url: "img1.png" }, { url: "img2.png" }, { url: "img3.png" }];
+        const imgs = [
+            { name: "image1.jpg", url: "https://localhost/image1.jpg" },
+            { name: "image2.jpg", url: "https://localhost/image2.jpg" },
+            { name: "image3.jpg", url: "https://localhost/image3.jpg" },
+        ];
         const imgShowTime = 60;
         const drawingSession = new DrawingSession(imgs, imgShowTime);
         const exit = vi.fn();

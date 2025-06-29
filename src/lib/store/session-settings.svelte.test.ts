@@ -76,8 +76,12 @@ describe("session-settings.svelte.ts", () => {
         await expect(sessionSettings.getImgs()).rejects.toThrow("No images found");
 
         // Valid image list
-        const sortedImgs = [{ url: "image1.jpg" }, { url: "image2.jpg" }, { url: "image3.jpg" }];
-        const imgs = [{ url: "image3.jpg" }, { url: "image2.jpg" }, { url: "image1.jpg" }];
+        const sortedImgs = [
+            { name: "image1.jpg", url: "https://localhost/image1.jpg" },
+            { name: "image2.jpg", url: "https://localhost/image2.jpg" },
+            { name: "image3.jpg", url: "https://localhost/image3.jpg" },
+        ];
+        const imgs = [sortedImgs[2], sortedImgs[0], sortedImgs[1]];
         sessionSettings.imgs = imgs;
         sessionSettings.shuffleImgs = false;
         await expect(sessionSettings.getImgs()).resolves.toEqual(sortedImgs);
