@@ -84,9 +84,16 @@ describe("SessionUI.svelte", () => {
         "toolbar does not hide if mouse is still over it",
         async ({ fixture: { sessionUI, user } }) => {
             expect(sessionUI.toolbarIsShown()).toBe(false);
+
+            // Hover on toolbar
             await user.hover(screen.getAllByRole("toolbar")[0]);
             expectToolbarPermanentlyShown(sessionUI);
+            await user.unhover(document.body);
+            expectToolbarTemporarilyShown(sessionUI);
 
+            // Hover on "images completed" status
+            await user.hover(screen.getByText(/images completed/i));
+            expectToolbarPermanentlyShown(sessionUI);
             await user.unhover(document.body);
             expectToolbarTemporarilyShown(sessionUI);
         },
