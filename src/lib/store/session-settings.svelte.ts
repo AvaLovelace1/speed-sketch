@@ -11,9 +11,11 @@ export class SessionSettings implements Record<string, unknown> {
     get IMG_SHOW_TIME_OPTIONS() {
         return ["30s", "45s", "1m", "2m", "5m", "10m", "Custom"];
     }
+
     get MAX_IMG_SHOW_TIME() {
         return 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
     }
+
     get #KEYS() {
         return [
             {

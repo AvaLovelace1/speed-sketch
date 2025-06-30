@@ -12,8 +12,8 @@ export function validateInteger(value: unknown, min: number, max: number): value
 
 // Shuffle an array in place
 export function fisherYatesShuffle(array: unknown[]) {
-    for (let curIdx = array.length - 1; curIdx > 0; curIdx--) {
-        const randomIdx = Math.floor(Math.random() * curIdx);
+    for (let curIdx = array.length - 1; curIdx >= 1; curIdx--) {
+        const randomIdx = Math.floor(Math.random() * (curIdx + 1));
         [array[curIdx], array[randomIdx]] = [array[randomIdx], array[curIdx]];
     }
 }

@@ -83,9 +83,15 @@ describe("session-settings.svelte.ts", () => {
         ];
         const imgs = [sortedImgs[2], sortedImgs[0], sortedImgs[1]];
         sessionSettings.imgs = imgs;
+
+        // Not shuffled (should return sorted order)
         sessionSettings.shuffleImgs = false;
         await expect(sessionSettings.getImgs()).resolves.toEqual(sortedImgs);
+
+        // Shuffled images
         sessionSettings.shuffleImgs = true;
         await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
+        await expect(sessionSettings.getImgs()).resolves.toHaveLength(3);
+        await expect.poll(sessionSettings.getImgs).not.toEqual(sortedImgs);
     });
 });
