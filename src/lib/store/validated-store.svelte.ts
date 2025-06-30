@@ -3,16 +3,10 @@ import { type PersistentStore } from "$lib/store/persistent-store.svelte";
 // Manages the persistent storage of a group of key-value pairs.
 // Validates the values when loading.
 export class ValidatedStore {
-    persistentStore: PersistentStore;
-    keys: { key: string; isValid: (value: unknown) => boolean }[];
-
     constructor(
-        persistentStore: PersistentStore,
-        keys: { key: string; isValid: (value: unknown) => boolean }[],
-    ) {
-        this.persistentStore = persistentStore;
-        this.keys = keys;
-    }
+        public persistentStore: PersistentStore,
+        public keys: { key: string; isValid: (value: unknown) => boolean }[],
+    ) {}
 
     // Saves all specified keys (if present) and their values in a record to the persistent store.
     async save(record: Record<string, unknown>): Promise<void> {

@@ -1,10 +1,6 @@
 import { type Image } from "$lib/types.svelte";
 
 export class DrawingSession {
-    // Array of images to be displayed in the session
-    imgs: Image[];
-    // Time each image is displayed for, in seconds
-    imgShowTime: number;
     nCompletedImgs: number;
     // Time remaining for the current image to be displayed, in seconds
     timeRemaining: number;
@@ -16,9 +12,12 @@ export class DrawingSession {
     // Timer interval that updates the time remaining with each tick
     #timer: NodeJS.Timeout | undefined = undefined;
 
-    constructor(imgs: Image[], imgShowTime: number) {
-        this.imgs = imgs;
-        this.imgShowTime = imgShowTime;
+    constructor(
+        // Array of images to be displayed in the session
+        public imgs: Image[],
+        // Time each image is displayed for, in seconds
+        public imgShowTime: number,
+    ) {
         this.nCompletedImgs = $state(0);
         this.timeRemaining = $state(imgShowTime);
         this.timeSpent = 0;

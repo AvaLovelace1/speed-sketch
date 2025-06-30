@@ -12,7 +12,6 @@ export interface Theme {
 }
 
 export class AppSettings implements Record<string, unknown> {
-    // Exactly 0 or 1 of these should be "Custom", and the rest should be a valid duration string
     get THEMES() {
         return [
             { name: "system", label: "Auto (system setting)", icon: "lucide--monitor" },
@@ -20,6 +19,7 @@ export class AppSettings implements Record<string, unknown> {
             { name: "dark", label: "Dark", icon: "lucide--moon" },
         ] as Theme[];
     }
+
     get CONTRAST_OPTIONS() {
         return [
             "contrast-125",
