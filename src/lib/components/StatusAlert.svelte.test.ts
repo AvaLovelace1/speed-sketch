@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
 import StatusAlert from "./StatusAlert.svelte";
 import { createRawSnippet } from "svelte";

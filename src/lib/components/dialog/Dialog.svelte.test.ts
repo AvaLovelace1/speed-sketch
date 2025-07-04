@@ -1,4 +1,5 @@
 import { describe, expect, test as base, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event";
 import { render, screen } from "@testing-library/svelte";

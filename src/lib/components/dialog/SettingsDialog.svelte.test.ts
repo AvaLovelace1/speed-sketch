@@ -1,4 +1,5 @@
 import { describe, test as base, expect, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
 import SettingsDialog from "./SettingsDialog.svelte";
 import userEvent, { type UserEvent } from "@testing-library/user-event";

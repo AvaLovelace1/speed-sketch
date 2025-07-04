@@ -1,4 +1,5 @@
 import { describe, test as base, expect, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
 import SessionUI from "./SessionUI.svelte";
 import { DrawingSession } from "$lib/drawing-session.svelte";
