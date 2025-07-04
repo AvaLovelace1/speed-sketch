@@ -13,7 +13,11 @@
     });
 
     const drawingSession = new DrawingSession(
-        [{ url: Sample1 }, { url: Sample2 }, { url: Sample3 }],
+        [
+            { name: "img1", url: Sample1 },
+            { name: "img2", url: Sample2 },
+            { name: "img3", url: Sample3 },
+        ],
         60,
     );
 </script>
