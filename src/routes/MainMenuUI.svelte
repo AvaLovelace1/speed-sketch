@@ -1,15 +1,17 @@
 <script lang="ts">
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
-    import { Separator, Button, Checkbox, Label } from "bits-ui";
-    import FolderInput from "$lib/components/FolderInput.svelte";
-    import RadioButtons from "$lib/components/RadioButtons.svelte";
+    import { Separator, Button, Label, Checkbox } from "bits-ui";
+    import type { Image } from "$lib/types.svelte";
     import Background from "$lib/components/Background.svelte";
     import Card from "$lib/components/Card.svelte";
-    import ImageGrid from "$lib/components/ImageGrid.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
-    import { sessionSettings } from "$lib/store/session-settings.svelte";
+    import ImageGrid from "$lib/components/ImageGrid.svelte";
+    import ImagesInput from "$lib/components/ImagesInput.svelte";
+    import RadioButtons from "$lib/components/RadioButtons.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
+    import { sessionSettings } from "$lib/store/session-settings.svelte";
+    import { isTauri } from "@tauri-apps/api/core";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
@@ -17,29 +19,23 @@
     const COPYRIGHT = "© 2024–2025 Ava Pun";
 
     interface Props {
-        imgUrls?: string[];
-        folderErr?: string;
+        imgs?: Image[];
         isLoadingImgs?: boolean;
-        isValid?: boolean;
-        // Callback to be called when image folder is updated.
-        setImgFolder?: (folder: string) => Promise<void>;
+        canStartSession?: boolean;
+        // Callback to be called when image input is updated
+        onImagesInput?: (e: CustomEvent) => Promise<void>;
         startSession?: () => Promise<void>;
     }
 
     let {
-        imgUrls = [],
-        folderErr = "",
+        imgs = [],
         isLoadingImgs = false,
-        isValid = false,
-        setImgFolder = async (_) => {
-            console.warn("setImgFolder not implemented");
-        },
-        startSession = async () => {
-            console.warn("startSession not implemented");
-        },
+        canStartSession = false,
+        onImagesInput = async (_) => {},
+        startSession = async () => {},
     }: Props = $props();
 
-    const imgShowTimeOptionsBind = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
+    const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
         label: option,
         value: option,
     }));
@@ -57,35 +53,31 @@
             </div>
         </header>
         <main>
-            <div class="mb-8 px-2">
-                <ImageGrid {imgUrls} isLoading={isLoadingImgs} />
-            </div>
             <Card class="mx-auto" cardBodyClass="p-0">
                 <form>
                     <div class="p-8 pb-12">
                         <div class="mb-2">
-                            <Label.Root class="text-muted" for="img-folder">
-                                Image folder
-                            </Label.Root>
+                            <Label.Root class="text-muted" for="images-input">Images</Label.Root>
                             <div class="float-end">
-                                <Checkbox.Root
-                                    id="include-subfolders"
-                                    bind:checked={sessionSettings.includeSubfolders}
-                                    onCheckedChange={(_) => setImgFolder(sessionSettings.imgFolder)}
-                                    class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
-                                    tabindex={0}
-                                />
-                                <Label.Root
-                                    class="text-muted cursor-pointer text-xs"
-                                    for="include-subfolders"
-                                >
-                                    Include subfolders
-                                </Label.Root>
-                                &nbsp;&nbsp;
+                                {#if isTauri()}
+                                    <Checkbox.Root
+                                        id="include-subfolders"
+                                        bind:checked={sessionSettings.includeSubfolders}
+                                        onCheckedChange={(_) => {}}
+                                        class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
+                                        tabindex={0}
+                                    />
+                                    <Label.Root
+                                        class="text-muted cursor-pointer text-xs"
+                                        for="include-subfolders"
+                                    >
+                                        Include subfolders
+                                    </Label.Root>
+                                    &nbsp;&nbsp;
+                                {/if}
                                 <Checkbox.Root
                                     id="shuffle-images"
                                     bind:checked={sessionSettings.shuffleImgs}
-                                    onCheckedChange={(_) => setImgFolder(sessionSettings.imgFolder)}
                                     class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
                                     tabindex={0}
                                 />
@@ -93,25 +85,41 @@
                                     class="text-muted cursor-pointer text-xs"
                                     for="shuffle-images"
                                 >
-                                    Shuffle images
+                                    Shuffle
                                 </Label.Root>
                             </div>
                         </div>
-                        <FolderInput
-                            id="img-folder"
-                            class="mb-6 w-full"
-                            bind:chosenFolder={sessionSettings.imgFolder}
-                            callback={setImgFolder}
-                            errorMsg={folderErr}
-                            onkeydown={(e) => {
-                                // Prevent form submission on Enter key press
-                                if (e.key === "Enter") e.preventDefault();
-                            }}
-                        />
+                        <ImagesInput id="images-input" class="mb-6" onDrop={onImagesInput}>
+                            {#if isLoadingImgs || imgs.length > 0}
+                                <div class="mx-auto w-xs">
+                                    <ImageGrid
+                                        {imgs}
+                                        isLoading={isLoadingImgs}
+                                        maxImgs={8}
+                                        gridClass="grid-cols-4 gap-1"
+                                    ></ImageGrid>
+                                </div>
+                                <p class="mt-6 text-center text-xs font-semibold">
+                                    Drag & drop or click to choose another folder
+                                </p>
+                            {:else}
+                                <p class="text-center">
+                                    <span class="iconify lucide--download text-lg"></span>
+                                </p>
+                                <p class="text-center font-semibold">
+                                    Drag & drop or click to choose a folder
+                                </p>
+                            {/if}
+                            <p class="text-center">
+                                <small>
+                                    Images are stored locally and will <strong>not</strong> be uploaded.
+                                </small>
+                            </p>
+                        </ImagesInput>
                         <RadioButtons
                             class="mb-4"
                             groupLabel="Time per image"
-                            options={imgShowTimeOptionsBind}
+                            options={imgShowTimeOptions}
                             bind:group={sessionSettings.imgShowTimeOption}
                         />
                         {#if sessionSettings.imgShowTimeOption === "Custom"}
@@ -127,7 +135,7 @@
                         type="submit"
                         class="btn btn-success btn-block rounded-b-box rounded-t-none p-6 text-lg font-semibold uppercase"
                         onclick={startSession}
-                        disabled={!isValid}
+                        disabled={!canStartSession}
                     >
                         <span class="iconify lucide--play"></span>Go!
                     </Button.Root>
