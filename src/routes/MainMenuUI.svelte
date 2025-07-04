@@ -17,28 +17,41 @@
     const TAGLINE = "timed drawing sessions";
     const VERSION = "2.0.0";
     const COPYRIGHT = "© 2024–2025 Ava Pun";
+    const IMG_SHOW_TIME_OPTIONS = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
+        label: option,
+        value: option,
+    }));
 
     interface Props {
         imgs?: Image[];
+        imgErrMsg?: string;
         isLoadingImgs?: boolean;
         canStartSession?: boolean;
         // Callback to be called when image input is updated
-        onImagesInput?: (e: CustomEvent) => Promise<void>;
+        onImagesInput?: (inputImgsOrFolder: string | Image[] | null) => Promise<void>;
         startSession?: () => Promise<void>;
     }
 
     let {
         imgs = [],
+        imgErrMsg = "",
         isLoadingImgs = false,
         canStartSession = false,
         onImagesInput = async (_) => {},
         startSession = async () => {},
     }: Props = $props();
 
-    const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
-        label: option,
-        value: option,
-    }));
+    async function onDrop(e: CustomEvent) {
+        const inputFiles: File[] = e.detail.acceptedFiles;
+        const inputImgs = inputFiles.map((file) => {
+            return {
+                name: file.name,
+                url: URL.createObjectURL(file),
+                path: file.webkitRelativePath,
+            };
+        });
+        await onImagesInput(inputImgs);
+    }
 </script>
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
@@ -63,7 +76,9 @@
                                     <Checkbox.Root
                                         id="include-subfolders"
                                         bind:checked={sessionSettings.includeSubfolders}
-                                        onCheckedChange={(_) => {}}
+                                        onCheckedChange={async (_) => {
+                                            await onImagesInput(null);
+                                        }}
                                         class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
                                         tabindex={0}
                                     />
@@ -78,6 +93,9 @@
                                 <Checkbox.Root
                                     id="shuffle-images"
                                     bind:checked={sessionSettings.shuffleImgs}
+                                    onCheckedChange={async (_) => {
+                                        await onImagesInput(null);
+                                    }}
                                     class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
                                     tabindex={0}
                                 />
@@ -89,37 +107,48 @@
                                 </Label.Root>
                             </div>
                         </div>
-                        <ImagesInput id="images-input" class="mb-6" onDrop={onImagesInput}>
-                            {#if isLoadingImgs || imgs.length > 0}
-                                <div class="mx-auto w-xs">
-                                    <ImageGrid
-                                        {imgs}
-                                        isLoading={isLoadingImgs}
-                                        maxImgs={8}
-                                        gridClass="grid-cols-4 gap-1"
-                                    ></ImageGrid>
-                                </div>
-                                <p class="mt-6 text-center text-xs font-semibold">
-                                    Drag & drop or click to choose another folder
-                                </p>
-                            {:else}
+                        <div class="mb-6">
+                            <ImagesInput id="images-input" {onDrop}>
+                                {#if isLoadingImgs || imgs.length > 0}
+                                    <div class="mx-auto mb-6 w-xs">
+                                        <ImageGrid
+                                            {imgs}
+                                            isLoading={isLoadingImgs}
+                                            maxImgs={8}
+                                            gridClass="grid-cols-4 gap-1"
+                                        ></ImageGrid>
+                                    </div>
+                                    <p class="text-center text-xs font-semibold">
+                                        Drag & drop or click to choose another folder
+                                    </p>
+                                {:else}
+                                    <p class="text-center">
+                                        <span class="iconify lucide--download text-lg"></span>
+                                    </p>
+                                    <p class="text-center font-semibold">
+                                        Drag & drop or click to choose a folder
+                                    </p>
+                                {/if}
                                 <p class="text-center">
-                                    <span class="iconify lucide--download text-lg"></span>
+                                    <small>
+                                        Images are stored locally and will <strong>not</strong> be uploaded.
+                                    </small>
                                 </p>
-                                <p class="text-center font-semibold">
-                                    Drag & drop or click to choose a folder
-                                </p>
+                            </ImagesInput>
+                            {#if !isLoadingImgs && imgErrMsg}
+                                <div
+                                    role="status"
+                                    aria-label="Error"
+                                    class="text-error mt-2 text-xs"
+                                >
+                                    {imgErrMsg}
+                                </div>
                             {/if}
-                            <p class="text-center">
-                                <small>
-                                    Images are stored locally and will <strong>not</strong> be uploaded.
-                                </small>
-                            </p>
-                        </ImagesInput>
+                        </div>
                         <RadioButtons
                             class="mb-4"
                             groupLabel="Time per image"
-                            options={imgShowTimeOptions}
+                            options={IMG_SHOW_TIME_OPTIONS}
                             bind:group={sessionSettings.imgShowTimeOption}
                         />
                         {#if sessionSettings.imgShowTimeOption === "Custom"}

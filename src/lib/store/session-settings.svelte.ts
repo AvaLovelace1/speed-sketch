@@ -54,7 +54,7 @@ export class SessionSettings implements Record<string, unknown> {
     [key: string]: unknown;
 
     get imgs(): Image[] {
-        return [...this.#imgs];
+        return this.#imgs;
     }
 
     set imgs(value: Image[]) {
@@ -123,7 +123,11 @@ export class SessionSettings implements Record<string, unknown> {
             if (e === "TaskJoinError") throw new Error("Failed to load images", { cause: e });
             throw e;
         })) as string[];
-        const imgs = files.map((file) => ({ url: convertFileSrc(file), path: file }));
+        const imgs: Image[] = files.map((file) => ({
+            name: "",
+            url: convertFileSrc(file),
+            path: file,
+        }));
         if (imgs.length === 0) throw new Error("No images found");
         return imgs;
     };
