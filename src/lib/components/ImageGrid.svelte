@@ -3,36 +3,46 @@
 Shows a grid of image thumbnails.
 -->
 <script lang="ts">
-    const N_COLS = 6;
+    import type { Image } from "$lib/types.svelte";
+
     const SHADOW = "shadow-sm";
 
     interface Props {
-        imgUrls?: string[];
+        imgs?: Image[];
         isLoading?: boolean;
+        maxImgs?: number;
+        gridClass?: string;
     }
-    const { imgUrls = [], isLoading = false }: Props = $props();
+    const {
+        imgs = [],
+        isLoading = false,
+        maxImgs = 6,
+        gridClass = "grid-cols-6 gap-1",
+    }: Props = $props();
 </script>
 
-{#if isLoading || imgUrls.length > 0}
-    <div class="text-muted mb-2 text-xs {isLoading ? '' : 'invisible'}">Loading images...</div>
-    <div class="grid grid-cols-6 gap-1">
+{#if isLoading || imgs.length > 0}
+    <div role="status" class={["text-muted mb-2 text-xs", isLoading ? "" : "invisible"]}>
+        Loading images...
+    </div>
+    <div class="grid {gridClass}">
         {#if isLoading}
-            {#each { length: N_COLS } as _, i (i)}
+            {#each { length: maxImgs } as _, i (i)}
                 <div class="bg-base-100 aspect-square animate-pulse rounded {SHADOW}"></div>
             {/each}
         {:else}
-            {#each { length: Math.min(imgUrls.length, imgUrls.length > N_COLS ? N_COLS - 1 : N_COLS) } as _, i (i)}
+            {#each { length: Math.min(imgs.length, imgs.length > maxImgs ? maxImgs - 1 : maxImgs) } as _, i (i)}
                 <img
-                    src={imgUrls[i]}
-                    alt="Thumbnail {i}"
+                    src={imgs[i].url}
+                    alt="Thumbnail for {imgs[i].name}"
                     class="aspect-square rounded object-cover {SHADOW}"
                 />
             {/each}
-            {#if imgUrls.length > N_COLS}
+            {#if imgs.length > maxImgs}
                 <div
                     class="bg-base-100 text-muted flex aspect-square items-center justify-center rounded {SHADOW}"
                 >
-                    + <span class="text-lg font-semibold">{imgUrls.length - (N_COLS - 1)}</span>
+                    + <span class="text-lg font-semibold">{imgs.length - (maxImgs - 1)}</span>
                 </div>
             {/if}
         {/if}
