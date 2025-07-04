@@ -32,6 +32,7 @@
         id={label.replace(/\s+/g, "-")}
         type="range"
         class="range range-primary"
+        tabindex="0"
         {min}
         {max}
         {step}
