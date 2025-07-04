@@ -20,7 +20,11 @@
 
 <label class="text-muted mb-2 block" for={label}>{label}</label>
 <Select.Root type="single" bind:value items={[...items.values()]}>
-    <Select.Trigger id={label} {...triggerProps} class={["select w-3xs", triggerProps.class]}>
+    <Select.Trigger
+        id={label.replace(/\s+/g, "-")}
+        {...triggerProps}
+        class={["select w-3xs", triggerProps.class]}
+    >
         {#if items.get(value)?.icon}
             <span class="iconify {items.get(value)?.icon} text-muted"></span>
         {/if}

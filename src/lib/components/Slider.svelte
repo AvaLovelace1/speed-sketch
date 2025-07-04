@@ -29,7 +29,7 @@
         </div>
     {/if}
     <input
-        id={label}
+        id={label.replace(/\s+/g, "-")}
         type="range"
         class="range range-primary"
         {min}
