@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test as base } from "vitest";
 import { ValidatedStore } from "./validated-store.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
@@ -6,7 +6,7 @@ interface ValidatedStoreFixture {
     validatedStore: ValidatedStore;
 }
 
-const testValidatedStore = test.extend<ValidatedStoreFixture>({
+const test = base.extend<ValidatedStoreFixture>({
     validatedStore: async ({ task: _task }, use) => {
         const keys = [
             {
@@ -34,7 +34,7 @@ const testValidatedStore = test.extend<ValidatedStoreFixture>({
 });
 
 describe("validated-store.svelte.ts", () => {
-    testValidatedStore("save and load", async ({ validatedStore }) => {
+    test("save and load", async ({ validatedStore }) => {
         // Test with extra and missing keys
         const record = {
             aString: "test string",
@@ -54,7 +54,7 @@ describe("validated-store.svelte.ts", () => {
         });
     });
 
-    testValidatedStore("load with invalid values", async ({ validatedStore }) => {
+    test("load with invalid values", async ({ validatedStore }) => {
         const record = {
             aString: "test string",
             aNumberEqualling42: 24, // Invalid value, should be 42

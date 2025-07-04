@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test as base, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event";
 import { render, screen } from "@testing-library/svelte";
@@ -14,7 +14,7 @@ interface DialogFixture {
     };
 }
 
-const testDialog = test.extend<DialogFixture>({
+const test = base.extend<DialogFixture>({
     fixture: async ({ task: _task }, use) => {
         // Mock Svelte transitions to avoid "animate is not a function" errors during testing
         vi.mock("svelte/transition");
@@ -42,7 +42,7 @@ const testDialog = test.extend<DialogFixture>({
 });
 
 describe("Dialog.svelte", () => {
-    testDialog("dialog opens", async ({ fixture: { dialog, onOpen, onClose } }) => {
+    test("dialog opens", async ({ fixture: { dialog, onOpen, onClose } }) => {
         dialog.open();
         expect(await screen.findByRole("dialog")).toBeVisible();
         expect(screen.getByRole("heading", { name: "Test Dialog" })).toBeVisible();
@@ -52,7 +52,7 @@ describe("Dialog.svelte", () => {
         expect(onClose).toHaveBeenCalledTimes(0);
     });
 
-    testDialog.for([
+    test.for([
         {
             name: "X button",
             action: async (user: UserEvent) =>

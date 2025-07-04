@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, test as base, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/svelte";
 import SessionUI from "./SessionUI.svelte";
 import { DrawingSession } from "$lib/drawing-session.svelte";
@@ -17,7 +17,7 @@ interface SessionUIFixture {
     };
 }
 
-const testSessionUI = test.extend<SessionUIFixture>({
+const test = base.extend<SessionUIFixture>({
     fixture: async ({ task: _task }, use) => {
         // Mock ResizeObserver to avoid errors in tests
         global.ResizeObserver = class ResizeObserver {
@@ -75,16 +75,15 @@ describe("SessionUI.svelte", () => {
         expect(sessionUI.toolbarIsShown()).toBe(true);
     }
 
-    testSessionUI(
-        "toolbar shows on hover and hides after delay",
-        async ({ fixture: { sessionUI, user } }) => {
-            expect(sessionUI.toolbarIsShown()).toBe(false);
-            await user.hover(document.body);
-            expectToolbarTemporarilyShown(sessionUI);
-        },
-    );
+    test("toolbar shows on hover and hides after delay", async ({
+        fixture: { sessionUI, user },
+    }) => {
+        expect(sessionUI.toolbarIsShown()).toBe(false);
+        await user.hover(document.body);
+        expectToolbarTemporarilyShown(sessionUI);
+    });
 
-    testSessionUI.for([
+    test.for([
         {
             name: "toolbar",
             region: () => screen.getAllByRole("toolbar")[0],
@@ -104,7 +103,7 @@ describe("SessionUI.svelte", () => {
         },
     );
 
-    testSessionUI("freeze and unfreeze", async ({ fixture: { sessionUI, drawingSession } }) => {
+    test("freeze and unfreeze", async ({ fixture: { sessionUI, drawingSession } }) => {
         // Freeze
         expect(sessionUI.toolbarIsShown()).toBe(false);
         sessionUI.freeze();
@@ -120,7 +119,7 @@ describe("SessionUI.svelte", () => {
         expectToolbarTemporarilyShown(sessionUI);
     });
 
-    testSessionUI("prev and next buttons", async ({ fixture: { drawingSession, user } }) => {
+    test("prev and next buttons", async ({ fixture: { drawingSession, user } }) => {
         expect(drawingSession.curImgIdx).toBe(0);
         await user.click(screen.getByRole("button", { name: /next/i }));
         expect(drawingSession.curImgIdx).toBe(1);
@@ -128,7 +127,7 @@ describe("SessionUI.svelte", () => {
         expect(drawingSession.curImgIdx).toBe(0);
     });
 
-    testSessionUI("resume and pause", async ({ fixture: { sessionUI, drawingSession, user } }) => {
+    test("resume and pause", async ({ fixture: { sessionUI, drawingSession, user } }) => {
         expect(drawingSession.isPaused).toBe(true);
 
         // Resume
@@ -146,7 +145,7 @@ describe("SessionUI.svelte", () => {
         expectToolbarTemporarilyShown(sessionUI);
     });
 
-    testSessionUI("zoom", async ({ fixture: { sessionUI, user } }) => {
+    test("zoom", async ({ fixture: { sessionUI, user } }) => {
         expect(sessionUI.getImgTransform().scale).toBe(1);
 
         // Zoom in
@@ -166,7 +165,7 @@ describe("SessionUI.svelte", () => {
         expect(sessionUI.getImgTransform().scale).toBe(1);
     });
 
-    testSessionUI.for([
+    test.for([
         {
             name: "flip horizontal",
             button: () => screen.getByRole("button", { name: /flip horizontal/i }),
@@ -200,7 +199,7 @@ describe("SessionUI.svelte", () => {
         expect(screen.getByRole("img")).not.toHaveClass(className);
     });
 
-    testSessionUI("hide timer button", async ({ fixture: { user } }) => {
+    test("hide timer button", async ({ fixture: { user } }) => {
         const hideTimerButton = screen.getByRole("button", { name: /hide timer/i });
         await user.click(hideTimerButton);
         expect(screen.queryByText(/time remaining/i)).toBeNull();
@@ -208,7 +207,7 @@ describe("SessionUI.svelte", () => {
         expect(screen.getByText(/time remaining/i)).toBeVisible();
     });
 
-    testSessionUI("pin window button", async ({ fixture: { user, setAlwaysOnTop } }) => {
+    test("pin window button", async ({ fixture: { user, setAlwaysOnTop } }) => {
         const pinButton = screen.getByRole("button", { name: /pin window/i });
         await user.click(pinButton);
         expect(setAlwaysOnTop).toHaveBeenCalledTimes(1);
@@ -219,13 +218,13 @@ describe("SessionUI.svelte", () => {
         expect(setAlwaysOnTop).toHaveBeenLastCalledWith(false);
     });
 
-    testSessionUI("show image folder button", async ({ fixture: { user, showImageFolder } }) => {
+    test("show image folder button", async ({ fixture: { user, showImageFolder } }) => {
         const showFolderButton = screen.getByRole("button", { name: /show image folder/i });
         await user.click(showFolderButton);
         expect(showImageFolder).toHaveBeenCalledTimes(1);
     });
 
-    testSessionUI("exit session button", async ({ fixture: { user, exit } }) => {
+    test("exit session button", async ({ fixture: { user, exit } }) => {
         const exitButton = screen.getByRole("button", { name: /exit session/i });
         await user.click(exitButton);
         const confirmExitButton = screen.getByRole("button", { name: /yes/i });
