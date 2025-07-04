@@ -13,6 +13,10 @@
     let isLoadingImgs = $state(false);
     let canStartSession = $state(false);
 
+    function setLoadingImgs(value: boolean) {
+        isLoadingImgs = value;
+    }
+
     // Updates the shown images from inputImgsOrFolder. If inputImgsOrFolder is null, it uses the current session settings.
     async function onImagesInput(inputImgsOrFolder: string | Image[] | null) {
         canStartSession = false;
@@ -68,4 +72,12 @@
     <title>SpeedSketch</title>
 </svelte:head>
 
-<MainMenuUI {imgs} {isLoadingImgs} {imgErrMsg} {canStartSession} {onImagesInput} {startSession} />
+<MainMenuUI
+    {imgs}
+    {isLoadingImgs}
+    {imgErrMsg}
+    {canStartSession}
+    {setLoadingImgs}
+    {onImagesInput}
+    {startSession}
+/>

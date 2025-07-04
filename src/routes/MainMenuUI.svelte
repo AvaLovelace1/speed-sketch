@@ -27,6 +27,7 @@
         imgErrMsg?: string;
         isLoadingImgs?: boolean;
         canStartSession?: boolean;
+        setLoadingImgs?: (value: boolean) => void;
         // Callback to be called when image input is updated
         onImagesInput?: (inputImgsOrFolder: string | Image[] | null) => Promise<void>;
         startSession?: () => Promise<void>;
@@ -37,6 +38,7 @@
         imgErrMsg = "",
         isLoadingImgs = false,
         canStartSession = false,
+        setLoadingImgs = (_) => {},
         onImagesInput = async (_) => {},
         startSession = async () => {},
     }: Props = $props();
@@ -108,7 +110,12 @@
                             </div>
                         </div>
                         <div class="mb-6">
-                            <ImagesInput id="images-input" {onDrop}>
+                            <ImagesInput
+                                id="images-input"
+                                onFileDropped={() => setLoadingImgs(true)}
+                                onFileDialogCancel={() => setLoadingImgs(false)}
+                                {onDrop}
+                            >
                                 {#if isLoadingImgs || imgs.length > 0}
                                     <div class="mx-auto mb-6 w-xs">
                                         <ImageGrid

@@ -10,11 +10,23 @@ A dropzone component for uploading an image folder.
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         id: string;
+        // Is called as soon as file is dropped or user clicks dropzone. Useful for setting "loading" state.
+        onFileDropped?: () => void;
+        // Called when user cancels the file dialog. Can be used to reset state set by `onFileDropped`.
+        onFileDialogCancel?: () => void;
+        // Callback to handle drop event
         onDrop?: (e: CustomEvent) => void;
         children: Snippet;
     }
 
-    let { id, onDrop = (_) => {}, children, ...props }: Props = $props();
+    let {
+        id,
+        onFileDropped = () => {},
+        onFileDialogCancel = () => {},
+        onDrop = (_) => {},
+        children,
+        ...props
+    }: Props = $props();
 
     let isDragging = $state(false);
     let inputElement: HTMLInputElement | undefined = $state(undefined);
@@ -39,7 +51,18 @@ A dropzone component for uploading an image folder.
             accept={["image/*"]}
             minSize={1}
             disableDefaultStyles
-            on:filedropped={() => (isDragging = false)}
+            onclick={() => {
+                isDragging = false;
+                onFileDropped();
+            }}
+            on:filedropped={() => {
+                isDragging = false;
+                onFileDropped();
+            }}
+            on:filedialogcancel={() => {
+                isDragging = false;
+                onFileDialogCancel();
+            }}
             on:dragenter={() => (isDragging = true)}
             on:dragleave={() => (isDragging = false)}
             on:drop={onDrop}
