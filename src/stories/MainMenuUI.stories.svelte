@@ -5,6 +5,10 @@
     import Sample2 from "./assets/pexels-by-sasha-kim.jpg";
     import Sample3 from "./assets/pexels-by-andrew-sindt.jpg";
 
+    const img1 = { name: "img1.jpg", url: Sample1 };
+    const img2 = { name: "img2.jpg", url: Sample2 };
+    const img3 = { name: "img3.jpg", url: Sample3 };
+
     const { Story } = defineMeta({
         title: "MainMenuUI",
         component: MainMenuUI,
@@ -14,9 +18,6 @@
 
 <!-- The user sees this on first startup. -->
 <Story name="Default" args={{}} />
-
-<!-- Custom time entry. -->
-<Story name="Custom Image Show Time" args={{}} />
 
 <!-- Loading images. -->
 <Story
@@ -30,30 +31,17 @@
 <Story
     name="Twelve Images"
     args={{
-        imgUrls: [
-            Sample1,
-            Sample2,
-            Sample3,
-            Sample1,
-            Sample2,
-            Sample3,
-            Sample1,
-            Sample2,
-            Sample3,
-            Sample1,
-            Sample2,
-            Sample3,
-        ],
-        isValid: true,
+        imgs: [img1, img2, img3, img1, img2, img3, img1, img2, img3, img1, img2, img3],
+        canStartSession: true,
     }}
 />
 
 <!-- 6 images loaded. -->
 <Story
-    name="Six Images"
+    name="Eight Images"
     args={{
-        imgUrls: [Sample1, Sample2, Sample3, Sample1, Sample2, Sample3],
-        isValid: true,
+        imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
+        canStartSession: true,
     }}
 />
 
@@ -61,8 +49,8 @@
 <Story
     name="One Image"
     args={{
-        imgUrls: [Sample1],
-        isValid: true,
+        imgs: [img1],
+        canStartSession: true,
     }}
 />
 
@@ -70,7 +58,7 @@
 <Story
     name="Invalid"
     args={{
-        folderErr: "No images found in folder",
-        isValid: false,
+        imgErrMsg: "No images found",
+        canStartSession: false,
     }}
 />
