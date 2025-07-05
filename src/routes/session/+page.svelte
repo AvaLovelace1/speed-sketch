@@ -3,10 +3,10 @@
     import { isTauri } from "@tauri-apps/api/core";
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
-    import { start, stop } from "tauri-plugin-keepawake-api";
     import { goto } from "$app/navigation";
     import { appSettings } from "$lib/store/app-settings.svelte";
     import { currentSession } from "$lib/drawing-session.svelte";
+    import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
     import SessionUI from "./SessionUI.svelte";
     import countdownBeepFile from "$lib/assets/audio/countdown-beep.wav";
     import countdownDoneFile from "$lib/assets/audio/countdown-done.wav";
@@ -51,16 +51,16 @@
     });
 
     onMount(async () => {
-        await start({ display: true, idle: true, sleep: true }).catch((e) => {
-            console.error("Failed to start keep awake:", e);
+        await startWakelock().catch((e) => {
+            console.error("Failed to start wakelock:", e);
         });
         currentSession.object.resume();
     });
 
     onDestroy(async () => {
         currentSession.object.pause();
-        await stop().catch((e) => {
-            console.error("Failed to stop keep awake:", e);
+        await stopWakelock().catch((e) => {
+            console.error("Failed to stop wakelock:", e);
         });
 
         if (isTauri()) {
