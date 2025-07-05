@@ -58,7 +58,11 @@
                                     <AlertDialog.Cancel type="button" class="btn">
                                         {cancelText}
                                     </AlertDialog.Cancel>
-                                    <AlertDialog.Action type="submit" class="btn btn-error">
+                                    <AlertDialog.Action
+                                        type="submit"
+                                        class="btn btn-error"
+                                        tabindex={0}
+                                    >
                                         {confirmText}
                                     </AlertDialog.Action>
                                 </div>
