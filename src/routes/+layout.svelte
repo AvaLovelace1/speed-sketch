@@ -17,6 +17,13 @@
     if (isTauri()) listen("do-open-settings", (_) => appSettingsDialog.component?.open());
 </script>
 
+<svelte:head>
+    <meta
+        name="description"
+        content="Create timed drawing sessions using photo references on your own computer. Perfect for gesture studies!"
+    />
+</svelte:head>
+
 <Tooltip.Provider>
     {@render children()}
     <SettingsDialog bind:this={appSettingsDialog.component} />
