@@ -19,9 +19,11 @@
         value = $bindable(),
         ...props
     }: Props = $props();
+
+    const id = label.replace(/\s+/g, "-");
 </script>
 
-<label class="text-muted mb-2 block" for={label}>{label}</label>
+<label class="text-muted mb-2 block" for={id}>{label}</label>
 <div class="flex items-center gap-2">
     {#if icon}
         <div class="text-muted flex items-center text-base">
@@ -29,7 +31,7 @@
         </div>
     {/if}
     <input
-        id={label.replace(/\s+/g, "-")}
+        {id}
         type="range"
         class="range range-primary"
         tabindex="0"
