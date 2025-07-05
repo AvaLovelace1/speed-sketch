@@ -91,5 +91,9 @@ describe("session-settings.svelte.ts", () => {
         await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
         await expect(sessionSettings.getImgs()).resolves.toHaveLength(3);
         await expect.poll(sessionSettings.getImgs).not.toEqual(sortedImgs);
+
+        // Unshuffle again
+        sessionSettings.shuffleImgs = false;
+        await expect(sessionSettings.getImgs()).resolves.toEqual(sortedImgs);
     });
 });

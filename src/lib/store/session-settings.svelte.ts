@@ -1,9 +1,8 @@
 import parse from "parse-duration";
-import { validateString, validateInteger, fisherYatesShuffle } from "$lib/utils.svelte";
+import { validateString, validateInteger, basename, fisherYatesShuffle } from "$lib/utils.svelte";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
-import { stat } from "@tauri-apps/plugin-fs";
-import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
 import { compareImages, type Image } from "$lib/types.svelte";
 
 export class SessionSettings implements Record<string, unknown> {
@@ -51,6 +50,7 @@ export class SessionSettings implements Record<string, unknown> {
     shuffleImgs: boolean;
     imgShowTimeOption: string;
     imgShowTimeCustom: number;
+
     [key: string]: unknown;
 
     get imgs(): Image[] {
@@ -99,44 +99,34 @@ export class SessionSettings implements Record<string, unknown> {
         }
     }
 
+    getImgs = async () => {
+        if (this.imgFolder !== "" && isTauri()) this.imgs = await this.getImgsFromFolder();
+        const imgs = [...this.imgs];
+        if (imgs.length === 0) throw new Error("No images found");
+        if (this.shuffleImgs) fisherYatesShuffle(imgs);
+        return imgs;
+    };
+
     // Get all image paths from the specified folder, converted to path URLs.
     getImgsFromFolder = async () => {
-        // Check if the folder is set
-        if (this.imgFolder === "") throw new Error("Please choose a folder");
-
-        // Check if the folder exists and is a directory
-        const metadata = await stat(this.imgFolder).catch((err) => {
-            console.error("Error getting folder metadata:", err);
-            throw new Error("Cannot access folder", { cause: err });
-        });
-        if (!metadata.isDirectory) throw new Error("Path is not a folder");
-
-        // Load images from the folder
         const files = (await invoke("get_img_files", {
             dir: this.imgFolder,
-            includeSubdirs: sessionSettings.includeSubfolders,
-            shuffle: sessionSettings.shuffleImgs,
+            includeSubdirs: this.includeSubfolders,
             timeoutDuration: 60,
         }).catch((e) => {
-            console.error("Error loading images:", e);
+            if (e === "DoesNotExist") throw new Error("Folder does not exist", { cause: e });
+            if (e === "NotADirectory") throw new Error("Path is not a folder", { cause: e });
+            if (e === "PathError") throw new Error("Cannot access folder", { cause: e });
             if (e === "TimeoutError") throw new Error("Loading images timed out", { cause: e });
             if (e === "TaskJoinError") throw new Error("Failed to load images", { cause: e });
             throw e;
         })) as string[];
+
         const imgs: Image[] = files.map((file) => ({
-            name: "",
+            name: basename(file),
             url: convertFileSrc(file),
             path: file,
         }));
-        if (imgs.length === 0) throw new Error("No images found");
-        return imgs;
-    };
-
-    getImgs = async () => {
-        if (this.imgFolder !== "") return this.getImgsFromFolder();
-        const imgs = this.imgs;
-        if (imgs.length === 0) throw new Error("No images found");
-        if (this.shuffleImgs) fisherYatesShuffle(imgs);
         return imgs;
     };
 }

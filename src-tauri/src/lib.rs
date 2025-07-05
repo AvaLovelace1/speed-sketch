@@ -1,5 +1,3 @@
-use rand::seq::SliceRandom;
-use rand::thread_rng;
 use std::time::Duration;
 use tauri::menu::{MenuBuilder, MenuItemBuilder, SubmenuBuilder};
 use tauri::Manager;
@@ -7,18 +5,29 @@ use tauri::{AppHandle, Emitter};
 use tauri_plugin_opener::OpenerExt;
 use tokio::{task, time};
 use walkdir::{DirEntry, WalkDir};
+use std::path::Path;
 
-/// Return a shuffled list of image file paths from the specified directory.
+/// Return a list of image file paths from the specified directory.
 /// Error if the process takes longer than timeout_duration (specified in seconds).
 #[tauri::command]
 async fn get_img_files(
     dir: String,
     include_subdirs: bool,
-    shuffle: bool,
     timeout_duration: u64,
 ) -> Result<Vec<String>, String> {
+    // First check that folder exists and is a directory
+    let dir_path = Path::new(&dir);
+    match dir_path.try_exists() {
+        Ok(true) => {},
+        Ok(false) => return Err("DoesNotExist".to_string()),
+        Err(_) => return Err("PathError".to_string()),
+    }
+    if !dir_path.is_dir() {
+        return Err("NotADirectory".to_string());
+    }
+
     // Spawn task to call _get_img_files; time out if taking too long
-    let result = task::spawn_blocking(move || _get_img_files(&dir, include_subdirs, shuffle));
+    let result = task::spawn_blocking(move || _get_img_files(&dir, include_subdirs));
     let timeout = Duration::from_secs(timeout_duration);
     match time::timeout(timeout, result).await {
         Ok(Ok(files)) => Ok(files),
@@ -27,26 +36,19 @@ async fn get_img_files(
     }
 }
 
-fn _get_img_files(dir: &str, include_subdirs: bool, shuffle: bool) -> Vec<String> {
+fn _get_img_files(dir: &str, include_subdirs: bool) -> Vec<String> {
     let walk_dir = if include_subdirs {
         WalkDir::new(dir)
     } else {
         WalkDir::new(dir).max_depth(1)
     };
 
-    let mut result: Vec<String> = walk_dir
+    walk_dir
         .into_iter()
         .filter_map(Result::ok)
         .filter(is_img_file)
         .filter_map(|entry| entry.path().to_str().map(String::from))
-        .collect();
-
-    if shuffle {
-        result.shuffle(&mut thread_rng());
-    } else {
-        result.sort_unstable();
-    }
-    result
+        .collect()
 }
 
 /// Check if the given entry is an image file based on its extension.

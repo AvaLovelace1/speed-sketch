@@ -1,7 +1,4 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte";
-    import { getCurrentWebview } from "@tauri-apps/api/webview";
-    import { listen, type UnlistenFn } from "@tauri-apps/api/event";
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
     import { Separator, Button, Label, Checkbox } from "bits-ui";

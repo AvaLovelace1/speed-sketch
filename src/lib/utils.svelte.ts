@@ -17,3 +17,8 @@ export function fisherYatesShuffle(array: unknown[]) {
         [array[curIdx], array[randomIdx]] = [array[randomIdx], array[curIdx]];
     }
 }
+
+export function basename(path: string) {
+    const lastSlashIndex = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+    return path.substring(lastSlashIndex + 1);
+}
