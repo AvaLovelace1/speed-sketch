@@ -4,6 +4,7 @@
     import Card from "$lib/components/Card.svelte";
     import Background from "$lib/components/Background.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
+    import { goto } from "$app/navigation";
 
     interface Props {
         nCompletedImgs: number;
@@ -45,7 +46,9 @@
                 {/each}
             </div>
             <div class="card-actions justify-end">
-                <Button.Root class="btn" href="/">Return to Main Menu</Button.Root>
+                <Button.Root class="btn" onclick={() => goto("/", { replaceState: true })}>
+                    Return to Main Menu
+                </Button.Root>
             </div>
         </Card>
     </div>

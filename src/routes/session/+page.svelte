@@ -20,7 +20,7 @@
         await endAudio.play().catch((e) => {
             console.error("Failed to play end audio:", e);
         });
-        goto("/session/end");
+        goto("/session/end", { replaceState: true });
     }
 
     async function setAlwaysOnTop(value: boolean) {
