@@ -18,6 +18,14 @@ export class SettingsDialog {
         this.closeBtn = this.page.getByRole("button", { name: "Close" });
     }
 
+    openSettings = async () => {
+        await this.settingsBtn.click();
+    };
+
+    closeSettings = async () => {
+        await this.closeBtn.click();
+    };
+
     setAppSettings = async ({
         theme,
         volume,
@@ -29,7 +37,7 @@ export class SettingsDialog {
         contrastStrength?: number;
         blurStrength?: number;
     }) => {
-        await this.settingsBtn.click();
+        await this.openSettings();
         if (theme !== undefined) {
             await this.themeBtn.click();
             await this.page.getByRole("option", { name: theme }).click();
@@ -43,7 +51,7 @@ export class SettingsDialog {
         if (blurStrength !== undefined) {
             await this.blurSlider.fill(blurStrength.toString());
         }
-        await this.page.keyboard.press("Escape"); // Close settings dialog
+        await this.closeSettings();
     };
 
     expectAppSettings = async ({
@@ -57,7 +65,7 @@ export class SettingsDialog {
         contrastStrength?: number;
         blurStrength?: number;
     }) => {
-        await this.settingsBtn.click();
+        await this.openSettings();
         if (theme !== undefined) {
             await expect(this.themeBtn).toHaveText(theme);
         }
@@ -70,6 +78,6 @@ export class SettingsDialog {
         if (blurStrength !== undefined) {
             await expect(this.blurSlider).toHaveValue(blurStrength.toString());
         }
-        await this.page.keyboard.press("Escape"); // Close settings dialog
+        await this.closeSettings();
     };
 }

@@ -202,7 +202,7 @@
                 >
                     <span class="font-semibold">star us on GitHub</span>
                     <span class="iconify lucide--external-link align-text-bottom">
-                        <span class="sr-only">Opens in new tab</span>
+                        <span class="sr-only">(Opens in new tab)</span>
                     </span>
                 </a>
                 &nbsp;•&nbsp;
@@ -215,7 +215,7 @@
                 >
                     <span class="font-semibold">report an issue</span>
                     <span class="iconify lucide--external-link align-text-bottom">
-                        <span class="sr-only">Opens in new tab</span>
+                        <span class="sr-only">(Opens in new tab)</span>
                     </span>
                 </a>
             </p>

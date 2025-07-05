@@ -31,11 +31,13 @@ A timer that displays a given time.
     class={["tabular-nums", { "alert-error": timeIsCritical }, props.class]}
 >
     <Progress.Root
+        id="timer-progress"
         class="radial-progress"
         style="--value:{progressValue}; --size:1em; --thickness:2px;"
         value={100 - progressValue}
         max={100}
+        aria-labelledby="time-remaining-label"
     />
-    <span class="sr-only">Time remaining:</span>
+    <span class="sr-only" id="time-remaining-label">Time remaining:</span>
     <time datetime={durationString}>{timerString}</time>
 </StatusAlert>

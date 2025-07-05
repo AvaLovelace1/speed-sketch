@@ -1,5 +1,5 @@
-import { test } from "@playwright/test";
 import fs from "node:fs";
+import { test } from "@playwright/test";
 import { MainMenuPage } from "./main-menu-page";
 import { SessionPage } from "./session-page";
 import { SessionEndPage } from "./session-end-page";
@@ -19,13 +19,13 @@ test("typical user flow", async ({ page }) => {
     await mainMenuPage.selectImgFiles(IMG_FOLDER);
     await mainMenuPage.expectImgThumbnails(IMG_FILENAMES);
     await mainMenuPage.setCustomImgShowTime(customImgShowTime);
-    await mainMenuPage.startSession();
 
     // Session page
+    await mainMenuPage.startSession();
     const sessionPage = new SessionPage(page);
-    await sessionPage.exitSession();
 
     // Session end page
+    await sessionPage.exitSession();
     const sessionEndPage = new SessionEndPage(page);
     await sessionEndPage.returnToMainMenu();
 

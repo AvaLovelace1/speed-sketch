@@ -40,7 +40,7 @@
                         <div class="stat-figure {color} self-end text-3xl">
                             <span class="iconify {icon}"></span>
                         </div>
-                        <div class="stat-title">{title}</div>
+                        <div class="stat-title text-muted">{title}</div>
                         <div class="stat-value {color}">{value}</div>
                     </div>
                 {/each}
