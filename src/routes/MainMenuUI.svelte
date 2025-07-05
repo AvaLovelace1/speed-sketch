@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { onDestroy, onMount } from "svelte";
+    import { getCurrentWebview } from "@tauri-apps/api/webview";
+    import { listen, type UnlistenFn } from "@tauri-apps/api/event";
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
     import { Separator, Button, Label, Checkbox } from "bits-ui";
@@ -42,18 +45,6 @@
         onImagesInput = async (_) => {},
         startSession = async () => {},
     }: Props = $props();
-
-    async function onDrop(e: CustomEvent) {
-        const inputFiles: File[] = e.detail.acceptedFiles;
-        const inputImgs = inputFiles.map((file) => {
-            return {
-                name: file.name,
-                url: URL.createObjectURL(file),
-                path: file.webkitRelativePath,
-            };
-        });
-        await onImagesInput(inputImgs);
-    }
 </script>
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
@@ -111,11 +102,19 @@
                         </div>
                         <div class="mb-6">
                             <ImagesInput
+                                class="text-center"
                                 id="images-input"
                                 onFileDropped={() => setLoadingImgs(true)}
                                 onFileDialogCancel={() => setLoadingImgs(false)}
-                                {onDrop}
+                                {onImagesInput}
                             >
+                                {#if sessionSettings.imgFolder}
+                                    <p class="text-base-content mx-auto mb-3 w-xs text-center">
+                                        <span class="iconify lucide--folder align-text-bottom"
+                                        ></span>
+                                        {sessionSettings.imgFolder}
+                                    </p>
+                                {/if}
                                 {#if isLoadingImgs || imgs.length > 0}
                                     <div class="mx-auto mb-6 w-xs">
                                         <ImageGrid
@@ -136,11 +135,14 @@
                                         Drag & drop or click to choose a folder
                                     </p>
                                 {/if}
-                                <p class="text-center">
-                                    <small>
-                                        Images are stored locally and will <strong>not</strong> be uploaded.
-                                    </small>
-                                </p>
+                                {#if !isTauri()}
+                                    <p class="text-center">
+                                        <small>
+                                            Images are stored locally and will <strong>not</strong> be
+                                            uploaded.
+                                        </small>
+                                    </p>
+                                {/if}
                             </ImagesInput>
                             {#if !isLoadingImgs && imgErrMsg}
                                 <div

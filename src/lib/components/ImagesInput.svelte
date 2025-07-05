@@ -5,8 +5,12 @@ A dropzone component for uploading an image folder.
 <script lang="ts">
     import Dropzone from "svelte-file-dropzone";
     import type { HTMLAttributes } from "svelte/elements";
-    import { onMount, type Snippet } from "svelte";
+    import { onDestroy, onMount, type Snippet } from "svelte";
     import { isTauri } from "@tauri-apps/api/core";
+    import type { UnlistenFn, Event } from "@tauri-apps/api/event";
+    import { type DragDropEvent, getCurrentWebview } from "@tauri-apps/api/webview";
+    import { open } from "@tauri-apps/plugin-dialog";
+    import type { Image } from "$lib/types.svelte";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         id: string;
@@ -15,24 +19,63 @@ A dropzone component for uploading an image folder.
         // Called when user cancels the file dialog. Can be used to reset state set by `onFileDropped`.
         onFileDialogCancel?: () => void;
         // Callback to handle drop event
-        onDrop?: (e: CustomEvent) => void;
+        onImagesInput?: (inputFolderOrImgs: string | Image[] | null) => Promise<void>;
         children: Snippet;
     }
 
     let {
-        id,
         onFileDropped = () => {},
         onFileDialogCancel = () => {},
-        onDrop = (_) => {},
+        onImagesInput = async (_) => {},
         children,
         ...props
     }: Props = $props();
 
     let isDragging = $state(false);
     let inputElement: HTMLInputElement | undefined = $state(undefined);
+    let unlistenDragDrop: UnlistenFn;
 
-    onMount(() => {
+    async function chooseFolder() {
+        const folder = await open({ directory: true, multiple: false, title: "Choose Folder" });
+        if (folder) await onImagesInput(folder);
+    }
+
+    async function tauriDragDropHandler(e: Event<DragDropEvent>) {
+        if (e.payload.type === "enter") isDragging = true;
+        else if (e.payload.type === "leave") isDragging = false;
+        else if (e.payload.type === "drop") {
+            isDragging = false;
+            const paths = e.payload.paths;
+
+            if (paths.length === 0) return;
+            if (paths.length > 1) {
+                console.warn("Multiple paths dropped, only the first will be used.");
+            }
+            await onImagesInput(paths[0]);
+        }
+    }
+
+    async function onDrop(e: CustomEvent) {
+        const inputFiles: File[] = e.detail.acceptedFiles;
+        const inputImgs = inputFiles.map((file) => {
+            return {
+                name: file.name,
+                url: URL.createObjectURL(file),
+                path: file.webkitRelativePath,
+            };
+        });
+        await onImagesInput(inputImgs);
+    }
+
+    onMount(async () => {
+        if (isTauri()) {
+            unlistenDragDrop = await getCurrentWebview().onDragDropEvent(tauriDragDropHandler);
+        }
         if (inputElement) inputElement?.setAttribute("webkitdirectory", "true");
+    });
+
+    onDestroy(() => {
+        if (unlistenDragDrop) unlistenDragDrop();
     });
 </script>
 
@@ -44,9 +87,12 @@ A dropzone component for uploading an image folder.
         props.class,
     ]}
 >
-    {#if isTauri()}{:else}
+    {#if isTauri()}
+        <button class="size-full cursor-pointer p-8 text-shadow-2xs" onclick={chooseFolder}>
+            {@render children()}
+        </button>
+    {:else}
         <Dropzone
-            {id}
             containerClasses="p-8 text-shadow-2xs"
             accept={["image/*"]}
             minSize={1}
