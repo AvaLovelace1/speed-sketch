@@ -114,8 +114,10 @@
                                             imgErrMsg ? "text-error" : "",
                                         ]}
                                     >
-                                        <span class="iconify lucide--folder align-text-bottom"
-                                        ></span>
+                                        <span
+                                            class="iconify lucide--folder text-muted align-text-bottom"
+                                        >
+                                        </span>
                                         {sessionSettings.imgFolder}
                                     </p>
                                 {/if}
