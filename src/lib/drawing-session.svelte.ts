@@ -27,6 +27,10 @@ export class DrawingSession {
         this.#timer = undefined;
     }
 
+    isValid = () => {
+        return this.imgs.length > 0 && this.imgShowTime > 0;
+    };
+
     getCurImg = () => {
         return this.imgs[this.curImgIdx];
     };
