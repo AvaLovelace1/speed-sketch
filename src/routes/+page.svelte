@@ -59,7 +59,7 @@
         await startAudio.play().catch((e) => {
             console.error("Failed to play start audio:", e);
         });
-        goto("/session", { replaceState: true });
+        await goto("/session", { replaceState: true });
     }
 
     onMount(async () => {

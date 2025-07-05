@@ -46,11 +46,14 @@
                 {/each}
             </div>
             <div class="card-actions justify-end">
-                <Button.Root class="btn" onclick={() => goto("/", { replaceState: true })}>
+                <Button.Root
+                    class="btn"
+                    onclick={async () => await goto("/", { replaceState: true })}
+                >
                     Return to Main Menu
                 </Button.Root>
             </div>
         </Card>
     </div>
-    <SettingsButton />
 </main>
+<SettingsButton />

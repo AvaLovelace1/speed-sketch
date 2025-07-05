@@ -17,6 +17,7 @@
     const TAGLINE = "timed drawing sessions";
     const VERSION = "2.0.0";
     const COPYRIGHT = "© 2024–2025 Ava Pun";
+    const GITHUB_URL = "https://github.com/AvaLovelace1/speed-sketch";
     const IMG_SHOW_TIME_OPTIONS = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
         label: option,
         value: option,
@@ -185,10 +186,19 @@
                     </Button.Root>
                 </form>
             </Card>
-            <SettingsButton />
         </main>
         <footer class="text-muted mt-8 text-center">
-            <small>v{VERSION} &nbsp; {COPYRIGHT}</small>
+            <small>
+                v{VERSION} &nbsp;•&nbsp;
+                {COPYRIGHT} &nbsp;•&nbsp; star us on
+                <a href={GITHUB_URL} class="font-semibold" target="_blank" rel="noreferrer">
+                    <span class="underline">GitHub</span>
+                    <span class="iconify lucide--external-link align-text-bottom">
+                        <span class="sr-only">Opens in new tab</span>
+                    </span>
+                </a>
+            </small>
         </footer>
+        <SettingsButton />
     </div>
 </div>
