@@ -8,7 +8,6 @@
         "core:webview:allow-set-webview-zoom",
         "core:window:allow-set-always-on-top",
         "dialog:allow-open",
-        "fs:allow-home-meta-recursive",
         "keepawake:default",
         "opener:default",
         "store:default"
