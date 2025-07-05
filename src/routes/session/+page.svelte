@@ -50,18 +50,28 @@
         }
     });
 
+    function beforeUnloadHandler(e: BeforeUnloadEvent) {
+        e.preventDefault();
+    }
+
     onMount(async () => {
+        if (!isTauri()) window.addEventListener("beforeunload", beforeUnloadHandler);
+
         await startWakelock().catch((e) => {
             console.error("Failed to start wakelock:", e);
         });
+
         currentSession.object.resume();
     });
 
     onDestroy(async () => {
         currentSession.object.pause();
+
         await stopWakelock().catch((e) => {
             console.error("Failed to stop wakelock:", e);
         });
+
+        if (!isTauri()) window.removeEventListener("beforeunload", beforeUnloadHandler);
 
         if (isTauri()) {
             await setAlwaysOnTop(false).catch((e) => {
