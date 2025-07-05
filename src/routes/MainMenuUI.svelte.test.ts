@@ -50,11 +50,11 @@ describe("MainMenuUI.svelte", () => {
 
         // Select time of 1m
         await user.click(screen.getByRole("radio", { name: /1m/i }));
-        expect(screen.queryByRole("spinbutton", { name: /minute/i })).toBeNull();
+        expect(screen.queryByRole("spinbutton", { name: /minute, custom time/i })).toBeNull();
 
         // Select custom time
         await user.click(screen.getByRole("radio", { name: /custom/i }));
-        expect(screen.getByRole("spinbutton", { name: /minute/i })).toBeVisible();
+        expect(screen.getByRole("spinbutton", { name: /minute, custom time/i })).toBeVisible();
 
         // Click GO button
         await user.click(screen.getByRole("button", { name: /go/i }));
