@@ -117,6 +117,7 @@
                                         <span
                                             class="iconify lucide--folder text-muted align-text-bottom"
                                         >
+                                            <span class="sr-only">Folder</span>
                                         </span>
                                         {sessionSettings.imgFolder}
                                     </p>
@@ -136,11 +137,11 @@
                                 {:else if imgErrMsg}
                                     <p
                                         role="status"
-                                        aria-label="Error"
                                         class="text-error mb-4 text-base font-semibold"
                                     >
-                                        <span class="iconify lucide--octagon-x align-text-bottom"
-                                        ></span>
+                                        <span class="iconify lucide--octagon-x align-text-bottom">
+                                            <span class="sr-only">Error</span>
+                                        </span>
                                         {imgErrMsg}
                                     </p>
                                     <p class="text-center text-xs font-semibold">

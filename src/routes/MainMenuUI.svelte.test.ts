@@ -60,6 +60,6 @@ describe("MainMenuUI.svelte", () => {
     test("error message visible when imgErrMsg is set", () => {
         const imgErrMsg = "Test error message";
         render(MainMenuUI, { imgErrMsg });
-        expect(screen.getByRole("status", { name: /error/i })).toHaveTextContent(imgErrMsg);
+        expect(screen.getByRole("status")).toHaveTextContent(imgErrMsg);
     });
 });
