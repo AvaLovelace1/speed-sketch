@@ -58,7 +58,7 @@
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
     <Background />
-    <div class="w-lg">
+    <div class="w-lg py-8">
         <header>
             <div class="mb-8 text-center text-shadow-sm">
                 <h1 class="text-6xl font-thin">{APP_NAME}</h1>

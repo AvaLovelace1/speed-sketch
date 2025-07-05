@@ -30,22 +30,24 @@
 
 <main class="flex h-dvh items-center-safe justify-center-safe">
     <Background />
-    <Card cardBodyClass="p-8">
-        <h1 class="card-title mb-6 text-2xl">Session complete!</h1>
-        <div class="stats mb-4">
-            {#each stats as { title, value, color, icon } (title)}
-                <div class="stat">
-                    <div class="stat-figure {color} self-end text-3xl">
-                        <span class="iconify {icon}"></span>
+    <div class="py-8">
+        <Card cardBodyClass="p-8">
+            <h1 class="card-title mb-6 text-2xl">Session complete!</h1>
+            <div class="stats mb-4">
+                {#each stats as { title, value, color, icon } (title)}
+                    <div class="stat">
+                        <div class="stat-figure {color} self-end text-3xl">
+                            <span class="iconify {icon}"></span>
+                        </div>
+                        <div class="stat-title">{title}</div>
+                        <div class="stat-value {color}">{value}</div>
                     </div>
-                    <div class="stat-title">{title}</div>
-                    <div class="stat-value {color}">{value}</div>
-                </div>
-            {/each}
-        </div>
-        <div class="card-actions justify-end">
-            <Button.Root class="btn" href="/">Return to Main Menu</Button.Root>
-        </div>
-    </Card>
+                {/each}
+            </div>
+            <div class="card-actions justify-end">
+                <Button.Root class="btn" href="/">Return to Main Menu</Button.Root>
+            </div>
+        </Card>
+    </div>
     <SettingsButton />
 </main>
