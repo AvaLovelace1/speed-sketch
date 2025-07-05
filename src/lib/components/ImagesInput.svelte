@@ -61,7 +61,6 @@ A dropzone component for uploading an image folder.
             return {
                 name: file.name,
                 url: URL.createObjectURL(file),
-                path: file.webkitRelativePath,
             };
         });
         await onImagesInput(inputImgs);

@@ -18,7 +18,7 @@
     }
 
     // Updates the shown images from inputImgsOrFolder. If inputImgsOrFolder is null, it uses the current session settings.
-    async function onImagesInput(inputImgsOrFolder: string | Image[] | null) {
+    export async function onImagesInput(inputImgsOrFolder: string | Image[] | null) {
         canStartSession = false;
         isLoadingImgs = true;
 
