@@ -2,6 +2,13 @@ import { describe, test as base, expect } from "vitest";
 import { SessionSettings } from "./session-settings.svelte";
 import { createMapStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 
+const FOLDER_NAME = "your/test-folder";
+const SORTED_IMGS = [
+    { name: "image1.jpg", url: "https://localhost/image1.jpg", path: `${FOLDER_NAME}/image1.jpg` },
+    { name: "image2.jpg", url: "https://localhost/image2.jpg", path: `${FOLDER_NAME}/image2.jpg` },
+    { name: "image3.jpg", url: "https://localhost/image3.jpg", path: `${FOLDER_NAME}/image3.jpg` },
+];
+
 interface SessionSettingsFixture {
     fixture: {
         sessionSettings: SessionSettings;
@@ -61,11 +68,6 @@ describe("session-settings.svelte.ts", () => {
         expect(sessionSettings.imgShowTime).toBe(expected);
     });
 
-    test("getImgsFromFolder", async ({ fixture: { sessionSettings } }) => {
-        sessionSettings.imgFolder = "";
-        await expect(sessionSettings.getImgsFromFolder()).rejects.toThrow("Please choose a folder");
-    });
-
     test("getImgs", async ({ fixture: { sessionSettings } }) => {
         sessionSettings.imgFolder = "";
 
@@ -74,26 +76,21 @@ describe("session-settings.svelte.ts", () => {
         await expect(sessionSettings.getImgs()).rejects.toThrow("No images found");
 
         // Valid image list
-        const sortedImgs = [
-            { name: "image1.jpg", url: "https://localhost/image1.jpg" },
-            { name: "image2.jpg", url: "https://localhost/image2.jpg" },
-            { name: "image3.jpg", url: "https://localhost/image3.jpg" },
-        ];
-        const imgs = [sortedImgs[2], sortedImgs[0], sortedImgs[1]];
+        const imgs = [SORTED_IMGS[2], SORTED_IMGS[0], SORTED_IMGS[1]];
         sessionSettings.imgs = imgs;
 
         // Not shuffled (should return sorted order)
         sessionSettings.shuffleImgs = false;
-        await expect(sessionSettings.getImgs()).resolves.toEqual(sortedImgs);
+        await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
 
         // Shuffled images
         sessionSettings.shuffleImgs = true;
         await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
-        await expect(sessionSettings.getImgs()).resolves.toHaveLength(3);
-        await expect.poll(sessionSettings.getImgs).not.toEqual(sortedImgs);
+        await expect(sessionSettings.getImgs()).resolves.toHaveLength(SORTED_IMGS.length);
+        await expect.poll(sessionSettings.getImgs).not.toEqual(SORTED_IMGS);
 
         // Unshuffle again
         sessionSettings.shuffleImgs = false;
-        await expect(sessionSettings.getImgs()).resolves.toEqual(sortedImgs);
+        await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
     });
 });

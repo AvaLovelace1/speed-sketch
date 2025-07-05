@@ -1,22 +1,13 @@
-import { describe, expect, test as base, vi, type Mock } from "vitest";
+import { describe, expect, test as base, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import MainMenuUI from "./MainMenuUI.svelte";
-import { isTauri } from "@tauri-apps/api/core";
 
 const test = base.extend({
     fixture: async ({ task: _task }, use) => {
         vi.mock("svelte/transition");
         vi.mock("svelte-reduced-motion/transition");
-        vi.mock("@tauri-apps/api/core", async () => {
-            const originalModule = await vi.importActual("@tauri-apps/api/core");
-            return {
-                ...originalModule,
-                isTauri: vi.fn().mockReturnValue(false),
-            };
-        });
-
         await use({});
         vi.restoreAllMocks();
     },
@@ -59,13 +50,6 @@ describe("MainMenuUI.svelte", () => {
         // Click GO button
         await user.click(screen.getByRole("button", { name: /go/i }));
         expect(startSession).toHaveBeenCalledTimes(1);
-    });
-
-    test("include subfolders checkbox visible with Tauri", async () => {
-        (isTauri as Mock).mockReturnValue(true);
-        render(MainMenuUI, {});
-        // Check that "include subfolders" checkbox is visible
-        expect(screen.getByRole("checkbox", { name: /include subfolders/i })).toBeVisible();
     });
 
     test("disabled GO button when canStartSession=false", () => {

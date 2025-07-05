@@ -106,7 +106,12 @@
                                 {onImagesInput}
                             >
                                 {#if sessionSettings.imgFolder}
-                                    <p class="text-base-content mx-auto mb-3 w-xs text-center">
+                                    <p
+                                        class={[
+                                            "text-base-content mx-auto mb-3 w-xs text-center",
+                                            imgErrMsg ? "text-error" : "",
+                                        ]}
+                                    >
                                         <span class="iconify lucide--folder align-text-bottom"
                                         ></span>
                                         {sessionSettings.imgFolder}
@@ -121,6 +126,19 @@
                                             gridClass="grid-cols-4 gap-1"
                                         ></ImageGrid>
                                     </div>
+                                    <p class="text-center text-xs font-semibold">
+                                        Drag & drop or click to choose another folder
+                                    </p>
+                                {:else if imgErrMsg}
+                                    <p
+                                        role="status"
+                                        aria-label="Error"
+                                        class="text-error mb-4 text-base font-semibold"
+                                    >
+                                        <span class="iconify lucide--octagon-x align-text-bottom"
+                                        ></span>
+                                        {imgErrMsg}
+                                    </p>
                                     <p class="text-center text-xs font-semibold">
                                         Drag & drop or click to choose another folder
                                     </p>
@@ -141,15 +159,6 @@
                                     </p>
                                 {/if}
                             </ImagesInput>
-                            {#if !isLoadingImgs && imgErrMsg}
-                                <div
-                                    role="status"
-                                    aria-label="Error"
-                                    class="text-error mt-2 text-xs"
-                                >
-                                    {imgErrMsg}
-                                </div>
-                            {/if}
                         </div>
                         <RadioButtons
                             class="mb-4"
