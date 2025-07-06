@@ -1,9 +1,7 @@
 use std::path::Path;
 use std::time::Duration;
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
-use tauri::AppHandle;
 use tauri::Manager;
-use tauri_plugin_opener::OpenerExt;
 use tokio::{task, time};
 use walkdir::{DirEntry, WalkDir};
 
@@ -107,24 +105,11 @@ pub fn run() {
                     .separator()
                     .close_window()
                     .build()?;
-                let help = SubmenuBuilder::new(app, "Help")
-                    .text("report_issue", "🔗 Report an Issue…")
-                    .build()?;
                 let menu = MenuBuilder::new(app)
-                    .items(&[&main, &view, &window, &help])
+                    .items(&[&main, &view, &window])
                     .build()?;
                 app.set_menu(menu)?;
             }
-
-            app.on_menu_event(move |app_handle: &AppHandle, event| {
-                if event.id().0.as_str() == "report_issue" {
-                    let url = "https://github.com/AvaLovelace1/speed-sketch/issues/new";
-                    app_handle
-                        .opener()
-                        .open_url(url, None::<&str>)
-                        .unwrap_or_default()
-                }
-            });
 
             Ok(())
         })
