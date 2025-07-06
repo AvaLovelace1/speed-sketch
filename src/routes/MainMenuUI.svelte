@@ -18,6 +18,8 @@
     const COPYRIGHT = "© 2024–2025 Ava Pun";
     const GITHUB_URL = "https://github.com/AvaLovelace1/speed-sketch";
     const ISSUE_URL = `${GITHUB_URL}/issues/new`;
+    const BUG_REPORT_URL = `${ISSUE_URL}?template=bug_report.md`;
+    const FEATURE_REQUEST_URL = `${ISSUE_URL}?template=feature_request.md`;
     const IMG_SHOW_TIME_OPTIONS = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
         label: option,
         value: option,
@@ -192,26 +194,26 @@
         <footer class="text-muted mt-8 text-center text-sm">
             <p>
                 <a
-                    href={GITHUB_URL}
+                    href={BUG_REPORT_URL}
                     class="hover:text-primary focus-visible:text-primary active:text-base-content hover:underline focus-visible:underline"
                     target="_blank"
                     rel="noreferrer"
                     tabindex="0"
                 >
-                    star us on <strong class="font-semibold">GitHub</strong>
+                    report <strong class="font-semibold">bug</strong>
                     <span class="iconify lucide--external-link align-text-bottom">
                         <span class="sr-only">(Opens in new tab)</span>
                     </span>
                 </a>
                 &nbsp;•&nbsp;
                 <a
-                    href={ISSUE_URL}
+                    href={FEATURE_REQUEST_URL}
                     class="hover:text-primary focus-visible:text-primary active:text-base-content hover:underline focus-visible:underline"
                     target="_blank"
                     rel="noreferrer"
                     tabindex="0"
                 >
-                    report an <strong class="font-semibold">issue</strong>
+                    request <strong class="font-semibold">feature</strong>
                     <span class="iconify lucide--external-link align-text-bottom">
                         <span class="sr-only">(Opens in new tab)</span>
                     </span>
