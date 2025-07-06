@@ -30,7 +30,6 @@
 </script>
 
 <main class="flex h-dvh items-center-safe justify-center-safe">
-    <Background />
     <div class="py-8">
         <Card cardBodyClass="p-8">
             <h1 class="card-title mb-6 text-2xl">Session complete!</h1>

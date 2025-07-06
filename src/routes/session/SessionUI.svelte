@@ -307,7 +307,6 @@ The user interface for a drawing session.
 
 {#snippet main()}
     <main class="flex h-dvh items-center-safe justify-center-safe">
-        <Background />
         <!-- Wrap image in container so panzoom mouse events only fire on the image -->
         <div class="size-full">
             <!-- Wrap in another container so flipping works correctly -->

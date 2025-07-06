@@ -10,7 +10,6 @@
 </svelte:head>
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
-    <Background />
     <div class="text-center">
         <h1 class="mb-4 text-3xl font-semibold">Error {page.status}: {page.error?.message}</h1>
         <Button.Root class="btn" onclick={async () => await goto("/", { replaceState: true })}>

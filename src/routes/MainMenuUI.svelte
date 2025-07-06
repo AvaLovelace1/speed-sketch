@@ -47,7 +47,6 @@
 </script>
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
-    <Background />
     <div class="w-lg py-8">
         <header>
             <div class="mb-8 text-center text-shadow-sm">
@@ -200,7 +199,7 @@
                     rel="noreferrer"
                     tabindex="0"
                 >
-                    <span class="font-semibold">star us on GitHub</span>
+                    star us on <strong class="font-semibold">GitHub</strong>
                     <span class="iconify lucide--external-link align-text-bottom">
                         <span class="sr-only">(Opens in new tab)</span>
                     </span>
@@ -213,7 +212,7 @@
                     rel="noreferrer"
                     tabindex="0"
                 >
-                    <span class="font-semibold">report an issue</span>
+                    report an <strong class="font-semibold">issue</strong>
                     <span class="iconify lucide--external-link align-text-bottom">
                         <span class="sr-only">(Opens in new tab)</span>
                     </span>
