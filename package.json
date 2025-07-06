@@ -7,15 +7,15 @@
         "prepare": "svelte-kit sync || echo ''",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-        "test": "npm run test:unit && npm run test:e2e",
-        "test:unit": "vitest",
-        "test:e2e": "playwright test",
-        "tauri": "tauri",
-        "tauri:dev": "tauri dev",
         "format": "prettier --write .",
         "lint": "prettier --check . && eslint .",
+        "test": "npm run test:unit -- --run && npm run test:e2e",
+        "test:unit": "vitest",
+        "test:e2e": "playwright test",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "build-storybook": "storybook build",
+        "tauri": "tauri",
+        "tauri:dev": "tauri dev"
     },
     "dependencies": {
         "@tauri-apps/api": "^2.5.0",
