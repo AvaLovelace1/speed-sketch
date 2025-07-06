@@ -7,50 +7,6 @@
 }
 
 @plugin "daisyui/theme" {
-    name: light;
-    default: true;
-    prefersdark: false;
-    color-scheme: light;
-
-    --color-base-100: oklch(0.98 0.003 260.73);
-    --color-base-200: #eceff4;
-    --color-base-300: #e5e9f0;
-    --color-base-content: #2e3440;
-    --color-primary: oklch(from #88c0d0 calc(l - 0.23) c h);
-    --color-primary-content: oklch(from var(--color-primary) 0.98 0.015 calc(h - 10));
-    --color-secondary: oklch(from #81a1c1 calc(l - 0.2) c h);
-    --color-secondary-content: oklch(from var(--color-secondary) 0.98 0.015 calc(h - 10));
-    --color-accent: oklch(from #8fbcbb calc(l - 0.23) c h);
-    --color-accent-content: oklch(from var(--color-accent) 0.98 0.015 calc(h - 10));
-    --color-neutral: #d8dee9;
-    --color-neutral-content: #3b4252;
-    --color-info: oklch(from #5e81ac calc(l - 0.15) c calc(h + 8));
-    --color-info-content: oklch(from var(--color-info) 0.98 0.015 calc(h - 10));
-    --color-success: oklch(from #a3be8c calc(l - 0.23) c h);
-    --color-success-content: oklch(from var(--color-success) 0.98 0.015 calc(h - 10));
-    --color-warning: oklch(from #ebcb8b calc(l - 0.31) c h);
-    --color-warning-content: oklch(from var(--color-warning) 0.98 0.015 calc(h + 10));
-    --color-error: oklch(from #bf616a calc(l - 0.15) c h);
-    --color-error-content: oklch(from var(--color-error) 0.98 0.015 calc(h + 10));
-    --color-muted: oklch(from #4c566a 0.4 0.02 h);
-
-    /* border radius */
-    --radius-selector: 1rem;
-    --radius-field: 2rem;
-    --radius-box: 1rem;
-
-    /* base sizes */
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
-
-    --border: 1px;
-
-    /* effects */
-    --depth: 1;
-    --noise: 1;
-}
-
-@plugin "daisyui/theme" {
     name: dark;
     default: false;
     prefersdark: true;
@@ -77,6 +33,50 @@
     --color-error: oklch(from #bf616a calc(l + 0.1) c h);
     --color-error-content: oklch(from var(--color-error) 0.22 0.03 calc(h - 10));
     --color-muted: oklch(from #4c566a 0.71 0.02 h);
+
+    /* border radius */
+    --radius-selector: 1rem;
+    --radius-field: 2rem;
+    --radius-box: 1rem;
+
+    /* base sizes */
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+
+    --border: 1px;
+
+    /* effects */
+    --depth: 1;
+    --noise: 1;
+}
+
+@plugin "daisyui/theme" {
+    name: light;
+    default: true;
+    prefersdark: false;
+    color-scheme: light;
+
+    --color-base-100: oklch(0.98 0.003 260.73);
+    --color-base-200: #eceff4;
+    --color-base-300: #e5e9f0;
+    --color-base-content: #2e3440;
+    --color-primary: oklch(from #88c0d0 calc(l - 0.23) c h);
+    --color-primary-content: oklch(from var(--color-primary) 0.98 0.015 calc(h - 10));
+    --color-secondary: oklch(from #81a1c1 calc(l - 0.2) c h);
+    --color-secondary-content: oklch(from var(--color-secondary) 0.98 0.015 calc(h - 10));
+    --color-accent: oklch(from #8fbcbb calc(l - 0.23) c h);
+    --color-accent-content: oklch(from var(--color-accent) 0.98 0.015 calc(h - 10));
+    --color-neutral: #d8dee9;
+    --color-neutral-content: #3b4252;
+    --color-info: oklch(from #5e81ac calc(l - 0.15) c calc(h + 8));
+    --color-info-content: oklch(from var(--color-info) 0.98 0.015 calc(h - 10));
+    --color-success: oklch(from #a3be8c calc(l - 0.23) c h);
+    --color-success-content: oklch(from var(--color-success) 0.98 0.015 calc(h - 10));
+    --color-warning: oklch(from #ebcb8b calc(l - 0.31) c h);
+    --color-warning-content: oklch(from var(--color-warning) 0.98 0.015 calc(h + 10));
+    --color-error: oklch(from #bf616a calc(l - 0.15) c h);
+    --color-error-content: oklch(from var(--color-error) 0.98 0.015 calc(h + 10));
+    --color-muted: oklch(from #4c566a 0.4 0.02 h);
 
     /* border radius */
     --radius-selector: 1rem;
