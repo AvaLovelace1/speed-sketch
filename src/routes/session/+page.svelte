@@ -8,9 +8,9 @@
     import { currentSession } from "$lib/drawing-session.svelte";
     import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
     import SessionUI from "./SessionUI.svelte";
-    import countdownBeepFile from "$lib/assets/audio/countdown-beep.wav";
-    import countdownDoneFile from "$lib/assets/audio/countdown-done.wav";
-    import endAudioFile from "$lib/assets/audio/end.wav";
+    import countdownBeepFile from "$lib/assets/audio/countdown-beep.mp3";
+    import countdownDoneFile from "$lib/assets/audio/countdown-done.mp3";
+    import endAudioFile from "$lib/assets/audio/end.mp3";
 
     const COUNTDOWN_BEEP_TIME = 3; // seconds before the end of the image to start beeping
 

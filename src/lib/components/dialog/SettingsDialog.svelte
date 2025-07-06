@@ -3,7 +3,7 @@
     import Select from "$lib/components/Select.svelte";
     import Slider from "$lib/components/Slider.svelte";
     import { appSettings } from "$lib/store/app-settings.svelte.js";
-    import startAudioFile from "$lib/assets/audio/start.wav";
+    import startAudioFile from "$lib/assets/audio/start.mp3";
 
     interface Props {
         onOpen?: () => void;

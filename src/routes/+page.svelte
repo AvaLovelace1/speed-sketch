@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import MainMenuUI from "./MainMenuUI.svelte";
-    import startAudioFile from "$lib/assets/audio/start.wav";
+    import startAudioFile from "$lib/assets/audio/start.mp3";
     import { appSettings } from "$lib/store/app-settings.svelte";
     import { type Image } from "$lib/types.svelte";
     import { DrawingSession, currentSession } from "$lib/drawing-session.svelte";
