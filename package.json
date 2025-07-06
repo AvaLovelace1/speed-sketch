@@ -15,7 +15,8 @@
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "tauri": "tauri",
-        "tauri:dev": "tauri dev"
+        "tauri:dev": "tauri dev",
+        "tauri:build": "tauri icon icon.png && tauri build"
     },
     "dependencies": {
         "@tauri-apps/api": "^2.5.0",
