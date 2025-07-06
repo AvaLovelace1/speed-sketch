@@ -32,11 +32,14 @@ Shows a grid of image thumbnails.
             {/each}
         {:else}
             {#each { length: Math.min(imgs.length, imgs.length > maxImgs ? maxImgs - 1 : maxImgs) } as _, i (i)}
-                <img
-                    src={imgs[i].url}
-                    alt="Thumbnail for {imgs[i].name}"
-                    class="aspect-square rounded object-cover {SHADOW}"
-                />
+                <!-- Wrapper div required for object-cover images to look good in Firefox -->
+                <div class="bg-base-100 aspect-square overflow-hidden rounded {SHADOW}">
+                    <img
+                        src={imgs[i].url}
+                        alt="Thumbnail for {imgs[i].name}"
+                        class="size-full object-cover"
+                    />
+                </div>
             {/each}
             {#if imgs.length > maxImgs}
                 <div
