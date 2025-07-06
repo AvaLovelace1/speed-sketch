@@ -3,7 +3,6 @@
     import { cubicOut } from "svelte/easing";
     import { Separator, Button, Label, Checkbox } from "bits-ui";
     import type { Image } from "$lib/types.svelte";
-    import Background from "$lib/components/Background.svelte";
     import Card from "$lib/components/Card.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";

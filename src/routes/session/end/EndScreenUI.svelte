@@ -2,7 +2,6 @@
     import { Button } from "bits-ui";
     import prettyMilliseconds from "pretty-ms";
     import Card from "$lib/components/Card.svelte";
-    import Background from "$lib/components/Background.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { goto } from "$app/navigation";
 

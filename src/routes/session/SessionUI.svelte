@@ -14,7 +14,6 @@ The user interface for a drawing session.
     import CustomTooltip from "$lib/components/Tooltip.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import { onDestroy, onMount } from "svelte";
-    import Background from "$lib/components/Background.svelte";
     import type { DrawingSession } from "$lib/drawing-session.svelte";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";

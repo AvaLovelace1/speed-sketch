@@ -2,7 +2,6 @@
     import { page } from "$app/state";
     import { goto } from "$app/navigation";
     import { Button } from "bits-ui";
-    import Background from "$lib/components/Background.svelte";
 </script>
 
 <svelte:head>
