@@ -11,7 +11,7 @@
 computer. It displays all images in a given collection one by one, each for a specified amount of time.
 Perfect for gesture studies, figure drawing practice, and the like!
 
-_Available as a web app and a desktop app for **Windows**, **macOS**, and **Linux**._
+_Available as a [web app][Webapp] and a desktop app for **Windows**, **macOS**, and **Linux**._
 
 ## Features
 
@@ -39,7 +39,7 @@ _Available as a web app and a desktop app for **Windows**, **macOS**, and **Linu
 
 ### Web Version
 
-You can use SpeedSketch directly in your browser with no installation: **[SpeedSketch - Web App][Webapp]**
+[Use SpeedSketch directly in your browser with no installation.][Webapp]
 
 ### Desktop Version
 
