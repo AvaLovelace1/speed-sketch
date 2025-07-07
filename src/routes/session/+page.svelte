@@ -4,6 +4,7 @@
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { goto } from "$app/navigation";
+    import { base } from "$app/paths";
     import { appSettings } from "$lib/store/app-settings.svelte";
     import { currentSession } from "$lib/drawing-session.svelte";
     import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
@@ -20,7 +21,7 @@
         await endAudio.play().catch((e) => {
             console.error("Failed to play end audio:", e);
         });
-        await goto("/session/end", { replaceState: true });
+        await goto(`${base}/session/end`, { replaceState: true });
     }
 
     async function setAlwaysOnTop(value: boolean) {

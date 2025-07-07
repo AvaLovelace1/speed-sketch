@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { base } from "$app/paths";
     import { goto } from "$app/navigation";
     import MainMenuUI from "./MainMenuUI.svelte";
     import startAudioFile from "$lib/assets/audio/start.mp3";
@@ -59,7 +60,7 @@
         await startAudio.play().catch((e) => {
             console.error("Failed to play start audio:", e);
         });
-        await goto("/session", { replaceState: true });
+        await goto(`${base}/session`, { replaceState: true });
     }
 
     onMount(async () => {
