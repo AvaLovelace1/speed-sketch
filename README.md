@@ -1,8 +1,8 @@
-<img src="icon-no-shadow.png" alt="Logo" width="80" height="80">
+<a href="https://avalovelace1.github.io/speed-sketch/"><img src="icon-no-shadow.png" alt="Logo" width="80" height="80"></a>
 
 # SpeedSketch: Gesture Drawing App
 
-![Browser][Browser]
+[![Browser][Browser]][Webapp]
 ![Windows][Windows]
 ![macOS][macOS]
 ![Linux][Linux]
@@ -11,7 +11,7 @@
 computer. It displays all images in a given collection one by one, each for a specified amount of time.
 Perfect for gesture studies, figure drawing practice, and the like!
 
-Available as a web app and a desktop app for **Windows**, **macOS**, and **Linux**.
+_Available as a web app and a desktop app for **Windows**, **macOS**, and **Linux**._
 
 ## Features
 
@@ -39,7 +39,7 @@ Available as a web app and a desktop app for **Windows**, **macOS**, and **Linux
 
 ### Web Version
 
-[Coming soon]
+You can use SpeedSketch directly in your browser with no installation: **[SpeedSketch - Web App][Webapp]**
 
 ### Desktop Version
 
@@ -61,11 +61,21 @@ SpeedSketch is built using [Tauri](https://tauri.app). Follow these steps to bui
 
 ## Acknowledgements
 
-SpeedSketch was inspired by the wonderful
-[GestureDrawing!](https://cubebrush.co/advanches/products/d9q6yq/gesturedrawing?q=gesturedrawing)
-and [Quickposes](https://quickposes.com/en/desktop-app).
+- Thanks to [Tauri](https://tauri.app), [Svelte](https://svelte.dev),
+  [Tailwind CSS](https://tailwindcss.com), [DaisyUI](https://daisyui.com), and [Bits UI](https://bits-ui.com) for the
+  amazing open-source technologies that made this app possible.
+- Thanks to [Lucide](https://lucide.dev) for the icons and [Mixkit](https://mixkit.co) for the sound effects used in the
+  app.
+- Thanks to [Andrew Sindt](https://www.pexels.com/@andrew-sindt-2650965/), [Hong Son](https://www.pexels.com/@hson/),
+  [Sasha Kim](https://www.pexels.com/@sasha-kim/), and [JookpubStock](https://jookpubstock.com) for the
+  reference images used in examples and testing.
+- SpeedSketch was inspired by the wonderful
+  [GestureDrawing!](https://cubebrush.co/advanches/products/d9q6yq/gesturedrawing?q=gesturedrawing)
+  and [Quickposes](https://quickposes.com/en/desktop-app).
 
-<!-- Badge images -->
+<!-- Links -->
+
+[Webapp]: https://avalovelace1.github.io/speed-sketch/
 
 [Browser]: https://img.shields.io/badge/Web%20Browser-4285F4?logo=GoogleChrome&logoColor=white&style=for-the-badge
 
