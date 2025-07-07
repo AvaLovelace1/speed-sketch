@@ -1,0 +1,15 @@
+{
+    "$schema": "../gen/schemas/desktop-schema.json",
+    "identifier": "default",
+    "description": "Capability for the main window",
+    "windows": ["main"],
+    "permissions": [
+        "core:default",
+        "core:webview:allow-set-webview-zoom",
+        "core:window:allow-set-always-on-top",
+        "dialog:allow-open",
+        "keepawake:default",
+        "opener:default",
+        "store:default"
+    ]
+}
