@@ -89,7 +89,7 @@
                                 {#if sessionSettings.imgFolder}
                                     <p
                                         class={[
-                                            "text-base-content mx-auto mb-3 w-xs text-center",
+                                            "text-base-content mx-auto mb-4 w-xs text-center text-sm",
                                             imgErrMsg ? "text-error" : "",
                                         ]}
                                     >
@@ -110,7 +110,7 @@
                                             gridClass="grid-cols-4 gap-1"
                                         ></ImageGrid>
                                     </div>
-                                    <p class="text-sm font-semibold">
+                                    <p class="text-xs font-semibold">
                                         Drag & drop or click to choose another folder
                                     </p>
                                 {:else if imgErrMsg}
