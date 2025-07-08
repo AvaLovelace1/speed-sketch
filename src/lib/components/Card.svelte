@@ -8,6 +8,6 @@
     const { children, ...props }: Props = $props();
 </script>
 
-<div {...props} class={["rounded-box bg-base-100 w-fit shadow-lg", props.class]}>
+<div {...props} class={["rounded-box bg-base-100 shadow-offblack/10 w-fit shadow-lg", props.class]}>
     {@render children()}
 </div>

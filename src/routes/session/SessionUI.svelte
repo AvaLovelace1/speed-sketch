@@ -367,7 +367,7 @@ The user interface for a drawing session.
             {/if}
         </div>
         <div
-            class="fixed bottom-0 mb-4 flex w-full justify-center-safe space-x-4 overflow-auto transition-all {TOOLBAR_TRANSITION}
+            class="fixed bottom-0 flex w-full justify-center-safe space-x-4 overflow-auto py-4 transition-all {TOOLBAR_TRANSITION}
                {toolbarShown ? '' : 'opacity-0'}"
             onfocusin={showToolbar}
         >

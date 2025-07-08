@@ -23,6 +23,8 @@
     --color-muted: var(--color-nord-night2);
     --color-stroke: oklch(from var(--color-muted) calc(l + 0.15) c h);
     --color-stroke-muted: oklch(from var(--color-muted) calc(l + 0.3) c h);
+
+    --color-offblack: oklch(from var(--color-nord-night1) 10% c h);
 }
 
 @plugin "daisyui/theme" {

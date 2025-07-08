@@ -62,7 +62,7 @@ A field that allows the user to input a time duration.
                                 class="bg-base-200 hover:bg-base-300
                                        focus:bg-primary focus:text-primary-content
                                        aria-[valuetext=Empty]:text-muted
-                                       outline-primary block rounded px-1 tabular-nums inset-shadow-xs
+                                       outline-primary inset-shadow-offblack/5 block rounded px-1 tabular-nums inset-shadow-xs
                                        outline-offset-2 focus-visible:outline-2"
                             >
                                 {value}

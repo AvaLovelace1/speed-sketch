@@ -81,7 +81,7 @@ A dropzone component for uploading an image folder.
 <div
     {...props}
     class={[
-        "text-muted bg-base-200 hover:bg-base-300 rounded-box border-base-100 w-full cursor-pointer border-2 text-center inset-shadow-xs",
+        "text-muted bg-base-200 hover:bg-base-300 rounded-box border-base-100 inset-shadow-offblack/5 w-full cursor-pointer border-2 text-center inset-shadow-xs",
         isDragging ? "bg-base-300 border-primary border-dashed" : "",
         props.class,
     ]}

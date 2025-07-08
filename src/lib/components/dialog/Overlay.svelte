@@ -11,7 +11,7 @@ A dark overlay that covers the entire viewport.
 </script>
 
 <div
-    class="fixed inset-0 z-50 bg-black/75"
+    class="bg-offblack/75 fixed inset-0 z-50"
     transition:fade={{ duration: 200, easing: cubicOut }}
     {...props}
 ></div>

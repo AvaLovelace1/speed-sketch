@@ -30,7 +30,7 @@
     </Select.Trigger>
     <Select.Portal>
         <Select.Content
-            class="bg-base-200 rounded-box z-50 w-3xs p-2 shadow-md"
+            class="bg-base-200 rounded-box shadow-offblack/10 z-50 w-3xs p-2 shadow-md"
             sideOffset={8}
             forceMount
         >
