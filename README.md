@@ -64,8 +64,8 @@ SpeedSketch is built using [Tauri](https://tauri.app). Follow these steps to bui
 - Thanks to [Tauri](https://tauri.app), [Svelte](https://svelte.dev),
   [Tailwind CSS](https://tailwindcss.com), [DaisyUI](https://daisyui.com), and [Bits UI](https://bits-ui.com) for the
   amazing open-source technologies that made this app possible.
-- Thanks to [Lucide](https://lucide.dev) for the icons and [Mixkit](https://mixkit.co) for the sound effects used in the
-  app.
+- Thanks to [Lucide](https://lucide.dev) for the icons, [Mixkit](https://mixkit.co) for the sound effects, and
+  [Nord](https://www.nordtheme.com) for the colour scheme.
 - Thanks to [Andrew Sindt](https://www.pexels.com/@andrew-sindt-2650965/), [Hong Son](https://www.pexels.com/@hson/),
   [Sasha Kim](https://www.pexels.com/@sasha-kim/), and [JookpubStock](https://jookpubstock.com) for the
   reference images used in examples and testing.
