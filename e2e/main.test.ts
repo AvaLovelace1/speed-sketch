@@ -57,3 +57,20 @@ test("settings are saved", async ({ page }) => {
     await mainMenuPage.goto();
     await settingsDialog.expectAppSettings(appSettings);
 });
+
+[
+    {
+        name: "SessionPage",
+        pageClass: SessionPage,
+    },
+    {
+        name: "SessionEndPage",
+        pageClass: SessionEndPage,
+    },
+].forEach(({ name, pageClass }) =>
+    test(`redirect to main menu if ${name} visited directly`, async ({ page }) => {
+        const notMainMenuPage = new pageClass(page);
+        await notMainMenuPage.goto();
+        await page.waitForURL("/");
+    }),
+);

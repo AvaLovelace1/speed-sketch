@@ -35,6 +35,10 @@ export class SessionPage {
         this.exitBtn = this.page.getByRole("button", { name: "Exit" });
     }
 
+    goto = async () => {
+        await this.page.goto("/session");
+    };
+
     // Can be used to reveal toolbar
     hoverImage = async () => {
         await this.img.hover();
