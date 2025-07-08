@@ -5,7 +5,7 @@
     import Popup from "$lib/components/dialog/Popup.svelte";
 
     interface Props {
-        title: string;
+        title?: string;
         description: string;
         cancelText?: string;
         confirmText?: string;
@@ -48,13 +48,17 @@
             {#snippet child({ props, open })}
                 {#if open}
                     <Popup {...props}>
-                        <Card>
-                            <AlertDialog.Title class="card-title mb-2">{title}</AlertDialog.Title>
-                            <AlertDialog.Description class="mb-8">
+                        <Card class="relative p-6">
+                            {#if title}
+                                <AlertDialog.Title class="mb-3 text-xl font-semibold">
+                                    {title}
+                                </AlertDialog.Title>
+                            {/if}
+                            <AlertDialog.Description class="mb-8 text-sm">
                                 {description}
                             </AlertDialog.Description>
                             <form onsubmit={onConfirm}>
-                                <div class="card-actions justify-end">
+                                <div class="flex justify-end gap-2">
                                     <AlertDialog.Cancel type="button" class="btn">
                                         {cancelText}
                                     </AlertDialog.Cancel>

@@ -42,7 +42,7 @@ A field that allows the user to input a time duration.
     {onValueChange}
 >
     <div class="flex gap-2">
-        <TimeField.Label class="text-muted pt-1 text-lg">
+        <TimeField.Label class="text-muted pt-1 text-xl">
             <span class="iconify lucide--timer"></span>
             <span class="sr-only">Custom time</span>
         </TimeField.Label>
@@ -62,7 +62,7 @@ A field that allows the user to input a time duration.
                                 class="bg-base-200 hover:bg-base-300
                                        focus:bg-primary focus:text-primary-content
                                        aria-[valuetext=Empty]:text-muted
-                                       outline-primary block rounded px-1 tabular-nums inset-shadow-2xs
+                                       outline-primary block rounded px-1 tabular-nums inset-shadow-xs
                                        outline-offset-2 focus-visible:outline-2"
                             >
                                 {value}

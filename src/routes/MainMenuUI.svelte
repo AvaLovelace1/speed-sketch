@@ -1,9 +1,10 @@
 <script lang="ts">
     import { slide } from "svelte-reduced-motion/transition";
     import { cubicOut } from "svelte/easing";
-    import { Separator, Button, Label, Checkbox } from "bits-ui";
+    import { Separator, Button, Label } from "bits-ui";
     import type { Image } from "$lib/types.svelte";
     import Card from "$lib/components/Card.svelte";
+    import Checkbox from "$lib/components/Checkbox.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import ImagesInput from "$lib/components/ImagesInput.svelte";
@@ -49,59 +50,37 @@
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
     <div class="w-lg py-8">
-        <header>
-            <div class="mb-8 text-center text-shadow-sm">
-                <h1 class="text-6xl font-thin">{APP_NAME}</h1>
-                <Separator.Root class="divider text-muted mt-3 text-lg tracking-widest">
-                    {TAGLINE}
-                </Separator.Root>
-            </div>
+        <header class="mb-8 text-center">
+            <h1 class="text-6xl font-thin">{APP_NAME}</h1>
+            <Separator.Root class="divider text-muted mt-3 text-lg tracking-widest">
+                {TAGLINE}
+            </Separator.Root>
         </header>
-        <main>
-            <Card class="mx-auto" cardBodyClass="p-0">
+        <main class="mb-8">
+            <Card class="mx-auto">
                 <form>
                     <div class="p-8 pb-12">
-                        <div class="mb-2">
-                            <Label.Root class="text-muted" for="images-input">Images</Label.Root>
-                            <div class="float-end">
-                                {#if isTauri()}
-                                    <Checkbox.Root
-                                        id="include-subfolders"
-                                        bind:checked={sessionSettings.includeSubfolders}
-                                        onCheckedChange={async (_) => {
-                                            await onImagesInput(null);
-                                        }}
-                                        class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
-                                        tabindex={0}
-                                    />
-                                    <Label.Root
-                                        class="text-muted cursor-pointer text-xs"
-                                        for="include-subfolders"
-                                    >
-                                        Include subfolders
-                                    </Label.Root>
-                                    &nbsp;&nbsp;
-                                {/if}
-                                <Checkbox.Root
-                                    id="shuffle-images"
-                                    bind:checked={sessionSettings.shuffleImgs}
-                                    onCheckedChange={async (_) => {
-                                        await onImagesInput(null);
-                                    }}
-                                    class="checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100"
-                                    tabindex={0}
-                                />
-                                <Label.Root
-                                    class="text-muted cursor-pointer text-xs"
-                                    for="shuffle-images"
-                                >
-                                    Shuffle
-                                </Label.Root>
-                            </div>
-                        </div>
                         <div class="mb-6">
+                            <div class="mb-2 flex items-baseline justify-between">
+                                <Label.Root class="text-muted text-sm" for="images-input">
+                                    Images
+                                </Label.Root>
+                                <div class="flex gap-3">
+                                    {#if isTauri()}
+                                        <Checkbox
+                                            label="Include subfolders"
+                                            bind:checked={sessionSettings.includeSubfolders}
+                                            onCheckedChange={async (_) => await onImagesInput(null)}
+                                        />
+                                    {/if}
+                                    <Checkbox
+                                        label="Shuffle"
+                                        bind:checked={sessionSettings.shuffleImgs}
+                                        onCheckedChange={async (_) => await onImagesInput(null)}
+                                    />
+                                </div>
+                            </div>
                             <ImagesInput
-                                class="text-center"
                                 id="images-input"
                                 onFileDropped={() => setLoadingImgs(true)}
                                 onFileDialogCancel={() => setLoadingImgs(false)}
@@ -123,7 +102,7 @@
                                     </p>
                                 {/if}
                                 {#if isLoadingImgs || imgs.length > 0}
-                                    <div class="mx-auto mb-6 w-xs">
+                                    <div class="mx-auto mt-3 mb-6 w-xs">
                                         <ImageGrid
                                             {imgs}
                                             isLoading={isLoadingImgs}
@@ -131,33 +110,28 @@
                                             gridClass="grid-cols-4 gap-1"
                                         ></ImageGrid>
                                     </div>
-                                    <p class="text-center text-xs font-semibold">
+                                    <p class="text-sm font-semibold">
                                         Drag & drop or click to choose another folder
                                     </p>
                                 {:else if imgErrMsg}
-                                    <p
-                                        role="status"
-                                        class="text-error mb-4 text-base font-semibold"
-                                    >
+                                    <p role="status" class="text-error mb-4 text-xl font-semibold">
                                         <span class="iconify lucide--octagon-x align-text-bottom">
                                             <span class="sr-only">Error</span>
                                         </span>
                                         {imgErrMsg}
                                     </p>
-                                    <p class="text-center text-xs font-semibold">
+                                    <p class="text-sm font-semibold">
                                         Drag & drop or click to choose another folder
                                     </p>
                                 {:else}
-                                    <p class="text-center">
-                                        <span class="iconify lucide--download text-lg"></span>
-                                    </p>
-                                    <p class="text-center font-semibold">
-                                        Drag & drop or click to choose a folder
+                                    <span class="iconify lucide--download text-xl"></span>
+                                    <p class="text-sm font-semibold">
+                                        Drag & drop or click to choose folder
                                     </p>
                                 {/if}
                                 {#if !isTauri()}
                                     <p class="text-center">
-                                        <small>
+                                        <small class="text-xs">
                                             Images are stored locally and will <strong>not</strong> be
                                             uploaded.
                                         </small>
@@ -191,7 +165,7 @@
                 </form>
             </Card>
         </main>
-        <footer class="text-muted mt-8 text-center text-sm">
+        <footer class="text-muted text-center text-sm">
             <p>
                 <a
                     href={BUG_REPORT_URL}
@@ -220,7 +194,7 @@
                 </a>
             </p>
             <p>
-                <small>{COPYRIGHT} &nbsp;•&nbsp; v{VERSION}</small>
+                <small class="text-xxs">{COPYRIGHT} &nbsp;•&nbsp; v{VERSION}</small>
             </p>
         </footer>
         <SettingsButton />

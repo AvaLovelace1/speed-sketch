@@ -42,7 +42,7 @@
 
 <Dialog bind:this={dialog} title="Settings" {onOpen} onClose={onCloseWithSave}>
     <!-- Theme picker -->
-    <div class="mb-4">
+    <div class="mb-6">
         <Select
             label="Theme"
             bind:value={appSettings.theme}
@@ -73,7 +73,7 @@
         />
     </div>
     <!-- Contrast -->
-    <div class="mb-4">
+    <div class="mb-6">
         <Slider
             label="Contrast filter strength"
             icon="lucide--contrast"

@@ -81,18 +81,18 @@ A dropzone component for uploading an image folder.
 <div
     {...props}
     class={[
-        "text-muted bg-base-200 hover:bg-base-300 rounded-box border-base-100 w-full cursor-pointer border-2 inset-shadow-xs",
+        "text-muted bg-base-200 hover:bg-base-300 rounded-box border-base-100 w-full cursor-pointer border-2 text-center inset-shadow-xs",
         isDragging ? "bg-base-300 border-primary border-dashed" : "",
         props.class,
     ]}
 >
     {#if isTauri()}
-        <button class="size-full cursor-pointer p-8 text-shadow-2xs" onclick={chooseFolder}>
+        <button class="size-full cursor-pointer p-8" onclick={chooseFolder}>
             {@render children()}
         </button>
     {:else}
         <Dropzone
-            containerClasses="p-8 text-shadow-2xs"
+            containerClasses="p-8"
             accept={["image/*"]}
             minSize={1}
             disableDefaultStyles

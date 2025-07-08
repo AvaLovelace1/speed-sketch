@@ -31,9 +31,9 @@
 
 <main class="flex h-dvh items-center-safe justify-center-safe">
     <div class="py-8">
-        <Card cardBodyClass="p-8">
-            <h1 class="card-title mb-6 text-2xl">Session complete!</h1>
-            <div class="stats mb-4">
+        <Card class="p-8">
+            <h1 class="mb-6 text-2xl font-semibold">Session complete!</h1>
+            <div class="stats mb-6">
                 {#each stats as { title, value, color, icon } (title)}
                     <div class="stat">
                         <div class="stat-figure {color} self-end text-3xl">
@@ -44,12 +44,12 @@
                     </div>
                 {/each}
             </div>
-            <div class="card-actions justify-end">
+            <div class="flex justify-end">
                 <Button.Root
                     class="btn"
                     onclick={async () => await goto(`${base}/`, { replaceState: true })}
                 >
-                    Return to Main Menu
+                    Return to main menu
                 </Button.Root>
             </div>
         </Card>

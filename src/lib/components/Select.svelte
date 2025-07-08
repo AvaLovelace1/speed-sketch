@@ -20,11 +20,11 @@
     const id = label.replace(/\s+/g, "-");
 </script>
 
-<label class="text-muted mb-2 block" for={id}>{label}</label>
+<label class="text-muted mb-2 block text-sm" for={id}>{label}</label>
 <Select.Root type="single" bind:value items={[...items.values()]}>
     <Select.Trigger {id} {...triggerProps} class={["select w-3xs", triggerProps.class]}>
         {#if items.get(value)?.icon}
-            <span class="iconify {items.get(value)?.icon} text-muted"></span>
+            <span class="text-stroke iconify {items.get(value)?.icon} text-muted"></span>
         {/if}
         {items.get(value)?.label}
     </Select.Trigger>

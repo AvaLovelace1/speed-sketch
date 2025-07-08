@@ -23,10 +23,10 @@
     const id = label.replace(/\s+/g, "-");
 </script>
 
-<label class="text-muted mb-2 block" for={id}>{label}</label>
+<label class="text-muted mb-2 block text-sm" for={id}>{label}</label>
 <div class="flex items-center gap-2">
     {#if icon}
-        <div class="text-muted flex items-center text-base">
+        <div class="text-stroke flex items-center text-base">
             <span class="iconify {icon}"></span>
         </div>
     {/if}

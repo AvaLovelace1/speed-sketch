@@ -16,7 +16,7 @@
             class="btn"
             onclick={async () => await goto(`${base}/`, { replaceState: true })}
         >
-            Return to Main Menu
+            Return to main menu
         </Button.Root>
     </div>
 </div>
