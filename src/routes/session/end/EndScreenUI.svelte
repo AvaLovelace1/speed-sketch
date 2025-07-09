@@ -30,7 +30,7 @@
 </script>
 
 <main class="flex h-dvh items-center-safe justify-center-safe">
-    <div class="py-8">
+    <div class="px-2 py-8">
         <Card class="p-8">
             <h1 class="mb-6 text-2xl font-semibold">Session complete!</h1>
             <div class="stats mb-6">

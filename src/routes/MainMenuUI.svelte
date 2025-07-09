@@ -49,7 +49,7 @@
 </script>
 
 <div class="flex h-dvh items-center-safe justify-center-safe">
-    <div class="w-lg py-8">
+    <div class="w-lg px-2 py-8">
         <header class="mb-8 text-center">
             <h1 class="text-6xl font-thin">{APP_NAME}</h1>
             <Separator.Root class="divider text-muted mt-3 text-lg tracking-widest">
