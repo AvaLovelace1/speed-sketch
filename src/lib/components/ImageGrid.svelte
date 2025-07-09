@@ -28,7 +28,12 @@ Shows a grid of image thumbnails.
         {#if isLoading}
             {#each { length: maxImgs } as _, i (i)}
                 <div class={SQUARE_CLASS}>
-                    <span class="loading loading-spinner loading-sm text-stroke-muted"></span>
+                    <progress
+                        id="loading-{i}"
+                        class="loading loading-spinner loading-sm text-stroke-muted"
+                    >
+                        <label class="sr-only" for="loading-{i}">Loading...</label>
+                    </progress>
                 </div>
             {/each}
         {:else}

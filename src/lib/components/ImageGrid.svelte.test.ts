@@ -55,6 +55,8 @@ describe("ImageGrid.svelte", () => {
         const imgs = makeImgList(5);
         render(ImageGrid, { maxImgs: 6, imgs, isLoading: true });
         expectImagesNotVisible(imgs);
-        expect(screen.getByText(/loading/i)).toBeVisible();
+        screen.getAllByRole("progressbar", { name: /loading/i }).forEach((loading) => {
+            expect(loading).toBeVisible();
+        });
     });
 });
