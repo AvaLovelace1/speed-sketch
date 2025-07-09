@@ -17,13 +17,14 @@
 </script>
 
 <!-- The user sees this on first startup. -->
-<Story name="Default" args={{}} />
+<Story name="Default" args={{ includeTooltipProvider: true }} />
 
 <!-- Loading images. -->
 <Story
     name="Loading Images"
     args={{
         isLoadingImgs: true,
+        includeTooltipProvider: true,
     }}
 />
 
@@ -33,6 +34,7 @@
     args={{
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2, img3, img1, img2, img3],
         canStartSession: true,
+        includeTooltipProvider: true,
     }}
 />
 
@@ -42,6 +44,7 @@
     args={{
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
+        includeTooltipProvider: true,
     }}
 />
 
@@ -51,6 +54,7 @@
     args={{
         imgs: [img1],
         canStartSession: true,
+        includeTooltipProvider: true,
     }}
 />
 
@@ -60,5 +64,6 @@
     args={{
         imgErrMsg: "No images found",
         canStartSession: false,
+        includeTooltipProvider: true,
     }}
 />

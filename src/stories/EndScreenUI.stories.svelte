@@ -15,5 +15,6 @@
     args={{
         nCompletedImgs: 42,
         timeSpent: 60 ** 2 + 30 * 60 + 15,
+        includeTooltipProvider: true,
     }}
 />

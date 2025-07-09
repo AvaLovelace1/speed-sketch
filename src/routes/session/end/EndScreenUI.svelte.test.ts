@@ -8,7 +8,7 @@ describe("EndScreenUI.svelte", () => {
         const nCompletedImgs = 42;
         const timeSpent = 125; // in seconds
 
-        render(EndScreenUI, { nCompletedImgs, timeSpent });
+        render(EndScreenUI, { nCompletedImgs, timeSpent, includeTooltipProvider: true });
         expect(screen.getByText(nCompletedImgs)).toBeVisible();
         expect(screen.getByText("2m 5s")).toBeVisible();
     });

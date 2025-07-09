@@ -61,8 +61,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
                 {...others}
                 class={["btn join-item btn-soft px-3 py-5 text-lg", others.class]}
             >
-                <span class="sr-only">{tooltip}</span>
-                <span class="iconify {icon}"></span>
+                <span class="iconify {icon}"><span class="sr-only">{tooltip}</span></span>
                 {#snippet tooltipContent()}
                     <p>{tooltip}</p>
                     {#if hotkey}

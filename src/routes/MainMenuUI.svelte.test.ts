@@ -16,7 +16,12 @@ const test = base.extend({
 describe("MainMenuUI.svelte", () => {
     test("UI renders", async () => {
         const startSession = vi.fn();
-        render(MainMenuUI, { canStartSession: true, imgErrMsg: "", startSession });
+        render(MainMenuUI, {
+            canStartSession: true,
+            imgErrMsg: "",
+            startSession,
+            includeTooltipProvider: true,
+        });
 
         // Check that title and footer are visible
         expect(screen.getByRole("heading")).toBeVisible();
@@ -53,13 +58,13 @@ describe("MainMenuUI.svelte", () => {
     });
 
     test("disabled GO button when canStartSession=false", () => {
-        render(MainMenuUI, { canStartSession: false });
+        render(MainMenuUI, { canStartSession: false, includeTooltipProvider: true });
         expect(screen.getByRole("button", { name: /go/i })).toBeDisabled();
     });
 
     test("error message visible when imgErrMsg is set", () => {
         const imgErrMsg = "Test error message";
-        render(MainMenuUI, { imgErrMsg });
+        render(MainMenuUI, { imgErrMsg, includeTooltipProvider: true });
         expect(screen.getByRole("status")).toHaveTextContent(imgErrMsg);
     });
 });
