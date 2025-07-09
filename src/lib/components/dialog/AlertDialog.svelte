@@ -6,7 +6,7 @@
 
     interface Props {
         title?: string;
-        description: string;
+        description?: string;
         cancelText?: string;
         confirmText?: string;
         onOpen?: () => void;
@@ -54,9 +54,11 @@
                                     {title}
                                 </AlertDialog.Title>
                             {/if}
-                            <AlertDialog.Description class="mb-8 text-sm">
-                                {description}
-                            </AlertDialog.Description>
+                            {#if description}
+                                <AlertDialog.Description class="mb-8 text-sm">
+                                    {description}
+                                </AlertDialog.Description>
+                            {/if}
                             <form onsubmit={onConfirm}>
                                 <div class="flex justify-end gap-2">
                                     <AlertDialog.Cancel type="button" class="btn">

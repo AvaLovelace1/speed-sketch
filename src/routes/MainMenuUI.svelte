@@ -132,8 +132,8 @@
                                 {#if !isTauri()}
                                     <p class="text-center">
                                         <small class="text-xs">
-                                            Images are stored locally and will <strong>not</strong> be
-                                            uploaded.
+                                            Images are stored on your device and will
+                                            <strong>not</strong> be uploaded
                                         </small>
                                     </p>
                                 {/if}

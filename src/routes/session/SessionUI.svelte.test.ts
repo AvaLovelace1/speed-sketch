@@ -228,7 +228,7 @@ describe("SessionUI.svelte", () => {
     test("exit session button", async ({ fixture: { user, exit } }) => {
         const exitButton = screen.getByRole("button", { name: /exit session/i });
         await user.click(exitButton);
-        const confirmExitButton = screen.getByRole("button", { name: /yes/i });
+        const confirmExitButton = screen.getByRole("button", { name: "Exit" });
         await user.click(confirmExitButton);
         expect(exit).toHaveBeenCalledTimes(1);
     });

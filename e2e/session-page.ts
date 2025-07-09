@@ -47,7 +47,7 @@ export class SessionPage {
     exitSession = async () => {
         await this.hoverImage();
         await this.exitBtn.click();
-        await this.page.getByRole("button", { name: "Yes" }).click();
+        await this.page.getByRole("button", { name: "Exit", exact: true }).click();
         await this.page.waitForURL("/session/end");
     };
 }

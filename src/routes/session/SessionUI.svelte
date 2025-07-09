@@ -388,10 +388,10 @@ The user interface for a drawing session.
 
     <AlertDialog
         bind:this={confirmExitDialog}
-        title="Confirm Exit"
-        description="Are you sure you want to end the session?"
-        cancelText="No"
-        confirmText="Yes"
+        title="Exit session?"
+        description="This will end the current session"
+        cancelText="Stay"
+        confirmText="Exit"
         onOpen={freeze}
         onCancel={unfreeze}
         onConfirm={exit}
