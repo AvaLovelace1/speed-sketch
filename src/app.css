@@ -57,7 +57,7 @@
     --color-error: oklch(from var(--color-nord-error) calc(l + 0.1) c h);
     --color-error-content: oklch(from var(--color-error) var(--luma) var(--chroma) h);
 
-    --color-muted: oklch(from var(--color-nord-night4) 71% 5% h);
+    --color-muted: oklch(from var(--color-nord-night4) 73% 5% h);
     --color-stroke: oklch(from var(--color-muted) calc(l - 0.15) c h);
     --color-stroke-muted: oklch(from var(--color-muted) calc(l - 0.3) c h);
 
