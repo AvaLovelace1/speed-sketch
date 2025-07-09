@@ -22,11 +22,17 @@
 
 <label class="text-muted mb-2 block text-sm" for={id}>{label}</label>
 <Select.Root type="single" bind:value items={[...items.values()]}>
-    <Select.Trigger {id} {...triggerProps} class={["select w-3xs", triggerProps.class]}>
-        {#if items.get(value)?.icon}
-            <span class="text-stroke iconify {items.get(value)?.icon} text-muted"></span>
-        {/if}
-        {items.get(value)?.label}
+    <Select.Trigger
+        {id}
+        {...triggerProps}
+        class={["select active:bg-base-200 w-3xs cursor-pointer", triggerProps.class]}
+    >
+        <div class="contents">
+            {#if items.get(value)?.icon}
+                <span class="text-stroke iconify {items.get(value)?.icon} text-muted"></span>
+            {/if}
+            {items.get(value)?.label}
+        </div>
     </Select.Trigger>
     <Select.Portal>
         <Select.Content

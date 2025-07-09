@@ -169,7 +169,7 @@
             <p>
                 <a
                     href={BUG_REPORT_URL}
-                    class="hover:text-primary focus-visible:text-primary active:text-base-content hover:underline focus-visible:underline"
+                    class="hover:text-base-content focus-visible:text-base-content active:text-primary hover:underline focus-visible:underline"
                     target="_blank"
                     rel="noreferrer"
                     tabindex="0"
@@ -182,7 +182,7 @@
                 &nbsp;•&nbsp;
                 <a
                     href={FEATURE_REQUEST_URL}
-                    class="hover:text-primary focus-visible:text-primary active:text-base-content hover:underline focus-visible:underline"
+                    class="hover:text-base-content focus-visible:text-base-content active:text-primary hover:underline focus-visible:underline"
                     target="_blank"
                     rel="noreferrer"
                     tabindex="0"
