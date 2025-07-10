@@ -6,6 +6,8 @@ A field that allows the user to input a time duration.
     import { TimeField } from "bits-ui";
     import { Time } from "@internationalized/date";
 
+    const minValue = new Time(0, 0, 1);
+
     interface Props {
         // The bindable value of the duration field in seconds.
         seconds: number;
@@ -28,7 +30,7 @@ A field that allows the user to input a time duration.
     }
 
     function onValueChange(value: Time | undefined) {
-        if (!value || value.compare(new Time(0, 0)) === 0) duration = new Time(0, 0, 1);
+        if (!value || value.compare(new Time(0, 0)) === 0) duration = minValue;
         else duration = value;
         seconds = duration.hour * 60 ** 2 + duration.minute * 60 + duration.second;
     }
@@ -38,7 +40,8 @@ A field that allows the user to input a time duration.
     hourCycle={24}
     granularity="second"
     bind:value={duration}
-    minValue={new Time(0, 0, 1)}
+    {minValue}
+    placeholder={minValue}
     {onValueChange}
 >
     <div class="flex gap-2">
