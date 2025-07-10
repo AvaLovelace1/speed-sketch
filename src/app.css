@@ -24,7 +24,7 @@
     --color-stroke: oklch(from var(--color-muted) calc(l + 0.15) c h);
     --color-stroke-muted: oklch(from var(--color-muted) calc(l + 0.3) c h);
 
-    --color-offblack: oklch(from var(--color-nord-night1) 10% c h);
+    --color-offblack: oklch(from var(--color-nord-night1) 5% c h);
 }
 
 @plugin "daisyui/theme" {
@@ -89,7 +89,7 @@
     --color-base-100: oklch(98% 1% 260);
     --color-base-200: var(--color-nord-snow1);
     --color-base-300: var(--color-nord-snow2);
-    --color-base-content: oklch(from var(--color-nord-night1) 25% c h);
+    --color-base-content: oklch(from var(--color-nord-night1) 10% c h);
     --color-primary: oklch(from var(--color-nord-primary) calc(l - 0.23) c h);
     --color-primary-content: oklch(from var(--color-primary) var(--luma) var(--chroma) h);
     --color-secondary: oklch(from var(--color-nord-secondary) calc(l - 0.2) c h);
