@@ -47,7 +47,12 @@
         <AlertDialog.Content forceMount>
             {#snippet child({ props, open })}
                 {#if open}
-                    <Popup {...props}>
+                    <Popup
+                        {...props}
+                        onclick={(e) => {
+                            if (e.target === e.currentTarget) openBind = false;
+                        }}
+                    >
                         <Card class="relative p-6">
                             {#if title}
                                 <AlertDialog.Title class="mb-3 text-xl font-semibold">
@@ -55,7 +60,7 @@
                                 </AlertDialog.Title>
                             {/if}
                             {#if description}
-                                <AlertDialog.Description class="mb-8 text-sm">
+                                <AlertDialog.Description class="text-muted mb-8 text-sm">
                                     {description}
                                 </AlertDialog.Description>
                             {/if}

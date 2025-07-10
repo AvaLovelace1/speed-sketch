@@ -45,7 +45,12 @@
         <Dialog.Content forceMount>
             {#snippet child({ props, open })}
                 {#if open}
-                    <Popup {...props}>
+                    <Popup
+                        {...props}
+                        onclick={(e) => {
+                            if (e.target === e.currentTarget) openBind = false;
+                        }}
+                    >
                         <Card class="relative p-8">
                             <Dialog.Title class="mb-8 text-2xl font-semibold">{title}</Dialog.Title>
                             <Dialog.Description>{@render children()}</Dialog.Description>
