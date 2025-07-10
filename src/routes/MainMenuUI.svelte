@@ -90,6 +90,7 @@
                                     onFileDropped={() => setLoadingImgs(true)}
                                     onFileDialogCancel={() => setLoadingImgs(false)}
                                     {onImagesInput}
+                                    isInvalid={!isLoadingImgs && imgErrMsg !== ""}
                                 >
                                     {#if sessionSettings.imgFolder}
                                         <p

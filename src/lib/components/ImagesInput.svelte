@@ -13,7 +13,7 @@ A dropzone component for uploading an image folder.
     import type { Image } from "$lib/types.svelte";
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
-        id: string;
+        isInvalid?: boolean;
         // Is called as soon as file is dropped or user clicks dropzone. Useful for setting "loading" state.
         onFileDropped?: () => void;
         // Called when user cancels the file dialog. Can be used to reset state set by `onFileDropped`.
@@ -24,6 +24,7 @@ A dropzone component for uploading an image folder.
     }
 
     let {
+        isInvalid = false,
         onFileDropped = () => {},
         onFileDialogCancel = () => {},
         onImagesInput = async (_) => {},
@@ -81,8 +82,12 @@ A dropzone component for uploading an image folder.
 <div
     {...props}
     class={[
-        "text-muted bg-base-200 hover:bg-base-300 rounded-box border-base-100 inset-shadow-offblack/5 w-full cursor-pointer border-2 text-center inset-shadow-xs",
-        isDragging ? "bg-base-300 border-primary border-dashed" : "",
+        "text-muted bg-base-200 hover:bg-base-300 rounded-box inset-shadow-offblack/5 w-full cursor-pointer border-2 text-center inset-shadow-xs",
+        isDragging
+            ? "bg-base-300 border-primary border-dashed"
+            : isInvalid
+              ? "border-error"
+              : "border-base-100",
         props.class,
     ]}
 >
