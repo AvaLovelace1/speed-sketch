@@ -6,7 +6,7 @@ Shows a grid of image thumbnails.
     import type { Image } from "$lib/types.svelte";
 
     const SQUARE_CLASS =
-        "bg-base-100 text-muted flex aspect-square items-center justify-center overflow-hidden rounded shadow-offblack/10 shadow-sm";
+        "bg-base-100 text-muted flex aspect-square items-center justify-center overflow-hidden rounded shadow-sm";
 
     interface Props {
         imgs?: Image[];
