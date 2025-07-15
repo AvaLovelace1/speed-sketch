@@ -3,6 +3,7 @@
     import { cubicOut } from "svelte/easing";
     import { Separator, Button, Label, Tooltip } from "bits-ui";
     import type { Image } from "$lib/types.svelte";
+    import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Card from "$lib/components/Card.svelte";
     import Checkbox from "$lib/components/Checkbox.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
@@ -52,7 +53,7 @@
 </script>
 
 {#snippet main()}
-    <div class="flex h-dvh items-center-safe justify-center-safe">
+    <CenteredFull>
         <div class="w-lg px-2 py-8">
             <header class="mb-8 text-center">
                 <h1 class="text-6xl font-thin">{APP_NAME}</h1>
@@ -212,7 +213,7 @@
             </footer>
             <SettingsButton />
         </div>
-    </div>
+    </CenteredFull>
 {/snippet}
 
 {#if includeTooltipProvider}

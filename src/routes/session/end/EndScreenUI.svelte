@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Button, Tooltip } from "bits-ui";
     import prettyMilliseconds from "pretty-ms";
+    import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Card from "$lib/components/Card.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { goto } from "$app/navigation";
@@ -32,7 +33,7 @@
 </script>
 
 {#snippet main()}
-    <main class="flex h-dvh items-center-safe justify-center-safe">
+    <CenteredFull tag="main">
         <div class="px-2 py-8">
             <Card class="p-8">
                 <h1 class="mb-6 text-2xl font-semibold">Session complete!</h1>
@@ -57,7 +58,7 @@
                 </div>
             </Card>
         </div>
-    </main>
+    </CenteredFull>
     <SettingsButton />
 {/snippet}
 

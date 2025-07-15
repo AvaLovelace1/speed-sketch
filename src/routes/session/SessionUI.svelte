@@ -6,6 +6,7 @@ The user interface for a drawing session.
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
     import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte.js";
+    import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";
     import Toolbar from "$lib/components/Toolbar.svelte";
@@ -17,7 +18,6 @@ The user interface for a drawing session.
     import type { DrawingSession } from "$lib/drawing-session.svelte";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";
-
     interface Props {
         drawingSession: DrawingSession;
         exit?: () => void;
@@ -305,7 +305,7 @@ The user interface for a drawing session.
 <svelte:body onmousemove={showToolbar} onmouseleave={hideToolbar} />
 
 {#snippet main()}
-    <main class="flex h-dvh items-center-safe justify-center-safe">
+    <CenteredFull tag="main">
         <!-- Wrap image in container so panzoom mouse events only fire on the image -->
         <div class="size-full">
             <!-- Wrap in another container so flipping works correctly -->
@@ -384,7 +384,7 @@ The user interface for a drawing session.
                 />
             {/each}
         </div>
-    </main>
+    </CenteredFull>
 
     <AlertDialog
         bind:this={confirmExitDialog}
