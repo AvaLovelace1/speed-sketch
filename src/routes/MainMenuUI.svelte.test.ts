@@ -42,6 +42,10 @@ describe("MainMenuUI.svelte", () => {
         // Check that settings button is visible
         expect(screen.getByRole("button", { name: /settings/i })).toBeVisible();
 
+        // Check that Github issue links are visible
+        expect(screen.getByRole("link", { name: /report bug/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /request feature/i })).toBeVisible();
+
         const user = userEvent.setup();
 
         // Select time of 1m

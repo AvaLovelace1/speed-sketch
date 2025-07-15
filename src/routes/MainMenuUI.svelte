@@ -4,6 +4,7 @@
     import { Separator, Button, Label, Tooltip } from "bits-ui";
     import type { Image } from "$lib/types.svelte";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
+    import Link from "$lib/utilities/Link.svelte";
     import Card from "$lib/components/Card.svelte";
     import Checkbox from "$lib/components/Checkbox.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
@@ -181,35 +182,15 @@
             </main>
             <footer class="text-muted text-center text-sm">
                 <p>
-                    <a
-                        href={BUG_REPORT_URL}
-                        class="hover:text-base-content focus:text-base-content active:text-primary hover:underline focus:underline"
-                        target="_blank"
-                        rel="noreferrer"
-                        tabindex="0"
-                    >
+                    <Link href={BUG_REPORT_URL} external>
                         report <strong class="font-semibold">bug</strong>
-                        <span class="iconify lucide--external-link align-text-bottom">
-                            <span class="sr-only">(Opens in new tab)</span>
-                        </span>
-                    </a>
+                    </Link>
                     &nbsp;•&nbsp;
-                    <a
-                        href={FEATURE_REQUEST_URL}
-                        class="hover:text-base-content focus:text-base-content active:text-primary hover:underline focus:underline"
-                        target="_blank"
-                        rel="noreferrer"
-                        tabindex="0"
-                    >
+                    <Link href={FEATURE_REQUEST_URL} external>
                         request <strong class="font-semibold">feature</strong>
-                        <span class="iconify lucide--external-link align-text-bottom">
-                            <span class="sr-only">(Opens in new tab)</span>
-                        </span>
-                    </a>
+                    </Link>
                 </p>
-                <p>
-                    <small class="text-xxs">{COPYRIGHT} &nbsp;•&nbsp; v{VERSION}</small>
-                </p>
+                <p><small class="text-xxs">{COPYRIGHT} &nbsp;•&nbsp; v{VERSION}</small></p>
             </footer>
             <SettingsButton />
         </div>
