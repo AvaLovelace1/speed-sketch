@@ -30,7 +30,7 @@ Shows a grid of image thumbnails.
                 <div class={SQUARE_CLASS}>
                     <progress
                         id="loading-{i}"
-                        class="loading loading-spinner loading-sm text-stroke-muted"
+                        class="loading loading-spinner loading-sm text-stroke-muted size-full"
                     >
                         <label class="sr-only" for="loading-{i}">Loading...</label>
                     </progress>
