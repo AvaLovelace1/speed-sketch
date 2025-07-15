@@ -13,20 +13,15 @@
         title: "MainMenuUI",
         component: MainMenuUI,
         tags: ["autodocs"],
+        args: { includeTooltipProvider: true },
     });
 </script>
 
 <!-- The user sees this on first startup. -->
-<Story name="Default" args={{ includeTooltipProvider: true }} />
+<Story name="Default" />
 
 <!-- Loading images. -->
-<Story
-    name="Loading Images"
-    args={{
-        isLoadingImgs: true,
-        includeTooltipProvider: true,
-    }}
-/>
+<Story name="Loading Images" args={{ isLoadingImgs: true, canStartSession: false }} />
 
 <!-- 12 images loaded. -->
 <Story
@@ -34,7 +29,6 @@
     args={{
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2, img3, img1, img2, img3],
         canStartSession: true,
-        includeTooltipProvider: true,
     }}
 />
 
@@ -44,26 +38,11 @@
     args={{
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
-        includeTooltipProvider: true,
     }}
 />
 
 <!-- 1 image loaded. -->
-<Story
-    name="One Image"
-    args={{
-        imgs: [img1],
-        canStartSession: true,
-        includeTooltipProvider: true,
-    }}
-/>
+<Story name="One Image" args={{ imgs: [img1], canStartSession: true }} />
 
 <!-- Invalid image folder chosen. -->
-<Story
-    name="Invalid"
-    args={{
-        imgErrMsg: "No images found",
-        canStartSession: false,
-        includeTooltipProvider: true,
-    }}
-/>
+<Story name="Invalid" args={{ imgErrMsg: "No images found", canStartSession: false }} />
