@@ -38,6 +38,7 @@
         "@storybook/addon-a11y": "^9.0.15",
         "@storybook/addon-docs": "^9.0.15",
         "@storybook/addon-svelte-csf": "^5.0.6",
+        "@storybook/addon-themes": "^9.0.16",
         "@storybook/addon-vitest": "^9.0.15",
         "@storybook/sveltekit": "^9.0.15",
         "@sveltejs/adapter-static": "^3.0.8",
