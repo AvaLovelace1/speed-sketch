@@ -1,7 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
-import { MainMenuPage } from "./main-menu-page";
-import { SettingsDialog } from "./settings-dialog";
-import { SessionPage } from "./session-page";
+import { MainMenuPage } from "./pages/main-menu-page";
+import { SettingsDialog } from "./pages/settings-dialog";
+import { SessionPage } from "./pages/session-page";
 import AxeBuilder from "@axe-core/playwright";
 
 const IMG_FOLDER = "test-assets";

@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import { test } from "@playwright/test";
-import { MainMenuPage } from "./main-menu-page";
-import { SessionPage } from "./session-page";
-import { SessionEndPage } from "./session-end-page";
-import { SettingsDialog } from "./settings-dialog";
+import { MainMenuPage } from "./pages/main-menu-page";
+import { SessionPage } from "./pages/session-page";
+import { SessionEndPage } from "./pages/session-end-page";
+import { SettingsDialog } from "./pages/settings-dialog";
 
 const IMG_FOLDER = "test-assets";
 const IMG_FILES = fs
