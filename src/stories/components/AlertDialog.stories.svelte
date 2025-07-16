@@ -3,7 +3,7 @@
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
 
     const { Story } = defineMeta({
-        title: "AlertDialog",
+        title: "Components/AlertDialog",
         component: AlertDialog,
         tags: ["autodocs"],
     });

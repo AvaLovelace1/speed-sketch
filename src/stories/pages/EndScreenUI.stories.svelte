@@ -1,9 +1,9 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import EndScreenUI from "../routes/session/end/EndScreenUI.svelte";
+    import EndScreenUI from "../../routes/session/end/EndScreenUI.svelte";
 
     const { Story } = defineMeta({
-        title: "EndScreenUI",
+        title: "Pages/EndScreenUI",
         component: EndScreenUI,
         tags: ["autodocs"],
     });

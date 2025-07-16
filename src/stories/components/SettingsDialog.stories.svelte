@@ -3,7 +3,7 @@
     import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
 
     const { Story } = defineMeta({
-        title: "SettingsDialog",
+        title: "Components/SettingsDialog",
         component: SettingsDialog,
         tags: ["autodocs"],
     });

@@ -1,13 +1,13 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import { DrawingSession } from "$lib/drawing-session.svelte";
-    import SessionUI from "../routes/session/SessionUI.svelte";
-    import Sample1 from "./assets/pexels-by-hong-son.jpg";
-    import Sample2 from "./assets/pexels-by-sasha-kim.jpg";
-    import Sample3 from "./assets/pexels-by-andrew-sindt.jpg";
+    import { DrawingSession } from "$lib/drawing-session.svelte.js";
+    import SessionUI from "../../routes/session/SessionUI.svelte";
+    import Sample1 from "../assets/pexels-by-hong-son.jpg";
+    import Sample2 from "../assets/pexels-by-sasha-kim.jpg";
+    import Sample3 from "../assets/pexels-by-andrew-sindt.jpg";
 
     const { Story } = defineMeta({
-        title: "SessionUI",
+        title: "Pages/SessionUI",
         component: SessionUI,
         tags: ["autodocs"],
     });

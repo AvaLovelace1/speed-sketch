@@ -3,7 +3,7 @@
     import Toolbar from "$lib/components/Toolbar.svelte";
 
     const { Story } = defineMeta({
-        title: "Toolbar",
+        title: "Components/Toolbar",
         component: Toolbar,
         tags: ["autodocs"],
     });
