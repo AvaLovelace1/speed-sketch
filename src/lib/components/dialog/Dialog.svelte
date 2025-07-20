@@ -5,7 +5,7 @@
     import Overlay from "$lib/components/dialog/Overlay.svelte";
     import Popup from "$lib/components/dialog/Popup.svelte";
 
-    interface Props extends Dialog.TriggerProps {
+    export interface Props {
         title: string;
         onOpen?: () => void;
         onClose?: () => void;
