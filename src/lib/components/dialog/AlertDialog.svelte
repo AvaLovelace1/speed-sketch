@@ -4,9 +4,9 @@
     import Overlay from "$lib/components/dialog/Overlay.svelte";
     import Popup from "$lib/components/dialog/Popup.svelte";
 
-    interface Props {
-        title?: string;
-        description?: string;
+    export interface Props {
+        title: string;
+        description: string;
         cancelText?: string;
         confirmText?: string;
         onOpen?: () => void;
@@ -17,8 +17,8 @@
     let {
         title,
         description,
-        cancelText = "No",
-        confirmText = "Yes",
+        cancelText = "Cancel",
+        confirmText = "Confirm",
         onOpen = () => {},
         onCancel = () => {},
         onConfirm = () => {},
@@ -64,25 +64,22 @@
                                     {description}
                                 </AlertDialog.Description>
                             {/if}
-                            <form onsubmit={onConfirm}>
-                                <div class="flex justify-end gap-2">
-                                    <AlertDialog.Cancel type="button" class="btn">
-                                        {cancelText}
-                                    </AlertDialog.Cancel>
-                                    <AlertDialog.Action
-                                        type="submit"
-                                        class="btn btn-error"
-                                        tabindex={0}
-                                    >
-                                        {confirmText}
-                                    </AlertDialog.Action>
-                                </div>
-                            </form>
+                            <div class="flex justify-end gap-2">
+                                <AlertDialog.Cancel class="btn">{cancelText}</AlertDialog.Cancel>
+                                <AlertDialog.Action
+                                    class="btn btn-error"
+                                    onclick={onConfirm}
+                                    tabindex={0}
+                                >
+                                    {confirmText}
+                                </AlertDialog.Action>
+                            </div>
                             <AlertDialog.Cancel
                                 class="text-muted hover:text-base-content active:text-muted focus:text-base-content absolute top-1 right-1 cursor-pointer p-2"
                             >
-                                <span class="iconify lucide--x"></span>
-                                <span class="sr-only">Close</span>
+                                <span class="iconify lucide--x">
+                                    <span class="sr-only">Close</span>
+                                </span>
                             </AlertDialog.Cancel>
                         </Card>
                     </Popup>
