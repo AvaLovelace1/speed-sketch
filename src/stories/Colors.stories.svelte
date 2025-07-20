@@ -53,51 +53,67 @@
         },
         {
             name: "Primary Text",
-            class_: "bg-base-100 text-primary",
+            class_: "bg-base-200 text-primary",
         },
         {
             name: "Secondary Text",
-            class_: "bg-base-100 text-secondary",
+            class_: "bg-base-200 text-secondary",
         },
         {
             name: "Accent Text",
-            class_: "bg-base-100 text-accent",
+            class_: "bg-base-200 text-accent",
         },
         {
             name: "Muted Text",
-            class_: "bg-base-100 text-muted",
+            class_: "bg-base-200 text-muted",
         },
         {
             name: "Info Text",
-            class_: "bg-base-100 text-info",
+            class_: "bg-base-200 text-info",
         },
         {
             name: "Success Text",
-            class_: "bg-base-100 text-success",
+            class_: "bg-base-200 text-success",
         },
         {
             name: "Warning Text",
-            class_: "bg-base-100 text-warning",
+            class_: "bg-base-200 text-warning",
         },
         {
             name: "Error Text",
-            class_: "bg-base-100 text-error",
+            class_: "bg-base-200 text-error",
         },
     ];
 </script>
 
-<!-- All theme colors. -->
-<Story name="Theme Colors">
-    {#snippet template(_args)}
-        <div class="flex flex-wrap gap-2">
-            {#each colors as { name, class_ } (name)}
-                <div class="flex size-32 items-center justify-center rounded {class_}">
-                    <div class="text-center">
-                        <p class="text-xl font-semibold">{name}</p>
-                        <p class="text-xs">{name}</p>
-                    </div>
+{#snippet themeColors()}
+    <div class="flex flex-wrap gap-2">
+        {#each colors as { name, class_ } (name)}
+            <div class="flex size-32 items-center justify-center rounded p-2 {class_}">
+                <div class="text-center">
+                    <p class="text-xl font-semibold">{name}</p>
+                    <p class="text-xs">{name}</p>
                 </div>
-            {/each}
-        </div>
+            </div>
+        {/each}
+    </div>
+{/snippet}
+
+<!-- System theme colors. -->
+<Story name="Default">
+    {#snippet template(_args)}{@render themeColors()}{/snippet}
+</Story>
+
+<!-- Light theme colors. -->
+<Story name="Light">
+    {#snippet template(_args)}
+        <div data-theme="light">{@render themeColors()}</div>
+    {/snippet}
+</Story>
+
+<!-- Dark theme colors. -->
+<Story name="Dark">
+    {#snippet template(_args)}
+        <div data-theme="dark">{@render themeColors()}</div>
     {/snippet}
 </Story>

@@ -108,25 +108,25 @@
     --color-base-100: oklch(98% 1% 260);
     --color-base-200: var(--color-nord-snow1);
     --color-base-300: var(--color-nord-snow2);
-    --color-base-content: oklch(from var(--color-nord-night1) 10% c h);
-    --color-primary: oklch(from var(--color-nord-primary) calc(l - 0.23) c h);
+    --color-base-content: oklch(from var(--color-nord-night1) 25% c h);
+    --color-primary: oklch(from var(--color-nord-primary) calc(l - 0.25) c h);
     --color-primary-content: oklch(from var(--color-primary) var(--luma) var(--chroma) h);
-    --color-secondary: oklch(from var(--color-nord-secondary) calc(l - 0.2) c h);
+    --color-secondary: oklch(from var(--color-nord-secondary) calc(l - 0.22) c h);
     --color-secondary-content: oklch(from var(--color-secondary) var(--luma) var(--chroma) h);
-    --color-accent: oklch(from var(--color-nord-accent) calc(l - 0.23) c h);
+    --color-accent: oklch(from var(--color-nord-accent) calc(l - 0.25) c h);
     --color-accent-content: oklch(from var(--color-accent) var(--luma) var(--chroma) h);
     --color-neutral: var(--color-nord-snow3);
     --color-neutral-content: var(--color-nord-night1);
     --color-info: oklch(from var(--color-nord-tertiary) calc(l - 0.15) c calc(h + 8));
     --color-info-content: oklch(from var(--color-info) var(--luma) var(--chroma) h);
-    --color-success: oklch(from var(--color-nord-success) calc(l - 0.23) c h);
+    --color-success: oklch(from var(--color-nord-success) calc(l - 0.25) c h);
     --color-success-content: oklch(from var(--color-success) var(--luma) var(--chroma) h);
-    --color-warning: oklch(from var(--color-nord-warning) calc(l - 0.31) c h);
+    --color-warning: oklch(from var(--color-nord-warning) calc(l - 0.32) c h);
     --color-warning-content: oklch(from var(--color-warning) var(--luma) var(--chroma) h);
     --color-error: oklch(from var(--color-nord-error) calc(l - 0.15) c h);
     --color-error-content: oklch(from var(--color-error) var(--luma) var(--chroma) h);
 
-    --color-muted: var(--color-nord-night2);
+    --color-muted: var(--color-nord-night4);
     --color-stroke: oklch(from var(--color-muted) calc(l + 0.15) c h);
     --color-stroke-muted: oklch(from var(--color-muted) calc(l + 0.3) c h);
 
