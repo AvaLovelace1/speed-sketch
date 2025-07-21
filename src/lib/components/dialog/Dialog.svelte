@@ -18,6 +18,12 @@
 
     export function open() {
         openBind = true;
+        onOpen();
+    }
+
+    export function close() {
+        openBind = false;
+        onClose();
     }
 
     export function setOnOpen(fn: () => void) {
@@ -31,7 +37,7 @@
 
 <Dialog.Root
     bind:open={openBind}
-    onOpenChangeComplete={(open) => {
+    onOpenChange={(open) => {
         if (open) onOpen();
         else onClose();
     }}
@@ -48,7 +54,7 @@
                     <Popup
                         {...props}
                         onclick={(e) => {
-                            if (e.target === e.currentTarget) openBind = false;
+                            if (e.target === e.currentTarget) close();
                         }}
                     >
                         <Card class="relative p-8">

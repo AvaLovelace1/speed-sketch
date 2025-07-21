@@ -14,9 +14,10 @@
     import { createRawSnippet } from "svelte";
 
     const { Story } = defineMeta({
-        title: "Components/Dialog",
+        title: "Components/Dialog/Dialog",
         component: Dialog,
         tags: ["autodocs"],
+        render: template,
         args: {
             title: "Dialog",
             onOpen: fn(),
@@ -24,18 +25,6 @@
             children: createRawSnippet(() => ({
                 render: () => "<p>This is the dialog body</p>",
             })),
-        },
-        parameters: {
-            a11y: {
-                config: {
-                    rules: [
-                        {
-                            id: "color-contrast",
-                            enabled: false, // Transitions interfere with color contrast checks
-                        },
-                    ],
-                },
-            },
         },
     });
 
@@ -45,17 +34,13 @@
     type StringType = string;
 </script>
 
-{#snippet componentWrapper(args: DialogProps)}
+{#snippet template(args: DialogProps)}
     <button class="btn" onclick={() => dialog.open()}>Open Dialog</button>
     <Dialog bind:this={dialog} {...args} />
 {/snippet}
 
 <!-- A modal dialog. -->
-<Story name="Default">
-    {#snippet template(args)}
-        {@render componentWrapper(args)}
-    {/snippet}
-</Story>
+<Story name="Default" />
 
 <!-- The dialog can close in three ways: "Close" button, click overlay, "Escape" key. -->
 <Story
@@ -105,8 +90,4 @@
             }
         });
     }}
->
-    {#snippet template(args)}
-        {@render componentWrapper(args)}
-    {/snippet}
-</Story>
+/>

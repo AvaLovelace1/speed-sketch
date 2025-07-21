@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
     webServer: {
@@ -6,4 +6,19 @@ export default defineConfig({
         port: 4173,
     },
     testDir: "e2e",
+    projects: [
+        {
+            name: "chromium",
+            use: { ...devices["Desktop Chrome"] },
+        },
+        {
+            name: "chromium-reduced-motion",
+            use: {
+                ...devices["Desktop Chrome"],
+                contextOptions: {
+                    reducedMotion: "reduce",
+                },
+            },
+        },
+    ],
 });

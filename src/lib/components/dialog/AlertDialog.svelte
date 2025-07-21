@@ -28,12 +28,18 @@
 
     export function open() {
         openBind = true;
+        onOpen();
+    }
+
+    export function close() {
+        openBind = false;
+        onCancel();
     }
 </script>
 
 <AlertDialog.Root
     bind:open={openBind}
-    onOpenChangeComplete={(open) => {
+    onOpenChange={(open) => {
         if (open) onOpen();
         else onCancel();
     }}
@@ -50,7 +56,7 @@
                     <Popup
                         {...props}
                         onclick={(e) => {
-                            if (e.target === e.currentTarget) openBind = false;
+                            if (e.target === e.currentTarget) close();
                         }}
                     >
                         <Card class="relative p-6">

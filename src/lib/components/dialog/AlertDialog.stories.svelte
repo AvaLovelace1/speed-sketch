@@ -13,9 +13,10 @@
     } from "storybook/test";
 
     const { Story } = defineMeta({
-        title: "Components/AlertDialog",
+        title: "Components/Dialog/AlertDialog",
         component: AlertDialog,
         tags: ["autodocs"],
+        render: template,
         args: {
             title: "Alert dialog",
             description: "A short description for the alert dialog",
@@ -45,17 +46,13 @@
     type StringType = string;
 </script>
 
-{#snippet componentWrapper(args: AlertDialogProps)}
-    <button class="btn" onclick={() => alertDialog.open()}>Open Dialog</button>
+{#snippet template(args: AlertDialogProps)}
+    <button class="btn" onclick={() => alertDialog.open()}>Open AlertDialog</button>
     <AlertDialog bind:this={alertDialog} {...args} />
 {/snippet}
 
 <!-- A modal dialog with two options: confirm or cancel. -->
-<Story name="Default">
-    {#snippet template(args)}
-        {@render componentWrapper(args)}
-    {/snippet}
-</Story>
+<Story name="Default" />
 
 <!-- The dialog can close in four ways: "Cancel" button, "Close" button, click overlay, "Escape" key. -->
 <Story
@@ -127,8 +124,4 @@
             await submitDialog();
         });
     }}
->
-    {#snippet template(args)}
-        {@render componentWrapper(args)}
-    {/snippet}
-</Story>
+/>
