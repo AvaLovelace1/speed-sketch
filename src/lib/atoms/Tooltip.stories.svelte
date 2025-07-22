@@ -11,6 +11,18 @@
         tags: ["autodocs"],
         render: template,
         args: { class: "btn btn-primary" },
+        parameters: {
+            a11y: {
+                config: {
+                    rules: [
+                        {
+                            id: "color-contrast",
+                            enabled: false, // Transitions interfere with color contrast checks
+                        },
+                    ],
+                },
+            },
+        },
     });
 
     const BUTTON_NAME = "Hover me";
