@@ -1,6 +1,8 @@
 <script lang="ts">
-    import { Select } from "bits-ui";
-    import { fly } from "svelte-reduced-motion/transition";
+    import { Label, Select } from "bits-ui";
+    import { fly } from "svelte/transition";
+    import { prefersReducedMotion } from "svelte/motion";
+    import { stringToId } from "$lib/utils.svelte";
 
     interface Item {
         value: string;
@@ -9,30 +11,28 @@
         icon?: string;
     }
 
-    interface Props extends Select.TriggerProps {
+    interface Props {
         label: string;
-        items: Map<string, Item>;
+        items: Item[];
         value: string;
     }
 
-    let { label, items, value = $bindable(), ...triggerProps }: Props = $props();
+    let { label, items, value = $bindable() }: Props = $props();
 
-    const id = label.replace(/\s+/g, "-");
+    const id = stringToId(`${label}-select`);
+    const itemsMap = new Map<string, Item>(items.map((item) => [item.value, item]));
 </script>
 
-<label class="text-muted mb-2 block text-sm" for={id}>{label}</label>
+<Label.Root class="text-muted mb-2 block text-sm" for={id}>{label}</Label.Root>
 <Select.Root type="single" bind:value items={[...items.values()]}>
     <Select.Trigger
         {id}
-        {...triggerProps}
-        class={["select active:bg-base-200 w-3xs cursor-pointer", triggerProps.class]}
+        class="select active:bg-base-200 flex w-3xs cursor-pointer items-center gap-2"
     >
-        <div class="contents">
-            {#if items.get(value)?.icon}
-                <span class="text-stroke iconify {items.get(value)?.icon} text-muted"></span>
-            {/if}
-            {items.get(value)?.label}
-        </div>
+        {#if itemsMap.get(value)?.icon}
+            <div class="text-stroke iconify {itemsMap.get(value)?.icon}"></div>
+        {/if}
+        {itemsMap.get(value)?.label}
     </Select.Trigger>
     <Select.Portal>
         <Select.Content
@@ -43,7 +43,13 @@
             {#snippet child({ wrapperProps, props, open })}
                 {#if open}
                     <div {...wrapperProps}>
-                        <div {...props} transition:fly={{ y: -10, duration: 200 }}>
+                        <div
+                            {...props}
+                            transition:fly={{
+                                y: prefersReducedMotion.current ? 0 : -10,
+                                duration: 200,
+                            }}
+                        >
                             <Select.Viewport>
                                 {#each items.values() as option, i (i + option.value)}
                                     <Select.Item
@@ -53,9 +59,9 @@
                                         label={option.label}
                                     >
                                         {#snippet children({ selected })}
-                                            <div>{option.label}</div>
+                                            {option.label}
                                             {#if selected}
-                                                <div class="iconify lucide--check"></div>
+                                                <span class="iconify lucide--check"></span>
                                             {/if}
                                         {/snippet}
                                     </Select.Item>

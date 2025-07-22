@@ -1,16 +1,17 @@
 <script lang="ts">
     import Dialog from "$lib/components/dialog/Dialog.svelte";
-    import Select from "$lib/components/Select.svelte";
-    import Slider from "$lib/components/Slider.svelte";
-    import { appSettings } from "$lib/store/app-settings.svelte.js";
+    import Select from "$lib/atoms/Select.svelte";
+    import Slider from "$lib/atoms/Slider.svelte";
+    import { AppSettings } from "$lib/store/app-settings.svelte.js";
     import startAudioFile from "$lib/assets/audio/start.mp3";
 
-    interface Props {
+    export interface Props {
+        appSettings: AppSettings;
         onOpen?: () => void;
         onClose?: () => void;
     }
 
-    let { onOpen = () => {}, onClose = () => {} }: Props = $props();
+    let { appSettings, onOpen = () => {}, onClose = () => {} }: Props = $props();
 
     let volumeIcon = $derived.by(() => {
         if (appSettings.volume === 0) return "lucide--volume-x";
@@ -19,39 +20,34 @@
     });
     let dialog: Dialog;
 
-    async function onCloseWithSave() {
-        await appSettings.saveToStore();
-        onClose();
-    }
-
     export function open() {
         dialog.open();
     }
 
     export function setOnOpen(fn: () => void) {
-        dialog.setOnOpen(fn);
+        onOpen = fn;
     }
 
     export function setOnClose(fn: () => void) {
-        dialog.setOnClose(async () => {
-            await appSettings.saveToStore();
-            fn();
-        });
+        onClose = fn;
     }
 </script>
 
-<Dialog bind:this={dialog} title="Settings" {onOpen} onClose={onCloseWithSave}>
+<Dialog
+    bind:this={dialog}
+    title="Settings"
+    {onOpen}
+    onClose={async () => {
+        await appSettings.saveToStore();
+        onClose();
+    }}
+>
     <!-- Theme picker -->
     <div class="mb-6">
         <Select
             label="Theme"
             bind:value={appSettings.theme}
-            items={new Map(
-                appSettings.THEMES.map((t) => [
-                    t.name,
-                    { value: t.name, label: t.label, icon: t.icon },
-                ]),
-            )}
+            items={appSettings.THEMES.map((t) => ({ value: t.name, label: t.label, icon: t.icon }))}
         />
     </div>
     <!-- Volume -->

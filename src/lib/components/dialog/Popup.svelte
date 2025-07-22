@@ -22,8 +22,8 @@ Centers its children in the viewport and applies a scale transition.
 >
     <div
         transition:scale={{
-            start: 0.95,
-            duration: prefersReducedMotion.current ? 0 : 150,
+            start: prefersReducedMotion.current ? 1 : 0.95,
+            duration: 150,
             easing: cubicOut,
         }}
     >

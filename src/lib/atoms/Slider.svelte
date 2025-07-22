@@ -1,5 +1,7 @@
 <script lang="ts">
     import { type HTMLInputAttributes } from "svelte/elements";
+    import { Label } from "bits-ui";
+    import { stringToId } from "$lib/utils.svelte";
 
     interface Props extends HTMLInputAttributes {
         label: string;
@@ -20,21 +22,19 @@
         ...props
     }: Props = $props();
 
-    const id = label.replace(/\s+/g, "-");
+    const id = stringToId(`${label}-slider`);
 </script>
 
-<label class="text-muted mb-2 block text-sm" for={id}>{label}</label>
+<Label.Root class="text-muted mb-2 block text-sm" for={id}>{label}</Label.Root>
 <div class="flex items-center gap-2">
     {#if icon}
-        <div class="text-stroke flex items-center text-base">
-            <span class="iconify {icon}"></span>
-        </div>
+        <span class="text-stroke iconify {icon}"></span>
     {/if}
     <input
         {id}
         type="range"
         class="range range-primary"
-        tabindex="0"
+        tabindex={0}
         {min}
         {max}
         {step}

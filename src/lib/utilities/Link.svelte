@@ -14,7 +14,7 @@
     class="hover:text-base-content focus:text-base-content active:text-primary hover:underline focus:underline"
     target={external ? "_blank" : "_self"}
     rel={external ? "external noopener noreferrer" : undefined}
-    tabindex="0"
+    tabindex={0}
 >
     {@render children()}
     {#if external}

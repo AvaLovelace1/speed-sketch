@@ -26,5 +26,5 @@
 
 <Tooltip.Provider>
     {@render children()}
-    <SettingsDialog bind:this={appSettingsDialog.component} />
+    <SettingsDialog {appSettings} bind:this={appSettingsDialog.component} />
 </Tooltip.Provider>

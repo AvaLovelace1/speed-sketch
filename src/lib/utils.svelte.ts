@@ -22,3 +22,10 @@ export function basename(path: string) {
     const lastSlashIndex = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
     return path.substring(lastSlashIndex + 1);
 }
+
+export function stringToId(str: string): string {
+    return str
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
