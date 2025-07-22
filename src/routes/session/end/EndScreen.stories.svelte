@@ -1,12 +1,12 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
     import { Tooltip } from "bits-ui";
-    import EndScreenUI from "./EndScreenUI.svelte";
-    import type { Props as EndScreenUIProps } from "./EndScreenUI.svelte";
+    import EndScreen from "./EndScreen.svelte";
+    import type { Props as EndScreenProps } from "./EndScreen.svelte";
 
     const { Story } = defineMeta({
-        title: "Pages/EndScreenUI",
-        component: EndScreenUI,
+        title: "Screens/EndScreen",
+        component: EndScreen,
         tags: ["autodocs"],
         render: template,
         args: {
@@ -16,11 +16,11 @@
     });
 </script>
 
-{#snippet template(args: EndScreenUIProps)}
+{#snippet template(args: EndScreenProps)}
     <Tooltip.Provider>
-        <EndScreenUI {...args} />
+        <EndScreen {...args} />
     </Tooltip.Provider>
 {/snippet}
 
 <!-- The screen displayed at the end of a session. -->
-<Story name="EndScreenUI" />
+<Story name="Default" />

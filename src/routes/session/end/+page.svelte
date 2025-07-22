@@ -1,13 +1,13 @@
 <script lang="ts">
     import { currentSession } from "$lib/drawing-session.svelte";
-    import EndScreenUI from "./EndScreenUI.svelte";
+    import EndScreen from "./EndScreen.svelte";
 </script>
 
 <svelte:head>
     <title>SpeedSketch - session ended</title>
 </svelte:head>
 
-<EndScreenUI
+<EndScreen
     nCompletedImgs={currentSession.object.nCompletedImgs}
     timeSpent={currentSession.object.timeSpent}
 />
