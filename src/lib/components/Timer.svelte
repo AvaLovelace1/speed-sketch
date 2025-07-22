@@ -3,19 +3,19 @@
 A timer that displays a given time.
 -->
 <script lang="ts">
-    import type { HTMLAttributes } from "svelte/elements";
+    import type { SvelteHTMLElements } from "svelte/elements";
     import { Progress } from "bits-ui";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
     import prettyMilliseconds from "pretty-ms";
 
-    interface Props extends HTMLAttributes<HTMLDivElement> {
+    type Props = SvelteHTMLElements["div"] & {
         // Time displayed, in seconds
         time?: number;
         // If set, the alert will turn red when timeRemaining is <= criticalTime
         criticalTime?: number | null;
         // Maximum time used for the radial progress bar
         maxTime?: number;
-    }
+    };
 
     const { time = 0, criticalTime = 10, maxTime = 60, ...props }: Props = $props();
 

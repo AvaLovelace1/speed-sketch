@@ -3,17 +3,12 @@
 Centers its children in the viewport and applies a scale transition.
 -->
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    import type { HTMLAttributes } from "svelte/elements";
+    import type { SvelteHTMLElements } from "svelte/elements";
     import { cubicOut } from "svelte/easing";
     import { scale } from "svelte/transition";
     import { prefersReducedMotion } from "svelte/motion";
 
-    interface Props extends HTMLAttributes<HTMLDivElement> {
-        children: Snippet;
-    }
-
-    const { children, ...props }: Props = $props();
+    const { children, ...props }: SvelteHTMLElements["div"] = $props();
 </script>
 
 <div
@@ -27,6 +22,6 @@ Centers its children in the viewport and applies a scale transition.
             easing: cubicOut,
         }}
     >
-        {@render children()}
+        {@render children?.()}
     </div>
 </div>

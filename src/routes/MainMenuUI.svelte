@@ -7,7 +7,7 @@
     import Link from "$lib/utilities/Link.svelte";
     import Card from "$lib/atoms/Card.svelte";
     import Checkbox from "$lib/atoms/Checkbox.svelte";
-    import DurationField from "$lib/components/DurationField.svelte";
+    import DurationField from "$lib/atoms/DurationField.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import ImagesInput from "$lib/components/ImagesInput.svelte";
     import RadioButtons from "$lib/components/RadioButtons.svelte";

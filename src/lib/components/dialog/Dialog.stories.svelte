@@ -1,7 +1,7 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import Dialog from "$lib/components/dialog/Dialog.svelte";
-    import type { Props as DialogProps } from "$lib/components/dialog/Dialog.svelte";
+    import Dialog from "./Dialog.svelte";
+    import type { Props as DialogProps } from "./Dialog.svelte";
     import {
         fn,
         within,

@@ -1,6 +1,6 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import Slider from "$lib/atoms/Slider.svelte";
+    import Slider from "./Slider.svelte";
 
     const { Story } = defineMeta({
         title: "Atoms/Slider",

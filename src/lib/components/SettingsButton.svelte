@@ -8,6 +8,7 @@
     onclick={() => appSettingsDialog.component?.open()}
     class="btn btn-circle fixed top-4 right-4 size-12 rounded-full text-xl shadow-sm"
 >
-    <span class="iconify lucide--settings"><span class="sr-only">Settings</span></span>
+    <span class="iconify lucide--settings"></span>
+    <span class="sr-only">Settings</span>
     {#snippet tooltipContent()}<p>Settings</p>{/snippet}
 </Tooltip>

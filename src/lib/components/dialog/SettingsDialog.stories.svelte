@@ -1,7 +1,7 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
-    import type { Props as SettingsDialogProps } from "$lib/components/dialog/SettingsDialog.svelte";
+    import SettingsDialog from "./SettingsDialog.svelte";
+    import type { Props as SettingsDialogProps } from "./SettingsDialog.svelte";
     import { AppSettings } from "$lib/store/app-settings.svelte";
     import {
         clearAllMocks,

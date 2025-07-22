@@ -3,14 +3,8 @@
 A simple alert component for displaying status messages.
 -->
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    import type { HTMLAttributes } from "svelte/elements";
-
-    interface Props extends HTMLAttributes<HTMLDivElement> {
-        children: Snippet;
-    }
-
-    const { children, ...props }: Props = $props();
+    import type { SvelteHTMLElements } from "svelte/elements";
+    const { children, ...props }: SvelteHTMLElements["div"] = $props();
 </script>
 
 <div class="inline-block">
@@ -19,6 +13,6 @@ A simple alert component for displaying status messages.
         {...props}
         class={["alert alert-soft gap-3 px-3 py-2 text-xl font-semibold shadow-sm!", props.class]}
     >
-        {@render children()}
+        {@render children?.()}
     </div>
 </div>

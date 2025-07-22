@@ -4,7 +4,7 @@ A dropzone component for uploading an image folder.
 -->
 <script lang="ts">
     import Dropzone from "svelte-file-dropzone";
-    import type { HTMLAttributes } from "svelte/elements";
+    import type { SvelteHTMLElements } from "svelte/elements";
     import { onDestroy, onMount, type Snippet } from "svelte";
     import { isTauri } from "@tauri-apps/api/core";
     import type { UnlistenFn, Event } from "@tauri-apps/api/event";
@@ -12,7 +12,7 @@ A dropzone component for uploading an image folder.
     import { open } from "@tauri-apps/plugin-dialog";
     import type { Image } from "$lib/types.svelte";
 
-    interface Props extends HTMLAttributes<HTMLDivElement> {
+    type Props = SvelteHTMLElements["div"] & {
         isInvalid?: boolean;
         // Is called as soon as file is dropped or user clicks dropzone. Useful for setting "loading" state.
         onFileDropped?: () => void;
@@ -21,7 +21,7 @@ A dropzone component for uploading an image folder.
         // Callback to handle drop event
         onImagesInput?: (inputFolderOrImgs: string | Image[] | null) => Promise<void>;
         children: Snippet;
-    }
+    };
 
     let {
         isInvalid = false,
