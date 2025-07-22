@@ -125,7 +125,7 @@ The user interface for a drawing session.
     }
 
     const prevBtn: Tool = $derived({
-        key: "prev",
+        uid: "prev",
         icon: "lucide--arrow-left",
         action: drawingSession.goPrevImg,
         hotkey: "ArrowLeft",
@@ -133,7 +133,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const nextBtn: Tool = $derived({
-        key: "next",
+        uid: "next",
         icon: "lucide--arrow-right",
         action: drawingSession.goNextImg,
         hotkey: "ArrowRight",
@@ -141,7 +141,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const pauseBtn: Tool = $derived({
-        key: "pause",
+        uid: "pause",
         icon: drawingSession.isPaused ? "lucide--play" : "lucide--pause",
         action: () => {
             drawingSession.togglePause();
@@ -152,7 +152,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const resetZoomBtn: Tool = $derived({
-        key: "reset-zoom",
+        uid: "reset-zoom",
         icon: "lucide--scan",
         action: () => {
             panzoom.moveTo(0, 0);
@@ -164,7 +164,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const zoomOutBtn: Tool = $derived({
-        key: "zoom-out",
+        uid: "zoom-out",
         icon: "lucide--zoom-out",
         action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(1)),
         hotkey: "-",
@@ -173,7 +173,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const zoomInBtn: Tool = $derived({
-        key: "zoom-in",
+        uid: "zoom-in",
         icon: "lucide--zoom-in",
         action: () => panzoom.zoomTo(imgWidth / 2, imgHeight / 2, getScaleMultiplier(-1)),
         hotkey: "=",
@@ -182,7 +182,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const flipHorizontalBtn: Tool = $derived({
-        key: "flip-horizontal",
+        uid: "flip-horizontal",
         icon: "lucide--flip-horizontal-2",
         action: () => (isFlippedHorizontal = !isFlippedHorizontal),
         hotkey: "f",
@@ -191,7 +191,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const flipVerticalBtn: Tool = $derived({
-        key: "flip-vertical",
+        uid: "flip-vertical",
         icon: "lucide--flip-vertical-2",
         action: () => (isFlippedVertical = !isFlippedVertical),
         hotkey: "F",
@@ -200,7 +200,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const greyscaleBtn: Tool = $derived({
-        key: "greyscale",
+        uid: "greyscale",
         icon: "lucide--blend",
         action: () => (isGreyscale = !isGreyscale),
         hotkey: "g",
@@ -209,7 +209,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const blurBtn: Tool = $derived({
-        key: "blur",
+        uid: "blur",
         icon: "lucide--droplet",
         action: () => (isBlurred = !isBlurred),
         pressed: isBlurred,
@@ -219,7 +219,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const highContrastBtn: Tool = $derived({
-        key: "high-contrast",
+        uid: "high-contrast",
         icon: "lucide--contrast",
         action: () => (isHighContrast = !isHighContrast),
         hotkey: "c",
@@ -228,7 +228,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const hideTimerBtn: Tool = $derived({
-        key: "hide-timer",
+        uid: "hide-timer",
         icon: "lucide--timer-off",
         action: () => (timerShown = !timerShown),
         hotkey: "t",
@@ -237,7 +237,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const alwaysOnTopBtn: Tool = $derived({
-        key: "always-on-top",
+        uid: "always-on-top",
         icon: "lucide--pin",
         action: setAlwaysOnTop
             ? async () => {
@@ -255,7 +255,7 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const showImageFolderBtn: Tool = $derived({
-        key: "show-image-folder",
+        uid: "show-image-folder",
         icon: "lucide--folder-open",
         action: showImageFolder ? showImageFolder : () => {},
         hotkey: "",
@@ -264,14 +264,14 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const settingsBtn: Tool = $derived({
-        key: "settings",
+        uid: "settings",
         icon: "lucide--settings",
         action: () => appSettingsDialog.component?.open(),
         tooltip: "Settings",
         disabled: isFrozen,
     });
     const exitBtn: Tool = $derived({
-        key: "exit",
+        uid: "exit",
         icon: "lucide--log-out",
         action: () => confirmExitDialog.open(),
         hotkey: "Escape",
