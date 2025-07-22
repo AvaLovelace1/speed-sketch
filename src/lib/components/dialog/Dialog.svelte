@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
     import { Dialog } from "bits-ui";
-    import Card from "$lib/components/Card.svelte";
+    import Card from "$lib/atoms/Card.svelte";
     import Overlay from "$lib/components/dialog/Overlay.svelte";
     import Popup from "$lib/components/dialog/Popup.svelte";
 

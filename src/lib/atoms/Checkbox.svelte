@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Checkbox, Label } from "bits-ui";
+    import { stringToId } from "$lib/utils.svelte";
 
     interface Props extends Checkbox.RootProps {
         label: string;
@@ -7,7 +8,7 @@
 
     let { label, checked = $bindable(false), ...props }: Props = $props();
 
-    const id = label.replace(/\s+/g, "-");
+    const id = stringToId(`${label}-checkbox`);
 </script>
 
 <div class="inline-flex items-center gap-1">

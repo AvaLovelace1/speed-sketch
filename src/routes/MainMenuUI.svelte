@@ -5,8 +5,8 @@
     import type { Image } from "$lib/types.svelte";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Link from "$lib/utilities/Link.svelte";
-    import Card from "$lib/components/Card.svelte";
-    import Checkbox from "$lib/components/Checkbox.svelte";
+    import Card from "$lib/atoms/Card.svelte";
+    import Checkbox from "$lib/atoms/Checkbox.svelte";
     import DurationField from "$lib/components/DurationField.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import ImagesInput from "$lib/components/ImagesInput.svelte";

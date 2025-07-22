@@ -2,7 +2,7 @@
     import { Button, Tooltip } from "bits-ui";
     import prettyMilliseconds from "pretty-ms";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
-    import Card from "$lib/components/Card.svelte";
+    import Card from "$lib/atoms/Card.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { goto } from "$app/navigation";
     import { base } from "$app/paths";
