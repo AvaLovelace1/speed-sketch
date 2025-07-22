@@ -30,7 +30,7 @@ A field that allows the user to input a time duration.
     }
 
     function onValueChange(value: Time | undefined) {
-        if (!value || value.compare(new Time(0, 0)) === 0) duration = minValue;
+        if (!value || value.compare(new Time(0)) === 0) duration = minValue;
         else duration = value;
         seconds = duration.hour * 60 ** 2 + duration.minute * 60 + duration.second;
     }
@@ -51,15 +51,13 @@ A field that allows the user to input a time duration.
         </TimeField.Label>
         <TimeField.Input class="flex text-2xl">
             {#snippet children({ segments })}
-                {#each segments as { part, value }, i (part + i)}
+                {#each segments as { part, value }, i (i)}
                     {#if part === "literal"}
-                        {#if value.trim() !== ""}
-                            <TimeField.Segment {part} class="text-muted px-1">
-                                {value}
-                            </TimeField.Segment>
-                        {/if}
+                        <TimeField.Segment {part} class="text-muted px-1">
+                            {value}
+                        </TimeField.Segment>
                     {:else}
-                        <div class="">
+                        <div>
                             <TimeField.Segment
                                 {part}
                                 class="bg-base-200 hover:bg-base-300
