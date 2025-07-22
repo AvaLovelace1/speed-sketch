@@ -5,7 +5,7 @@ A timer that displays a given time.
 <script lang="ts">
     import type { SvelteHTMLElements } from "svelte/elements";
     import { Progress } from "bits-ui";
-    import StatusAlert from "$lib/components/StatusAlert.svelte";
+    import StatusAlert from "$lib/atoms/StatusAlert.svelte";
     import prettyMilliseconds from "pretty-ms";
 
     type Props = SvelteHTMLElements["div"] & {
