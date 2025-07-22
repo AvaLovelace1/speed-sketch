@@ -12,7 +12,7 @@ The user interface for a drawing session.
     import Toolbar from "$lib/components/Toolbar.svelte";
     import type { Tool } from "$lib/components/Toolbar.svelte";
     import { Tooltip } from "bits-ui";
-    import CustomTooltip from "$lib/components/Tooltip.svelte";
+    import CustomTooltip from "$lib/atoms/Tooltip.svelte";
     import StatusAlert from "$lib/atoms/StatusAlert.svelte";
     import { onDestroy, onMount } from "svelte";
     import type { DrawingSession } from "$lib/drawing-session.svelte";
