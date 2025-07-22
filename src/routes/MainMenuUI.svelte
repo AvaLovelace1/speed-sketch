@@ -10,7 +10,7 @@
     import DurationField from "$lib/atoms/DurationField.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
     import ImagesInput from "$lib/components/ImagesInput.svelte";
-    import RadioButtons from "$lib/components/RadioButtons.svelte";
+    import RadioButtons from "$lib/atoms/RadioButtons.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri } from "@tauri-apps/api/core";
@@ -155,8 +155,9 @@
                             <RadioButtons
                                 class="mb-4"
                                 groupLabel="Time per image"
-                                options={IMG_SHOW_TIME_OPTIONS}
+                                items={IMG_SHOW_TIME_OPTIONS}
                                 bind:group={sessionSettings.imgShowTimeOption}
+                                required
                             />
                             {#if sessionSettings.imgShowTimeOption === "Custom"}
                                 <div

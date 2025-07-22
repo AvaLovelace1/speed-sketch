@@ -1,7 +1,7 @@
 <script lang="ts">
     import { RadioGroup } from "bits-ui";
 
-    interface Option {
+    interface Item {
         label: string;
         value?: string; // If not provided, defaults to label
     }
@@ -10,12 +10,12 @@
         // Label for the radio group
         groupLabel: string;
         // Array of options for the radio buttons
-        options: Option[];
+        items: Item[];
         // Group variable to bind the selected value
         group: string;
     }
 
-    let { groupLabel, options, group = $bindable(), ...props }: Props = $props();
+    let { groupLabel, items, group = $bindable(), ...props }: Props = $props();
 </script>
 
 <fieldset>
@@ -23,11 +23,10 @@
     <RadioGroup.Root
         bind:value={group}
         orientation="horizontal"
-        required
         {...props}
         class={["join", props.class]}
     >
-        {#each options as { label, value = label } (label)}
+        {#each items as { label, value = label } (label)}
             <RadioGroup.Item class="join-item btn aria-checked:btn-primary" {value}>
                 {label}
             </RadioGroup.Item>
