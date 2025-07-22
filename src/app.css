@@ -22,7 +22,7 @@
     --color-nord-success: #a3be8c;
     --color-nord-special: #b48ead;
 
-    --color-muted: var(--color-nord-night2);
+    --color-muted: var(--color-nord-night4);
     --color-stroke: oklch(from var(--color-muted) calc(l + 0.15) c h);
     --color-stroke-muted: oklch(from var(--color-muted) calc(l + 0.3) c h);
 

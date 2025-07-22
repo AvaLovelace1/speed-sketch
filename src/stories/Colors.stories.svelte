@@ -84,6 +84,17 @@
             class_: "bg-base-200 text-error",
         },
     ];
+
+    const strokeColors = [
+        {
+            name: "Stroke",
+            class_: "border text-stroke",
+        },
+        {
+            name: "Stroke Muted",
+            class_: "border text-stroke-muted",
+        },
+    ];
 </script>
 
 {#snippet themeColors()}
@@ -93,6 +104,14 @@
                 <div class="text-center">
                     <p class="text-xl font-semibold">{name}</p>
                     <p class="text-xs">{name}</p>
+                </div>
+            </div>
+        {/each}
+        {#each strokeColors as { name, class_ } (name)}
+            <div class="flex size-32 items-center justify-center rounded p-2 {class_}">
+                <div class="text-center">
+                    <p><span class="iconify lucide--heart text-3xl"></span></p>
+                    <p class="text-muted text-xs">{name}</p>
                 </div>
             </div>
         {/each}
