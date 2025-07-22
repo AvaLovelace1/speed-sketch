@@ -26,18 +26,6 @@
             onCancel: fn(),
             onConfirm: fn(),
         },
-        parameters: {
-            a11y: {
-                config: {
-                    rules: [
-                        {
-                            id: "color-contrast",
-                            enabled: false, // Transitions interfere with color contrast checks
-                        },
-                    ],
-                },
-            },
-        },
     });
 
     let alertDialog: AlertDialog;
