@@ -3,7 +3,7 @@
     import Card from "./Card.svelte";
 
     const { Story } = defineMeta({
-        title: "Atoms/Card",
+        title: "Components/Card",
         component: Card,
         tags: ["autodocs"],
     });

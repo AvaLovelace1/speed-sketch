@@ -1,6 +1,6 @@
 <script lang="ts">
     import { appSettingsDialog } from "$lib/store/app-settings.svelte";
-    import Tooltip from "$lib/atoms/Tooltip.svelte";
+    import Tooltip from "$lib/components/Tooltip.svelte";
 </script>
 
 <Tooltip

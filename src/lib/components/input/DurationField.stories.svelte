@@ -3,7 +3,7 @@
     import DurationField from "./DurationField.svelte";
 
     const { Story } = defineMeta({
-        title: "Atoms/DurationField",
+        title: "Components/Input/DurationField",
         component: DurationField,
         tags: ["autodocs"],
     });

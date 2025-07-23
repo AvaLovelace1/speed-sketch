@@ -3,7 +3,7 @@
     import RadioButtons from "./RadioButtons.svelte";
 
     const { Story } = defineMeta({
-        title: "Atoms/RadioButtons",
+        title: "Components/Input/RadioButtons",
         component: RadioButtons,
         tags: ["autodocs"],
         args: {

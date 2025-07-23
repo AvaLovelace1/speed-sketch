@@ -5,12 +5,12 @@
     import type { Image } from "$lib/types.svelte";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Link from "$lib/utilities/Link.svelte";
-    import Card from "$lib/atoms/Card.svelte";
-    import Checkbox from "$lib/atoms/Checkbox.svelte";
-    import DurationField from "$lib/atoms/DurationField.svelte";
+    import Card from "$lib/components/Card.svelte";
+    import Checkbox from "$lib/components/input/Checkbox.svelte";
+    import DurationField from "$lib/components/input/DurationField.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
-    import ImagesInput from "$lib/components/ImagesInput.svelte";
-    import RadioButtons from "$lib/atoms/RadioButtons.svelte";
+    import Dropzone from "$lib/components/input/Dropzone.svelte";
+    import RadioButtons from "$lib/components/input/RadioButtons.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri } from "@tauri-apps/api/core";
@@ -87,7 +87,7 @@
                                         />
                                     </div>
                                 </div>
-                                <ImagesInput
+                                <Dropzone
                                     id="images-input"
                                     onFileDropped={() => setLoadingImgs(true)}
                                     onFileDialogCancel={() => setLoadingImgs(false)}
@@ -150,7 +150,7 @@
                                             </small>
                                         </p>
                                     {/if}
-                                </ImagesInput>
+                                </Dropzone>
                             </div>
                             <RadioButtons
                                 class="mb-4"

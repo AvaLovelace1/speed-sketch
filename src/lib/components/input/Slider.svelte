@@ -1,7 +1,7 @@
 <script lang="ts">
     import { type HTMLInputAttributes } from "svelte/elements";
     import { Label } from "bits-ui";
-    import { stringToId } from "$lib/utils.svelte";
+    import { stringToId } from "$lib/utils.svelte.js";
 
     interface Props extends HTMLInputAttributes {
         label: string;

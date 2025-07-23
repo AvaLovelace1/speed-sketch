@@ -6,7 +6,7 @@
     import { expect, waitFor, screen } from "storybook/test";
 
     const { Story } = defineMeta({
-        title: "Atoms/Tooltip",
+        title: "Components/Tooltip",
         component: Tooltip,
         tags: ["autodocs"],
         render: template,

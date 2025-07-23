@@ -3,7 +3,7 @@
     import StatusAlert from "./StatusAlert.svelte";
 
     const { Story } = defineMeta({
-        title: "Atoms/StatusAlert",
+        title: "Components/StatusAlert",
         component: StatusAlert,
         tags: ["autodocs"],
     });

@@ -1,7 +1,7 @@
 <script lang="ts">
     import Dialog from "$lib/components/dialog/Dialog.svelte";
-    import Select from "$lib/atoms/Select.svelte";
-    import Slider from "$lib/atoms/Slider.svelte";
+    import Select from "$lib/components/input/Select.svelte";
+    import Slider from "$lib/components/input/Slider.svelte";
     import { AppSettings } from "$lib/store/app-settings.svelte.js";
     import { playStartAudio } from "$lib/audio";
 

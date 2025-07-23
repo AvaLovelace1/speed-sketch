@@ -2,7 +2,7 @@
     import { Label, Select } from "bits-ui";
     import { fly } from "svelte/transition";
     import { prefersReducedMotion } from "svelte/motion";
-    import { stringToId } from "$lib/utils.svelte";
+    import { stringToId } from "$lib/utils.svelte.js";
 
     interface Item {
         value: string;

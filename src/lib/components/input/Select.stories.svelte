@@ -4,7 +4,7 @@
     import { expect, screen, within } from "storybook/test";
 
     const { Story } = defineMeta({
-        title: "Atoms/Select",
+        title: "Components/Input/Select",
         component: Select,
         tags: ["autodocs"],
         args: {

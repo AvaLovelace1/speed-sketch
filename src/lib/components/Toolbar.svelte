@@ -4,7 +4,7 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 -->
 <script lang="ts">
     import { Toolbar, Tooltip } from "bits-ui";
-    import CustomTooltip from "$lib/atoms/Tooltip.svelte";
+    import CustomTooltip from "$lib/components/Tooltip.svelte";
 
     export interface Tool extends Tooltip.TriggerProps {
         // Unique identifier for the tool

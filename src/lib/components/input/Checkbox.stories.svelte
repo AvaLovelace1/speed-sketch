@@ -3,7 +3,7 @@
     import Checkbox from "./Checkbox.svelte";
 
     const { Story } = defineMeta({
-        title: "Atoms/Checkbox",
+        title: "Components/Input/Checkbox",
         component: Checkbox,
         tags: ["autodocs"],
         args: { label: "Checkbox" },

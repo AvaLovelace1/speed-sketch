@@ -3,7 +3,7 @@
     import Slider from "./Slider.svelte";
 
     const { Story } = defineMeta({
-        title: "Atoms/Slider",
+        title: "Components/Input/Slider",
         component: Slider,
         tags: ["autodocs"],
         args: {
