@@ -3,7 +3,7 @@
     import Select from "$lib/atoms/Select.svelte";
     import Slider from "$lib/atoms/Slider.svelte";
     import { AppSettings } from "$lib/store/app-settings.svelte.js";
-    import startAudioFile from "$lib/assets/audio/start.mp3";
+    import { playStartAudio } from "$lib/audio";
 
     export interface Props {
         appSettings: AppSettings;
@@ -59,13 +59,7 @@
             max={1}
             step={0.1}
             bind:value={appSettings.volume}
-            onmouseup={() => {
-                const startAudio = new Audio(startAudioFile);
-                startAudio.volume = appSettings.volume;
-                startAudio.play().catch((e) => {
-                    console.error("Failed to play start audio:", e);
-                });
-            }}
+            onmouseup={playStartAudio}
         />
     </div>
     <!-- Contrast -->

@@ -5,22 +5,15 @@
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { goto } from "$app/navigation";
     import { base } from "$app/paths";
-    import { appSettings } from "$lib/store/app-settings.svelte";
     import { currentSession } from "$lib/drawing-session.svelte";
     import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
     import SessionScreen from "./SessionScreen.svelte";
-    import countdownBeepFile from "$lib/assets/audio/countdown-beep.mp3";
-    import countdownDoneFile from "$lib/assets/audio/countdown-done.mp3";
-    import endAudioFile from "$lib/assets/audio/end.mp3";
+    import { playEndAudio, playCountdownBeep, playCountdownDone } from "$lib/audio";
 
     const COUNTDOWN_BEEP_TIME = 3; // seconds before the end of the image to start beeping
 
     async function exit() {
-        const endAudio = new Audio(endAudioFile);
-        endAudio.volume = appSettings.volume;
-        await endAudio.play().catch((e) => {
-            console.error("Failed to play end audio:", e);
-        });
+        await playEndAudio();
         await goto(`${base}/session/end`, { replaceState: true });
     }
 
@@ -40,15 +33,8 @@
     }
 
     $effect(() => {
-        if (currentSession.object.timeRemaining === 0) {
-            const countdownDone = new Audio(countdownDoneFile);
-            countdownDone.volume = appSettings.volume;
-            countdownDone.play().catch((e) => console.error("Failed to play countdown done:", e));
-        } else if (currentSession.object.timeRemaining <= COUNTDOWN_BEEP_TIME) {
-            const countdownBeep = new Audio(countdownBeepFile);
-            countdownBeep.volume = appSettings.volume;
-            countdownBeep.play().catch((e) => console.error("Failed to play countdown beep:", e));
-        }
+        if (currentSession.object.timeRemaining === 0) playCountdownDone();
+        else if (currentSession.object.timeRemaining <= COUNTDOWN_BEEP_TIME) playCountdownBeep();
     });
 
     function beforeUnloadHandler(e: BeforeUnloadEvent) {

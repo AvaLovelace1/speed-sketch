@@ -3,11 +3,10 @@
     import { base } from "$app/paths";
     import { goto } from "$app/navigation";
     import MainMenuUI from "./MainMenuUI.svelte";
-    import startAudioFile from "$lib/assets/audio/start.mp3";
-    import { appSettings } from "$lib/store/app-settings.svelte";
     import { type Image } from "$lib/types.svelte";
     import { DrawingSession, currentSession } from "$lib/drawing-session.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
+    import { playStartAudio } from "$lib/audio";
 
     let imgs = $state<Image[]>([]);
     let imgErrMsg = $state("");
@@ -51,15 +50,9 @@
 
     async function startSession() {
         if (!canStartSession) return;
-
         await sessionSettings.saveToStore();
         currentSession.object = new DrawingSession(imgs, sessionSettings.imgShowTime);
-
-        const startAudio = new Audio(startAudioFile);
-        startAudio.volume = appSettings.volume;
-        await startAudio.play().catch((e) => {
-            console.error("Failed to play start audio:", e);
-        });
+        await playStartAudio();
         await goto(`${base}/session`, { replaceState: true });
     }
 
