@@ -8,7 +8,7 @@
     import { appSettings } from "$lib/store/app-settings.svelte";
     import { currentSession } from "$lib/drawing-session.svelte";
     import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
-    import SessionUI from "./SessionUI.svelte";
+    import SessionScreen from "./SessionScreen.svelte";
     import countdownBeepFile from "$lib/assets/audio/countdown-beep.mp3";
     import countdownDoneFile from "$lib/assets/audio/countdown-done.mp3";
     import endAudioFile from "$lib/assets/audio/end.mp3";
@@ -86,7 +86,7 @@
     <title>SpeedSketch - session in progress</title>
 </svelte:head>
 
-<SessionUI
+<SessionScreen
     drawingSession={currentSession.object}
     {exit}
     setAlwaysOnTop={isTauri() ? setAlwaysOnTop : null}

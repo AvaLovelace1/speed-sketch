@@ -18,7 +18,7 @@ The user interface for a drawing session.
     import type { DrawingSession } from "$lib/drawing-session.svelte";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";
-    interface Props {
+    export interface Props {
         drawingSession: DrawingSession;
         exit?: () => void;
         setAlwaysOnTop?: ((value: boolean) => Promise<void>) | null;
@@ -306,84 +306,9 @@ The user interface for a drawing session.
 
 {#snippet main()}
     <CenteredFull tag="main">
-        <!-- Wrap image in container so panzoom mouse events only fire on the image -->
-        <div class="size-full">
-            <!-- Wrap in another container so flipping works correctly -->
-            <div class="size-full" {@attach panzoomAttachment}>
-                <img
-                    src={drawingSession.getCurImg().url}
-                    alt="Reference used for drawing practice"
-                    class={[
-                        "size-full object-contain",
-                        isFlippedVertical ? "-scale-y-100" : "",
-                        isFlippedHorizontal ? "-scale-x-100" : "",
-                        isGreyscale ? "grayscale" : "",
-                        isHighContrast ? appSettings.contrastClass : "",
-                        isBlurred ? appSettings.blurClass : "",
-                    ]}
-                    bind:clientWidth={imgWidth}
-                    bind:clientHeight={imgHeight}
-                />
-            </div>
-        </div>
-        <div
-            class="toast toast-top toast-start {TOOLBAR_TRANSITION} {toolbarShown
-                ? ''
-                : 'opacity-0'}"
-        >
-            <CustomTooltip
-                side="right"
-                onmouseenter={() => {
-                    toolbarIsHovered = true;
-                }}
-                onmouseleave={() => {
-                    toolbarIsHovered = false;
-                    resetToolbarTimeout();
-                }}
-            >
-                <StatusAlert class="alert-success tabular-nums">
-                    <span class="iconify lucide--circle-check"></span>
-                    <span class="sr-only">Images completed:</span>
-                    {drawingSession.nCompletedImgs}
-                </StatusAlert>
-                {#snippet tooltipContent()}Images completed{/snippet}
-            </CustomTooltip>
-        </div>
-        <div class="toast toast-top toast-end items-end">
-            {#if timerShown}
-                <CustomTooltip side="left">
-                    <Timer
-                        time={drawingSession.timeRemaining}
-                        maxTime={drawingSession.imgShowTime}
-                        class={drawingSession.isPaused ? "text-muted!" : ""}
-                    />
-                    {#snippet tooltipContent()}Time remaining{/snippet}
-                </CustomTooltip>
-            {/if}
-            {#if drawingSession.isPaused}
-                <StatusAlert class="alert-error">
-                    <span class="iconify lucide--pause"></span>Paused
-                </StatusAlert>
-            {/if}
-        </div>
-        <div
-            class="fixed bottom-0 flex w-full justify-center-safe space-x-4 overflow-auto px-2 py-4 transition-all {TOOLBAR_TRANSITION}
-               {toolbarShown ? '' : 'opacity-0'}"
-            onfocusin={showToolbar}
-        >
-            {#each toolsets as tools, i (i)}
-                <Toolbar
-                    {tools}
-                    onmouseenter={() => {
-                        toolbarIsHovered = true;
-                    }}
-                    onmouseleave={() => {
-                        toolbarIsHovered = false;
-                        resetToolbarTimeout();
-                    }}
-                />
-            {/each}
-        </div>
+        {@render image()}
+        {@render statusAlerts()}
+        {@render toolbar()}
     </CenteredFull>
 
     <AlertDialog
@@ -396,6 +321,85 @@ The user interface for a drawing session.
         onCancel={unfreeze}
         onConfirm={exit}
     />
+{/snippet}
+
+{#snippet image()}
+    <!-- Wrap image in container so panzoom mouse events only fire on the image -->
+    <div class="size-full">
+        <!-- Wrap in another container so flipping works correctly -->
+        <div class="size-full" {@attach panzoomAttachment}>
+            <img
+                src={drawingSession.getCurImg().url}
+                alt="Reference used for drawing practice"
+                class={[
+                    "size-full object-contain",
+                    isFlippedVertical ? "-scale-y-100" : "",
+                    isFlippedHorizontal ? "-scale-x-100" : "",
+                    isGreyscale ? "grayscale" : "",
+                    isHighContrast ? appSettings.contrastClass : "",
+                    isBlurred ? appSettings.blurClass : "",
+                ]}
+                bind:clientWidth={imgWidth}
+                bind:clientHeight={imgHeight}
+            />
+        </div>
+    </div>
+{/snippet}
+
+{#snippet statusAlerts()}
+    <div class="toast toast-top toast-start {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
+        <CustomTooltip
+            side="right"
+            onmouseenter={() => (toolbarIsHovered = true)}
+            onmouseleave={() => {
+                toolbarIsHovered = false;
+                resetToolbarTimeout();
+            }}
+        >
+            <StatusAlert class="alert-success tabular-nums">
+                <span class="iconify lucide--circle-check"></span>
+                <span class="sr-only">Images completed:</span>
+                {drawingSession.nCompletedImgs}
+            </StatusAlert>
+            {#snippet tooltipContent()}Images completed{/snippet}
+        </CustomTooltip>
+    </div>
+    <div class="toast toast-top toast-end items-end">
+        {#if timerShown}
+            <CustomTooltip side="left">
+                <Timer
+                    time={drawingSession.timeRemaining}
+                    maxTime={drawingSession.imgShowTime}
+                    class={drawingSession.isPaused ? "text-muted!" : ""}
+                />
+                {#snippet tooltipContent()}Time remaining{/snippet}
+            </CustomTooltip>
+        {/if}
+        {#if drawingSession.isPaused}
+            <StatusAlert class="alert-error">
+                <span class="iconify lucide--pause"></span>Paused
+            </StatusAlert>
+        {/if}
+    </div>
+{/snippet}
+
+{#snippet toolbar()}
+    <div
+        class="fixed bottom-0 flex w-full justify-center-safe space-x-4 overflow-auto px-2 py-4 transition-all {TOOLBAR_TRANSITION}
+               {toolbarShown ? '' : 'opacity-0'}"
+        onfocusin={showToolbar}
+    >
+        {#each toolsets as tools, i (i)}
+            <Toolbar
+                {tools}
+                onmouseenter={() => (toolbarIsHovered = true)}
+                onmouseleave={() => {
+                    toolbarIsHovered = false;
+                    resetToolbarTimeout();
+                }}
+            />
+        {/each}
+    </div>
 {/snippet}
 
 {#if includeTooltipProvider}

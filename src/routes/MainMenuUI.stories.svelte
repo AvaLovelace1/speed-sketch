@@ -1,9 +1,9 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import MainMenuUI from "../../routes/MainMenuUI.svelte";
-    import Sample1 from "../assets/pexels-by-hong-son.jpg";
-    import Sample2 from "../assets/pexels-by-sasha-kim.jpg";
-    import Sample3 from "../assets/pexels-by-andrew-sindt.jpg";
+    import MainMenuUI from "./MainMenuUI.svelte";
+    import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";
+    import Sample2 from "$lib/assets/images/pexels-by-sasha-kim.jpg";
+    import Sample3 from "$lib/assets/images/pexels-by-andrew-sindt.jpg";
 
     const img1 = { name: "img1.jpg", url: Sample1 };
     const img2 = { name: "img2.jpg", url: Sample2 };
