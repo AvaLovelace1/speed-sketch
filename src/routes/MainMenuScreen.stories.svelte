@@ -75,6 +75,19 @@
     }}
 />
 
+<!-- The folder name is red when invalid. -->
+<Story
+    name="Tauri Invalid"
+    args={{
+        sessionSettings: new SessionSettings({
+            imgFolder: "C:\\Users\\User\\Pictures",
+        }),
+        imgErrMsg: "No images found",
+        canStartSession: false,
+        isTauri: true,
+    }}
+/>
+
 <Story
     name="With Interactions"
     args={{ canStartSession: true }}

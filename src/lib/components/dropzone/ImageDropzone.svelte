@@ -7,6 +7,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
     import TauriDropzone from "$lib/components/dropzone/TauriDropzone.svelte";
     import WebDropzone from "$lib/components/dropzone/WebDropzone.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";
+    import { isTauri as isTauriFn } from "@tauri-apps/api/core";
 
     interface Props {
         imgs?: Image[];
@@ -23,7 +24,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
         isLoading = $bindable(false),
         errMsg = "",
         onInput = async (_) => {},
-        isTauri = false,
+        isTauri = isTauriFn(),
     }: Props = $props();
 </script>
 

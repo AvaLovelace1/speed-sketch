@@ -13,6 +13,7 @@
     import RadioButtons from "$lib/components/input/RadioButtons.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { SessionSettings } from "$lib/store/session-settings.svelte";
+    import { isTauri as isTauriFn } from "@tauri-apps/api/core";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
@@ -45,7 +46,7 @@
         onImgsInput = async (_) => {},
         canStartSession = false,
         startSession = async () => {},
-        isTauri = false,
+        isTauri = isTauriFn(),
     }: Props = $props();
 
     const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
