@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { base } from "$app/paths";
     import { goto } from "$app/navigation";
-    import MainMenuUI from "./MainMenuUI.svelte";
+    import MainMenuScreen from "./MainMenuScreen.svelte";
     import { type Image } from "$lib/types.svelte";
     import { DrawingSession, currentSession } from "$lib/drawing-session.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
@@ -13,12 +13,8 @@
     let isLoadingImgs = $state(false);
     let canStartSession = $state(false);
 
-    function setLoadingImgs(value: boolean) {
-        isLoadingImgs = value;
-    }
-
     // Updates the shown images from inputImgsOrFolder. If inputImgsOrFolder is null, it uses the current session settings.
-    export async function onImagesInput(inputImgsOrFolder: string | Image[] | null) {
+    export async function onImgsInput(inputImgsOrFolder: string | Image[] | null) {
         canStartSession = false;
         isLoadingImgs = true;
 
@@ -57,8 +53,8 @@
     }
 
     onMount(async () => {
-        if (sessionSettings.imgFolder) await onImagesInput(sessionSettings.imgFolder);
-        else if (sessionSettings.imgs.length > 0) await onImagesInput(sessionSettings.imgs);
+        if (sessionSettings.imgFolder) await onImgsInput(sessionSettings.imgFolder);
+        else if (sessionSettings.imgs.length > 0) await onImgsInput(sessionSettings.imgs);
     });
 </script>
 
@@ -66,12 +62,12 @@
     <title>SpeedSketch</title>
 </svelte:head>
 
-<MainMenuUI
+<MainMenuScreen
+    {sessionSettings}
     {imgs}
-    {isLoadingImgs}
     {imgErrMsg}
+    bind:isLoadingImgs
     {canStartSession}
-    {setLoadingImgs}
-    {onImagesInput}
+    {onImgsInput}
     {startSession}
 />
