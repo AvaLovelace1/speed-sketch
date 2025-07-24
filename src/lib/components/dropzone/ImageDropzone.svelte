@@ -26,6 +26,8 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
         onInput = async (_) => {},
         isTauri = isTauriFn(),
     }: Props = $props();
+
+    let isInvalid = $derived(!isLoading && errMsg !== "");
 </script>
 
 {#snippet content()}
@@ -33,7 +35,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
         <p
             class={[
                 "text-base-content mx-auto mb-4 w-xs text-center text-sm",
-                errMsg && "text-error",
+                isInvalid && "text-error",
             ]}
         >
             <span class="iconify lucide--folder text-muted align-text-bottom"></span>
@@ -67,13 +69,13 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
 {/snippet}
 
 {#if isTauri}
-    <TauriDropzone isInvalid={errMsg !== ""} {onInput}>
+    <TauriDropzone {isInvalid} {onInput}>
         {@render content()}
     </TauriDropzone>
 {:else}
     <WebDropzone
         accept="image/*"
-        isInvalid={errMsg !== ""}
+        {isInvalid}
         onFileDropped={() => (isLoading = true)}
         onFileDialogCancel={() => (isLoading = false)}
         onInput={async (inputFiles: File[]) => {
