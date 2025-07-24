@@ -186,7 +186,7 @@ The user interface for a drawing session.
         icon: "lucide--flip-horizontal-2",
         action: () => (isFlippedHorizontal = !isFlippedHorizontal),
         hotkey: "f",
-        class: ["btn-primary", isFlippedHorizontal ? "btn-active" : ""],
+        class: ["btn-primary", isFlippedHorizontal && "btn-active"],
         tooltip: "Flip horizontally",
         disabled: isFrozen,
     });
@@ -195,7 +195,7 @@ The user interface for a drawing session.
         icon: "lucide--flip-vertical-2",
         action: () => (isFlippedVertical = !isFlippedVertical),
         hotkey: "F",
-        class: ["btn-primary", isFlippedVertical ? "btn-active" : ""],
+        class: ["btn-primary", isFlippedVertical && "btn-active"],
         tooltip: "Flip vertically",
         disabled: isFrozen,
     });
@@ -204,7 +204,7 @@ The user interface for a drawing session.
         icon: "lucide--blend",
         action: () => (isGreyscale = !isGreyscale),
         hotkey: "g",
-        class: ["btn-secondary", isGreyscale ? "btn-active" : ""],
+        class: ["btn-secondary", isGreyscale && "btn-active"],
         tooltip: "Greyscale",
         disabled: isFrozen,
     });
@@ -214,7 +214,7 @@ The user interface for a drawing session.
         action: () => (isBlurred = !isBlurred),
         pressed: isBlurred,
         hotkey: "b",
-        class: ["btn-secondary", isBlurred ? "btn-active" : ""],
+        class: ["btn-secondary", isBlurred && "btn-active"],
         tooltip: "Blur",
         disabled: isFrozen,
     });
@@ -223,7 +223,7 @@ The user interface for a drawing session.
         icon: "lucide--contrast",
         action: () => (isHighContrast = !isHighContrast),
         hotkey: "c",
-        class: ["btn-secondary", isHighContrast ? "btn-active" : ""],
+        class: ["btn-secondary", isHighContrast && "btn-active"],
         tooltip: "High contrast",
         disabled: isFrozen,
     });
@@ -232,7 +232,7 @@ The user interface for a drawing session.
         icon: "lucide--timer-off",
         action: () => (timerShown = !timerShown),
         hotkey: "t",
-        class: ["btn-info", !timerShown ? "btn-active" : ""],
+        class: ["btn-info", !timerShown && "btn-active"],
         tooltip: timerShown ? "Hide timer" : "Show timer",
         disabled: isFrozen,
     });
@@ -250,7 +250,7 @@ The user interface for a drawing session.
               }
             : () => {},
         hotkey: "",
-        class: ["btn-info", isAlwaysOnTop ? "btn-active" : ""],
+        class: ["btn-info", isAlwaysOnTop && "btn-active"],
         tooltip: isAlwaysOnTop ? "Unpin window" : "Pin window to top",
         disabled: isFrozen,
     });
@@ -333,11 +333,11 @@ The user interface for a drawing session.
                 alt="Reference used for drawing practice"
                 class={[
                     "size-full object-contain",
-                    isFlippedVertical ? "-scale-y-100" : "",
-                    isFlippedHorizontal ? "-scale-x-100" : "",
-                    isGreyscale ? "grayscale" : "",
-                    isHighContrast ? appSettings.contrastClass : "",
-                    isBlurred ? appSettings.blurClass : "",
+                    isFlippedVertical && "-scale-y-100",
+                    isFlippedHorizontal && "-scale-x-100",
+                    isGreyscale && "grayscale",
+                    isHighContrast && appSettings.contrastClass,
+                    isBlurred && appSettings.blurClass,
                 ]}
                 bind:clientWidth={imgWidth}
                 bind:clientHeight={imgHeight}
@@ -370,7 +370,7 @@ The user interface for a drawing session.
                 <Timer
                     time={drawingSession.timeRemaining}
                     maxTime={drawingSession.imgShowTime}
-                    class={drawingSession.isPaused ? "text-muted!" : ""}
+                    class={[drawingSession.isPaused && "text-muted!"]}
                 />
                 {#snippet tooltipContent()}Time remaining{/snippet}
             </CustomTooltip>

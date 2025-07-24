@@ -12,7 +12,7 @@
         children: Snippet;
     }
 
-    let { title, onOpen = () => {}, onClose = () => {}, children }: Props = $props();
+    const { title, onOpen = () => {}, onClose = () => {}, children }: Props = $props();
 
     let openBind = $state(false);
 

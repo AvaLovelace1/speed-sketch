@@ -14,7 +14,7 @@
         onConfirm?: () => void;
     }
 
-    let {
+    const {
         title,
         description,
         cancelText = "Cancel",

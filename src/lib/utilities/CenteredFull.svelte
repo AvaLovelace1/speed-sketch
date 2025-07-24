@@ -10,7 +10,7 @@ Center content both vertically and horizontally, and take up the full viewport h
         children: Snippet;
         tag?: string;
     }
-    let { children, tag = "div", ...props }: Props = $props();
+    const { children, tag = "div", ...props }: Props = $props();
 </script>
 
 <svelte:element
