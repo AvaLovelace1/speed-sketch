@@ -1,11 +1,13 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
     import MainMenuScreen from "./MainMenuScreen.svelte";
+    import type { Props as MainMenuScreenProps } from "./MainMenuScreen.svelte";
+    import { Tooltip } from "bits-ui";
     import { SessionSettings } from "$lib/store/session-settings.svelte";
     import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";
     import Sample2 from "$lib/assets/images/pexels-by-sasha-kim.jpg";
     import Sample3 from "$lib/assets/images/pexels-by-andrew-sindt.jpg";
-    import { fn } from "storybook/test";
+    import { fn, expect } from "storybook/test";
 
     const img1 = { name: "img1.jpg", url: Sample1 };
     const img2 = { name: "img2.jpg", url: Sample2 };
@@ -15,13 +17,20 @@
         title: "Screens/MainMenuScreen",
         component: MainMenuScreen,
         tags: ["autodocs"],
+        render: template,
         args: {
-            includeTooltipProvider: true,
+            sessionSettings: new SessionSettings(),
             onImgsInput: fn(),
             startSession: fn(),
         },
     });
 </script>
+
+{#snippet template(args: MainMenuScreenProps)}
+    <Tooltip.Provider>
+        <MainMenuScreen {...args} />
+    </Tooltip.Provider>
+{/snippet}
 
 <!-- The user sees this on first startup. -->
 <Story name="Default" />
@@ -63,5 +72,42 @@
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
         isTauri: true,
+    }}
+/>
+
+<Story
+    name="With Interactions"
+    args={{ canStartSession: true }}
+    play={async ({ args, canvas, userEvent, step }) => {
+        await step("Toggle shuffle checkbox", async () => {
+            const shuffleCheckbox = await canvas.findByRole("checkbox", { name: /shuffle/i });
+            await userEvent.click(shuffleCheckbox);
+            expect(args.sessionSettings.shuffleImgs).toBe(false);
+            await userEvent.click(shuffleCheckbox);
+            expect(args.sessionSettings.shuffleImgs).toBe(true);
+        });
+
+        await step("Select time of 1m", async () => {
+            await userEvent.click(canvas.getByRole("radio", { name: /1m/i }));
+            await expect(
+                canvas.queryByRole("spinbutton", { name: /minute, custom time/i }),
+            ).toBeNull();
+            expect(args.sessionSettings.imgShowTime).toBe(60);
+        });
+
+        await step("Select custom time", async () => {
+            await userEvent.click(canvas.getByRole("radio", { name: /custom/i }));
+            const hourInput = await canvas.findByRole("spinbutton", { name: /hour, custom time/i });
+            const minuteInput = await canvas.findByRole("spinbutton", {
+                name: /minute, custom time/i,
+            });
+            const secondInput = await canvas.findByRole("spinbutton", {
+                name: /second, custom time/i,
+            });
+            await userEvent.type(hourInput, "2");
+            await userEvent.type(minuteInput, "30");
+            await userEvent.type(secondInput, "15");
+            expect(args.sessionSettings.imgShowTime).toBe(2 * 3600 + 30 * 60 + 15);
+        });
     }}
 />

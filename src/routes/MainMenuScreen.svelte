@@ -2,7 +2,7 @@
     import { slide } from "svelte/transition";
     import { cubicOut } from "svelte/easing";
     import { prefersReducedMotion } from "svelte/motion";
-    import { Separator, Button, Tooltip } from "bits-ui";
+    import { Separator, Button } from "bits-ui";
     import type { Image } from "$lib/types.svelte";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Link from "$lib/utilities/Link.svelte";
@@ -23,7 +23,7 @@
     const BUG_REPORT_URL = `${ISSUE_URL}?template=bug_report.md`;
     const FEATURE_REQUEST_URL = `${ISSUE_URL}?template=feature_request.md`;
 
-    interface Props {
+    export interface Props {
         sessionSettings: SessionSettings;
 
         imgs?: Image[];
@@ -35,8 +35,6 @@
         startSession?: () => Promise<void>;
 
         isTauri?: boolean;
-        // Whether to wrap in a Tooltip.Provider (necessary if ancestor is not already wrapped)
-        includeTooltipProvider?: boolean;
     }
 
     let {
@@ -48,8 +46,6 @@
         canStartSession = false,
         startSession = async () => {},
         isTauri = false,
-
-        includeTooltipProvider = false,
     }: Props = $props();
 
     const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
@@ -58,16 +54,14 @@
     }));
 </script>
 
-{#snippet main()}
-    <CenteredFull>
-        <div class="w-lg px-2 py-8">
-            {@render header()}
-            {@render form()}
-            {@render footer()}
-            <SettingsButton />
-        </div>
-    </CenteredFull>
-{/snippet}
+<CenteredFull>
+    <div class="w-lg px-2 py-8">
+        {@render header()}
+        {@render form()}
+        {@render footer()}
+        <SettingsButton />
+    </div>
+</CenteredFull>
 
 {#snippet header()}
     <header class="mb-8 text-center">
@@ -156,11 +150,3 @@
         <p><small class="text-xxs">{COPYRIGHT} &nbsp;•&nbsp; v{VERSION}</small></p>
     </footer>
 {/snippet}
-
-{#if includeTooltipProvider}
-    <Tooltip.Provider>
-        {@render main()}
-    </Tooltip.Provider>
-{:else}
-    {@render main()}
-{/if}
