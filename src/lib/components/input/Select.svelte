@@ -1,7 +1,6 @@
 <script lang="ts">
     import { Label, Select } from "bits-ui";
-    import { fly } from "svelte/transition";
-    import { prefersReducedMotion } from "svelte/motion";
+    import { fly } from "$lib/motion.svelte";
     import { stringToId } from "$lib/utils.svelte.js";
 
     interface Item {
@@ -45,10 +44,8 @@
                     <div {...wrapperProps}>
                         <div
                             {...props}
-                            transition:fly={{
-                                y: prefersReducedMotion.current ? 0 : -10,
-                                duration: 200,
-                            }}
+                            in:fly={{ y: -10, duration: "medium" }}
+                            out:fly={{ y: -10, duration: "short" }}
                         >
                             <Select.Viewport>
                                 {#each items.values() as option, i (i + option.value)}

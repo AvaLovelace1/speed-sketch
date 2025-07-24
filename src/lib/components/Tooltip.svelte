@@ -1,7 +1,6 @@
 <script lang="ts">
     import { Tooltip } from "bits-ui";
-    import { fly } from "svelte/transition";
-    import { prefersReducedMotion } from "svelte/motion";
+    import { fly } from "$lib/motion.svelte";
     import type { Snippet } from "svelte";
 
     export interface Props extends Tooltip.TriggerProps {
@@ -14,11 +13,7 @@
     const flyAmount = 4;
     const xFlyAmount = side === "left" ? flyAmount : side === "right" ? -flyAmount : 0;
     const yFlyAmount = side === "top" ? flyAmount : side === "bottom" ? -flyAmount : 0;
-    const flyTransition = {
-        x: prefersReducedMotion.current ? 0 : xFlyAmount,
-        y: prefersReducedMotion.current ? 0 : yFlyAmount,
-        duration: 100,
-    };
+    const flyTransition = { x: xFlyAmount, y: yFlyAmount, duration: "short" } as const;
 </script>
 
 <Tooltip.Root>

@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { slide } from "svelte/transition";
-    import { cubicOut } from "svelte/easing";
-    import { prefersReducedMotion } from "svelte/motion";
+    import { slide } from "$lib/motion.svelte";
     import { Separator, Button } from "bits-ui";
     import type { Image } from "$lib/types.svelte";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
@@ -115,10 +113,8 @@
                     {#if sessionSettings.imgShowTimeOption === "Custom"}
                         <div
                             class="flex justify-center"
-                            transition:slide={{
-                                duration: prefersReducedMotion.current ? 0 : 250,
-                                easing: cubicOut,
-                            }}
+                            in:slide={{ duration: "long" }}
+                            out:slide={{ duration: "medium" }}
                         >
                             <DurationField bind:seconds={sessionSettings.imgShowTimeCustom} />
                         </div>
