@@ -8,12 +8,11 @@
     import { currentSession } from "$lib/drawing-session.svelte";
     import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
     import SessionScreen from "./SessionScreen.svelte";
-    import { playEndAudio, playCountdownBeep, playCountdownDone } from "$lib/audio";
+    import { playCountdownBeep, playCountdownDone, playStartAudio } from "$lib/audio";
 
     const COUNTDOWN_BEEP_TIME = 3; // seconds before the end of the image to start beeping
 
     async function exit() {
-        await playEndAudio();
         await goto(`${base}/session/end`, { replaceState: true });
     }
 
@@ -48,6 +47,7 @@
             console.error("Failed to start wakelock:", e);
         });
 
+        await playStartAudio();
         currentSession.object.resume();
     });
 

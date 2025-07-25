@@ -6,7 +6,6 @@
     import { type Image } from "$lib/types.svelte";
     import { DrawingSession, currentSession } from "$lib/drawing-session.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
-    import { playStartAudio } from "$lib/audio";
 
     let imgs = $state<Image[]>([]);
     let imgErrMsg = $state("");
@@ -48,7 +47,6 @@
         if (!canStartSession) return;
         await sessionSettings.saveToStore();
         currentSession.object = new DrawingSession(imgs, sessionSettings.imgShowTime);
-        await playStartAudio();
         await goto(`${base}/session`, { replaceState: true });
     }
 
