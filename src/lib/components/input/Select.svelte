@@ -3,6 +3,8 @@
     import { fly } from "$lib/motion.svelte";
     import { stringToId } from "$lib/utils.svelte.js";
 
+    const SIDE_OFFSET = 8;
+
     interface Item {
         value: string;
         label: string;
@@ -36,7 +38,7 @@
     <Select.Portal>
         <Select.Content
             class="bg-base-200 rounded-box z-50 w-(--bits-select-anchor-width) p-2 shadow-md"
-            sideOffset={8}
+            sideOffset={SIDE_OFFSET}
             forceMount
         >
             {#snippet child({ wrapperProps, props, open })}
@@ -44,8 +46,8 @@
                     <div {...wrapperProps}>
                         <div
                             {...props}
-                            in:fly={{ y: -10, duration: "medium" }}
-                            out:fly={{ y: -10, duration: "short" }}
+                            in:fly={{ y: -SIDE_OFFSET, duration: "medium" }}
+                            out:fly={{ y: -SIDE_OFFSET, duration: "short" }}
                         >
                             <Select.Viewport>
                                 {#each items.values() as option, i (i + option.value)}
