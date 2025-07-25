@@ -74,7 +74,12 @@
 {#snippet form()}
     <main class="mb-8">
         <Card class="mx-auto">
-            <form>
+            <form
+                onsubmit={async (e) => {
+                    e.preventDefault();
+                    await startSession();
+                }}
+            >
                 <div class="p-8 pb-12">
                     <div class="mb-6">
                         <div class="mb-2 flex items-baseline justify-between">
@@ -123,7 +128,6 @@
                 <Button.Root
                     type="submit"
                     class="btn btn-success btn-block rounded-b-box rounded-t-none p-6 text-lg font-semibold uppercase"
-                    onclick={startSession}
                     disabled={!canStartSession}
                 >
                     <span class="iconify lucide--play"></span>Go!
