@@ -17,9 +17,9 @@
         bind:checked
         tabindex={0}
         {...props}
-        class={["checkbox checkbox-xs rounded-sm before:delay-0 before:duration-100", props.class]}
+        class={["checkbox rounded-sm checkbox-xs before:delay-0 before:duration-100", props.class]}
     />
-    <Label.Root class="text-muted cursor-pointer text-xs" for={id}>
+    <Label.Root class="cursor-pointer text-xs text-muted" for={id}>
         {label}
     </Label.Root>
 </div>

@@ -25,10 +25,10 @@
     const id = stringToId(`${label}-slider`);
 </script>
 
-<Label.Root class="text-muted mb-2 block text-sm" for={id}>{label}</Label.Root>
+<Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>
 <div class="flex items-center gap-2">
     {#if icon}
-        <span class="text-stroke iconify {icon}"></span>
+        <span class="iconify text-stroke {icon}"></span>
     {/if}
     <input
         {id}

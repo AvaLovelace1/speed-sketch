@@ -10,7 +10,7 @@ A dark overlay that covers the entire viewport.
 </script>
 
 <div
-    class="bg-offblack/75 fixed inset-0 z-50"
+    class="fixed inset-0 z-50 bg-offblack/75"
     in:fade={{ duration: "long" }}
     out:fade={{ duration: "medium" }}
     {...props}

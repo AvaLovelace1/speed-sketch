@@ -19,7 +19,7 @@ A styled wrapper for the dropzone area.
 
 <div
     class={[
-        "text-muted bg-base-200 hover:bg-base-300 rounded-box w-full cursor-pointer border-2 text-center inset-shadow-xs",
+        "w-full cursor-pointer rounded-box border-2 bg-base-200 text-center text-muted inset-shadow-xs hover:bg-base-300",
         isDragging ? draggingStyle : isInvalid ? invalidStyle : "border-base-100",
     ]}
 >

@@ -45,7 +45,7 @@ A field that allows the user to input a time duration.
     {onValueChange}
 >
     <div class="flex gap-2">
-        <TimeField.Label class="text-muted pt-1 text-xl">
+        <TimeField.Label class="pt-1 text-xl text-muted">
             <span class="iconify lucide--timer"></span>
             <span class="sr-only">Custom time</span>
         </TimeField.Label>
@@ -53,22 +53,22 @@ A field that allows the user to input a time duration.
             {#snippet children({ segments })}
                 {#each segments as { part, value }, i (i)}
                     {#if part === "literal"}
-                        <TimeField.Segment {part} class="text-muted px-1">
+                        <TimeField.Segment {part} class="px-1 text-muted">
                             {value}
                         </TimeField.Segment>
                     {:else}
                         <div>
                             <TimeField.Segment
                                 {part}
-                                class="bg-base-200 hover:bg-base-300
-                                       focus:bg-primary focus:text-primary-content
-                                       aria-[valuetext=Empty]:text-muted
-                                       outline-primary block rounded px-1 tabular-nums inset-shadow-xs
-                                       outline-offset-2 focus-visible:outline-2"
+                                class="block rounded
+                                       bg-base-200 px-1
+                                       tabular-nums
+                                       inset-shadow-xs outline-offset-2 outline-primary hover:bg-base-300 focus:bg-primary focus:text-primary-content
+                                       focus-visible:outline-2 aria-[valuetext=Empty]:text-muted"
                             >
                                 {value}
                             </TimeField.Segment>
-                            <div class="text-muted text-center text-xs">
+                            <div class="text-center text-xs text-muted">
                                 {getTimeSegmentPartAbbr(part)}
                             </div>
                         </div>

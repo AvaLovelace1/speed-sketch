@@ -76,11 +76,7 @@ SpeedSketch is built using [Tauri](https://tauri.app). Follow these steps to bui
 <!-- Links -->
 
 [Webapp]: https://avalovelace1.github.io/speed-sketch/
-
 [Browser]: https://img.shields.io/badge/Web%20Browser-4285F4?logo=GoogleChrome&logoColor=white&style=for-the-badge
-
 [Windows]: https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white&style=for-the-badge
-
 [macOS]: https://img.shields.io/badge/mac-000000?logo=apple&logoColor=F0F0F0&style=for-the-badge
-
 [Linux]: https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black&style=for-the-badge

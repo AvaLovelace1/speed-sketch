@@ -110,8 +110,8 @@
         {#each strokeColors as { name, class_ } (name)}
             <div class="flex size-32 items-center justify-center rounded p-2 {class_}">
                 <div class="text-center">
-                    <p><span class="iconify lucide--heart text-3xl"></span></p>
-                    <p class="text-muted text-xs">{name}</p>
+                    <p><span class="iconify text-3xl lucide--heart"></span></p>
+                    <p class="text-xs text-muted">{name}</p>
                 </div>
             </div>
         {/each}

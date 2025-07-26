@@ -34,11 +34,11 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
     {#if folder}
         <p
             class={[
-                "text-base-content mx-auto mb-4 w-xs text-center text-sm",
+                "mx-auto mb-4 w-xs text-center text-sm text-base-content",
                 isInvalid && "text-error",
             ]}
         >
-            <span class="iconify lucide--folder text-muted align-text-bottom"></span>
+            <span class="iconify align-text-bottom text-muted lucide--folder"></span>
             <span class="sr-only">Folder</span>
             {folder}
         </p>
@@ -49,14 +49,14 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
         </div>
         <p class="text-xs font-semibold">Drag & drop or click to choose another folder</p>
     {:else if errMsg}
-        <p role="status" class="text-error mb-4 text-xl font-semibold">
-            <span class="iconify lucide--octagon-x align-text-bottom"></span>
+        <p role="status" class="mb-4 text-xl font-semibold text-error">
+            <span class="iconify align-text-bottom lucide--octagon-x"></span>
             <span class="sr-only">Error</span>
             {errMsg}
         </p>
         <p class="text-sm font-semibold">Drag & drop or click to choose another folder</p>
     {:else}
-        <span class="iconify lucide--download text-xl"></span>
+        <span class="iconify text-xl lucide--download"></span>
         <p class="text-sm font-semibold">Drag & drop or click to choose folder</p>
     {/if}
     {#if !isTauri}

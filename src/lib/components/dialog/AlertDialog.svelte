@@ -66,7 +66,7 @@
                                 </AlertDialog.Title>
                             {/if}
                             {#if description}
-                                <AlertDialog.Description class="text-muted mb-8 text-sm">
+                                <AlertDialog.Description class="mb-8 text-sm text-muted">
                                     {description}
                                 </AlertDialog.Description>
                             {/if}
@@ -81,7 +81,7 @@
                                 </AlertDialog.Action>
                             </div>
                             <AlertDialog.Cancel
-                                class="text-muted hover:text-base-content active:text-muted focus:text-base-content absolute top-1 right-1 cursor-pointer p-2"
+                                class="absolute top-1 right-1 cursor-pointer p-2 text-muted hover:text-base-content focus:text-base-content active:text-muted"
                             >
                                 <span class="iconify lucide--x">
                                     <span class="sr-only">Close</span>

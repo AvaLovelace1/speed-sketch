@@ -53,7 +53,7 @@
                             <Dialog.Title class="mb-8 text-2xl font-semibold">{title}</Dialog.Title>
                             <Dialog.Description>{@render children()}</Dialog.Description>
                             <Dialog.Close
-                                class="text-muted hover:text-base-content active:text-muted focus:text-base-content absolute top-1 right-1 cursor-pointer p-2"
+                                class="absolute top-1 right-1 cursor-pointer p-2 text-muted hover:text-base-content focus:text-base-content active:text-muted"
                             >
                                 <span class="iconify lucide--x"></span>
                                 <span class="sr-only">Close</span>

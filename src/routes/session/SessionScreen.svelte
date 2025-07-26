@@ -347,7 +347,7 @@ The user interface for a drawing session.
 {/snippet}
 
 {#snippet statusAlerts()}
-    <div class="toast toast-top toast-start {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
+    <div class="toast-top toast-start toast {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
         <CustomTooltip
             side="right"
             onmouseenter={() => (toolbarIsHovered = true)}
@@ -364,7 +364,7 @@ The user interface for a drawing session.
             {#snippet tooltipContent()}Images completed{/snippet}
         </CustomTooltip>
     </div>
-    <div class="toast toast-top toast-end items-end">
+    <div class="toast-top toast-end toast items-end">
         {#if timerShown}
             <CustomTooltip side="left">
                 <Timer

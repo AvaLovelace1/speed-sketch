@@ -65,7 +65,7 @@
 {#snippet header()}
     <header class="mb-8 text-center">
         <h1 class="text-6xl font-thin">{APP_NAME}</h1>
-        <Separator.Root class="divider text-muted mt-3 text-lg tracking-widest">
+        <Separator.Root class="divider mt-3 text-lg tracking-widest text-muted">
             {TAGLINE}
         </Separator.Root>
     </header>
@@ -83,7 +83,7 @@
                 <div class="p-8 pb-12">
                     <div class="mb-6">
                         <div class="mb-2 flex items-baseline justify-between">
-                            <div class="text-muted text-sm">Images</div>
+                            <div class="text-sm text-muted">Images</div>
                             <div class="flex gap-3">
                                 {#if isTauri}
                                     <Checkbox
@@ -127,7 +127,7 @@
                 </div>
                 <Button.Root
                     type="submit"
-                    class="btn btn-success btn-block rounded-b-box rounded-t-none p-6 text-lg font-semibold uppercase"
+                    class="btn btn-block rounded-t-none rounded-b-box p-6 text-lg font-semibold uppercase btn-success"
                     disabled={!canStartSession}
                 >
                     <span class="iconify lucide--play"></span>Go!
@@ -138,7 +138,7 @@
 {/snippet}
 
 {#snippet footer()}
-    <footer class="text-muted text-center text-sm">
+    <footer class="text-center text-sm text-muted">
         <p>
             <Link href={BUG_REPORT_URL} external>
                 report <strong class="font-semibold">bug</strong>

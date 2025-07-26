@@ -24,20 +24,20 @@
     const itemsMap = new Map<string, Item>(items.map((item) => [item.value, item]));
 </script>
 
-<Label.Root class="text-muted mb-2 block text-sm" for={id}>{label}</Label.Root>
+<Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>
 <Select.Root type="single" bind:value items={[...items.values()]}>
     <Select.Trigger
         {id}
-        class="select active:bg-base-200 flex w-3xs cursor-pointer items-center gap-2"
+        class="select flex w-3xs cursor-pointer items-center gap-2 active:bg-base-200"
     >
         {#if itemsMap.get(value)?.icon}
-            <div class="text-stroke iconify {itemsMap.get(value)?.icon}"></div>
+            <div class="iconify text-stroke {itemsMap.get(value)?.icon}"></div>
         {/if}
         {itemsMap.get(value)?.label}
     </Select.Trigger>
     <Select.Portal>
         <Select.Content
-            class="bg-base-200 rounded-box z-50 w-(--bits-select-anchor-width) p-2 shadow-md"
+            class="z-50 w-(--bits-select-anchor-width) rounded-box bg-base-200 p-2 shadow-md"
             sideOffset={SIDE_OFFSET}
             forceMount
         >
@@ -52,8 +52,8 @@
                             <Select.Viewport>
                                 {#each items.values() as option, i (i + option.value)}
                                     <Select.Item
-                                        class="data-highlighted:bg-base-300 data-selected:bg-primary data-selected:text-primary-content
-                                               rounded-field flex cursor-pointer items-center justify-between px-4 py-2 text-sm"
+                                        class="flex cursor-pointer items-center
+                                               justify-between rounded-field px-4 py-2 text-sm data-highlighted:bg-base-300 data-selected:bg-primary data-selected:text-primary-content"
                                         value={option.value}
                                         label={option.label}
                                     >
