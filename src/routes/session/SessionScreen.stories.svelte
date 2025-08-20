@@ -21,7 +21,7 @@
                     { name: "img2.jpg", url: Sample2 },
                     { name: "img3.jpg", url: Sample3 },
                 ],
-                60,
+                [{ time: 60, repeat: Infinity }],
             ),
             exit: fn(),
             setAlwaysOnTop: fn(),

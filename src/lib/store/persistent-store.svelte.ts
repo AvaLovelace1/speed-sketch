@@ -1,5 +1,6 @@
 import { load } from "@tauri-apps/plugin-store";
 import { isTauri } from "@tauri-apps/api/core";
+import { SvelteMap } from "svelte/reactivity";
 
 export interface PersistentStore {
     // Get a value by key. Returns undefined if the key does not exist.
@@ -52,7 +53,7 @@ export function createLocalStorageStore() {
 
 // Persistent store with an in-memory map. Useful for testing
 export function createMapStore() {
-    const items = new Map<string, unknown>();
+    const items = new SvelteMap<string, unknown>();
     const result: PersistentStore = {
         get: async (key: string) => {
             return items.get(key);

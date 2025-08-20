@@ -32,7 +32,7 @@ const test = base.extend<SessionScreenFixture>({
             { name: "image3.jpg", url: "https://localhost/image3.jpg" },
         ];
         const imgShowTime = 60;
-        const drawingSession = new DrawingSession(imgs, imgShowTime);
+        const drawingSession = new DrawingSession(imgs, [{ time: imgShowTime, repeat: Infinity }]);
         const exit = vi.fn();
         const setAlwaysOnTop = vi.fn();
         const showImageFolder = vi.fn();

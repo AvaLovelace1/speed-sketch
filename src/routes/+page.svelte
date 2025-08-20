@@ -46,7 +46,9 @@
     async function startSession() {
         if (!canStartSession) return;
         await sessionSettings.saveToStore();
-        currentSession.object = new DrawingSession(imgs, sessionSettings.imgShowTime);
+        currentSession.object = new DrawingSession(imgs, [
+            { time: sessionSettings.imgShowTime, repeat: Infinity },
+        ]);
         await goto(`${base}/session`, { replaceState: true });
     }
 

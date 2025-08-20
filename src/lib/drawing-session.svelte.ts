@@ -1,5 +1,10 @@
 import { type Image } from "$lib/types.svelte";
 
+export type SessionSchedule = {
+    time: number; // Time in seconds to show each image
+    repeat: number; // Number of images to show for this time (Infinity for endless sessions)
+}[];
+
 export class DrawingSession {
     nCompletedImgs: number;
     // Time remaining for the current image to be displayed, in seconds
@@ -9,6 +14,10 @@ export class DrawingSession {
     isPaused: boolean;
     // Index of the current image being displayed
     curImgIdx: number;
+    // Index of the current schedule entry being used
+    curScheduleIdx: number;
+    // Number of times the current schedule entry has repeated
+    curScheduleRepeat: number;
     // Timer interval that updates the time remaining with each tick
     #timer: NodeJS.Timeout | undefined = undefined;
 
@@ -16,19 +25,21 @@ export class DrawingSession {
         // Array of images to be displayed in the session
         public imgs: Image[],
         // Time each image is displayed for, in seconds
-        public imgShowTime: number,
+        public schedule: SessionSchedule,
     ) {
         this.nCompletedImgs = $state(0);
-        this.timeRemaining = $state(imgShowTime);
+        this.timeRemaining = $state(schedule[0].time);
         this.timeSpent = 0;
         this.isPaused = $state(true);
 
         this.curImgIdx = $state(0);
+        this.curScheduleIdx = $state(0);
+        this.curScheduleRepeat = $state(0);
         this.#timer = undefined;
     }
 
     isValid = () => {
-        return this.imgs.length > 0 && this.imgShowTime > 0;
+        return this.imgs.length > 0 && this.schedule[0].time > 0;
     };
 
     getCurImg = () => {
@@ -48,6 +59,10 @@ export class DrawingSession {
         this.timeRemaining = this.imgShowTime;
         if (!this.isPaused) this.#restartTimer();
     };
+
+    get imgShowTime() {
+        return this.schedule[this.curScheduleIdx].time;
+    }
 
     pause = () => {
         this.isPaused = true;
@@ -83,5 +98,5 @@ export class DrawingSession {
 }
 
 export const currentSession = $state({
-    object: new DrawingSession([], 0),
+    object: new DrawingSession([], [{ time: 0, repeat: Infinity }]),
 });
