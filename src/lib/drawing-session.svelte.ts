@@ -12,6 +12,7 @@ export class DrawingSession {
     // Total time spent drawing (not paused), in seconds
     timeSpent: number;
     isPaused: boolean;
+    isFinished: boolean;
     // Index of the current image being displayed
     curImgIdx: number;
     // Index of the current schedule entry being used
@@ -31,6 +32,7 @@ export class DrawingSession {
         this.timeRemaining = $state(schedule[0].time);
         this.timeSpent = 0;
         this.isPaused = $state(true);
+        this.isFinished = $state(false);
 
         this.curImgIdx = $state(0);
         this.curScheduleIdx = $state(0);
@@ -46,30 +48,58 @@ export class DrawingSession {
         return this.imgs[this.curImgIdx];
     };
 
+    getCurScheduleEntry = () => {
+        return this.schedule[this.curScheduleIdx];
+    };
+
     goPrevImg = () => {
+        if (this.isFinished) return;
         this.curImgIdx -= 1;
         if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
-        this.timeRemaining = this.imgShowTime;
+        this.timeRemaining = this.getCurScheduleEntry().time;
         if (!this.isPaused) this.#restartTimer();
     };
 
     goNextImg = () => {
+        if (this.isFinished) return;
         this.curImgIdx += 1;
         if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
-        this.timeRemaining = this.imgShowTime;
+        this.timeRemaining = this.getCurScheduleEntry().time;
         if (!this.isPaused) this.#restartTimer();
     };
 
-    get imgShowTime() {
-        return this.schedule[this.curScheduleIdx].time;
-    }
+    finishImg = () => {
+        this.nCompletedImgs += 1;
+
+        if (
+            this.curScheduleRepeat === this.getCurScheduleEntry().repeat - 1 &&
+            this.curScheduleIdx === this.schedule.length - 1
+        ) {
+            this.finishSession();
+            return;
+        }
+
+        this.curScheduleRepeat += 1;
+        if (this.curScheduleRepeat >= this.getCurScheduleEntry().repeat) {
+            this.curScheduleRepeat = 0;
+            this.curScheduleIdx += 1;
+        }
+        this.goNextImg();
+    };
+
+    finishSession = () => {
+        this.isFinished = true;
+        this.#clearTimer();
+    };
 
     pause = () => {
+        if (this.isFinished) return;
         this.isPaused = true;
         this.#clearTimer();
     };
 
     resume = () => {
+        if (this.isFinished) return;
         this.isPaused = false;
         this.#restartTimer();
     };
@@ -86,8 +116,7 @@ export class DrawingSession {
                 this.timeRemaining--;
                 this.timeSpent++;
             } else {
-                this.nCompletedImgs += 1;
-                this.goNextImg();
+                this.finishImg();
             }
         }, 1000);
     };
