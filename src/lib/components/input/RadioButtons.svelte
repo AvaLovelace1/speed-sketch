@@ -4,6 +4,7 @@
     interface Item {
         label: string;
         value?: string; // If not provided, defaults to label
+        description?: string;
     }
 
     interface Props extends RadioGroup.RootProps {
@@ -13,9 +14,21 @@
         items: Item[];
         // Group variable to bind the selected value
         group: string;
+        buttonStyle?: "default" | "large";
     }
 
-    let { groupLabel, items, group = $bindable(), ...props }: Props = $props();
+    let {
+        groupLabel,
+        items,
+        group = $bindable(),
+        buttonStyle = "default",
+        ...props
+    }: Props = $props();
+
+    const itemClass =
+        buttonStyle === "large"
+            ? "group btn join-item aria-checked:btn-primary first:rounded-s-box last:rounded-e-box text-base grow block h-auto px-8 py-4"
+            : "group btn join-item aria-checked:btn-primary grow";
 </script>
 
 <fieldset>
@@ -26,9 +39,16 @@
         {...props}
         class={["join", props.class]}
     >
-        {#each items as { label, value = label } (label)}
-            <RadioGroup.Item class="btn join-item aria-checked:btn-primary" {value}>
+        {#each items as { label, value = label, description } (label)}
+            <RadioGroup.Item class={itemClass} {value}>
                 {label}
+                {#if description}
+                    <p
+                        class="text-xs font-normal text-muted transition-[inherit] group-aria-checked:text-primary-content"
+                    >
+                        {description}
+                    </p>
+                {/if}
             </RadioGroup.Item>
         {/each}
     </RadioGroup.Root>

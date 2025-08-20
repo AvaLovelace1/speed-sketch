@@ -20,3 +20,16 @@
 
 <!-- A group of buttons functioning as a radio select. -->
 <Story name="Default" />
+
+<!-- Large button style with descriptions. Descriptions look best in this style. -->
+<Story
+    name="Large"
+    args={{
+        buttonStyle: "large",
+        items: [
+            { label: "Option 1", value: "option1", description: "This is the first option." },
+            { label: "Option 2", value: "option2", description: "This is the second option." },
+            { label: "Option 3", value: "option3", description: "This is the third option." },
+        ],
+    }}
+/>
