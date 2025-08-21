@@ -369,7 +369,7 @@ The user interface for a drawing session.
             <CustomTooltip side="left">
                 <Timer
                     time={drawingSession.timeRemaining}
-                    maxTime={drawingSession.imgShowTime}
+                    maxTime={drawingSession.getCurScheduleEntry().duration}
                     class={[drawingSession.isPaused && "text-muted!"]}
                 />
                 {#snippet tooltipContent()}Time remaining{/snippet}
