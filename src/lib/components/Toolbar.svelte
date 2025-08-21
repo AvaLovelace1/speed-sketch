@@ -17,9 +17,11 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
     export interface Props extends Toolbar.RootProps {
         tools: Tool[];
+        toolbarStyle?: "default" | "small";
+        tooltipSide?: "top" | "bottom" | "left" | "right";
     }
 
-    const { tools, ...props }: Props = $props();
+    const { tools, toolbarStyle = "default", tooltipSide = "top", ...props }: Props = $props();
 
     function onKeyDown(e: KeyboardEvent) {
         for (const tool of tools) {
@@ -43,17 +45,23 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
         if (hotkey.match(/^[A-Z]$/)) return ["Shift", hotkey];
         return hotkeyLabels.get(hotkey) || [hotkey];
     }
+
+    const toolbarClass = toolbarStyle === "small" ? "flex gap-2" : "join rounded-field shadow-md";
+    const itemClass =
+        toolbarStyle === "small"
+            ? "btn btn-circle btn-soft btn-sm text-base"
+            : "btn join-item px-3 py-5 text-lg btn-soft";
 </script>
 
 <svelte:window onkeydown={onKeyDown} />
 
-<Toolbar.Root {...props} class={["join rounded-field shadow-md", props.class]}>
+<Toolbar.Root {...props} class={[toolbarClass, props.class]}>
     {#each tools as { uid, icon, action, hotkey, tooltip, ...others } (uid)}
         <CustomTooltip
-            side="top"
+            side={tooltipSide}
             onclick={action}
             {...others}
-            class={["btn join-item px-3 py-5 text-lg btn-soft", others.class]}
+            class={[itemClass, others.class]}
         >
             <span class="iconify {icon}"></span>
             <span class="sr-only">{tooltip}</span>
