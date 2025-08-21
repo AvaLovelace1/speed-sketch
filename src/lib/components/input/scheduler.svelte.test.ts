@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { Scheduler } from "./scheduler.svelte";
 
-const ENTRIES = [0, 1, 2].map((i) => {
-    return { ...Scheduler.DEFAULT_ENTRY, id: i };
+const ENTRIES = [0, 1, 2].map((_) => {
+    return { ...Scheduler.DEFAULT_ENTRY, id: self.crypto.randomUUID() };
 });
 
 describe("scheduler.svelte.ts", () => {
@@ -10,18 +10,18 @@ describe("scheduler.svelte.ts", () => {
         const scheduler = new Scheduler();
 
         // Add first entry
-        scheduler.addEntry();
+        scheduler.addEntry(ENTRIES[0]);
         expect(scheduler.schedule).toEqual([ENTRIES[0]]);
         expect(scheduler.selectedIdx).toBe(0);
 
         // Add second entry. New entry should be selected.
-        scheduler.addEntry();
+        scheduler.addEntry(ENTRIES[1]);
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(1);
 
         // Add third entry after the first.
         scheduler.selectedIdx = 0;
-        scheduler.addEntry();
+        scheduler.addEntry(ENTRIES[2]);
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(1);
     });

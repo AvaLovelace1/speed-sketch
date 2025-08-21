@@ -2,18 +2,17 @@ import type { ScheduleEntry, SessionSchedule } from "$lib/drawing-session.svelte
 
 export class Scheduler {
     static DEFAULT_ENTRY = { duration: 60, repeat: 1 };
-    // Count to keep track of the ID numbers used
-    id: number;
     // Index of the selected entry, or -1 if there are no entries
     selectedIdx: number;
 
     constructor(public schedule: SessionSchedule = []) {
-        this.id = 0;
         this.selectedIdx = $state(schedule.length > 0 ? 0 : -1);
     }
 
     addEntry = (newEntry: ScheduleEntry | undefined = undefined) => {
-        if (newEntry === undefined) newEntry = { ...Scheduler.DEFAULT_ENTRY, id: this.id++ };
+        if (newEntry === undefined) {
+            newEntry = { ...Scheduler.DEFAULT_ENTRY, id: self.crypto.randomUUID() };
+        }
         this.schedule.splice(this.selectedIdx + 1, 0, newEntry);
         this.selectedIdx++;
     };
