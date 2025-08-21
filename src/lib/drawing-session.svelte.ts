@@ -1,10 +1,12 @@
 import { type Image } from "$lib/types.svelte";
 
-export type SessionSchedule = {
+export type ScheduleEntry = {
     duration: number; // Time in seconds to show each image
     repeat: number; // Number of images to show for this time (Infinity for endless sessions)
     id?: number; // Optional ID for the schedule entry, useful for tracking
-}[];
+};
+
+export type SessionSchedule = ScheduleEntry[];
 
 export class DrawingSession {
     nCompletedImgs: number;
