@@ -8,9 +8,9 @@ const IMGS = [
 ];
 
 const SCHEDULE = [
-    { time: 60, repeat: 3 },
-    { time: 30, repeat: 3 },
-    { time: 45, repeat: 1 },
+    { duration: 60, repeat: 3 },
+    { duration: 30, repeat: 3 },
+    { duration: 45, repeat: 1 },
 ];
 
 interface DrawingSessionFixture {
@@ -31,7 +31,7 @@ describe("drawing-session.svelte.ts", () => {
         expect(session.imgs).toEqual(IMGS);
         expect(session.nCompletedImgs).toBe(0);
         expect(session.schedule).toBe(SCHEDULE);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
         expect(session.timeSpent).toBe(0);
         expect(session.isPaused).toBe(true);
     });
@@ -53,14 +53,14 @@ describe("drawing-session.svelte.ts", () => {
         session.resume();
 
         vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time - 9);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration - 9);
         session.goNextImg();
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
 
         vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time - 9);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration - 9);
         session.goPrevImg();
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
     });
 
     test("goNextImg and goPrevImg don't restart timer when paused", ({ session }) => {
@@ -81,7 +81,7 @@ describe("drawing-session.svelte.ts", () => {
         expect(session.isPaused).toBe(false);
         const waitTimeSeconds = 3;
         vi.advanceTimersByTime(waitTimeSeconds * 1000);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time - waitTimeSeconds);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration - waitTimeSeconds);
 
         session.pause();
         expect(session.isPaused).toBe(true);
@@ -99,27 +99,27 @@ describe("drawing-session.svelte.ts", () => {
 
     test("advance image when time runs out", ({ session }) => {
         session.resume();
-        vi.advanceTimersByTime((SCHEDULE[0].time + 1) * 1000);
+        vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
         expect(session.nCompletedImgs).toBe(1);
         expect(session.getCurImg()).toEqual(IMGS[1]);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].time);
+        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
     });
 
     test("go to next schedule entry", ({ session }) => {
         session.resume();
         for (let i = 0; i < SCHEDULE[0].repeat - 1; i++) {
-            vi.advanceTimersByTime((SCHEDULE[0].time + 1) * 1000);
-            expect(session.timeRemaining).toBe(SCHEDULE[0].time);
+            vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
+            expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
         }
-        vi.advanceTimersByTime((SCHEDULE[0].time + 1) * 1000);
-        expect(session.timeRemaining).toBe(SCHEDULE[1].time);
+        vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
+        expect(session.timeRemaining).toBe(SCHEDULE[1].duration);
     });
 
     test("finish session when all schedule entries are done", ({ session }) => {
         session.resume();
         for (const sessionEntry of SCHEDULE) {
             for (let i = 0; i < sessionEntry.repeat; i++) {
-                vi.advanceTimersByTime((sessionEntry.time + 1) * 1000);
+                vi.advanceTimersByTime((sessionEntry.duration + 1) * 1000);
                 const isFinished =
                     i === sessionEntry.repeat - 1 && sessionEntry === SCHEDULE[SCHEDULE.length - 1];
                 expect(session.isFinished).toBe(isFinished);

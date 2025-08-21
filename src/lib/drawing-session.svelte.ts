@@ -1,8 +1,9 @@
 import { type Image } from "$lib/types.svelte";
 
 export type SessionSchedule = {
-    time: number; // Time in seconds to show each image
+    duration: number; // Time in seconds to show each image
     repeat: number; // Number of images to show for this time (Infinity for endless sessions)
+    id?: number; // Optional ID for the schedule entry, useful for tracking
 }[];
 
 export class DrawingSession {
@@ -29,7 +30,7 @@ export class DrawingSession {
         public schedule: SessionSchedule,
     ) {
         this.nCompletedImgs = $state(0);
-        this.timeRemaining = $state(schedule[0].time);
+        this.timeRemaining = $state(schedule[0].duration);
         this.timeSpent = 0;
         this.isPaused = $state(true);
         this.isFinished = $state(false);
@@ -41,7 +42,7 @@ export class DrawingSession {
     }
 
     isValid = () => {
-        return this.imgs.length > 0 && this.schedule[0].time > 0;
+        return this.imgs.length > 0 && this.schedule[0].duration > 0;
     };
 
     getCurImg = () => {
@@ -56,7 +57,7 @@ export class DrawingSession {
         if (this.isFinished) return;
         this.curImgIdx -= 1;
         if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
-        this.timeRemaining = this.getCurScheduleEntry().time;
+        this.timeRemaining = this.getCurScheduleEntry().duration;
         if (!this.isPaused) this.#restartTimer();
     };
 
@@ -64,7 +65,7 @@ export class DrawingSession {
         if (this.isFinished) return;
         this.curImgIdx += 1;
         if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
-        this.timeRemaining = this.getCurScheduleEntry().time;
+        this.timeRemaining = this.getCurScheduleEntry().duration;
         if (!this.isPaused) this.#restartTimer();
     };
 
@@ -127,5 +128,5 @@ export class DrawingSession {
 }
 
 export const currentSession = $state({
-    object: new DrawingSession([], [{ time: 0, repeat: Infinity }]),
+    object: new DrawingSession([], [{ duration: 0, repeat: Infinity }]),
 });
