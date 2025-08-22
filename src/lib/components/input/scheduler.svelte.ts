@@ -2,11 +2,30 @@ import type { ScheduleEntry, SessionSchedule } from "$lib/drawing-session.svelte
 
 export class Scheduler {
     static DEFAULT_ENTRY = { duration: 60, repeat: 1 };
-    // Index of the selected entry, or -1 if there are no entries
-    selectedIdx: number;
+    // Index of the selected entry, or -1 if there is no selection
+    #selectedIdx: number;
 
-    constructor(public schedule: SessionSchedule = []) {
-        this.selectedIdx = $state(schedule.length > 0 ? 0 : -1);
+    constructor(public readonly schedule: SessionSchedule = []) {
+        this.#selectedIdx = $state(schedule.length > 0 ? 0 : -1);
+    }
+
+    get selectedIdx() {
+        return this.#selectedIdx;
+    }
+
+    set selectedIdx(value: number) {
+        if (value < -1 || value >= this.schedule.length) {
+            throw new Error(`selectedIdx out of range: ${value}`);
+        }
+        this.#selectedIdx = value;
+    }
+
+    get totalImgs() {
+        return this.schedule.reduce((acc, entry) => acc + entry.repeat, 0);
+    }
+
+    get totalDuration() {
+        return this.schedule.reduce((acc, entry) => acc + entry.duration * entry.repeat, 0);
     }
 
     addEntry = (newEntry: ScheduleEntry | undefined = undefined) => {
