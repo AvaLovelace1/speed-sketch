@@ -43,6 +43,10 @@ export class DrawingSession {
         this.#timer = undefined;
     }
 
+    get totalImgs() {
+        return this.schedule.reduce((acc, entry) => acc + entry.repeat, 0);
+    }
+
     isValid = () => {
         return this.imgs.length > 0 && this.schedule[0].duration > 0;
     };

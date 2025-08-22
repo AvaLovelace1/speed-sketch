@@ -357,9 +357,14 @@ The user interface for a drawing session.
             }}
         >
             <StatusAlert class="alert-success tabular-nums">
-                <span class="iconify lucide--circle-check"></span>
+                <span class="iconify lucide--image"></span>
                 <span class="sr-only">Images completed:</span>
-                {drawingSession.nCompletedImgs}
+                <div>
+                    {drawingSession.nCompletedImgs}
+                    {#if drawingSession.totalImgs !== Infinity}
+                        <span class="text-base font-normal">/ {drawingSession.totalImgs}</span>
+                    {/if}
+                </div>
             </StatusAlert>
             {#snippet tooltipContent()}Images completed{/snippet}
         </CustomTooltip>

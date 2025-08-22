@@ -9,20 +9,19 @@
     import { Tooltip } from "bits-ui";
     import { fn, expect, clearAllMocks, screen, within, waitFor } from "storybook/test";
 
+    const imgs = [
+        { name: "img1.jpg", url: Sample1 },
+        { name: "img2.jpg", url: Sample2 },
+        { name: "img3.jpg", url: Sample3 },
+    ];
+
     const { Story } = defineMeta({
         title: "Screens/SessionScreen",
         component: SessionScreen,
         tags: ["autodocs"],
         render: template,
         args: {
-            drawingSession: new DrawingSession(
-                [
-                    { name: "img1.jpg", url: Sample1 },
-                    { name: "img2.jpg", url: Sample2 },
-                    { name: "img3.jpg", url: Sample3 },
-                ],
-                [{ duration: 60, repeat: Infinity }],
-            ),
+            drawingSession: new DrawingSession(imgs, [{ duration: 60, repeat: Infinity }]),
             exit: fn(),
             setAlwaysOnTop: fn(),
             showImageFolder: fn(),
@@ -42,7 +41,18 @@
 <!-- The main UI for the drawing session. -->
 <Story name="Default" />
 
-<!-- -->
+<!-- With a custom schedule, the total number of images is displayed in the top left. -->
+<Story
+    name="Class"
+    args={{
+        drawingSession: new DrawingSession(imgs, [
+            { duration: 60, repeat: 42 },
+            { duration: 120, repeat: 13 },
+        ]),
+    }}
+/>
+
+<!-- With user interactions. -->
 <Story
     name="With Interactions"
     play={async ({ args, canvas, userEvent, step }) => {
