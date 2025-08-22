@@ -24,7 +24,7 @@
         {
             title: "Time spent drawing",
             value: prettyMilliseconds(Math.max(timeSpent, 1) * 1000),
-            icon: "lucide--clock",
+            icon: "lucide--timer",
             color: "text-secondary",
         },
     ]);
