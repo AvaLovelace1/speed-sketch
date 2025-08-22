@@ -35,6 +35,21 @@
 <!-- The user sees this on first startup. -->
 <Story name="Default" />
 
+<!-- Scheduler input is displayed when using Class session type. -->
+<Story
+    name="Class"
+    args={{
+        sessionSettings: new SessionSettings({
+            sessionScheduleCustom: [
+                { duration: 60, repeat: 20, id: "1" },
+                { duration: 145, repeat: 10, id: "2" },
+                { duration: 3611, repeat: 5, id: "3" },
+            ],
+            sessionType: "Class",
+        }),
+    }}
+/>
+
 <!-- Loading images. -->
 <Story name="Loading Images" args={{ isLoadingImgs: true, canStartSession: false }} />
 
