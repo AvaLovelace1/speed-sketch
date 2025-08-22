@@ -32,7 +32,7 @@
 </script>
 
 <fieldset>
-    <legend class="mb-2 text-sm text-muted">{groupLabel}</legend>
+    <legend class="mb-2 cursor-default text-sm text-muted">{groupLabel}</legend>
     <RadioGroup.Root
         bind:value={group}
         orientation="horizontal"

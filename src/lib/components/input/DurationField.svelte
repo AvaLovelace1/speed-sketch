@@ -42,8 +42,8 @@ A field that allows the user to input a time duration.
     let textColor = $derived(bgColor === "primary" ? "text-primary-content" : "text-muted");
     let fieldColors = $derived(
         bgColor === "primary"
-            ? "outline-primary-content focus:text-primary focus:bg-primary-content"
-            : "outline-primary focus:text-primary-content focus:bg-primary",
+            ? "outline-primary-content focus:text-primary focus:bg-primary-content focus:border-primary-content"
+            : "outline-primary focus:text-primary-content focus:bg-primary focus:border-primary",
     );
 </script>
 
@@ -69,13 +69,15 @@ A field that allows the user to input a time duration.
                         <div>
                             <TimeField.Segment
                                 {part}
-                                class="block rounded bg-base-200 px-1 text-base-content
-                                       tabular-nums inset-shadow-xs outline-offset-2
-                                       hover:bg-base-300 focus-visible:outline-2 {fieldColors}"
+                                class="block rounded border border-stroke-muted bg-base-200 px-1 text-base-content
+                                       tabular-nums inset-shadow-xs outline-offset-2 hover:bg-base-300
+                                       focus-visible:outline-2 {fieldColors}"
                             >
                                 {value}
                             </TimeField.Segment>
-                            <div class="text-center text-xs">{getTimeSegmentPartAbbr(part)}</div>
+                            <div class="cursor-default text-center text-xs">
+                                {getTimeSegmentPartAbbr(part)}
+                            </div>
                         </div>
                     {/if}
                 {/each}
