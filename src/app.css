@@ -94,6 +94,10 @@
     /* effects */
     --depth: 1;
     --noise: 1;
+
+    /* transitions */
+    --daisyui-btn-ease: cubic-bezier(0, 0, 0.2, 1);
+    --daisyui-btn-duration: 0.2s;
 }
 
 @plugin "daisyui/theme" {
