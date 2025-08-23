@@ -289,6 +289,10 @@ The user interface for a drawing session.
         [settingsBtn, exitBtn],
     ]);
 
+    $effect(() => {
+        if (drawingSession.isFinished) exit();
+    });
+
     onMount(() => {
         resetToolbarTimeout();
         appSettingsDialog.component?.setOnOpen(freeze);
