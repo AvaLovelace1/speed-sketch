@@ -4,7 +4,7 @@
     import { getCurrentWindow } from "@tauri-apps/api/window";
     import { revealItemInDir } from "@tauri-apps/plugin-opener";
     import { goto } from "$app/navigation";
-    import { base } from "$app/paths";
+    import { resolve } from "$app/paths";
     import { currentSession } from "$lib/drawing-session.svelte";
     import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
     import SessionScreen from "./SessionScreen.svelte";
@@ -13,7 +13,7 @@
     const COUNTDOWN_BEEP_TIME = 3; // seconds before the end of the image to start beeping
 
     async function exit() {
-        await goto(`${base}/session/end`, { replaceState: true });
+        await goto(resolve("/session/end"), { replaceState: true });
     }
 
     async function setAlwaysOnTop(value: boolean) {

@@ -5,7 +5,7 @@
     import Card from "$lib/components/Card.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { goto } from "$app/navigation";
-    import { base } from "$app/paths";
+    import { resolve } from "$app/paths";
 
     export interface Props {
         nCompletedImgs: number;
@@ -48,7 +48,7 @@
             <div class="flex justify-end">
                 <Button.Root
                     class="btn"
-                    onclick={async () => await goto(`${base}/`, { replaceState: true })}
+                    onclick={async () => await goto(resolve("/"), { replaceState: true })}
                 >
                     Return to main menu
                 </Button.Root>

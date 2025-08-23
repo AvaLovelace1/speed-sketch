@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { base } from "$app/paths";
+    import { resolve } from "$app/paths";
     import { goto } from "$app/navigation";
     import MainMenuScreen from "./MainMenuScreen.svelte";
     import { type Image } from "$lib/types.svelte";
@@ -49,7 +49,7 @@
         if (!canStartSession) return;
         await sessionSettings.saveToStore();
         currentSession.object = new DrawingSession(imgs, sessionSettings.sessionSchedule);
-        await goto(`${base}/session`, { replaceState: true });
+        await goto(resolve("/session"), { replaceState: true });
     }
 
     onMount(async () => {
