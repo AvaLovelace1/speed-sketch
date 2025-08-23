@@ -10,11 +10,13 @@
     let imgs = $state<Image[]>([]);
     let imgErrMsg = $state("");
     let isLoadingImgs = $state(false);
-    let canStartSession = $state(false);
+    let imgsAreValid = $state(false);
+    let scheduleIsValid = $derived(sessionSettings.sessionSchedule.length > 0);
+    let canStartSession = $derived(imgsAreValid && scheduleIsValid);
 
     // Updates the shown images from inputImgsOrFolder. If inputImgsOrFolder is null, it uses the current session settings.
     export async function onImgsInput(inputImgsOrFolder: string | Image[] | null) {
-        canStartSession = false;
+        imgsAreValid = false;
         isLoadingImgs = true;
 
         let inputFolder = sessionSettings.imgFolder;
@@ -40,7 +42,7 @@
         imgs = inputImgs;
         imgErrMsg = inputErrMsg;
         isLoadingImgs = false;
-        canStartSession = inputImgs.length > 0 && inputErrMsg === "";
+        imgsAreValid = inputImgs.length > 0 && inputErrMsg === "";
     }
 
     async function startSession() {

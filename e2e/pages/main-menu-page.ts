@@ -107,6 +107,14 @@ export class MainMenuPage {
         }
     };
 
+    expectCanStartSession = async () => {
+        await expect(this.goBtn).toBeEnabled();
+    };
+
+    expectCannotStartSession = async () => {
+        await expect(this.goBtn).toBeDisabled();
+    };
+
     startSession = async () => {
         await this.goBtn.click();
         await this.page.waitForURL("/session");
