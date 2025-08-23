@@ -21,7 +21,7 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 - **Custom session schedule:** Choose a fixed display time in **Endless Mode**, or create your own schedule in **Class Mode**.
 - **Randomize image order:** Choose whether to display images alphabetically or in a random order.
 
-### Image Viewing
+### Image viewer
 
 - **Zoom/pan:** Scroll to zoom in and out, and click & drag to pan around the image.
 - **Flip horizontally or vertically:** Flip the image for more variety.
