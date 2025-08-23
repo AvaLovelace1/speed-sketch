@@ -34,6 +34,16 @@ test("typical user flow", async ({ page }) => {
     await mainMenuPage.expectCustomImgShowTime(customImgShowTime);
 });
 
+test("set schedule", async ({ page }) => {
+    const mainMenuPage = new MainMenuPage(page);
+    await mainMenuPage.goto();
+
+    const schedule = [1, 2, 3];
+    await mainMenuPage.selectImgFiles(IMG_FOLDER);
+    await mainMenuPage.setSchedule(schedule);
+    await mainMenuPage.expectSchedule(schedule);
+});
+
 test("settings are saved", async ({ page }) => {
     // Set settings
     let mainMenuPage = new MainMenuPage(page);

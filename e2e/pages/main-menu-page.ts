@@ -3,18 +3,34 @@ import type { Locator, Page, FileChooser } from "@playwright/test";
 
 export class MainMenuPage {
     readonly dropzone: Locator;
+
+    readonly endlessModeBtn: Locator;
+    readonly classModeBtn: Locator;
+
     readonly customTimeBtn: Locator;
     readonly customTimeHrs: Locator;
     readonly customTimeMins: Locator;
     readonly customTimeSecs: Locator;
+
+    readonly addEntryBtn: Locator;
+    readonly numImgsInputs: Locator;
+
     readonly goBtn: Locator;
 
     constructor(public readonly page: Page) {
         this.dropzone = this.page.getByRole("button", { name: "Drag & drop" });
+
+        this.endlessModeBtn = this.page.getByRole("radio", { name: "Endless" });
+        this.classModeBtn = this.page.getByRole("radio", { name: "Class" });
+
         this.customTimeBtn = this.page.getByRole("radio", { name: "Custom" });
         this.customTimeHrs = this.page.getByRole("spinbutton", { name: "hour, Custom time" });
         this.customTimeMins = this.page.getByRole("spinbutton", { name: "minute, Custom time" });
         this.customTimeSecs = this.page.getByRole("spinbutton", { name: "second, Custom time" });
+
+        this.addEntryBtn = this.page.getByRole("button", { name: "Add entry" });
+        this.numImgsInputs = this.page.getByRole("spinbutton", { name: "Images" });
+
         this.goBtn = this.page.getByRole("button", { name: "Go" });
     }
 
@@ -49,6 +65,7 @@ export class MainMenuPage {
         mins: number;
         secs: number;
     }) => {
+        await this.endlessModeBtn.click();
         await this.customTimeBtn.click();
         await this.customTimeHrs.click();
         const timeString = `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
@@ -64,10 +81,30 @@ export class MainMenuPage {
         mins: number;
         secs: number;
     }) => {
+        await expect(this.endlessModeBtn).toBeChecked();
         await expect(this.customTimeBtn).toBeChecked();
         await expect(this.customTimeHrs).toHaveText(hrs.toString().padStart(2, "0"));
         await expect(this.customTimeMins).toHaveText(mins.toString().padStart(2, "0"));
         await expect(this.customTimeSecs).toHaveText(secs.toString().padStart(2, "0"));
+    };
+
+    setSchedule = async (numImgs: number[]) => {
+        await this.classModeBtn.click();
+        for (let i = 0; i < numImgs.length; i++) {
+            await this.addEntryBtn.click();
+            const input = this.numImgsInputs.nth(i);
+            await input.clear();
+            await input.fill(numImgs[i].toString());
+        }
+    };
+
+    expectSchedule = async (expectedNumImgs: number[]) => {
+        await expect(this.classModeBtn).toBeChecked();
+        await expect(this.numImgsInputs).toHaveCount(expectedNumImgs.length);
+        for (let i = 0; i < expectedNumImgs.length; i++) {
+            const input = this.numImgsInputs.nth(i);
+            await expect(input).toHaveValue(expectedNumImgs[i].toString());
+        }
     };
 
     startSession = async () => {
