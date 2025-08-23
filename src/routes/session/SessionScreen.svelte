@@ -289,6 +289,10 @@ The user interface for a drawing session.
         [settingsBtn, exitBtn],
     ]);
 
+    $effect(() => {
+        if (drawingSession.isFinished) exit();
+    });
+
     onMount(() => {
         resetToolbarTimeout();
         appSettingsDialog.component?.setOnOpen(freeze);
@@ -357,9 +361,14 @@ The user interface for a drawing session.
             }}
         >
             <StatusAlert class="alert-success tabular-nums">
-                <span class="iconify lucide--circle-check"></span>
+                <span class="iconify lucide--image"></span>
                 <span class="sr-only">Images completed:</span>
-                {drawingSession.nCompletedImgs}
+                <div>
+                    {drawingSession.nCompletedImgs}
+                    {#if drawingSession.totalImgs !== Infinity}
+                        <span class="text-base font-normal">/ {drawingSession.totalImgs}</span>
+                    {/if}
+                </div>
             </StatusAlert>
             {#snippet tooltipContent()}Images completed{/snippet}
         </CustomTooltip>
@@ -369,7 +378,7 @@ The user interface for a drawing session.
             <CustomTooltip side="left">
                 <Timer
                     time={drawingSession.timeRemaining}
-                    maxTime={drawingSession.imgShowTime}
+                    maxTime={drawingSession.getCurScheduleEntry().duration}
                     class={[drawingSession.isPaused && "text-muted!"]}
                 />
                 {#snippet tooltipContent()}Time remaining{/snippet}

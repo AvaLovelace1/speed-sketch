@@ -12,6 +12,7 @@
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import { SessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri as isTauriFn } from "@tauri-apps/api/core";
+    import SchedulerInput from "$lib/components/input/SchedulerInput.svelte";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
@@ -47,14 +48,22 @@
         isTauri = isTauriFn(),
     }: Props = $props();
 
+    const sessionModeOptions = sessionSettings.SESSION_MODES.map((sessionMode) => ({
+        label: sessionMode.name,
+        value: sessionMode.name,
+        description: sessionMode.description,
+    }));
+
     const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
         label: option,
         value: option,
     }));
+
+    let schedule = $state(sessionSettings.sessionScheduleCustom);
 </script>
 
 <CenteredFull>
-    <div class="w-lg px-2 py-8">
+    <div class="mx-2 w-lg py-8">
         {@render header()}
         {@render form()}
         {@render footer()}
@@ -75,6 +84,7 @@
     <main class="mb-8">
         <Card class="mx-auto">
             <form
+                class="w-lg"
                 onsubmit={async (e) => {
                     e.preventDefault();
                     await startSession();
@@ -83,7 +93,7 @@
                 <div class="p-8 pb-12">
                     <div class="mb-6">
                         <div class="mb-2 flex items-baseline justify-between">
-                            <div class="text-sm text-muted">Images</div>
+                            <div class="cursor-default text-sm text-muted">Images</div>
                             <div class="flex gap-3">
                                 {#if isTauri}
                                     <Checkbox
@@ -109,20 +119,34 @@
                         />
                     </div>
                     <RadioButtons
-                        class="mb-4"
-                        groupLabel="Time per image"
-                        items={imgShowTimeOptions}
-                        bind:group={sessionSettings.imgShowTimeOption}
+                        class="mb-1 flex"
+                        groupLabel="Session mode"
+                        items={sessionModeOptions}
+                        bind:group={sessionSettings.sessionMode}
+                        buttonStyle="large"
                         required
                     />
-                    {#if sessionSettings.imgShowTimeOption === "Custom"}
-                        <div
-                            class="flex justify-center"
-                            in:slide={{ duration: "long" }}
-                            out:slide={{ duration: "medium" }}
-                        >
-                            <DurationField bind:seconds={sessionSettings.imgShowTimeCustom} />
-                        </div>
+                    <Separator.Root class="divider" />
+                    {#if sessionSettings.sessionMode === "Endless"}
+                        <RadioButtons
+                            class="mb-4 flex"
+                            groupLabel="Time per image"
+                            items={imgShowTimeOptions}
+                            bind:group={sessionSettings.imgShowTimeOption}
+                            required
+                        />
+                        {#if sessionSettings.imgShowTimeOption === "Custom"}
+                            <div
+                                class="flex justify-center"
+                                in:slide={{ duration: "long" }}
+                                out:slide={{ duration: "medium" }}
+                            >
+                                <DurationField bind:seconds={sessionSettings.imgShowTimeCustom} />
+                            </div>
+                        {/if}
+                    {/if}
+                    {#if sessionSettings.sessionMode === "Class"}
+                        <SchedulerInput bind:schedule />
                     {/if}
                 </div>
                 <Button.Root

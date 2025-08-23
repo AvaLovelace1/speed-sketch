@@ -15,6 +15,11 @@ const DURATIONS = new Map<Duration, number>([
 ]);
 const EASING = cubicOut;
 
+export function getDuration(duration: Duration) {
+    if (!DURATIONS.has(duration)) throw new Error(`Invalid duration: ${duration}`);
+    return DURATIONS.get(duration) as number;
+}
+
 export function fade(node: Element, { duration }: { duration: Duration }) {
     return svelteFade(node, {
         duration: DURATIONS.get(duration),

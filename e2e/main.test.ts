@@ -15,9 +15,14 @@ test("typical user flow", async ({ page }) => {
     // Main menu page
     const mainMenuPage = new MainMenuPage(page);
     await mainMenuPage.goto();
-    const customImgShowTime = { hrs: 0, mins: 12, secs: 24 };
+
+    // Cannot start session before images are selected
+    await mainMenuPage.expectCannotStartSession();
+
+    // Select images and set custom image show time
     await mainMenuPage.selectImgFiles(IMG_FOLDER);
     await mainMenuPage.expectImgThumbnails(IMG_FILENAMES);
+    const customImgShowTime = { hrs: 0, mins: 12, secs: 24 };
     await mainMenuPage.setCustomImgShowTime(customImgShowTime);
 
     // Session page
@@ -32,6 +37,24 @@ test("typical user flow", async ({ page }) => {
     // Main menu page again. Settings should be preserved
     await mainMenuPage.expectImgThumbnails(IMG_FILENAMES);
     await mainMenuPage.expectCustomImgShowTime(customImgShowTime);
+});
+
+test("set schedule", async ({ page }) => {
+    const mainMenuPage = new MainMenuPage(page);
+    await mainMenuPage.goto();
+
+    // Select images
+    await mainMenuPage.selectImgFiles(IMG_FOLDER);
+    await mainMenuPage.setSchedule([]);
+    // Cannot start session because schedule is not set
+    await mainMenuPage.expectCannotStartSession();
+
+    // Set schedule
+    const schedule = [1, 2, 3];
+    await mainMenuPage.setSchedule(schedule);
+    await mainMenuPage.expectSchedule(schedule);
+    // Can start session now
+    await mainMenuPage.expectCanStartSession();
 });
 
 test("settings are saved", async ({ page }) => {

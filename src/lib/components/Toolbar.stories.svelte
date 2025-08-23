@@ -48,6 +48,9 @@
 <!-- A toolbar with a set of tools/actions and keyboard shortcuts. -->
 <Story name="Default" />
 
+<!-- Smaller style with round buttons, used in the SchedulerInput. -->
+<Story name="Small" args={{ toolbarStyle: "small" }} />
+
 <!-- Actions can be triggered by clicking the buttons or using the hotkeys. Disabled tools have their hotkeys disabled. -->
 <Story
     name="With Interactions"
