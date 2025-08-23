@@ -63,7 +63,7 @@
 </script>
 
 <CenteredFull>
-    <div class="mx-2 w-lg py-8">
+    <div class="px-2 py-8">
         {@render header()}
         {@render form()}
         {@render footer()}
@@ -82,7 +82,7 @@
 
 {#snippet form()}
     <main class="mb-8">
-        <Card class="mx-auto">
+        <Card>
             <form
                 class="w-lg"
                 onsubmit={async (e) => {
