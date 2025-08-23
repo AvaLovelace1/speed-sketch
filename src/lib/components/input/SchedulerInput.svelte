@@ -11,6 +11,7 @@
     import { Button } from "bits-ui";
     import { prefersReducedMotion } from "svelte/motion";
     import { getDuration } from "$lib/motion.svelte";
+    import { isTauri } from "@tauri-apps/api/core";
 
     export interface Props {
         schedule?: SessionSchedule;
@@ -55,6 +56,7 @@
         sortable = Sortable.create(node, {
             animation: prefersReducedMotion.current ? 0 : getDuration("medium"),
             handle: ".sortable-handle",
+            forceFallback: isTauri(), // Tauri doesn't support Drag and Drop API
             onSort: (evt) => {
                 const { oldIndex, newIndex } = evt;
                 if (oldIndex === undefined || newIndex === undefined) return;
