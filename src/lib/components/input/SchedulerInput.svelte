@@ -107,6 +107,7 @@
                         class="sortable-handle flex cursor-grab items-center py-3
                                text-base text-stroke group-aria-selected:text-primary-content"
                         onmousedown={() => (scheduler.selectedIdx = i)}
+                        type="button"
                     >
                         <span class="iconify lucide--grip-vertical"></span>
                         <span class="sr-only">Drag to reorder</span>
