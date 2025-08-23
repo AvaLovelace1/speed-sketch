@@ -32,17 +32,23 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 - **Show image folder** _(desktop version only)_: Reveal the image in your system’s file navigator.
 - **Light & dark themes**
 
-## Usage
+## Installation
 
 ### Web app
 
-[Use SpeedSketch directly in your browser with no installation.][Webapp]
+[![Browser][Browser]][Webapp]
+
+Visit the [SpeedSketch website][Webapp] to use SpeedSketch directly in your browser with no installation.
 
 ### Desktop app
 
-Build the desktop app on your computer by following the instructions in [Build from source](#build-from-source). Pre-built binaries are currently not available.
+[![Windows][Windows]](#desktop-app)
+[![macOS][macOS]](#desktop-app)
+[![Linux][Linux]](#desktop-app)
 
-### Build from source
+Build the desktop app on your computer by following the instructions in [Building from source](#building-from-source). Pre-built binaries are currently not available.
+
+## Building from source
 
 SpeedSketch is built using [SvelteKit](https://svelte.dev/docs/kit/introduction) and [Tauri](https://tauri.app). Follow these steps to build from source:
 
