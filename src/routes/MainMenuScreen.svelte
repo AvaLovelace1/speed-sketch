@@ -48,10 +48,10 @@
         isTauri = isTauriFn(),
     }: Props = $props();
 
-    const sessionTypeOptions = sessionSettings.SESSION_TYPES.map((sessionType) => ({
-        label: sessionType.name,
-        value: sessionType.name,
-        description: sessionType.description,
+    const sessionModeOptions = sessionSettings.SESSION_MODES.map((sessionMode) => ({
+        label: sessionMode.name,
+        value: sessionMode.name,
+        description: sessionMode.description,
     }));
 
     const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
@@ -120,14 +120,14 @@
                     </div>
                     <RadioButtons
                         class="mb-1 flex"
-                        groupLabel="Session type"
-                        items={sessionTypeOptions}
-                        bind:group={sessionSettings.sessionType}
+                        groupLabel="Session mode"
+                        items={sessionModeOptions}
+                        bind:group={sessionSettings.sessionMode}
                         buttonStyle="large"
                         required
                     />
                     <Separator.Root class="divider" />
-                    {#if sessionSettings.sessionType === "Endless"}
+                    {#if sessionSettings.sessionMode === "Endless"}
                         <RadioButtons
                             class="mb-4 flex"
                             groupLabel="Time per image"
@@ -145,7 +145,7 @@
                             </div>
                         {/if}
                     {/if}
-                    {#if sessionSettings.sessionType === "Class"}
+                    {#if sessionSettings.sessionMode === "Class"}
                         <SchedulerInput bind:schedule />
                     {/if}
                 </div>

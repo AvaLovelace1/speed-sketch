@@ -35,7 +35,7 @@
 <!-- The user sees this on first startup. -->
 <Story name="Default" />
 
-<!-- Scheduler input is displayed when using Class session type. -->
+<!-- Scheduler input is displayed when using Class session mode. -->
 <Story
     name="Class"
     args={{
@@ -45,7 +45,7 @@
                 { duration: 145, repeat: 10, id: "2" },
                 { duration: 3611, repeat: 5, id: "3" },
             ],
-            sessionType: "Class",
+            sessionMode: "Class",
         }),
     }}
 />

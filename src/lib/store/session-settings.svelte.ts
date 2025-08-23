@@ -7,7 +7,7 @@ import { compareImages, type Image } from "$lib/types.svelte";
 import type { SessionSchedule } from "$lib/drawing-session.svelte";
 
 export class SessionSettings implements Record<string, unknown> {
-    get SESSION_TYPES() {
+    get SESSION_MODES() {
         return [
             {
                 name: "Endless",
@@ -44,11 +44,11 @@ export class SessionSettings implements Record<string, unknown> {
                 isValid: (v: unknown): v is boolean => typeof v === "boolean",
             },
             {
-                key: "sessionType",
+                key: "sessionMode",
                 isValid: (v: unknown): v is string =>
                     validateString(
                         v,
-                        this.SESSION_TYPES.map((t) => t.name),
+                        this.SESSION_MODES.map((t) => t.name),
                     ),
             },
             {
@@ -83,7 +83,7 @@ export class SessionSettings implements Record<string, unknown> {
     includeSubfolders: boolean;
     // Whether to shuffle images before showing them
     shuffleImgs: boolean;
-    sessionType: string;
+    sessionMode: string;
     imgShowTimeOption: string;
     imgShowTimeCustom: number;
     sessionScheduleCustom: SessionSchedule;
@@ -104,7 +104,7 @@ export class SessionSettings implements Record<string, unknown> {
         imgs = [],
         includeSubfolders = true,
         shuffleImgs = true,
-        sessionType = this.SESSION_TYPES[0].name,
+        sessionMode = this.SESSION_MODES[0].name,
         imgShowTimeOption = this.IMG_SHOW_TIME_OPTIONS[0],
         imgShowTimeCustom = Math.floor((parse(this.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000),
         sessionScheduleCustom = [] as SessionSchedule,
@@ -114,7 +114,7 @@ export class SessionSettings implements Record<string, unknown> {
         this.imgs = imgs;
         this.includeSubfolders = $state(includeSubfolders);
         this.shuffleImgs = $state(shuffleImgs);
-        this.sessionType = $state(sessionType);
+        this.sessionMode = $state(sessionMode);
         this.imgShowTimeOption = $state(imgShowTimeOption);
         this.imgShowTimeCustom = $state(imgShowTimeCustom);
         this.sessionScheduleCustom = $state(sessionScheduleCustom);
@@ -141,7 +141,7 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     get sessionSchedule(): SessionSchedule {
-        if (this.sessionType === "Endless") {
+        if (this.sessionMode === "Endless") {
             return [{ duration: this.imgShowTime, repeat: Infinity }];
         } else {
             return this.sessionScheduleCustom;
