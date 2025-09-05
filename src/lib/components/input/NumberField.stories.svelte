@@ -1,15 +1,22 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
     import NumberField from "./NumberField.svelte";
+    import type { Props as NumberFieldProps } from "./NumberField.svelte";
     import { expect } from "storybook/test";
 
     const { Story } = defineMeta({
         title: "Components/Input/NumberField",
         component: NumberField,
         tags: ["autodocs"],
+        render: template,
         args: { value: 1, id: "number-field", minValue: 1, maxValue: 999 },
     });
 </script>
+
+{#snippet template(args: NumberFieldProps)}
+    <label class="mb-2 block text-sm text-muted" for={args.id}>Number field</label>
+    <NumberField {...args} />
+{/snippet}
 
 <!-- A number entry field with a minimum and maximum value. -->
 <Story name="Default" />
@@ -18,6 +25,9 @@
 <Story name="Primary Background" args={{ bgColor: "primary" }}>
     {#snippet template(args)}
         <div class="rounded bg-primary p-4">
+            <label class="mb-2 block text-sm text-primary-content" for={args.id}>
+                Number field
+            </label>
             <NumberField {...args} />
         </div>
     {/snippet}

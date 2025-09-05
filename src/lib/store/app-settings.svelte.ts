@@ -51,21 +51,23 @@ export class AppSettings implements Record<string, unknown> {
             },
             {
                 key: "volume",
-                isValid: (v: unknown) => {
-                    return validateNumber(v, 0, 1);
-                },
+                isValid: (v: unknown) => validateNumber(v, 0, 1),
             },
             {
                 key: "contrastStrength",
-                isValid: (v: unknown) => {
-                    return validateInteger(v, 0, this.CONTRAST_OPTIONS.length - 1);
-                },
+                isValid: (v: unknown) => validateInteger(v, 0, this.CONTRAST_OPTIONS.length - 1),
             },
             {
                 key: "blurStrength",
-                isValid: (v: unknown) => {
-                    return validateInteger(v, 0, this.BLUR_OPTIONS.length - 1);
-                },
+                isValid: (v: unknown) => validateInteger(v, 0, this.BLUR_OPTIONS.length - 1),
+            },
+            {
+                key: "gridRows",
+                isValid: (v: unknown) => validateInteger(v, 0, 99),
+            },
+            {
+                key: "gridCols",
+                isValid: (v: unknown) => validateInteger(v, 0, 99),
             },
         ];
     }
@@ -74,13 +76,24 @@ export class AppSettings implements Record<string, unknown> {
     volume: number;
     contrastStrength: number;
     blurStrength: number;
+    gridRows: number;
+    gridCols: number;
     [key: string]: unknown;
 
-    constructor({ theme = "system", volume = 1, contrastStrength = 4, blurStrength = 1 } = {}) {
+    constructor({
+        theme = "system",
+        volume = 1,
+        contrastStrength = 4,
+        blurStrength = 1,
+        gridRows = 5,
+        gridCols = 10,
+    } = {}) {
         this.theme = $state(theme);
         this.volume = $state(volume);
         this.contrastStrength = $state(contrastStrength);
         this.blurStrength = $state(blurStrength);
+        this.gridRows = $state(gridRows);
+        this.gridCols = $state(gridCols);
     }
 
     loadFromStore = async (persistentStore?: PersistentStore) => {

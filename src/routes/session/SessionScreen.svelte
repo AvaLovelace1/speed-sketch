@@ -358,8 +358,8 @@ The user interface for a drawing session.
             {#if gridShown}
                 <Gridlines
                     class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"
-                    rows={5}
-                    cols={10}
+                    rows={appSettings.gridRows}
+                    cols={appSettings.gridCols}
                 />
             {/if}
         </div>

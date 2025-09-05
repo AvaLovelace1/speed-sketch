@@ -8,7 +8,7 @@
     import prettyMilliseconds from "pretty-ms";
     import Sortable from "sortablejs";
     import type { Attachment } from "svelte/attachments";
-    import { Button } from "bits-ui";
+    import { Button, Label } from "bits-ui";
     import { prefersReducedMotion } from "svelte/motion";
     import { getDuration } from "$lib/motion.svelte";
     import { isTauri } from "@tauri-apps/api/core";
@@ -114,11 +114,24 @@
                     </Button.Root>
                 </td>
                 <td class="grow">
-                    <NumberField
-                        id={`num-images-${id}`}
-                        bind:value={schedule[i].repeat}
-                        bgColor={i === scheduler.selectedIdx ? "primary" : "base"}
-                    />
+                    <div class="flex items-center gap-2">
+                        <Label.Root class="flex items-center text-lg" for={`num-images-${id}`}>
+                            <span class="iconify lucide--image"></span>
+                            <span class="sr-only">Number of images</span>
+                        </Label.Root>
+                        <div class="flex items-baseline gap-2">
+                            <NumberField
+                                id={`num-images-${id}`}
+                                minValue={1}
+                                maxValue={999}
+                                bind:value={schedule[i].repeat}
+                                bgColor={i === scheduler.selectedIdx ? "primary" : "base"}
+                            />
+                            <div class="cursor-default text-xs">
+                                {schedule[i].repeat === 1 ? "image" : "images"}
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <DurationField

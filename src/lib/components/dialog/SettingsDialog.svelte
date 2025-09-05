@@ -4,6 +4,8 @@
     import Slider from "$lib/components/input/Slider.svelte";
     import { AppSettings } from "$lib/store/app-settings.svelte.js";
     import { playStartAudio } from "$lib/audio";
+    import { Label } from "bits-ui";
+    import NumberField from "$lib/components/input/NumberField.svelte";
 
     export interface Props {
         appSettings: AppSettings;
@@ -83,5 +85,31 @@
             step={1}
             bind:value={appSettings.blurStrength}
         />
+    </div>
+    <!-- Grid dimensions -->
+    <div class="mb-4">
+        <div class="mb-2 cursor-default text-sm text-muted">Grid dimensions (rows × cols)</div>
+        <div class="flex items-center gap-2">
+            <Label.Root for="gridRowsField" class="flex items-center">
+                <span class="iconify text-stroke lucide--grid"></span>
+                <span class="sr-only">Grid rows</span>
+            </Label.Root>
+            <div>
+                <NumberField
+                    id="gridRowsField"
+                    minValue={1}
+                    maxValue={99}
+                    bind:value={appSettings.gridRows}
+                />
+                <span class="text-xl text-muted">×</span>
+                <Label.Root for="gridColsField" class="sr-only">Grid columns</Label.Root>
+                <NumberField
+                    id="gridColsField"
+                    minValue={1}
+                    maxValue={99}
+                    bind:value={appSettings.gridCols}
+                />
+            </div>
+        </div>
     </div>
 </Dialog>
