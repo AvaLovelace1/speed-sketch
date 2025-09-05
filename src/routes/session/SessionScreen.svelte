@@ -14,6 +14,7 @@ The user interface for a drawing session.
     import { Tooltip } from "bits-ui";
     import CustomTooltip from "$lib/components/Tooltip.svelte";
     import StatusAlert from "$lib/components/StatusAlert.svelte";
+    import Gridlines from "$lib/components/Gridlines.svelte";
     import { onDestroy, onMount } from "svelte";
     import type { DrawingSession } from "$lib/drawing-session.svelte";
 
@@ -58,6 +59,7 @@ The user interface for a drawing session.
     let isAlwaysOnTop = $state(false);
 
     // UI state management
+    let gridShown = $state(false);
     let timerShown = $state(true);
 
     let confirmExitDialog: AlertDialog;
@@ -227,11 +229,18 @@ The user interface for a drawing session.
         tooltip: "High contrast",
         disabled: isFrozen,
     });
+    const gridBtn: Tool = $derived({
+        uid: "show-grid",
+        icon: "lucide--grid",
+        action: () => (gridShown = !gridShown),
+        class: ["btn-info", gridShown && "btn-active"],
+        tooltip: gridShown ? "Hide grid" : "Show grid",
+        disabled: isFrozen,
+    });
     const hideTimerBtn: Tool = $derived({
         uid: "hide-timer",
         icon: "lucide--timer-off",
         action: () => (timerShown = !timerShown),
-        hotkey: "t",
         class: ["btn-info", !timerShown && "btn-active"],
         tooltip: timerShown ? "Hide timer" : "Show timer",
         disabled: isFrozen,
@@ -283,7 +292,7 @@ The user interface for a drawing session.
         [prevBtn, pauseBtn, nextBtn],
         [resetZoomBtn, zoomOutBtn, zoomInBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
-        [hideTimerBtn]
+        [gridBtn, hideTimerBtn]
             .concat(setAlwaysOnTop ? [alwaysOnTopBtn] : [])
             .concat(showImageFolder ? [showImageFolderBtn] : []),
         [settingsBtn, exitBtn],
@@ -346,6 +355,13 @@ The user interface for a drawing session.
                 bind:clientWidth={imgWidth}
                 bind:clientHeight={imgHeight}
             />
+            {#if gridShown}
+                <Gridlines
+                    class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"
+                    rows={5}
+                    cols={10}
+                />
+            {/if}
         </div>
     </div>
 {/snippet}

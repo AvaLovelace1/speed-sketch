@@ -61,13 +61,13 @@
             expect(sessionScreen.toolbarIsShown()).toBe(false);
             sessionScreen.freeze();
             expect(args.drawingSession.isPaused).toBe(true);
-            const exitButton = screen.getByRole("button", { name: "Exit session" });
-            await waitFor(() => expect(exitButton).toBeDisabled());
+            const exitBtn = screen.getByRole("button", { name: "Exit session" });
+            await waitFor(() => expect(exitBtn).toBeDisabled());
 
             // Unfreeze
             sessionScreen.unfreeze();
             expect(args.drawingSession.isPaused).toBe(false);
-            await waitFor(() => expect(exitButton).toBeEnabled());
+            await waitFor(() => expect(exitBtn).toBeEnabled());
         });
 
         await userEvent.click(canvas.getByRole("button", { name: /pause/i }));
@@ -98,14 +98,14 @@
             expect(sessionScreen.getImgTransform().scale).toBe(1);
 
             // Zoom in
-            const zoomInButton = canvas.getByRole("button", { name: /zoom in/i });
-            await userEvent.click(zoomInButton);
+            const zoomInBtn = canvas.getByRole("button", { name: /zoom in/i });
+            await userEvent.click(zoomInBtn);
             await expect(sessionScreen.getImgTransform().scale).toBeGreaterThan(1);
 
             // Zoom out
-            const zoomOutButton = canvas.getByRole("button", { name: /zoom out/i });
-            await userEvent.click(zoomOutButton);
-            await userEvent.click(zoomOutButton);
+            const zoomOutBtn = canvas.getByRole("button", { name: /zoom out/i });
+            await userEvent.click(zoomOutBtn);
+            await userEvent.click(zoomOutBtn);
             await expect(sessionScreen.getImgTransform().scale).toBeLessThan(1);
 
             // Reset zoom
@@ -145,24 +145,34 @@
             }
         });
 
+        await step("Click grid button", async () => {
+            const gridBtn = canvas.getByRole("button", { name: /grid/i });
+            await userEvent.click(gridBtn);
+            await waitFor(() =>
+                expect(canvas.getByRole("presentation", { name: /grid/i })).toBeVisible(),
+            );
+            await userEvent.click(gridBtn);
+            await expect(canvas.queryByRole("presentation", { name: /grid/i })).toBeNull();
+        });
+
         await step("Click hide timer button", async () => {
-            const hideTimerButton = canvas.getByRole("button", { name: /hide timer/i });
-            await userEvent.click(hideTimerButton);
+            const hideTimerBtn = canvas.getByRole("button", { name: /hide timer/i });
+            await userEvent.click(hideTimerBtn);
             await expect(canvas.queryByText(/time remaining/i)).toBeNull();
-            await userEvent.click(hideTimerButton);
+            await userEvent.click(hideTimerBtn);
             await waitFor(() => expect(canvas.getByText(/time remaining/i)).toBeVisible());
         });
 
         await step("Click pin window button", async () => {
-            const pinButton = canvas.getByRole("button", { name: /pin window/i });
+            const pinBtn = canvas.getByRole("button", { name: /pin window/i });
 
             // Pin
-            await userEvent.click(pinButton);
+            await userEvent.click(pinBtn);
             await expect(args.setAlwaysOnTop).toHaveBeenCalledTimes(1);
             await expect(args.setAlwaysOnTop).toHaveBeenLastCalledWith(true);
 
             // Unpin
-            await userEvent.click(pinButton);
+            await userEvent.click(pinBtn);
             await expect(args.setAlwaysOnTop).toHaveBeenCalledTimes(2);
             await expect(args.setAlwaysOnTop).toHaveBeenLastCalledWith(false);
 
@@ -170,15 +180,15 @@
         });
 
         await step("Click show image folder button", async () => {
-            const showFolderButton = canvas.getByRole("button", { name: /show image folder/i });
-            await userEvent.click(showFolderButton);
+            const showFolderBtn = canvas.getByRole("button", { name: /show image folder/i });
+            await userEvent.click(showFolderBtn);
             await expect(args.showImageFolder).toHaveBeenCalledTimes(1);
             clearAllMocks();
         });
 
         await step("Click exit session button", async () => {
-            const exitButton = canvas.getByRole("button", { name: /exit session/i });
-            await userEvent.click(exitButton);
+            const exitBtn = canvas.getByRole("button", { name: /exit session/i });
+            await userEvent.click(exitBtn);
             const dialogCanvas = within(screen.getByRole("alertdialog"));
             await userEvent.click(await dialogCanvas.findByRole("button", { name: "Exit" }));
             await expect(args.exit).toHaveBeenCalledTimes(1);
@@ -186,7 +196,7 @@
 
             // Close the dialog. Session should be unfrozen
             await userEvent.click(await dialogCanvas.findByRole("button", { name: /close/i }));
-            await waitFor(() => expect(exitButton).toBeEnabled());
+            await waitFor(() => expect(exitBtn).toBeEnabled());
         });
     }}
 />
