@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export class SessionPage {
     readonly img: Locator;
@@ -42,6 +42,15 @@ export class SessionPage {
     // Can be used to reveal toolbar
     hoverImage = async () => {
         await this.img.hover();
+    };
+
+    tryExitThenCancel = async () => {
+        await this.hoverImage();
+        await this.exitBtn.click();
+        // Cancel the exit
+        await this.page.keyboard.press("Escape");
+        // Check that toolbar buttons are enabled
+        await expect(this.prevBtn).toBeEnabled();
     };
 
     exitSession = async () => {

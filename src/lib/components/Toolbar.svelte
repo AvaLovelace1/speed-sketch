@@ -25,10 +25,12 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
 
     function onKeyDown(e: KeyboardEvent) {
         for (const tool of tools) {
-            if (tool.hotkey && !tool.disabled && e.key === tool.hotkey) {
-                e.preventDefault();
-                tool.action();
-                break;
+            if (tool.hotkey && e.key === tool.hotkey) {
+                if (!tool.disabled) {
+                    e.preventDefault();
+                    tool.action();
+                }
+                return;
             }
         }
     }

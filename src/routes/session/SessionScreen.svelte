@@ -283,7 +283,6 @@ The user interface for a drawing session.
         uid: "exit",
         icon: "lucide--log-out",
         action: () => confirmExitDialog.open(),
-        hotkey: "Escape",
         class: "btn-error",
         tooltip: "Exit session",
         disabled: isFrozen,

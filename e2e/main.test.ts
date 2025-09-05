@@ -1,4 +1,5 @@
-import fs from "node:fs";
+import * as fs from "node:fs";
+import { Dirent } from "node:fs";
 import { test } from "@playwright/test";
 import { MainMenuPage } from "./pages/main-menu-page";
 import { SessionPage } from "./pages/session-page";
@@ -8,8 +9,8 @@ import { SettingsDialog } from "./pages/settings-dialog";
 const IMG_FOLDER = "test-assets";
 const IMG_FILES = fs
     .readdirSync(IMG_FOLDER, { withFileTypes: true })
-    .filter((file) => file.isFile() && /\.(jpg|jpeg|png|gif)$/i.test(file.name));
-const IMG_FILENAMES = IMG_FILES.map((file) => file.name);
+    .filter((file: Dirent) => file.isFile() && /\.(jpg|jpeg|png|gif)$/i.test(file.name));
+const IMG_FILENAMES = IMG_FILES.map((file: Dirent) => file.name);
 
 test("typical user flow", async ({ page }) => {
     // Main menu page
@@ -28,6 +29,7 @@ test("typical user flow", async ({ page }) => {
     // Session page
     await mainMenuPage.startSession();
     const sessionPage = new SessionPage(page);
+    await sessionPage.tryExitThenCancel();
 
     // Session end page
     await sessionPage.exitSession();
