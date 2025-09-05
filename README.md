@@ -3,55 +3,54 @@
 # SpeedSketch: Gesture Drawing App
 
 [![Browser][Browser]][Webapp]
-![Windows][Windows]
-![macOS][macOS]
-![Linux][Linux]
+[![Windows][Windows]](#desktop-app)
+[![macOS][macOS]](#desktop-app)
+[![Linux][Linux]](#desktop-app)
 
 **SpeedSketch** is a free app for creating timed drawing sessions using photo references on your own
-computer. It displays all images in a given collection one by one, each for a specified amount of time.
+device. It displays all images in a given collection one by one, each for a specified amount of time.
 Perfect for gesture studies, figure drawing practice, and the like!
 
-_Available as a [web app][Webapp] and a desktop app for **Windows**, **macOS**, and **Linux**._
+_Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Windows**, **macOS**, and **Linux**._
 
 ## Features
 
-### Choose Your Own Image Collection
+### Create your own drawing session
 
-- **Custom Image Folder:** Select any folder on your computer to use as an image source.
-- **Custom Display Time:** Choose from a list of predefined durations, or set your own duration for each image.
-- **Randomize Image Order:** Choose whether to display images alphabetically or in a random order.
+- **Personal photo references:** Choose any folder on your device to use as a photo reference source.
+- **Custom session schedule:** Choose a fixed display time in **Endless Mode**, or create your own schedule in **Class Mode**.
+- **Randomize image order:** Choose whether to display images alphabetically or in a random order.
 
-### Image Viewing
+### Image viewer
 
-- **Zoom/Pan:** Scroll to zoom in and out, and click & drag to pan around the image.
-- **Flip (Horizontal or Vertical):** Flip the image for more variety.
-- **Customizable Image Filters:** Use the **Greyscale**, **Increased Contrast**, and **Blur** filters to focus on shape
+- **Zoom/pan:** Scroll to zoom in and out, and click & drag to pan around the image.
+- **Flip horizontally or vertically:** Flip the image for more variety.
+- **Customizable image filters:** Use the **Greyscale**, **High Contrast**, and **Blur** filters to focus on shape
   and form.
-- **Always on Top Mode (desktop version only):** Keep the app window on top of other windows for easy reference while
+- **Pin window to top** _(desktop version only)_: Keep the app window on top of other windows for easy reference while
   drawing.
-
-### Additional Features
-
-- **Light & Dark Themes:** Switch up the colours for comfortable viewing.
-- …and more!
+- **Show image folder** _(desktop version only)_: Reveal the image in your system’s file navigator.
+- **Light & dark themes**
 
 ## Installation
 
-### Web Version
+### Web app
 
-[Use SpeedSketch directly in your browser with no installation.][Webapp]
+[![Browser][Browser]][Webapp]
 
-### Desktop Version
+Visit the [SpeedSketch website][Webapp] to use SpeedSketch directly in your browser with no installation.
 
-[Coming soon]
+### Desktop app
 
-<!-- Download the latest version of SpeedSketch from the
-**[releases page](https://github.com/AvaLovelace1/speed-sketch/releases/latest)**.
-Available for Windows, macOS (Intel + Apple Silicon), and Linux. -->
+[![Windows][Windows]](#desktop-app)
+[![macOS][macOS]](#desktop-app)
+[![Linux][Linux]](#desktop-app)
 
-### Build from source
+Build the desktop app on your computer by following the instructions in [Building from source](#building-from-source). Pre-built binaries are currently not available.
 
-SpeedSketch is built using [Tauri](https://tauri.app). Follow these steps to build from source:
+## Building from source
+
+SpeedSketch is built using [SvelteKit](https://svelte.dev/docs/kit/introduction) and [Tauri](https://tauri.app). Follow these steps to build from source:
 
 1. Clone this repository with `git clone https://github.com/AvaLovelace1/speed-sketch.git && cd speed-sketch`.
 2. Install all [Tauri prerequisites](https://tauri.app/start/prerequisites/), including **System Dependencies**,
@@ -61,7 +60,7 @@ SpeedSketch is built using [Tauri](https://tauri.app). Follow these steps to bui
 
 ## Acknowledgements
 
-- Thanks to [Tauri](https://tauri.app), [Svelte](https://svelte.dev),
+- Thanks to [Svelte](https://svelte.dev), [Tauri](https://tauri.app),
   [Tailwind CSS](https://tailwindcss.com), [DaisyUI](https://daisyui.com), and [Bits UI](https://bits-ui.com) for the
   amazing open-source technologies that made this app possible.
 - Thanks to [Lucide](https://lucide.dev) for the icons, [Mixkit](https://mixkit.co) for the sound effects, and
