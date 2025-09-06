@@ -16,7 +16,7 @@
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
-    const VERSION = "2.0.0";
+    const VERSION = "2.1.0";
     const COPYRIGHT = "© 2024–2025 Ava Pun";
     const GITHUB_URL = "https://github.com/AvaLovelace1/speed-sketch";
     const ISSUE_URL = `${GITHUB_URL}/issues/new`;
