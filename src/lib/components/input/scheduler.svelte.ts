@@ -22,10 +22,7 @@ export class Scheduler {
     }
 
     get totalImgs() {
-        return this.schedule.reduce(
-            (acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat),
-            0,
-        );
+        return this.schedule.reduce((acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat), 0);
     }
 
     get totalDuration() {
