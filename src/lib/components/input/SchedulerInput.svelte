@@ -26,6 +26,12 @@
         action: () => scheduler.addEntry(),
         tooltip: "Add entry",
     };
+    const addBreakBtn: Tool = {
+        uid: "add-break",
+        icon: "lucide--coffee",
+        action: () => scheduler.addBreak(),
+        tooltip: "Add break",
+    };
     const removeBtn: Tool = $derived({
         uid: "remove-entry",
         icon: "lucide--minus",
@@ -47,7 +53,7 @@
         tooltip: "Move entry down",
         disabled: scheduler.selectedIdx >= schedule.length - 1,
     });
-    const tools = $derived([addBtn, removeBtn, moveUpBtn, moveDownBtn]);
+    const tools = $derived([addBtn, addBreakBtn, removeBtn, moveUpBtn, moveDownBtn]);
 
     let sortable: Sortable;
 
@@ -115,22 +121,27 @@
                 </td>
                 <td class="grow">
                     <div class="flex items-center gap-2">
-                        <Label.Root class="flex items-center text-lg" for={`num-images-${id}`}>
-                            <span class="iconify lucide--image"></span>
-                            <span class="sr-only">Number of images</span>
-                        </Label.Root>
-                        <div class="flex items-baseline gap-2">
-                            <NumberField
-                                id={`num-images-${id}`}
-                                minValue={1}
-                                maxValue={999}
-                                bind:value={schedule[i].repeat}
-                                bgColor={i === scheduler.selectedIdx ? "primary" : "base"}
-                            />
-                            <div class="cursor-default text-xs">
-                                {schedule[i].repeat === 1 ? "image" : "images"}
+                        {#if schedule[i].isBreak}
+                            <span class="iconify text-lg lucide--coffee"></span>
+                            <div class="cursor-default">Break</div>
+                        {:else}
+                            <Label.Root class="flex items-center text-lg" for={`num-images-${id}`}>
+                                <span class="iconify lucide--image"></span>
+                                <span class="sr-only">Number of images</span>
+                            </Label.Root>
+                            <div class="flex items-baseline gap-2">
+                                <NumberField
+                                    id={`num-images-${id}`}
+                                    minValue={1}
+                                    maxValue={999}
+                                    bind:value={schedule[i].repeat}
+                                    bgColor={i === scheduler.selectedIdx ? "primary" : "base"}
+                                />
+                                <div class="cursor-default text-xs">
+                                    {schedule[i].repeat === 1 ? "image" : "images"}
+                                </div>
                             </div>
-                        </div>
+                        {/if}
                     </div>
                 </td>
                 <td>
