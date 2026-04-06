@@ -97,4 +97,31 @@ describe("scheduler.svelte.ts", () => {
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[1], ENTRIES[2]]);
         expect(scheduler.selectedIdx).toBe(2);
     });
+
+    test("add break", () => {
+        const scheduler = new Scheduler();
+
+        scheduler.addBreak();
+        expect(scheduler.schedule[0].isBreak).toBe(true);
+        expect(scheduler.schedule[0].duration).toBe(Scheduler.DEFAULT_BREAK.duration);
+        expect(scheduler.schedule[0].repeat).toBe(Scheduler.DEFAULT_BREAK.repeat);
+    });
+
+    test("totalImgs excludes breaks", () => {
+        const scheduler = new Scheduler([
+            { duration: 60, repeat: 5 },
+            { duration: 30, repeat: 1, isBreak: true },
+            { duration: 45, repeat: 3 },
+        ]);
+        expect(scheduler.totalImgs).toBe(8); // 5 + 0 + 3
+    });
+
+    test("totalDuration includes breaks", () => {
+        const scheduler = new Scheduler([
+            { duration: 60, repeat: 2 },
+            { duration: 30, repeat: 1, isBreak: true },
+            { duration: 45, repeat: 1 },
+        ]);
+        expect(scheduler.totalDuration).toBe(60 * 2 + 30 + 45);
+    });
 });

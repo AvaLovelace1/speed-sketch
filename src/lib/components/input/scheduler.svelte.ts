@@ -2,6 +2,7 @@ import type { ScheduleEntry, SessionSchedule } from "$lib/drawing-session.svelte
 
 export class Scheduler {
     static DEFAULT_ENTRY = { duration: 60, repeat: 1 };
+    static DEFAULT_BREAK = { duration: 30, repeat: 1, isBreak: true };
     // Index of the selected entry, or -1 if there is no selection
     #selectedIdx: number;
 
@@ -21,7 +22,10 @@ export class Scheduler {
     }
 
     get totalImgs() {
-        return this.schedule.reduce((acc, entry) => acc + entry.repeat, 0);
+        return this.schedule.reduce(
+            (acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat),
+            0,
+        );
     }
 
     get totalDuration() {
@@ -34,6 +38,10 @@ export class Scheduler {
         }
         this.schedule.splice(this.selectedIdx + 1, 0, newEntry);
         this.selectedIdx++;
+    };
+
+    addBreak = () => {
+        this.addEntry({ ...Scheduler.DEFAULT_BREAK, id: self.crypto.randomUUID() });
     };
 
     removeEntry = () => {
