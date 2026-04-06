@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-    themes: false; /* Disable default themes so they don't con
+    themes: false; /* Disable default themes so they don't conflict with custom themes */
 }
 
 @theme {
