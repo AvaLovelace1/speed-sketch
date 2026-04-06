@@ -32,7 +32,7 @@ export async function createTauriStore() {
     if (!isTauri()) {
         throw new Error("This function can only be used in a Tauri environment.");
     }
-    return await load("store.json", { autoSave: false });
+    return await load("store.json", { defaults: {}, autoSave: false });
 }
 
 // Persistent store with localStorage

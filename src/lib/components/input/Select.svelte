@@ -20,8 +20,8 @@
 
     let { label, items, value = $bindable() }: Props = $props();
 
-    const id = stringToId(`${label}-select`);
-    const itemsMap = new Map<string, Item>(items.map((item) => [item.value, item]));
+    const id = $derived(stringToId(`${label}-select`));
+    const itemsMap = $derived(new Map<string, Item>(items.map((item) => [item.value, item])));
 </script>
 
 <Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>

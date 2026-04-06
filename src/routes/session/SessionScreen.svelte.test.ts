@@ -4,6 +4,7 @@ import { render, screen, waitFor } from "@testing-library/svelte";
 import SessionScreen from "./SessionScreen.svelte";
 import { DrawingSession } from "$lib/drawing-session.svelte";
 import userEvent, { type UserEvent } from "@testing-library/user-event";
+vi.mock("svelte/transition");
 
 const HIDE_TOOLBAR_TIMEOUT = 5000;
 
@@ -23,7 +24,6 @@ const test = base.extend<SessionScreenFixture>({
             unobserve() {}
             disconnect() {}
         };
-        vi.mock("svelte/transition");
         vi.useFakeTimers();
 
         const imgs = [

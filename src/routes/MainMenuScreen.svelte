@@ -48,18 +48,22 @@
         isTauri = isTauriFn(),
     }: Props = $props();
 
-    const sessionModeOptions = sessionSettings.SESSION_MODES.map((sessionMode) => ({
-        label: sessionMode.name,
-        value: sessionMode.name,
-        description: sessionMode.description,
-    }));
+    const sessionModeOptions = $derived(
+        sessionSettings.SESSION_MODES.map((sessionMode) => ({
+            label: sessionMode.name,
+            value: sessionMode.name,
+            description: sessionMode.description,
+        })),
+    );
 
-    const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
-        label: option,
-        value: option,
-    }));
+    const imgShowTimeOptions = $derived(
+        sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
+            label: option,
+            value: option,
+        })),
+    );
 
-    let schedule = $state(sessionSettings.sessionScheduleCustom);
+    let schedule = $derived(sessionSettings.sessionScheduleCustom);
 </script>
 
 <CenteredFull>
