@@ -40,15 +40,10 @@
                 {#if open}<Overlay {...props} />{/if}
             {/snippet}
         </Dialog.Overlay>
-        <Dialog.Content forceMount>
+        <Dialog.Content forceMount interactOutsideBehavior="close">
             {#snippet child({ props, open })}
                 {#if open}
-                    <Popup
-                        {...props}
-                        onclick={(e) => {
-                            if (e.target === e.currentTarget) close();
-                        }}
-                    >
+                    <Popup {...props}>
                         <Card class="relative p-8">
                             <Dialog.Title class="mb-8 text-2xl font-semibold">{title}</Dialog.Title>
                             <Dialog.Description>{@render children()}</Dialog.Description>

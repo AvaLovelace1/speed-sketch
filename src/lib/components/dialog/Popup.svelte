@@ -9,11 +9,8 @@ Centers its children in the viewport and applies a scale transition.
     const { children, ...props }: SvelteHTMLElements["div"] = $props();
 </script>
 
-<div
-    class="fixed inset-0 z-50 flex items-center-safe justify-center-safe overflow-auto p-3"
-    {...props}
->
-    <div in:scale={{ duration: "medium" }} out:scale={{ duration: "short" }}>
+<div class="fixed inset-0 z-50 flex items-center-safe justify-center-safe overflow-auto p-3">
+    <div in:scale={{ duration: "medium" }} out:scale={{ duration: "short" }} {...props}>
         {@render children?.()}
     </div>
 </div>

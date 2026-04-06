@@ -50,15 +50,10 @@
                 {#if open}<Overlay {...props} />{/if}
             {/snippet}
         </AlertDialog.Overlay>
-        <AlertDialog.Content forceMount>
+        <AlertDialog.Content forceMount interactOutsideBehavior="close">
             {#snippet child({ props, open })}
                 {#if open}
-                    <Popup
-                        {...props}
-                        onclick={(e) => {
-                            if (e.target === e.currentTarget) close();
-                        }}
-                    >
+                    <Popup {...props}>
                         <Card class="relative p-6">
                             {#if title}
                                 <AlertDialog.Title class="mb-3 text-xl font-semibold">
