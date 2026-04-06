@@ -5,6 +5,7 @@ import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
 import { compareImages, type Image } from "$lib/types.svelte";
 import type { SessionSchedule } from "$lib/drawing-session.svelte";
+import { SvelteSet } from "svelte/reactivity";
 
 export class SessionSettings implements Record<string, unknown> {
     get SESSION_MODES() {
@@ -63,13 +64,18 @@ export class SessionSettings implements Record<string, unknown> {
                 key: "sessionScheduleCustom",
                 isValid: (v: unknown): v is SessionSchedule => {
                     if (!Array.isArray(v)) return false;
-                    for (let i = 0; i < v.length; i++) {
-                        if (!validateInteger(v[i].duration, 1, this.MAX_IMG_SHOW_TIME))
+
+                    // Validate each item in the array
+                    for (const item of v) {
+                        if (!validateInteger(item.duration, 1, this.MAX_IMG_SHOW_TIME))
                             return false;
-                        if (!validateInteger(v[i].repeat, 1, Infinity)) return false;
-                        v[i].id = self.crypto.randomUUID();
+                        if (!validateInteger(item.repeat, 1, Infinity)) return false;
+                        if (typeof item.id !== "string") return false;
                     }
-                    return true;
+
+                    // Check for duplicate IDs
+                    const uniqueIds = new SvelteSet(v.map((s) => s.id));
+                    return uniqueIds.size === v.length;
                 },
             },
         ];
