@@ -54,7 +54,7 @@
     name="With Interactions"
     args={{ schedule: [] }}
     play={async ({ args: _args, canvas, userEvent, step }) => {
-        const addBtn = canvas.getByRole("button", { name: /add entry/i });
+        const addBtn = canvas.getByRole("button", { name: /add drawing/i });
         const addBreakBtn = canvas.getByRole("button", { name: /add break/i });
         const removeBtn = canvas.getByRole("button", { name: /remove/i });
         const moveUpBtn = canvas.getByRole("button", { name: /up/i });

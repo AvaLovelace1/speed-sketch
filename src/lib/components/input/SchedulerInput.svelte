@@ -24,7 +24,7 @@
         uid: "add-entry",
         icon: "lucide--plus",
         action: () => scheduler.addEntry(),
-        tooltip: "Add entry",
+        tooltip: "Add drawing interval",
     };
     const addBreakBtn: Tool = {
         uid: "add-break",
@@ -83,12 +83,17 @@
         class="list max-h-48 overflow-auto rounded-box bg-base-200 inset-shadow-xs"
     >
         {#if schedule.length === 0}
-            <tr class="list-row flex justify-center">
+            <tr class="list-row flex justify-center text-center">
                 <td class="p-3 text-xs text-muted">
-                    Add an entry with the
-                    <span class="iconify align-middle text-base-content lucide--plus"></span>
-                    <span class="sr-only">Add entry</span>
-                    button
+                    Use
+                    <span class="iconify align-middle text-base-content {addBtn.icon}"></span>
+                    <span class="sr-only">{addBtn.tooltip}</span>
+                    to add a drawing interval
+                    <br />
+                    or
+                    <span class="iconify align-middle text-base-content {addBreakBtn.icon}"></span>
+                    <span class="sr-only">{addBreakBtn.tooltip}</span>
+                    to add a break
                 </td>
             </tr>
         {/if}
