@@ -175,7 +175,6 @@ describe("drawing-session.svelte.ts", () => {
         for (let i = 0; i < BREAK_SCHEDULE[0].repeat; i++) {
             vi.advanceTimersByTime((BREAK_SCHEDULE[0].duration + 1) * 1000);
         }
-        const imgIdxBeforeBreak = session.curImgIdx;
 
         // On break
         expect(session.getCurScheduleEntry().isBreak).toBe(true);
@@ -183,10 +182,7 @@ describe("drawing-session.svelte.ts", () => {
 
         // Finish the break
         vi.advanceTimersByTime((BREAK_SCHEDULE[1].duration + 1) * 1000);
-
-        // curImgIdx and nCompletedImgs are unchanged
-        expect(session.nCompletedImgs).toBe(BREAK_SCHEDULE[0].repeat);
-        expect(session.curImgIdx).toBe(imgIdxBeforeBreak);
+        expect(session.nCompletedImgs).toBe(BREAK_SCHEDULE[0].repeat); // nCompletedImgs is unchanged
 
         // Now on schedule entry 2
         expect(session.getCurScheduleEntry()).toBe(BREAK_SCHEDULE[2]);
@@ -206,20 +202,27 @@ describe("drawing-session.svelte.ts", () => {
     testWithBreaks(
         "goPrevInterval and goNextInterval don't change image index when exiting break",
         ({ session }) => {
-            for (let i = 0; i < 2; i++) session.goNextInterval();
-            expect(session.getCurImg()).toBeUndefined();
+            expect(session.getCurImg()).toEqual(IMGS[0]); // Entry 0, interval 0
             session.goNextInterval();
-            expect(session.getCurImg()).toEqual(IMGS[2]);
+            expect(session.getCurImg()).toEqual(IMGS[1]); // Entry 0, interval 1
             session.goNextInterval();
-            expect(session.getCurImg()).toEqual(IMGS[0]);
+            expect(session.getCurImg()).toBeUndefined(); // Entry 1 (break)
+            session.goNextInterval();
+            expect(session.getCurImg()).toEqual(IMGS[2]); // Entry 2, interval 0
+            session.goNextInterval();
+            expect(session.getCurImg()).toEqual(IMGS[0]); // Entry 2, interval 1
             session.goPrevInterval();
-            expect(session.getCurImg()).toEqual(IMGS[2]);
+            expect(session.getCurImg()).toEqual(IMGS[2]); // Entry 2, interval 0
             session.goPrevInterval();
-            expect(session.getCurImg()).toBeUndefined();
+            expect(session.getCurImg()).toBeUndefined(); // Entry 1 (break)
+            session.goNextInterval();
+            expect(session.getCurImg()).toEqual(IMGS[2]); // Entry 2, interval 0
             session.goPrevInterval();
-            expect(session.getCurImg()).toEqual(IMGS[1]);
+            expect(session.getCurImg()).toBeUndefined(); // Entry 1 (break)
             session.goPrevInterval();
-            expect(session.getCurImg()).toEqual(IMGS[0]);
+            expect(session.getCurImg()).toEqual(IMGS[1]); // Entry 0, interval 1
+            session.goPrevInterval();
+            expect(session.getCurImg()).toEqual(IMGS[0]); // Entry 0, interval 0
         },
     );
 

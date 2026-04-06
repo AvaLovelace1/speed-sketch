@@ -17,14 +17,14 @@ export class DrawingSession {
     timeSpent: number;
     isPaused: boolean;
     isFinished: boolean;
-    // Index of the current image being displayed
-    curImgIdx: number;
     // Index of the current schedule entry being used
-    curScheduleIdx: number;
+    curEntryIdx: number;
     // Number of times the current schedule entry has repeated
-    curScheduleRepeat: number;
+    curRepeatIdx: number;
     // Timer interval that updates the time remaining with each tick
     #timer: NodeJS.Timeout | undefined = undefined;
+    // Prefix sums of the (image-only) repeat counts in the schedule, used to compute the current image index
+    #imgIntervalPrefixSums: number[];
 
     constructor(
         // Array of images to be displayed in the session
@@ -38,10 +38,19 @@ export class DrawingSession {
         this.isPaused = $state(true);
         this.isFinished = $state(false);
 
-        this.curImgIdx = $state(0);
-        this.curScheduleIdx = $state(0);
-        this.curScheduleRepeat = $state(0);
+        this.curEntryIdx = $state(0);
+        this.curRepeatIdx = $state(0);
         this.#timer = undefined;
+
+        this.#imgIntervalPrefixSums = $derived.by(() => {
+            const prefixSums: number[] = [];
+            for (const entry of schedule) {
+                const nImgIntervals = entry.isBreak ? 0 : entry.repeat;
+                if (prefixSums.length === 0) prefixSums.push(nImgIntervals);
+                else prefixSums.push(prefixSums[prefixSums.length - 1] + nImgIntervals);
+            }
+            return prefixSums;
+        });
     }
 
     get totalImgs() {
@@ -54,28 +63,26 @@ export class DrawingSession {
 
     getCurImg = (): Image | undefined => {
         if (this.getCurScheduleEntry().isBreak) return undefined;
-        return this.imgs[this.curImgIdx];
+        const curImgIdx =
+            this.curEntryIdx === 0
+                ? this.curRepeatIdx
+                : this.curRepeatIdx + this.#imgIntervalPrefixSums[this.curEntryIdx - 1];
+        return this.imgs[curImgIdx % this.imgs.length];
     };
 
     getCurScheduleEntry = () => {
-        return this.schedule[this.curScheduleIdx];
+        return this.schedule[this.curEntryIdx];
     };
 
     goPrevInterval = () => {
         if (this.isFinished) return;
 
-        // Go to the previous interval
-        if (this.curScheduleRepeat !== 0 || this.curScheduleIdx !== 0) {
-            // Go to the previous image (if not on a break)
-            if (!this.getCurScheduleEntry().isBreak) {
-                this.curImgIdx -= 1;
-                if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
-            }
-
-            this.curScheduleRepeat -= 1;
-            if (this.curScheduleRepeat < 0) {
-                this.curScheduleIdx -= 1;
-                this.curScheduleRepeat = Math.max(0, this.getCurScheduleEntry().repeat - 1);
+        // Go to the previous interval (does nothing if already at the first interval)
+        if (this.curRepeatIdx !== 0 || this.curEntryIdx !== 0) {
+            this.curRepeatIdx -= 1;
+            if (this.curRepeatIdx < 0) {
+                this.curEntryIdx -= 1;
+                this.curRepeatIdx = Math.max(0, this.getCurScheduleEntry().repeat - 1);
             }
         }
 
@@ -87,24 +94,18 @@ export class DrawingSession {
     goNextInterval = () => {
         if (this.isFinished) return;
 
-        // Go to the next image (if not on a break)
-        if (!this.getCurScheduleEntry().isBreak) {
-            this.curImgIdx += 1;
-            if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
-        }
-
         // Go to the next interval (or finish session if no more intervals)
         if (
-            this.curScheduleRepeat === this.getCurScheduleEntry().repeat - 1 &&
-            this.curScheduleIdx === this.schedule.length - 1
+            this.curRepeatIdx === this.getCurScheduleEntry().repeat - 1 &&
+            this.curEntryIdx === this.schedule.length - 1
         ) {
             this.finishSession();
             return;
         }
-        this.curScheduleRepeat += 1;
-        if (this.curScheduleRepeat >= this.getCurScheduleEntry().repeat) {
-            this.curScheduleRepeat = 0;
-            this.curScheduleIdx += 1;
+        this.curRepeatIdx += 1;
+        if (this.curRepeatIdx >= this.getCurScheduleEntry().repeat) {
+            this.curRepeatIdx = 0;
+            this.curEntryIdx += 1;
         }
 
         // Reset timer

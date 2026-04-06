@@ -95,11 +95,11 @@
         });
 
         await step("Click previous and next buttons", async () => {
-            expect(args.drawingSession.curImgIdx).toBe(0);
+            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[0]);
             await userEvent.click(canvas.getByRole("button", { name: /next/i }));
-            expect(args.drawingSession.curImgIdx).toBe(1);
+            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[1]);
             await userEvent.click(canvas.getByRole("button", { name: /previous/i }));
-            expect(args.drawingSession.curImgIdx).toBe(0);
+            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[0]);
         });
 
         await step("Click zoom buttons", async () => {
