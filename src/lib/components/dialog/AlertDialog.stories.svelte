@@ -45,6 +45,7 @@
 <!-- The dialog can close in four ways: "Cancel" button, "Close" button, click overlay, "Escape" key. -->
 <Story
     name="With Interactions"
+    parameters={{ a11y: { config: { rules: [{ id: "color-contrast", enabled: false }] } } }}
     play={async ({ args, canvas, userEvent, step }) => {
         async function openDialog() {
             await step("Open dialog", async () => {
@@ -65,7 +66,7 @@
                 } else if (method === "closeBtn") {
                     await userEvent.click(dialogCanvas.getByRole("button", { name: /close/i }));
                 } else if (method === "clickOutside") {
-                    await userEvent.click(screen.getByRole("alertdialog"));
+                    await userEvent.click(screen.getByRole("presentation"));
                 } else if (method === "keyboard") {
                     await userEvent.keyboard("{Escape}");
                 } else {

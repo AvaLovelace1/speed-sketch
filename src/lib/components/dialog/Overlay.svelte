@@ -13,5 +13,6 @@ A dark overlay that covers the entire viewport.
     class="fixed inset-0 z-50 bg-offblack/75"
     in:fade={{ duration: "long" }}
     out:fade={{ duration: "medium" }}
+    role="presentation"
     {...props}
 ></div>
