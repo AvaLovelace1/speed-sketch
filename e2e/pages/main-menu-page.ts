@@ -28,7 +28,7 @@ export class MainMenuPage {
         this.customTimeMins = this.page.getByRole("spinbutton", { name: "minute, Custom time" });
         this.customTimeSecs = this.page.getByRole("spinbutton", { name: "second, Custom time" });
 
-        this.addEntryBtn = this.page.getByRole("button", { name: "Add entry" });
+        this.addEntryBtn = this.page.getByRole("button", { name: "Add drawing interval" });
         this.numImgsInputs = this.page.getByRole("spinbutton", { name: "Images" });
 
         this.goBtn = this.page.getByRole("button", { name: "Go" });
