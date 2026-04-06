@@ -118,7 +118,7 @@ export class DrawingSession {
 
     #restartTimer = () => {
         this.#clearTimer();
-        this.#timer = setInterval(async () => {
+        this.#timer = setInterval(() => {
             if (this.timeRemaining > 0) {
                 this.timeRemaining--;
                 this.timeSpent++;
