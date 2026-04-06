@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@plugin "daisyui";
+@plugin "daisyui" {
+    themes: false; /* Disable default themes so they don't con
+}
 
 @theme {
     /* nord theme colors */
