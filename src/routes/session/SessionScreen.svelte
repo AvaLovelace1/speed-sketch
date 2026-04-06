@@ -129,17 +129,17 @@ The user interface for a drawing session.
     const prevBtn: Tool = $derived({
         uid: "prev",
         icon: "lucide--arrow-left",
-        action: drawingSession.goPrevImg,
+        action: drawingSession.goPrevInterval,
         hotkey: "ArrowLeft",
-        tooltip: "Previous image",
+        tooltip: "Previous interval",
         disabled: isFrozen,
     });
     const nextBtn: Tool = $derived({
         uid: "next",
         icon: "lucide--arrow-right",
-        action: drawingSession.goNextImg,
+        action: drawingSession.goNextInterval,
         hotkey: "ArrowRight",
-        tooltip: "Next image",
+        tooltip: "Next interval",
         disabled: isFrozen,
     });
     const pauseBtn: Tool = $derived({

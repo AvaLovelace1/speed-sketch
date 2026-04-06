@@ -13,6 +13,12 @@ const SCHEDULE = [
     { duration: 45, repeat: 1 },
 ];
 
+const BREAK_SCHEDULE = [
+    { duration: 60, repeat: 2 },
+    { duration: 10, repeat: 1, isBreak: true },
+    { duration: 45, repeat: 3 },
+];
+
 interface DrawingSessionFixture {
     session: DrawingSession;
 }
@@ -21,6 +27,15 @@ const test = base.extend<DrawingSessionFixture>({
     session: async ({ task: _task }, use) => {
         vi.useFakeTimers();
         const session = new DrawingSession(IMGS, SCHEDULE);
+        await use(session);
+        vi.restoreAllMocks();
+    },
+});
+
+const testWithBreaks = base.extend<DrawingSessionFixture>({
+    session: async ({ task: _task }, use) => {
+        vi.useFakeTimers();
+        const session = new DrawingSession(IMGS, BREAK_SCHEDULE);
         await use(session);
         vi.restoreAllMocks();
     },
@@ -36,42 +51,46 @@ describe("drawing-session.svelte.ts", () => {
         expect(session.isPaused).toBe(true);
     });
 
-    test("goPrevImg and goNextImg", ({ session }) => {
-        session.goNextImg();
+    test("goPrevInterval and goNextInterval", ({ session }) => {
+        session.goNextInterval();
         expect(session.getCurImg()).toEqual(IMGS[1]);
-        session.goNextImg();
+        session.goNextInterval();
         expect(session.getCurImg()).toEqual(IMGS[2]);
-        session.goNextImg();
+        session.goNextInterval();
         expect(session.getCurImg()).toEqual(IMGS[0]);
-        session.goPrevImg();
+        session.goPrevInterval();
         expect(session.getCurImg()).toEqual(IMGS[2]);
-        session.goPrevImg();
+        session.goPrevInterval();
         expect(session.getCurImg()).toEqual(IMGS[1]);
+        session.goPrevInterval();
+        expect(session.getCurImg()).toEqual(IMGS[0]);
+        session.goPrevInterval();
+        expect(session.getCurImg()).toEqual(IMGS[0]); // Can't go back past the first interval
     });
 
-    test("goNextImg and goPrevImg reset timer", ({ session }) => {
+    test("goNextInterval and goPrevInterval reset timer", ({ session }) => {
         session.resume();
 
         vi.advanceTimersByTime(9000);
         expect(session.timeRemaining).toBe(SCHEDULE[0].duration - 9);
-        session.goNextImg();
+        session.goNextInterval();
         expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
 
         vi.advanceTimersByTime(9000);
         expect(session.timeRemaining).toBe(SCHEDULE[0].duration - 9);
-        session.goPrevImg();
+        session.goPrevInterval();
         expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
     });
 
-    test("goNextImg and goPrevImg don't restart timer when paused", ({ session }) => {
+    test("goNextInterval and goPrevInterval don't restart timer when paused", ({ session }) => {
         session.pause();
         const prevTimeRemaining = session.timeRemaining;
 
-        session.goNextImg();
+        session.goNextInterval();
         vi.advanceTimersByTime(9000);
         expect(session.timeRemaining).toBe(prevTimeRemaining);
 
-        session.goPrevImg();
+        session.goPrevInterval();
         vi.advanceTimersByTime(9000);
         expect(session.timeRemaining).toBe(prevTimeRemaining);
     });
@@ -127,6 +146,18 @@ describe("drawing-session.svelte.ts", () => {
         }
     });
 
+    test("finish session via goNextInterval", ({ session }) => {
+        session.resume();
+        for (const sessionEntry of SCHEDULE) {
+            for (let i = 0; i < sessionEntry.repeat; i++) {
+                session.goNextInterval();
+                const isFinished =
+                    i === sessionEntry.repeat - 1 && sessionEntry === SCHEDULE[SCHEDULE.length - 1];
+                expect(session.isFinished).toBe(isFinished);
+            }
+        }
+    });
+
     test("timeSpent increments correctly", ({ session }) => {
         session.resume();
         const waitTimeSeconds = 3;
@@ -134,5 +165,73 @@ describe("drawing-session.svelte.ts", () => {
         session.pause();
         vi.advanceTimersByTime(9000);
         expect(session.timeSpent).toBe(waitTimeSeconds);
+    });
+
+    testWithBreaks("full session with breaks", ({ session }) => {
+        expect(session.totalImgs).toBe(BREAK_SCHEDULE[0].repeat + BREAK_SCHEDULE[2].repeat);
+        session.resume();
+
+        // Finish first entry
+        for (let i = 0; i < BREAK_SCHEDULE[0].repeat; i++) {
+            vi.advanceTimersByTime((BREAK_SCHEDULE[0].duration + 1) * 1000);
+        }
+        const imgIdxBeforeBreak = session.curImgIdx;
+
+        // On break
+        expect(session.getCurScheduleEntry().isBreak).toBe(true);
+        expect(session.getCurImg()).toBeUndefined();
+
+        // Finish the break
+        vi.advanceTimersByTime((BREAK_SCHEDULE[1].duration + 1) * 1000);
+
+        // curImgIdx and nCompletedImgs are unchanged
+        expect(session.nCompletedImgs).toBe(BREAK_SCHEDULE[0].repeat);
+        expect(session.curImgIdx).toBe(imgIdxBeforeBreak);
+
+        // Now on schedule entry 2
+        expect(session.getCurScheduleEntry()).toBe(BREAK_SCHEDULE[2]);
+        expect(session.timeRemaining).toBe(BREAK_SCHEDULE[2].duration);
+        expect(session.getCurImg()).toBeDefined();
+
+        // Finish second entry
+        for (let i = 0; i < BREAK_SCHEDULE[2].repeat; i++) {
+            vi.advanceTimersByTime((BREAK_SCHEDULE[2].duration + 1) * 1000);
+        }
+
+        // Session is finished
+        expect(session.isFinished).toBe(true);
+        expect(session.nCompletedImgs).toBe(BREAK_SCHEDULE[0].repeat + BREAK_SCHEDULE[2].repeat); // only non-break entries counted
+    });
+
+    testWithBreaks(
+        "goPrevInterval and goNextInterval don't change image index when exiting break",
+        ({ session }) => {
+            for (let i = 0; i < 2; i++) session.goNextInterval();
+            expect(session.getCurImg()).toBeUndefined();
+            session.goNextInterval();
+            expect(session.getCurImg()).toEqual(IMGS[2]);
+            session.goNextInterval();
+            expect(session.getCurImg()).toEqual(IMGS[0]);
+            session.goPrevInterval();
+            expect(session.getCurImg()).toEqual(IMGS[2]);
+            session.goPrevInterval();
+            expect(session.getCurImg()).toBeUndefined();
+            session.goPrevInterval();
+            expect(session.getCurImg()).toEqual(IMGS[1]);
+            session.goPrevInterval();
+            expect(session.getCurImg()).toEqual(IMGS[0]);
+        },
+    );
+
+    testWithBreaks("timer counts down during break", ({ session }) => {
+        session.resume();
+        // Finish 2 images
+        for (let i = 0; i < 2; i++) {
+            vi.advanceTimersByTime((BREAK_SCHEDULE[0].duration + 1) * 1000);
+        }
+        // On break
+        expect(session.timeRemaining).toBe(BREAK_SCHEDULE[1].duration);
+        vi.advanceTimersByTime(5000);
+        expect(session.timeRemaining).toBe(BREAK_SCHEDULE[1].duration - 5);
     });
 });

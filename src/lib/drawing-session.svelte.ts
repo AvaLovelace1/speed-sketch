@@ -1,9 +1,10 @@
 import { type Image } from "$lib/types.svelte";
 
 export type ScheduleEntry = {
-    duration: number; // Time in seconds to show each image
+    duration: number; // Time in seconds to show each image (or break duration)
     repeat: number; // Number of images to show for this time (Infinity for endless sessions)
     id?: string; // UUID for the schedule entry, useful for tracking
+    isBreak?: boolean; // If true, no image is displayed during this time
 };
 
 export type SessionSchedule = ScheduleEntry[];
@@ -44,14 +45,15 @@ export class DrawingSession {
     }
 
     get totalImgs() {
-        return this.schedule.reduce((acc, entry) => acc + entry.repeat, 0);
+        return this.schedule.reduce((acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat), 0);
     }
 
     isValid = () => {
         return this.imgs.length > 0 && this.schedule[0].duration > 0;
     };
 
-    getCurImg = () => {
+    getCurImg = (): Image | undefined => {
+        if (this.getCurScheduleEntry().isBreak) return undefined;
         return this.imgs[this.curImgIdx];
     };
 
@@ -59,25 +61,39 @@ export class DrawingSession {
         return this.schedule[this.curScheduleIdx];
     };
 
-    goPrevImg = () => {
+    goPrevInterval = () => {
         if (this.isFinished) return;
-        this.curImgIdx -= 1;
-        if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
+
+        // Go to the previous interval
+        if (this.curScheduleRepeat !== 0 || this.curScheduleIdx !== 0) {
+            // Go to the previous image (if not on a break)
+            if (!this.getCurScheduleEntry().isBreak) {
+                this.curImgIdx -= 1;
+                if (this.curImgIdx < 0) this.curImgIdx = this.imgs.length - 1;
+            }
+
+            this.curScheduleRepeat -= 1;
+            if (this.curScheduleRepeat < 0) {
+                this.curScheduleIdx -= 1;
+                this.curScheduleRepeat = Math.max(0, this.getCurScheduleEntry().repeat - 1);
+            }
+        }
+
+        // Reset timer
         this.timeRemaining = this.getCurScheduleEntry().duration;
         if (!this.isPaused) this.#restartTimer();
     };
 
-    goNextImg = () => {
+    goNextInterval = () => {
         if (this.isFinished) return;
-        this.curImgIdx += 1;
-        if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
-        this.timeRemaining = this.getCurScheduleEntry().duration;
-        if (!this.isPaused) this.#restartTimer();
-    };
 
-    finishImg = () => {
-        this.nCompletedImgs += 1;
+        // Go to the next image (if not on a break)
+        if (!this.getCurScheduleEntry().isBreak) {
+            this.curImgIdx += 1;
+            if (this.curImgIdx >= this.imgs.length) this.curImgIdx = 0;
+        }
 
+        // Go to the next interval (or finish session if no more intervals)
         if (
             this.curScheduleRepeat === this.getCurScheduleEntry().repeat - 1 &&
             this.curScheduleIdx === this.schedule.length - 1
@@ -85,13 +101,21 @@ export class DrawingSession {
             this.finishSession();
             return;
         }
-
         this.curScheduleRepeat += 1;
         if (this.curScheduleRepeat >= this.getCurScheduleEntry().repeat) {
             this.curScheduleRepeat = 0;
             this.curScheduleIdx += 1;
         }
-        this.goNextImg();
+
+        // Reset timer
+        this.timeRemaining = this.getCurScheduleEntry().duration;
+        if (!this.isPaused) this.#restartTimer();
+    };
+
+    // Mark an interval as finished without interruption, and go to the next one
+    finishInterval = () => {
+        if (!this.getCurScheduleEntry().isBreak) this.nCompletedImgs += 1;
+        this.goNextInterval();
     };
 
     finishSession = () => {
@@ -123,7 +147,7 @@ export class DrawingSession {
                 this.timeRemaining--;
                 this.timeSpent++;
             } else {
-                this.finishImg();
+                this.finishInterval();
             }
         }, 1000);
     };
