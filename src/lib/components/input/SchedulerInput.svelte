@@ -128,7 +128,7 @@
                     <div class="flex items-center gap-2">
                         {#if schedule[i].isBreak}
                             <span class="iconify text-lg lucide--coffee"></span>
-                            <div class="cursor-default">Break</div>
+                            <div class="cursor-default font-semibold">Break</div>
                         {:else}
                             <Label.Root class="flex items-center text-lg" for={`num-images-${id}`}>
                                 <span class="iconify lucide--image"></span>

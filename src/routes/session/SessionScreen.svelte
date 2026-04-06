@@ -336,33 +336,43 @@ The user interface for a drawing session.
 {/snippet}
 
 {#snippet image()}
-    <!-- Wrap image in container so panzoom mouse events only fire on the image -->
-    <div class="size-full">
-        <!-- Wrap in another container so flipping works correctly -->
-        <div class="size-full" {@attach panzoomAttachment}>
-            <img
-                src={drawingSession.getCurImg().url}
-                alt="Reference used for drawing practice"
-                class={[
-                    "size-full object-contain",
-                    isFlippedVertical && "-scale-y-100",
-                    isFlippedHorizontal && "-scale-x-100",
-                    isGreyscale && "grayscale",
-                    isHighContrast && appSettings.contrastClass,
-                    isBlurred && appSettings.blurClass,
-                ]}
-                bind:clientWidth={imgWidth}
-                bind:clientHeight={imgHeight}
-            />
-            {#if gridShown}
-                <Gridlines
-                    class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"
-                    rows={appSettings.gridRows}
-                    cols={appSettings.gridCols}
+    {@const curImg = drawingSession.getCurImg()}
+    {#if curImg}
+        <!-- Wrap image in container so panzoom mouse events only fire on the image -->
+        <div class="size-full">
+            <!-- Wrap in another container so flipping works correctly -->
+            <div class="size-full" {@attach panzoomAttachment}>
+                <img
+                    src={curImg.url}
+                    alt="Reference used for drawing practice"
+                    class={[
+                        "size-full object-contain",
+                        isFlippedVertical && "-scale-y-100",
+                        isFlippedHorizontal && "-scale-x-100",
+                        isGreyscale && "grayscale",
+                        isHighContrast && appSettings.contrastClass,
+                        isBlurred && appSettings.blurClass,
+                    ]}
+                    bind:clientWidth={imgWidth}
+                    bind:clientHeight={imgHeight}
                 />
-            {/if}
+                {#if gridShown}
+                    <Gridlines
+                        class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"
+                        rows={appSettings.gridRows}
+                        cols={appSettings.gridCols}
+                    />
+                {/if}
+            </div>
         </div>
-    </div>
+    {:else}
+        <div
+            class="flex size-full items-center justify-center gap-4 text-4xl font-semibold text-muted"
+        >
+            <span class="iconify lucide--coffee"></span>
+            Break
+        </div>
+    {/if}
 {/snippet}
 
 {#snippet statusAlerts()}

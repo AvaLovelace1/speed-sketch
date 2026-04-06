@@ -52,6 +52,14 @@
     }}
 />
 
+<!-- During a break, an image is not displayed. -->
+<Story
+    name="Break"
+    args={{
+        drawingSession: new DrawingSession(imgs, [{ duration: 30, repeat: 1, isBreak: true }]),
+    }}
+/>
+
 <!-- With user interactions. -->
 <Story
     name="With Interactions"
