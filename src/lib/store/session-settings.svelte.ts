@@ -7,6 +7,8 @@ import { compareImages, type Image } from "$lib/types.svelte";
 import type { SessionSchedule } from "$lib/drawing-session.svelte";
 import { SvelteSet } from "svelte/reactivity";
 
+export type SchedulePreset = { name: string; schedule: SessionSchedule };
+
 export class SessionSettings implements Record<string, unknown> {
     get SESSION_MODES() {
         return [
@@ -28,6 +30,26 @@ export class SessionSettings implements Record<string, unknown> {
 
     get MAX_IMG_SHOW_TIME() {
         return 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
+    }
+
+    static DEFAULT_PRESET_NAME = "Default Preset";
+
+    static get DEFAULT_PRESET_SCHEDULE(): SessionSchedule {
+        return [
+            { duration: 60, repeat: 5, id: "1m x 5" },
+            { duration: 120, repeat: 5, id: "2m x 5" },
+            { duration: 300, repeat: 2, id: "5m x 2" },
+            { duration: 600, repeat: 1, id: "10m x 1" },
+        ];
+    }
+
+    static get DEFAULT_SAVED_SCHEDULES(): SchedulePreset[] {
+        return [
+            {
+                name: SessionSettings.DEFAULT_PRESET_NAME,
+                schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
+            },
+        ];
     }
 
     get #KEYS() {
@@ -61,24 +83,34 @@ export class SessionSettings implements Record<string, unknown> {
                 isValid: (v: unknown): v is number => validateInteger(v, 1, this.MAX_IMG_SHOW_TIME),
             },
             {
-                key: "sessionScheduleCustom",
-                isValid: (v: unknown): v is SessionSchedule => {
+                key: "schedulePresets",
+                isValid: (v: unknown): v is SchedulePreset[] => {
                     if (!Array.isArray(v)) return false;
-
-                    // Validate each item in the array
-                    for (const item of v) {
-                        if (!validateInteger(item.duration, 1, this.MAX_IMG_SHOW_TIME))
-                            return false;
-                        if (!validateInteger(item.repeat, 1, Infinity)) return false;
-                        if (typeof item.id !== "string") return false;
+                    for (const entry of v) {
+                        if (typeof entry !== "object" || entry === null) return false;
+                        if (typeof entry.name !== "string") return false;
+                        if (!this.#isValidSessionSchedule(entry.schedule)) return false;
                     }
-
-                    // Check for duplicate IDs
-                    const uniqueIds = new SvelteSet(v.map((s) => s.id));
-                    return uniqueIds.size === v.length;
+                    // Must contain at least one entry, and first entry must be "default preset"
+                    return v.length > 0 && v[0].name === SessionSettings.DEFAULT_PRESET_NAME;
                 },
             },
+            {
+                key: "selectedScheduleIdx",
+                isValid: (v: unknown): v is number => validateInteger(v, 0, Infinity),
+            },
         ];
+    }
+
+    #isValidSessionSchedule(v: unknown): v is SessionSchedule {
+        if (!Array.isArray(v)) return false;
+        for (const item of v) {
+            if (!validateInteger(item.duration, 1, this.MAX_IMG_SHOW_TIME)) return false;
+            if (!validateInteger(item.repeat, 1, Infinity)) return false;
+            if (typeof item.id !== "string") return false;
+        }
+        const uniqueIds = new SvelteSet(v.map((s) => s.id));
+        return uniqueIds.size === v.length;
     }
 
     // Folder containing images to show
@@ -92,9 +124,14 @@ export class SessionSettings implements Record<string, unknown> {
     sessionMode: string;
     imgShowTimeOption: string;
     imgShowTimeCustom: number;
-    sessionScheduleCustom: SessionSchedule;
+    schedulePresets: SchedulePreset[];
+    selectedScheduleIdx: number;
 
     [key: string]: unknown;
+
+    get sessionScheduleCustom(): SessionSchedule {
+        return this.schedulePresets[this.selectedScheduleIdx].schedule;
+    }
 
     get imgs(): Image[] {
         return this.#imgs;
@@ -113,7 +150,8 @@ export class SessionSettings implements Record<string, unknown> {
         sessionMode = this.SESSION_MODES[0].name,
         imgShowTimeOption = this.IMG_SHOW_TIME_OPTIONS[0],
         imgShowTimeCustom = Math.floor((parse(this.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000),
-        sessionScheduleCustom = [] as SessionSchedule,
+        schedulePresets: schedulePresets = SessionSettings.DEFAULT_SAVED_SCHEDULES,
+        selectedScheduleIdx = 0,
     } = {}) {
         this.imgFolder = $state(imgFolder);
         this.#imgs = [];
@@ -123,13 +161,19 @@ export class SessionSettings implements Record<string, unknown> {
         this.sessionMode = $state(sessionMode);
         this.imgShowTimeOption = $state(imgShowTimeOption);
         this.imgShowTimeCustom = $state(imgShowTimeCustom);
-        this.sessionScheduleCustom = $state(sessionScheduleCustom);
+        this.schedulePresets = $state(schedulePresets);
+        this.selectedScheduleIdx = $state(selectedScheduleIdx);
     }
 
     loadFromStore = async (persistentStore?: PersistentStore) => {
         if (!persistentStore) persistentStore = await getStore();
         const validatedStore = new ValidatedStore(persistentStore, this.#KEYS);
         await validatedStore.loadInto(this);
+        // Clamp selectedScheduleIdx in case schedulePresets shrank
+        this.selectedScheduleIdx = Math.min(
+            this.selectedScheduleIdx,
+            this.schedulePresets.length - 1,
+        );
     };
 
     saveToStore = async (persistentStore?: PersistentStore) => {
@@ -137,6 +181,27 @@ export class SessionSettings implements Record<string, unknown> {
         const validatedStore = new ValidatedStore(persistentStore, this.#KEYS);
         await validatedStore.save(this);
     };
+
+    selectSchedulePreset(idx: number) {
+        if (idx < 0 || idx >= this.schedulePresets.length) {
+            throw new Error(`Index out of range: ${idx}`);
+        }
+        this.selectedScheduleIdx = idx;
+    }
+
+    addSchedulePreset(name: string) {
+        this.schedulePresets.push({ name, schedule: [] });
+        this.selectedScheduleIdx = this.schedulePresets.length - 1;
+    }
+
+    removeSchedulePreset() {
+        if (this.selectedScheduleIdx === 0) return; // Don't allow removing default preset
+        this.schedulePresets.splice(this.selectedScheduleIdx, 1);
+        this.selectedScheduleIdx = Math.min(
+            this.selectedScheduleIdx,
+            this.schedulePresets.length - 1,
+        );
+    }
 
     get imgShowTime() {
         if (this.imgShowTimeOption === "Custom") {
