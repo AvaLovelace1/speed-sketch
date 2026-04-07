@@ -16,19 +16,24 @@
         label: string;
         items: Item[];
         value: string;
+        hideLabel?: boolean;
+        width?: string;
     }
 
-    let { label, items, value = $bindable() }: Props = $props();
+    let { label, items, value = $bindable(), hideLabel = false, width = "w-3xs" }: Props = $props();
 
     const id = $derived(stringToId(`${label}-select`));
     const itemsMap = $derived(new Map<string, Item>(items.map((item) => [item.value, item])));
 </script>
 
-<Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>
+{#if !hideLabel}
+    <Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>
+{/if}
 <Select.Root type="single" bind:value items={[...items.values()]}>
     <Select.Trigger
         {id}
-        class="select flex w-3xs cursor-pointer items-center gap-2 active:bg-base-200"
+        class="select flex cursor-pointer items-center gap-2 active:bg-base-200 {width}"
+        aria-label={label}
     >
         {#if itemsMap.get(value)?.icon}
             <div class="iconify text-stroke {itemsMap.get(value)?.icon}"></div>

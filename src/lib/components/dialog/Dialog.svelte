@@ -45,7 +45,7 @@
                 {#if open}
                     <Popup {...props}>
                         <Card class="relative p-8">
-                            <Dialog.Title class="mb-8 text-2xl font-semibold">{title}</Dialog.Title>
+                            <Dialog.Title class="mb-6 text-2xl font-semibold">{title}</Dialog.Title>
                             <Dialog.Description>{@render children()}</Dialog.Description>
                             <Dialog.Close
                                 class="absolute top-1 right-1 cursor-pointer p-2 text-muted hover:text-base-content focus:text-base-content active:text-muted"

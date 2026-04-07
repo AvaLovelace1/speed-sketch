@@ -54,9 +54,9 @@
             {#snippet child({ props, open })}
                 {#if open}
                     <Popup {...props}>
-                        <Card class="relative p-6">
+                        <Card class="relative p-8">
                             {#if title}
-                                <AlertDialog.Title class="mb-3 text-xl font-semibold">
+                                <AlertDialog.Title class="mb-6 text-2xl font-semibold">
                                     {title}
                                 </AlertDialog.Title>
                             {/if}
