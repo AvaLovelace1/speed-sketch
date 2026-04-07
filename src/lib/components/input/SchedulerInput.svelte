@@ -9,6 +9,7 @@
     import Sortable from "sortablejs";
     import type { Attachment } from "svelte/attachments";
     import { Button, Label } from "bits-ui";
+    import { untrack } from "svelte";
     import { prefersReducedMotion } from "svelte/motion";
     import { getDuration } from "$lib/motion.svelte";
     import { isTauri } from "@tauri-apps/api/core";
@@ -18,7 +19,11 @@
     }
 
     const { schedule = $bindable([]) }: Props = $props();
-    const scheduler = new Scheduler(schedule);
+    // Only recreate Scheduler when the schedule prop identity changes (e.g. switching presets)
+    let scheduler = $derived.by(() => {
+        const s = schedule;
+        return untrack(() => new Scheduler(s));
+    });
 
     const addBtn: Tool = {
         uid: "add-entry",
@@ -77,7 +82,7 @@
 </script>
 
 <table class="mb-3 block">
-    <caption class="mb-2 cursor-default text-start text-sm text-muted">Schedule</caption>
+    <caption class="sr-only">Scheduler input</caption>
     <tbody
         {@attach sortableAttachment}
         class="list max-h-48 overflow-auto rounded-box bg-base-200 inset-shadow-xs"

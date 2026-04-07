@@ -40,10 +40,15 @@
     name="Class"
     args={{
         sessionSettings: new SessionSettings({
-            sessionScheduleCustom: [
-                { duration: 60, repeat: 20, id: "1" },
-                { duration: 145, repeat: 10, id: "2" },
-                { duration: 3611, repeat: 5, id: "3" },
+            schedulePresets: [
+                {
+                    name: "Default Preset",
+                    schedule: [
+                        { duration: 60, repeat: 20, id: "1" },
+                        { duration: 145, repeat: 10, id: "2" },
+                        { duration: 3611, repeat: 5, id: "3" },
+                    ],
+                },
             ],
             sessionMode: "Class",
         }),

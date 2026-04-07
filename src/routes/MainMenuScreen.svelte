@@ -13,6 +13,7 @@
     import { SessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri as isTauriFn } from "@tauri-apps/api/core";
     import SchedulerInput from "$lib/components/input/SchedulerInput.svelte";
+    import SchedulePresets from "$lib/components/input/SchedulePresets.svelte";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
@@ -150,6 +151,16 @@
                         {/if}
                     {/if}
                     {#if sessionSettings.sessionMode === "Class"}
+                        <div class="mb-2 text-sm text-muted">Schedule</div>
+                        <SchedulePresets
+                            schedulePresets={sessionSettings.schedulePresets}
+                            selectedIdx={sessionSettings.selectedScheduleIdx}
+                            onSelect={(idx) => sessionSettings.selectSchedulePreset(idx)}
+                            onAdd={(name) => sessionSettings.addSchedulePreset(name)}
+                            onDelete={() => sessionSettings.removeSchedulePreset()}
+                            deleteDisabled={sessionSettings.selectedScheduleIdx === 0}
+                        />
+                        <div class="mb-2"></div>
                         <SchedulerInput bind:schedule />
                     {/if}
                 </div>
