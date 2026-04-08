@@ -10,7 +10,7 @@ import { SvelteSet } from "svelte/reactivity";
 export type SchedulePreset = { name: string; schedule: SessionSchedule };
 
 export class SessionSettings implements Record<string, unknown> {
-    get SESSION_MODES() {
+    static get SESSION_MODES() {
         return [
             {
                 name: "Endless",
@@ -24,15 +24,13 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     // Exactly 0 or 1 of these should be "Custom", and the rest should be a valid duration string
-    get IMG_SHOW_TIME_OPTIONS() {
+    static get IMG_SHOW_TIME_OPTIONS() {
         return ["30s", "45s", "1m", "2m", "5m", "10m", "Custom"];
     }
 
-    get MAX_IMG_SHOW_TIME() {
-        return 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
-    }
+    static readonly MAX_IMG_SHOW_TIME = 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
 
-    static DEFAULT_PRESET_NAME = "Default Preset";
+    static readonly DEFAULT_PRESET_NAME = "Default Preset";
 
     static get DEFAULT_PRESET_SCHEDULE(): SessionSchedule {
         return [
@@ -52,7 +50,7 @@ export class SessionSettings implements Record<string, unknown> {
         ];
     }
 
-    get #KEYS() {
+    static get #KEYS() {
         return [
             {
                 key: "imgFolder",
@@ -71,16 +69,18 @@ export class SessionSettings implements Record<string, unknown> {
                 isValid: (v: unknown): v is string =>
                     validateString(
                         v,
-                        this.SESSION_MODES.map((t) => t.name),
+                        SessionSettings.SESSION_MODES.map((t) => t.name),
                     ),
             },
             {
                 key: "imgShowTimeOption",
-                isValid: (v: unknown): v is string => validateString(v, this.IMG_SHOW_TIME_OPTIONS),
+                isValid: (v: unknown): v is string =>
+                    validateString(v, SessionSettings.IMG_SHOW_TIME_OPTIONS),
             },
             {
                 key: "imgShowTimeCustom",
-                isValid: (v: unknown): v is number => validateInteger(v, 1, this.MAX_IMG_SHOW_TIME),
+                isValid: (v: unknown): v is number =>
+                    validateInteger(v, 1, SessionSettings.MAX_IMG_SHOW_TIME),
             },
             {
                 key: "schedulePresets",
@@ -89,7 +89,7 @@ export class SessionSettings implements Record<string, unknown> {
                     for (const entry of v) {
                         if (typeof entry !== "object" || entry === null) return false;
                         if (typeof entry.name !== "string") return false;
-                        if (!this.#isValidSessionSchedule(entry.schedule)) return false;
+                        if (!SessionSettings.#isValidSessionSchedule(entry.schedule)) return false;
                     }
                     // Must contain at least one entry, and first entry must be "default preset"
                     return v.length > 0 && v[0].name === SessionSettings.DEFAULT_PRESET_NAME;
@@ -102,10 +102,10 @@ export class SessionSettings implements Record<string, unknown> {
         ];
     }
 
-    #isValidSessionSchedule(v: unknown): v is SessionSchedule {
+    static #isValidSessionSchedule(v: unknown): v is SessionSchedule {
         if (!Array.isArray(v)) return false;
         for (const item of v) {
-            if (!validateInteger(item.duration, 1, this.MAX_IMG_SHOW_TIME)) return false;
+            if (!validateInteger(item.duration, 1, SessionSettings.MAX_IMG_SHOW_TIME)) return false;
             if (!validateInteger(item.repeat, 1, Infinity)) return false;
             if (typeof item.id !== "string") return false;
         }
@@ -147,9 +147,11 @@ export class SessionSettings implements Record<string, unknown> {
         imgs = [],
         includeSubfolders = true,
         shuffleImgs = true,
-        sessionMode = this.SESSION_MODES[0].name,
-        imgShowTimeOption = this.IMG_SHOW_TIME_OPTIONS[0],
-        imgShowTimeCustom = Math.floor((parse(this.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000),
+        sessionMode = SessionSettings.SESSION_MODES[0].name,
+        imgShowTimeOption = SessionSettings.IMG_SHOW_TIME_OPTIONS[0],
+        imgShowTimeCustom = Math.floor(
+            (parse(SessionSettings.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000,
+        ),
         schedulePresets: schedulePresets = SessionSettings.DEFAULT_SAVED_SCHEDULES,
         selectedScheduleIdx = 0,
     } = {}) {
@@ -167,7 +169,7 @@ export class SessionSettings implements Record<string, unknown> {
 
     loadFromStore = async (persistentStore?: PersistentStore) => {
         if (!persistentStore) persistentStore = await getStore();
-        const validatedStore = new ValidatedStore(persistentStore, this.#KEYS);
+        const validatedStore = new ValidatedStore(persistentStore, SessionSettings.#KEYS);
         await validatedStore.loadInto(this);
         // Clamp selectedScheduleIdx in case schedulePresets shrank
         this.selectedScheduleIdx = Math.min(
@@ -178,7 +180,7 @@ export class SessionSettings implements Record<string, unknown> {
 
     saveToStore = async (persistentStore?: PersistentStore) => {
         if (!persistentStore) persistentStore = await getStore();
-        const validatedStore = new ValidatedStore(persistentStore, this.#KEYS);
+        const validatedStore = new ValidatedStore(persistentStore, SessionSettings.#KEYS);
         await validatedStore.save(this);
     };
 

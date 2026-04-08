@@ -49,20 +49,15 @@
         isTauri = isTauriFn(),
     }: Props = $props();
 
-    const sessionModeOptions = $derived(
-        sessionSettings.SESSION_MODES.map((sessionMode) => ({
-            label: sessionMode.name,
-            value: sessionMode.name,
-            description: sessionMode.description,
-        })),
-    );
-
-    const imgShowTimeOptions = $derived(
-        sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
-            label: option,
-            value: option,
-        })),
-    );
+    const sessionModeOptions = SessionSettings.SESSION_MODES.map((sessionMode) => ({
+        label: sessionMode.name,
+        value: sessionMode.name,
+        description: sessionMode.description,
+    }));
+    const imgShowTimeOptions = SessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
+        label: option,
+        value: option,
+    }));
 
     let schedule = $derived(sessionSettings.sessionScheduleCustom);
 </script>
