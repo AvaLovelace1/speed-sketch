@@ -1,11 +1,13 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { resolve } from "$app/paths";
     import { goto } from "$app/navigation";
     import MainMenuScreen from "./MainMenuScreen.svelte";
     import { type Image } from "$lib/types.svelte";
-    import { DrawingSession, currentSession } from "$lib/drawing-session.svelte";
+    import { currentSession, DrawingSession } from "$lib/drawing-session.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
+    import { isTauri } from "@tauri-apps/api/core";
+    import { getCurrentWindow } from "@tauri-apps/api/window";
 
     let imgs = $state<Image[]>([]);
     let imgErrMsg = $state("");
@@ -52,15 +54,36 @@
         await goto(resolve("/session"), { replaceState: true });
     }
 
+    let unlisten: () => void;
+
     onMount(async () => {
         if (sessionSettings.imgFolder) await onImgsInput(sessionSettings.imgFolder);
         else if (sessionSettings.imgs.length > 0) await onImgsInput(sessionSettings.imgs);
+        if (isTauri()) {
+            // Save session settings before window close
+            // We need to enable core:window:allow-destroy permissions to allow the window to close after
+            // Note that this doesn't fire when quitting via Cmd-Q on Mac
+            unlisten = await getCurrentWindow().onCloseRequested(async (_) => {
+                await sessionSettings.saveToStore();
+            });
+        }
+    });
+
+    onDestroy(() => {
+        if (unlisten) unlisten();
     });
 </script>
 
 <svelte:head>
     <title>SpeedSketch</title>
 </svelte:head>
+
+<!-- Save session settings before window unloads -->
+<svelte:window
+    onbeforeunload={async () => {
+        await sessionSettings.saveToStore();
+    }}
+/>
 
 <MainMenuScreen
     {sessionSettings}
