@@ -24,13 +24,38 @@
 <!-- A dropdown select component with options. -->
 <Story name="Default" />
 
+<!-- A dropdown select component with grouped options. -->
+<Story
+    name="With Groups"
+    args={{
+        label: "Select a fruit",
+        items: [
+            {
+                heading: "Citrus",
+                items: [
+                    { value: "orange", label: "Orange" },
+                    { value: "lemon", label: "Lemon" },
+                    { value: "grapefruit", label: "Grapefruit" },
+                ],
+            },
+            {
+                heading: "Berries",
+                items: [
+                    { value: "strawberry", label: "Strawberry" },
+                    { value: "blueberry", label: "Blueberry" },
+                ],
+            },
+        ],
+    }}
+/>
+
 <!-- The user can select an option from the dropdown. -->
 <Story
     name="With Interactions"
     play={async ({ args, canvas, userEvent, step }) => {
         async function selectOption(num: NumberType) {
             await step(`Set option to ${num}`, async () => {
-                const item = args.items[num];
+                const item = args.items[num] as { value: string; label: string };
                 const selectBtn = canvas.getByRole("button", { name: args.label });
                 await userEvent.click(selectBtn);
                 const listboxCanvas = within(screen.getByRole("listbox"));
