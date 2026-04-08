@@ -327,7 +327,7 @@ The user interface for a drawing session.
         bind:this={confirmExitDialog}
         title="Exit session?"
         description="This will end the current session"
-        cancelText="Stay"
+        cancelText="Cancel"
         confirmText="Exit"
         onOpen={freeze}
         onCancel={unfreeze}

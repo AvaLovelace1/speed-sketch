@@ -102,8 +102,8 @@
 
 <AlertDialog
     bind:this={deleteDialog}
-    title="Delete preset"
-    description={`Are you sure you want to delete "${selectedName}"?`}
+    title="Delete preset?"
+    description={`“${selectedName}” will be permanently deleted`}
     confirmText="Delete"
     onConfirm={() => {
         deleteDialog.close();
