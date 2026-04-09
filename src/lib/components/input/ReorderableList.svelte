@@ -86,7 +86,7 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
                 }}
             >
                 <Button.Root
-                    class="sortable-handle flex cursor-grab items-center py-3
+                    class="sortable-handle flex cursor-grab items-center self-stretch
                            text-base text-stroke group-aria-selected:text-primary-content"
                     onmousedown={() => (manager.selectedIdx = i)}
                     type="button"

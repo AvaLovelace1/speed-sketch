@@ -63,7 +63,7 @@
     {tools}
 >
     {#snippet emptyState()}
-        <p class="p-3 text-xs text-muted">
+        <p class="p-1 text-xs text-muted">
             Use
             <span class="iconify align-middle text-base-content {addBtn.icon}"></span>
             <span class="sr-only">{addBtn.tooltip}</span>
@@ -76,30 +76,28 @@
         </p>
     {/snippet}
     {#snippet row(item: ScheduleEntry, index: number, isSelected: boolean)}
-        <div class="grow">
-            <div class="flex items-center gap-2">
-                {#if item.isBreak}
-                    <span class="iconify text-lg lucide--coffee"></span>
-                    <div class="cursor-default font-semibold">Break</div>
-                {:else}
-                    <Label.Root class="flex items-center text-lg" for={`num-images-${item.id}`}>
-                        <span class="iconify lucide--image"></span>
-                        <span class="sr-only">Number of images</span>
-                    </Label.Root>
-                    <div class="flex items-baseline gap-2">
-                        <NumberField
-                            id={`num-images-${item.id}`}
-                            minValue={1}
-                            maxValue={999}
-                            bind:value={schedule[index].repeat}
-                            bgColor={isSelected ? "primary" : "base"}
-                        />
-                        <div class="cursor-default text-xs">
-                            {schedule[index].repeat === 1 ? "image" : "images"}
-                        </div>
+        <div class="flex grow items-center gap-2">
+            {#if item.isBreak}
+                <span class="iconify text-lg lucide--coffee"></span>
+                <div class="cursor-default font-semibold">Break</div>
+            {:else}
+                <Label.Root class="flex items-center text-lg" for={`num-images-${item.id}`}>
+                    <span class="iconify lucide--image"></span>
+                    <span class="sr-only">Number of images</span>
+                </Label.Root>
+                <div class="flex items-baseline gap-2">
+                    <NumberField
+                        id={`num-images-${item.id}`}
+                        minValue={1}
+                        maxValue={999}
+                        bind:value={schedule[index].repeat}
+                        bgColor={isSelected ? "primary" : "base"}
+                    />
+                    <div class="cursor-default text-xs">
+                        {schedule[index].repeat === 1 ? "image" : "images"}
                     </div>
-                {/if}
-            </div>
+                </div>
+            {/if}
         </div>
         <div>
             <DurationField
