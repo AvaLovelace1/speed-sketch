@@ -223,7 +223,7 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     getImgs = async () => {
-        if (this.imgFolders.length > 0 && isTauri()) this.imgs = await this.getImgsFromFolders();
+        if (isTauri()) this.imgs = await this.getImgsFromFolders();
         const imgs = [...this.imgs];
         if (imgs.length === 0) throw new Error("No images found");
         if (this.shuffleImgs) fisherYatesShuffle(imgs);

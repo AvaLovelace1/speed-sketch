@@ -24,7 +24,7 @@
         isLoadingImgs = true;
 
         let inputFolders = [...sessionSettings.imgFolders];
-        let inputRawImgs = sessionSettings.imgs;
+        let inputRawImgs: Image[];
         if (inputImgsOrFolders !== null) {
             if (inputImgsOrFolders.length === 0) {
                 inputFolders = [];
@@ -36,10 +36,9 @@
                 inputFolders = [];
                 inputRawImgs = inputImgsOrFolders as Image[];
             }
+            sessionSettings.imgFolders = inputFolders;
+            sessionSettings.imgs = inputRawImgs;
         }
-
-        sessionSettings.imgFolders = inputFolders;
-        sessionSettings.imgs = inputRawImgs;
 
         let inputImgs: Image[] = [];
         let inputErrMsg = "";

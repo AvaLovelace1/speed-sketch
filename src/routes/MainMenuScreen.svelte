@@ -14,6 +14,7 @@
     import { isTauri as isTauriFn } from "@tauri-apps/api/core";
     import SchedulerInput from "$lib/components/input/SchedulerInput.svelte";
     import SchedulePresets from "$lib/components/input/SchedulePresets.svelte";
+    import FolderInput from "$lib/components/input/FolderInput.svelte";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
@@ -60,6 +61,7 @@
     }));
 
     let schedule = $derived(sessionSettings.sessionScheduleCustom);
+    let imgFolders = $derived(sessionSettings.imgFolders);
 </script>
 
 <CenteredFull>
@@ -116,6 +118,13 @@
                             onInput={onImgsInput}
                             {isTauri}
                         />
+                        <div class="mb-2"></div>
+                        {#if isTauri}
+                            <FolderInput
+                                bind:folders={imgFolders}
+                                onChange={async () => await onImgsInput(null)}
+                            />
+                        {/if}
                     </div>
                     <RadioButtons
                         class="mb-1 flex"
