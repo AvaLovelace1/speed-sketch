@@ -76,7 +76,7 @@
         </p>
     {/snippet}
     {#snippet row(item: ScheduleEntry, index: number, isSelected: boolean)}
-        <div class="flex grow items-center gap-2">
+        <td class="flex grow items-center gap-2">
             {#if item.isBreak}
                 <span class="iconify text-lg lucide--coffee"></span>
                 <div class="cursor-default">Break</div>
@@ -98,14 +98,14 @@
                     </div>
                 </div>
             {/if}
-        </div>
-        <div>
+        </td>
+        <td>
             <DurationField
                 bind:seconds={schedule[index].duration}
                 inputStyle="small"
                 bgColor={isSelected ? "primary" : "base"}
             />
-        </div>
+        </td>
     {/snippet}
 </ReorderableList>
 

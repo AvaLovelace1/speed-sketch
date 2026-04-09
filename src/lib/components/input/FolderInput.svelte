@@ -86,9 +86,9 @@ A reorderable list of image folders with add/remove/move controls.
         </p>
     {/snippet}
     {#snippet row(folder: string, _index: number, _isSelected: boolean)}
-        <div class="flex grow items-center gap-2 truncate text-sm" title={folder}>
+        <td class="flex grow items-center gap-2 truncate text-sm" title={folder}>
             <span class="iconify lucide--folder"></span>
             {basename(folder)}
-        </div>
+        </td>
     {/snippet}
 </ReorderableList>

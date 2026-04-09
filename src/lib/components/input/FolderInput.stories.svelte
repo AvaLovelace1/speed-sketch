@@ -51,7 +51,7 @@
         const moveDownBtn = canvas.getByRole("button", { name: /down/i });
 
         function getOption(idx: NumberType) {
-            return canvas.getAllByRole("option")[idx];
+            return canvas.getAllByRole("row")[idx];
         }
 
         async function selectEntry(idx: NumberType) {
@@ -59,7 +59,7 @@
         }
 
         await step("Initial state has 3 folders", async () => {
-            const options = canvas.getAllByRole("option");
+            const options = canvas.getAllByRole("row");
             await expect(options).toHaveLength(3);
             await expect(options[0]).toHaveTextContent(/folder1/);
             await expect(options[1]).toHaveTextContent(/folder2/);
@@ -86,7 +86,7 @@
         await step("Move first folder down", async () => {
             await selectEntry(0);
             await userEvent.click(moveDownBtn);
-            const options = canvas.getAllByRole("option");
+            const options = canvas.getAllByRole("row");
             await expect(options[0]).toHaveTextContent(/folder2/);
             await expect(options[1]).toHaveTextContent(/folder1/);
             await expect(getOption(1)).toHaveAttribute("aria-selected", "true");
@@ -95,7 +95,7 @@
         await step("Move last folder up", async () => {
             await selectEntry(2);
             await userEvent.click(moveUpBtn);
-            const options = canvas.getAllByRole("option");
+            const options = canvas.getAllByRole("row");
             await expect(options[1]).toHaveTextContent(/folder3/);
             await expect(options[2]).toHaveTextContent(/folder1/);
             await expect(getOption(1)).toHaveAttribute("aria-selected", "true");
@@ -104,7 +104,7 @@
         await step("Remove selected folder", async () => {
             await selectEntry(1);
             await userEvent.click(removeBtn);
-            const options = canvas.getAllByRole("option");
+            const options = canvas.getAllByRole("row");
             await expect(options).toHaveLength(2);
             await expect(args.onChange).toHaveBeenCalledOnce();
             clearAllMocks();
@@ -112,7 +112,7 @@
 
         await step("Add a new folder", async () => {
             await userEvent.click(addBtn);
-            const options = canvas.getAllByRole("option");
+            const options = canvas.getAllByRole("row");
             await expect(options).toHaveLength(3);
             await expect(options[2]).toHaveTextContent(/new-folder/);
             await expect(args.onChange).toHaveBeenCalledOnce();
