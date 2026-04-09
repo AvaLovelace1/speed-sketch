@@ -16,18 +16,29 @@
     let scheduleIsValid = $derived(sessionSettings.sessionSchedule.length > 0);
     let canStartSession = $derived(imgsAreValid && scheduleIsValid);
 
-    // Updates the shown images from inputImgsOrFolder. If inputImgsOrFolder is null, it uses the current session settings.
-    export async function onImgsInput(inputImgsOrFolder: string | Image[] | null) {
+    // Updates the shown images from inputImgsOrFolders.
+    // If inputImgsOrFolders is null, it uses the current session settings.
+    // If inputImgsOrFolders is empty, it clears the list of shown images.
+    export async function onImgsInput(inputImgsOrFolders: string[] | Image[] | null) {
         imgsAreValid = false;
         isLoadingImgs = true;
 
-        let inputFolder = sessionSettings.imgFolder;
+        let inputFolders = [...sessionSettings.imgFolders];
         let inputRawImgs = sessionSettings.imgs;
-        if (inputImgsOrFolder !== null) {
-            inputFolder = typeof inputImgsOrFolder === "string" ? inputImgsOrFolder : "";
-            inputRawImgs = Array.isArray(inputImgsOrFolder) ? inputImgsOrFolder : [];
+        if (inputImgsOrFolders !== null) {
+            if (inputImgsOrFolders.length === 0) {
+                inputFolders = [];
+                inputRawImgs = [];
+            } else if (typeof inputImgsOrFolders[0] === "string") {
+                inputFolders = inputImgsOrFolders as string[];
+                inputRawImgs = [];
+            } else {
+                inputFolders = [];
+                inputRawImgs = inputImgsOrFolders as Image[];
+            }
         }
-        sessionSettings.imgFolder = inputFolder;
+
+        sessionSettings.imgFolders = inputFolders;
         sessionSettings.imgs = inputRawImgs;
 
         let inputImgs: Image[] = [];
@@ -38,8 +49,12 @@
             inputErrMsg = e instanceof Error ? e.message : "Unknown error loading images";
         }
 
-        // If the folder has changed while loading, ignore the result
-        if (sessionSettings.imgFolder !== inputFolder) return;
+        // If the folders have changed while loading, ignore the result
+        if (
+            sessionSettings.imgFolders.length !== inputFolders.length ||
+            sessionSettings.imgFolders.some((f, i) => f !== inputFolders[i])
+        )
+            return;
 
         imgs = inputImgs;
         imgErrMsg = inputErrMsg;
@@ -57,7 +72,7 @@
     let unlisten: () => void;
 
     onMount(async () => {
-        if (sessionSettings.imgFolder) await onImgsInput(sessionSettings.imgFolder);
+        if (sessionSettings.imgFolders.length > 0) await onImgsInput(sessionSettings.imgFolders);
         else if (sessionSettings.imgs.length > 0) await onImgsInput(sessionSettings.imgs);
         if (isTauri()) {
             // Save session settings before window close
