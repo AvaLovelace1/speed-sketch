@@ -32,17 +32,17 @@ describe("scheduler.svelte.ts", () => {
         scheduler.selectedIdx = 1;
 
         // Remove middle entry
-        scheduler.removeEntry();
+        scheduler.removeItem();
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2]]);
         expect(scheduler.selectedIdx).toBe(1);
 
         // Remove last entry
-        scheduler.removeEntry();
+        scheduler.removeItem();
         expect(scheduler.schedule).toEqual([ENTRIES[0]]);
         expect(scheduler.selectedIdx).toBe(0);
 
         // Remove first entry, leaving the schedule empty
-        scheduler.removeEntry();
+        scheduler.removeItem();
         expect(scheduler.schedule).toEqual([]);
         expect(scheduler.selectedIdx).toBe(-1);
     });
@@ -51,15 +51,15 @@ describe("scheduler.svelte.ts", () => {
         const scheduler = new Scheduler([...ENTRIES]);
 
         scheduler.selectedIdx = 2;
-        scheduler.moveEntryUp();
+        scheduler.moveItemUp();
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(1);
 
-        scheduler.moveEntryUp();
+        scheduler.moveItemUp();
         expect(scheduler.schedule).toEqual([ENTRIES[2], ENTRIES[0], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(0);
 
-        scheduler.moveEntryUp();
+        scheduler.moveItemUp();
         expect(scheduler.schedule).toEqual([ENTRIES[2], ENTRIES[0], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(0);
     });
@@ -68,15 +68,15 @@ describe("scheduler.svelte.ts", () => {
         const scheduler = new Scheduler([...ENTRIES]);
 
         scheduler.selectedIdx = 0;
-        scheduler.moveEntryDown();
+        scheduler.moveItemDown();
         expect(scheduler.schedule).toEqual([ENTRIES[1], ENTRIES[0], ENTRIES[2]]);
         expect(scheduler.selectedIdx).toBe(1);
 
-        scheduler.moveEntryDown();
+        scheduler.moveItemDown();
         expect(scheduler.schedule).toEqual([ENTRIES[1], ENTRIES[2], ENTRIES[0]]);
         expect(scheduler.selectedIdx).toBe(2);
 
-        scheduler.moveEntryDown();
+        scheduler.moveItemDown();
         expect(scheduler.schedule).toEqual([ENTRIES[1], ENTRIES[2], ENTRIES[0]]);
         expect(scheduler.selectedIdx).toBe(2);
     });
@@ -85,15 +85,15 @@ describe("scheduler.svelte.ts", () => {
         const scheduler = new Scheduler([...ENTRIES]);
 
         scheduler.selectedIdx = 2;
-        scheduler.moveEntry(0);
+        scheduler.moveItem(0);
         expect(scheduler.schedule).toEqual([ENTRIES[2], ENTRIES[0], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(0);
 
-        scheduler.moveEntry(1);
+        scheduler.moveItem(1);
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2], ENTRIES[1]]);
         expect(scheduler.selectedIdx).toBe(1);
 
-        scheduler.moveEntry(2);
+        scheduler.moveItem(2);
         expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[1], ENTRIES[2]]);
         expect(scheduler.selectedIdx).toBe(2);
     });
