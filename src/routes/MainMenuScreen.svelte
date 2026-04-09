@@ -15,6 +15,7 @@
     import SchedulerInput from "$lib/components/input/SchedulerInput.svelte";
     import SchedulePresets from "$lib/components/input/SchedulePresets.svelte";
     import FolderInput from "$lib/components/input/FolderInput.svelte";
+    import ImageGrid from "$lib/components/ImageGrid.svelte";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
@@ -111,18 +112,34 @@
                                 />
                             </div>
                         </div>
-                        <ImageDropzone
-                            {imgs}
-                            bind:isLoading={isLoadingImgs}
-                            errMsg={imgErrMsg}
-                            onInput={onImgsInput}
-                            {isTauri}
-                        />
-                        <div class="mb-2"></div>
                         {#if isTauri}
+                            {#if imgs.length > 0}
+                                <ImageGrid
+                                    {imgs}
+                                    isLoading={isLoadingImgs}
+                                    maxImgs={6}
+                                    gridClass="grid-cols-6 gap-1 mb-4"
+                                    moreTileClass="bg-base-200"
+                                ></ImageGrid>
+                            {:else if imgErrMsg}
+                                <p role="status" class="mb-2 text-sm text-error italic">
+                                    <span class="iconify align-text-bottom lucide--octagon-x">
+                                    </span>
+                                    <span class="sr-only">Error</span>
+                                    {imgErrMsg}
+                                </p>
+                            {/if}
                             <FolderInput
                                 bind:folders={imgFolders}
                                 onChange={async () => await onImgsInput(null)}
+                            />
+                        {:else}
+                            <ImageDropzone
+                                {imgs}
+                                bind:isLoading={isLoadingImgs}
+                                errMsg={imgErrMsg}
+                                onInput={onImgsInput}
+                                {isTauri}
                             />
                         {/if}
                     </div>

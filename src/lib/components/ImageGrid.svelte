@@ -13,9 +13,16 @@ Shows a grid of image thumbnails.
         isLoading?: boolean;
         maxImgs?: number;
         gridClass?: string;
+        moreTileClass?: string;
     }
 
-    const { imgs = [], isLoading = false, maxImgs = 8, gridClass = "" }: Props = $props();
+    const {
+        imgs = [],
+        isLoading = false,
+        maxImgs = 8,
+        gridClass = "",
+        moreTileClass = "",
+    }: Props = $props();
 
     // Workaround for bug https://youtrack.jetbrains.com/issue/WEB-61819/Svelte-5-TypeScript-in-markup-expressions
     type StringType = string;
@@ -47,7 +54,7 @@ Shows a grid of image thumbnails.
 {/snippet}
 
 {#snippet moreTile(count: NumberType)}
-    <div class={TILE_CLASS}>
+    <div class={[TILE_CLASS, moreTileClass]}>
         + <span class="text-lg font-semibold">{count}</span>
     </div>
 {/snippet}
