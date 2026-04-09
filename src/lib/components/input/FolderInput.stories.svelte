@@ -90,6 +90,8 @@
             await expect(options[0]).toHaveTextContent(/folder2/);
             await expect(options[1]).toHaveTextContent(/folder1/);
             await expect(getOption(1)).toHaveAttribute("aria-selected", "true");
+            await expect(args.onChange).toHaveBeenCalledOnce();
+            clearAllMocks();
         });
 
         await step("Move last folder up", async () => {
@@ -99,6 +101,8 @@
             await expect(options[1]).toHaveTextContent(/folder3/);
             await expect(options[2]).toHaveTextContent(/folder1/);
             await expect(getOption(1)).toHaveAttribute("aria-selected", "true");
+            await expect(args.onChange).toHaveBeenCalledOnce();
+            clearAllMocks();
         });
 
         await step("Remove selected folder", async () => {

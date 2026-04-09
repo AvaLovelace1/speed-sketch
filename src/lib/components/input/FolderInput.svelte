@@ -56,14 +56,20 @@ A reorderable list of image folders with add/remove/move controls.
     const moveUpBtn: Tool = $derived({
         uid: "move-entry-up",
         icon: "lucide--arrow-up-from-line",
-        action: () => manager.moveItemUp(),
+        action: () => {
+            manager.moveItemUp();
+            onChange();
+        },
         tooltip: "Move folder up",
         disabled: manager.selectedIdx <= 0,
     });
     const moveDownBtn: Tool = $derived({
         uid: "move-entry-down",
         icon: "lucide--arrow-down-from-line",
-        action: () => manager.moveItemDown(),
+        action: () => {
+            manager.moveItemDown();
+            onChange();
+        },
         tooltip: "Move folder down",
         disabled: manager.selectedIdx >= manager.items.length - 1,
     });
