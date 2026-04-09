@@ -30,7 +30,7 @@
         imgs?: Image[];
         imgErrMsg?: string;
         isLoadingImgs?: boolean;
-        onImgsInput?: (inputImgsOrFolder: string | Image[] | null) => Promise<void>;
+        onImgsInput?: (inputImgsOrFolders: string[] | Image[] | null) => Promise<void>;
 
         canStartSession?: boolean;
         startSession?: () => Promise<void>;
@@ -111,7 +111,7 @@
                         </div>
                         <ImageDropzone
                             {imgs}
-                            folder={sessionSettings.imgFolder}
+                            folders={sessionSettings.imgFolders}
                             bind:isLoading={isLoadingImgs}
                             errMsg={imgErrMsg}
                             onInput={onImgsInput}

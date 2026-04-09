@@ -87,7 +87,7 @@
     name="Tauri"
     args={{
         sessionSettings: new SessionSettings({
-            imgFolder: "C:\\Users\\User\\Pictures",
+            imgFolders: ["C:\\Users\\User\\Pictures"],
         }),
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
@@ -100,7 +100,7 @@
     name="Tauri Invalid"
     args={{
         sessionSettings: new SessionSettings({
-            imgFolder: "C:\\Users\\User\\Pictures",
+            imgFolders: ["C:\\Users\\User\\Pictures"],
         }),
         imgErrMsg: "No images found",
         canStartSession: false,
