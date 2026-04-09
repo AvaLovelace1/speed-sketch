@@ -76,7 +76,7 @@ describe("session-settings.svelte.ts", () => {
         await expect(sessionSettings.getImgs()).rejects.toThrow("No images found");
 
         // Valid image list
-        const imgs = [SORTED_IMGS[2], SORTED_IMGS[0], SORTED_IMGS[1]];
+        const imgs = [...SORTED_IMGS];
         sessionSettings.imgs = imgs;
 
         // Not shuffled (should return sorted order)

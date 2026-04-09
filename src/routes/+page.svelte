@@ -3,7 +3,7 @@
     import { resolve } from "$app/paths";
     import { goto } from "$app/navigation";
     import MainMenuScreen from "./MainMenuScreen.svelte";
-    import { type Image } from "$lib/types.svelte";
+    import { compareImages, type Image } from "$lib/types.svelte";
     import { currentSession, DrawingSession } from "$lib/drawing-session.svelte";
     import { sessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri } from "@tauri-apps/api/core";
@@ -35,6 +35,7 @@
             } else {
                 inputFolders = [];
                 inputRawImgs = inputImgsOrFolders as Image[];
+                inputRawImgs = inputRawImgs.sort(compareImages);
             }
             sessionSettings.imgFolders = inputFolders;
             sessionSettings.imgs = inputRawImgs;

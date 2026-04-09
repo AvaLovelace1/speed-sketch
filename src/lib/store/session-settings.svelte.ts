@@ -139,8 +139,7 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     set imgs(value: Image[]) {
-        // Sort images before setting them
-        this.#imgs = [...value].sort(compareImages);
+        this.#imgs = [...value];
     }
 
     constructor({
@@ -254,11 +253,13 @@ export class SessionSettings implements Record<string, unknown> {
             throw e;
         })) as string[];
 
-        const imgs: Image[] = files.map((file) => ({
-            name: basename(file),
-            url: convertFileSrc(file),
-            path: file,
-        }));
+        const imgs: Image[] = files
+            .map((file) => ({
+                name: basename(file),
+                url: convertFileSrc(file),
+                path: file,
+            }))
+            .sort(compareImages);
         return imgs;
     };
 }
