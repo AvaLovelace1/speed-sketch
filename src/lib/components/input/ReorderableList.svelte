@@ -84,9 +84,9 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
                     }
                 }}
             >
-                <td>
+                <td class="flex self-stretch">
                     <Button.Root
-                        class="sortable-handle flex cursor-grab items-center self-stretch
+                        class="sortable-handle flex cursor-grab items-center
                            text-base text-stroke group-aria-selected:text-primary-content"
                         onmousedown={() => (manager.selectedIdx = i)}
                         type="button"
