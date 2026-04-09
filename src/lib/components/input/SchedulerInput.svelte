@@ -79,7 +79,7 @@
         <div class="flex grow items-center gap-2">
             {#if item.isBreak}
                 <span class="iconify text-lg lucide--coffee"></span>
-                <div class="cursor-default font-semibold">Break</div>
+                <div class="cursor-default">Break</div>
             {:else}
                 <Label.Root class="flex items-center text-lg" for={`num-images-${item.id}`}>
                     <span class="iconify lucide--image"></span>
