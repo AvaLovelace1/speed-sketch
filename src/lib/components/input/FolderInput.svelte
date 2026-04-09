@@ -84,12 +84,16 @@ A reorderable list of image folders with add/remove/move controls.
     {onChange}
 >
     {#snippet emptyState()}
-        <p class="p-1 text-xs text-muted">
+        <button
+            class="w-100 cursor-pointer p-1 text-xs text-muted"
+            onclick={addFolders}
+            type="button"
+        >
             Use
             <span class="iconify align-text-bottom text-base-content {addBtn.icon}"></span>
             <span class="sr-only">{addBtn.icon}</span>
-            to add an image folder(s)
-        </p>
+            or click to add image folders
+        </button>
     {/snippet}
     {#snippet row(folder: string, _index: number, _isSelected: boolean)}
         <td class="flex grow items-center gap-2 truncate text-sm" title={folder}>

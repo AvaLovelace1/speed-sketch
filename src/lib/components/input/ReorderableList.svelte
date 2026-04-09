@@ -64,7 +64,7 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
     >
         {#if manager.items.length === 0 && emptyState}
             <tr class="list-row flex justify-center text-center">
-                <td>
+                <td class="grow">
                     {@render emptyState()}
                 </td>
             </tr>
