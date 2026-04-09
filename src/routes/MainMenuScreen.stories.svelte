@@ -7,7 +7,15 @@
     import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";
     import Sample2 from "$lib/assets/images/pexels-by-sasha-kim.jpg";
     import Sample3 from "$lib/assets/images/pexels-by-andrew-sindt.jpg";
-    import { fn, expect, clearAllMocks, screen, within, waitFor } from "storybook/test";
+    import {
+        fn,
+        expect,
+        clearAllMocks,
+        screen,
+        within,
+        waitFor,
+        waitForElementToBeRemoved,
+    } from "storybook/test";
 
     const img1 = { name: "img1.jpg", url: Sample1 };
     const img2 = { name: "img2.jpg", url: Sample2 };
@@ -173,6 +181,7 @@
 
             const submitBtn = screen.getByRole("button", { name: /^add$/i });
             await userEvent.click(submitBtn);
+            await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
 
             // New preset should be auto-selected
             expect(args.sessionSettings.selectedScheduleIdx).toBe(1);
@@ -226,6 +235,7 @@
 
             const confirmBtn = screen.getByRole("button", { name: /^delete$/i });
             await userEvent.click(confirmBtn);
+            await waitForElementToBeRemoved(() => screen.queryByRole("alertdialog"));
 
             // Should fall back to Default Preset
             await waitFor(() => expect(args.sessionSettings.schedulePresets).toHaveLength(1));
