@@ -53,8 +53,9 @@ export class SessionSettings implements Record<string, unknown> {
     static get #KEYS() {
         return [
             {
-                key: "imgFolder",
-                isValid: (v: unknown): v is string => typeof v === "string",
+                key: "imgFolders",
+                isValid: (v: unknown): v is string[] =>
+                    Array.isArray(v) && v.every((item) => typeof item === "string"),
             },
             {
                 key: "includeSubfolders",
@@ -113,11 +114,11 @@ export class SessionSettings implements Record<string, unknown> {
         return uniqueIds.size === v.length;
     }
 
-    // Folder containing images to show
-    imgFolder: string;
-    // Array of images to show, to be used if imgFolder is not set
+    // Folders containing images to show
+    imgFolders: string[];
+    // Array of images to show, to be used if imgFolders is empty
     #imgs: Image[];
-    // Whether to include images from subfolders. Has no effect if imgFolder is not set
+    // Whether to include images from subfolders. Has no effect if imgFolders is empty
     includeSubfolders: boolean;
     // Whether to shuffle images before showing them
     shuffleImgs: boolean;
@@ -143,7 +144,7 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     constructor({
-        imgFolder = "",
+        imgFolders = [] as string[],
         imgs = [],
         includeSubfolders = true,
         shuffleImgs = true,
@@ -155,7 +156,7 @@ export class SessionSettings implements Record<string, unknown> {
         schedulePresets: schedulePresets = SessionSettings.DEFAULT_SAVED_SCHEDULES,
         selectedScheduleIdx = 0,
     } = {}) {
-        this.imgFolder = $state(imgFolder);
+        this.imgFolders = $state(imgFolders);
         this.#imgs = [];
         this.imgs = imgs;
         this.includeSubfolders = $state(includeSubfolders);
@@ -222,17 +223,26 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     getImgs = async () => {
-        if (this.imgFolder !== "" && isTauri()) this.imgs = await this.getImgsFromFolder();
+        if (this.imgFolders.length > 0 && isTauri()) this.imgs = await this.getImgsFromFolders();
         const imgs = [...this.imgs];
         if (imgs.length === 0) throw new Error("No images found");
         if (this.shuffleImgs) fisherYatesShuffle(imgs);
         return imgs;
     };
 
+    // Get all image paths from the specified folders, converted to path URLs.
+    getImgsFromFolders = async () => {
+        const allImgs: Image[] = [];
+        for (const imgFolder of this.imgFolders) {
+            allImgs.push(...(await this.getImgsFromFolder(imgFolder)));
+        }
+        return allImgs;
+    };
+
     // Get all image paths from the specified folder, converted to path URLs.
-    getImgsFromFolder = async () => {
+    getImgsFromFolder = async (imgFolder: string) => {
         const files = (await invoke("get_img_files", {
-            dir: this.imgFolder,
+            dir: imgFolder,
             includeSubdirs: this.includeSubfolders,
             timeoutDuration: 60,
         }).catch((e) => {
