@@ -41,7 +41,7 @@
         "@storybook/addon-vitest": "^10.3.5",
         "@storybook/sveltekit": "^10.3.5",
         "@sveltejs/adapter-static": "^3.0.10",
-        "@sveltejs/kit": "^2.57.0",
+        "@sveltejs/kit": "^2.57.1",
         "@sveltejs/vite-plugin-svelte": "^7.0.0",
         "@tailwindcss/vite": "^4.2.2",
         "@tauri-apps/cli": "^2.10.1",
