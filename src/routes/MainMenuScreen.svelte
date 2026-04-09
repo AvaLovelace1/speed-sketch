@@ -111,7 +111,6 @@
                         </div>
                         <ImageDropzone
                             {imgs}
-                            folders={sessionSettings.imgFolders}
                             bind:isLoading={isLoadingImgs}
                             errMsg={imgErrMsg}
                             onInput={onImgsInput}
