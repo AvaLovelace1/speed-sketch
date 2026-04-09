@@ -65,12 +65,12 @@
     {#snippet emptyState()}
         <p class="p-1 text-xs text-muted">
             Use
-            <span class="iconify align-middle text-base-content {addBtn.icon}"></span>
+            <span class="iconify align-text-bottom text-base-content {addBtn.icon}"></span>
             <span class="sr-only">{addBtn.tooltip}</span>
             to add a drawing interval
             <br />
             or
-            <span class="iconify align-middle text-base-content {addBreakBtn.icon}"></span>
+            <span class="iconify align-text-bottom text-base-content {addBreakBtn.icon}"></span>
             <span class="sr-only">{addBreakBtn.tooltip}</span>
             to add a break
         </p>

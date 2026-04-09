@@ -86,7 +86,7 @@ A reorderable list of image folders with add/remove/move controls.
     {#snippet emptyState()}
         <p class="p-1 text-xs text-muted">
             Use
-            <span class="iconify align-middle text-base-content {addBtn.icon}"></span>
+            <span class="iconify align-text-bottom text-base-content {addBtn.icon}"></span>
             <span class="sr-only">{addBtn.icon}</span>
             to add an image folder(s)
         </p>
