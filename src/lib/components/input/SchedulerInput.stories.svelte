@@ -61,7 +61,7 @@
         const moveDownBtn = canvas.getByRole("button", { name: /down/i });
 
         function getRow(rowIdx: NumberType) {
-            return canvas.getAllByRole("row")[rowIdx];
+            return canvas.getAllByRole("option")[rowIdx];
         }
 
         function getNumImgsInput(rowIdx: NumberType) {
@@ -88,7 +88,7 @@
         // Check that the schedule entries match the expected number of images.
         // expectedNumImgs[i] = null if the entry is a break.
         async function expectEntries(expectedNumImgs: (NumberType | null)[]) {
-            const rows = canvas.queryAllByRole("row");
+            const rows = canvas.queryAllByRole("option");
             await expect(rows).toHaveLength(expectedNumImgs.length);
             for (let i = 0; i < expectedNumImgs.length; i++) {
                 if (expectedNumImgs[i] === null) await expect(rows[i]).toHaveTextContent(/break/i);
