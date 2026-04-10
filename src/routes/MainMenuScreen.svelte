@@ -118,7 +118,7 @@
                                     {imgs}
                                     isLoading={isLoadingImgs}
                                     maxImgs={6}
-                                    gridClass="grid-cols-6 gap-1 mb-4"
+                                    gridClass="grid-cols-6 gap-1 p-1 mb-4"
                                     moreTileClass="bg-base-200"
                                 ></ImageGrid>
                             {:else if imgErrMsg}
