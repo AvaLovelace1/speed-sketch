@@ -141,6 +141,20 @@ describe("session-settings.svelte.ts", () => {
         expect(sessionSettings.schedulePresets[0].schedule[0]).toEqual(newEntry);
     });
 
+    test("renameSchedulePreset renames the selected schedule", ({
+        fixture: { sessionSettings },
+    }) => {
+        sessionSettings.addSchedulePreset("Old Name");
+        sessionSettings.renameSchedulePreset("New Name");
+        expect(sessionSettings.schedulePresets[1].name).toBe("New Name");
+        expect(sessionSettings.selectedScheduleIdx).toBe(1);
+    });
+
+    test("renameSchedulePreset is no-op for Default Preset", ({ fixture: { sessionSettings } }) => {
+        sessionSettings.renameSchedulePreset("Something Else");
+        expect(sessionSettings.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
+    });
+
     test("removeSchedulePreset removes selected schedule", ({ fixture: { sessionSettings } }) => {
         sessionSettings.addSchedulePreset("A");
         sessionSettings.addSchedulePreset("B");

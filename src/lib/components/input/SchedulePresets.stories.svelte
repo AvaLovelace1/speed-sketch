@@ -32,6 +32,7 @@
             selectedIdx: 0,
             onSelect: fn(),
             onAdd: fn(),
+            onRename: fn(),
             onDelete: fn(),
         },
     });
@@ -51,6 +52,7 @@
     name="With Interactions"
     play={async ({ args, canvas, userEvent, step }) => {
         const addBtn = canvas.getByRole("button", { name: /add/i });
+        const renameBtn = canvas.getByRole("button", { name: /rename/i });
         const deleteBtn = canvas.getByRole("button", { name: /delete/i });
 
         await step("Choose a different schedule from the dropdown", async () => {
@@ -74,7 +76,31 @@
 
             await userEvent.click(submitBtn);
 
-            await expect(args.onAdd).toHaveBeenCalledOnce();
+            await expect(args.onAdd).toHaveBeenCalledWith("New Schedule");
+            clearAllMocks();
+
+            await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+        });
+
+        await step("Rename button opens a name input dialog", async () => {
+            await userEvent.click(renameBtn);
+            const nameInput = await screen.findByLabelText(/enter a new name/i);
+
+            // Pre-filled with current preset name
+            await expect(nameInput).toHaveValue("Default Preset");
+
+            const submitBtn = screen.getByRole("button", { name: /^rename$/i });
+
+            // Clear and leave empty — submit should be disabled
+            await userEvent.clear(nameInput);
+            await expect(submitBtn).toBeDisabled();
+
+            await userEvent.type(nameInput, "Renamed Preset");
+            await expect(submitBtn).toBeEnabled();
+
+            await userEvent.click(submitBtn);
+
+            await expect(args.onRename).toHaveBeenCalledWith("Renamed Preset");
             clearAllMocks();
 
             await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));

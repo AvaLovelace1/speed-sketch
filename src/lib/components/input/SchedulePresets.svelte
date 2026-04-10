@@ -10,18 +10,22 @@
     export interface Props {
         schedulePresets?: SchedulePreset[];
         selectedIdx?: number;
+        renameDisabled?: boolean;
         deleteDisabled?: boolean;
         onSelect?: (idx: number) => void;
         onAdd?: (name: string) => void;
+        onRename?: (name: string) => void;
         onDelete?: () => void;
     }
 
     const {
         schedulePresets = [],
         selectedIdx = 0,
+        renameDisabled = false,
         deleteDisabled = false,
         onSelect = (_) => {},
         onAdd = (_) => {},
+        onRename = (_) => {},
         onDelete = () => {},
     }: Props = $props();
 
@@ -32,6 +36,8 @@
 
     let addDialog: Dialog;
     let addName = $state("");
+    let renameDialog: Dialog;
+    let renameName = $state("");
     let deleteDialog: AlertDialog;
 
     const addTool: Tool = {
@@ -43,6 +49,16 @@
             addDialog.open();
         },
     };
+    const renameTool: Tool = $derived({
+        uid: "rename-schedule",
+        icon: "lucide--pencil",
+        tooltip: "Rename preset",
+        action: () => {
+            renameName = schedulePresets[selectedIdx]?.name ?? "";
+            renameDialog.open();
+        },
+        disabled: renameDisabled,
+    });
     const deleteTool: Tool = $derived({
         uid: "delete-schedule",
         icon: "lucide--trash-2",
@@ -50,8 +66,8 @@
         action: () => deleteDialog.open(),
         disabled: deleteDisabled,
     });
-    const selectedName = $derived(schedulePresets[selectedIdx]?.name ?? "this preset");
-    const tools = $derived([addTool, deleteTool]);
+    const selectedName = $derived(schedulePresets[selectedIdx]?.name ?? "Preset");
+    const tools = $derived([addTool, renameTool, deleteTool]);
 
     // Propagate user-driven selection changes to parent
     $effect(() => {
@@ -65,6 +81,15 @@
             onAdd(trimmed);
             addName = "";
             addDialog.close();
+        }
+    }
+
+    function handleRename() {
+        const trimmed = renameName.trim();
+        if (trimmed) {
+            onRename(trimmed);
+            renameName = "";
+            renameDialog.close();
         }
     }
 </script>
@@ -96,6 +121,31 @@
         <div class="flex justify-end gap-2">
             <button type="button" class="btn" onclick={() => addDialog.close()}>Cancel</button>
             <button type="submit" class="btn btn-primary" disabled={!addName.trim()}>Add</button>
+        </div>
+    </form>
+</Dialog>
+
+<Dialog bind:this={renameDialog} title="Rename preset">
+    <form
+        onsubmit={(e) => {
+            e.preventDefault();
+            handleRename();
+        }}
+    >
+        <Label.Root for="rename-schedule-name" class="mb-2 block text-sm text-muted">
+            Enter a new name for the schedule preset
+        </Label.Root>
+        <input
+            id="rename-schedule-name"
+            type="text"
+            class="input mb-8 w-full"
+            bind:value={renameName}
+        />
+        <div class="flex justify-end gap-2">
+            <button type="button" class="btn" onclick={() => renameDialog.close()}>Cancel</button>
+            <button type="submit" class="btn btn-primary" disabled={!renameName.trim()}>
+                Rename
+            </button>
         </div>
     </form>
 </Dialog>

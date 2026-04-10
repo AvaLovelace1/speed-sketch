@@ -196,6 +196,11 @@ export class SessionSettings implements Record<string, unknown> {
         this.selectedScheduleIdx = this.schedulePresets.length - 1;
     }
 
+    renameSchedulePreset(name: string) {
+        if (this.selectedScheduleIdx === 0) return; // Don't allow renaming default preset
+        this.schedulePresets[this.selectedScheduleIdx].name = name;
+    }
+
     removeSchedulePreset() {
         if (this.selectedScheduleIdx === 0) return; // Don't allow removing default preset
         this.schedulePresets.splice(this.selectedScheduleIdx, 1);
