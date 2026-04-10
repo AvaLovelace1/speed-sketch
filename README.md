@@ -19,7 +19,7 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 
 - **Personal image references:** Choose any folder(s) on your device to use as an image reference source.
 - **Shuffle images:** Choose whether to display images alphabetically or in a random order.
-- **Custom sessions:** Set a fixed display time in **Endless Mode**, or create your own schedule in **Class Mode**.
+- **Custom sessions:** Set a fixed display time in **Endless Mode**, or create your own schedules in **Class Mode**.
 - **Breaks:** Rest your wrist! Add breaks of any length to schedules in Class Mode.
 
 ### Image viewer
