@@ -28,9 +28,9 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 - **Customizable image filters:** Use the **Greyscale**, **High Contrast**, and **Blur** filters to focus on shape
   and form.
 - **Grid overlay:** Display a modifiable grid over the image for checking proportions.
-- **Pin window to top** _(desktop version only)_: Keep the app window on top of other windows for easy reference while
+- **Pin window to top** _(desktop only)_: Keep the app window on top of other windows for easy reference while
   drawing.
-- **Show image folder** _(desktop version only)_: Reveal the image in your system’s file navigator.
+- **Open image folder** _(desktop only)_: Reveal the image in your system’s file navigator.
 - **Light & dark themes**
 
 ## Installation

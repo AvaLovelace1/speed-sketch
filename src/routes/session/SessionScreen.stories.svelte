@@ -187,8 +187,8 @@
             clearAllMocks();
         });
 
-        await step("Click show image folder button", async () => {
-            const showFolderBtn = canvas.getByRole("button", { name: /show image folder/i });
+        await step("Click image folder button", async () => {
+            const showFolderBtn = canvas.getByRole("button", { name: /open image folder/i });
             await userEvent.click(showFolderBtn);
             await expect(args.showImageFolder).toHaveBeenCalledTimes(1);
             clearAllMocks();

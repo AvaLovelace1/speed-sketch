@@ -265,12 +265,12 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const showImageFolderBtn: Tool = $derived({
-        uid: "show-image-folder",
+        uid: "open-image-folder",
         icon: "lucide--folder-open",
         action: showImageFolder ? showImageFolder : () => {},
         hotkey: "",
         class: "btn-info",
-        tooltip: "Show image folder",
+        tooltip: "Open image folder",
         disabled: isFrozen,
     });
     const settingsBtn: Tool = $derived({
