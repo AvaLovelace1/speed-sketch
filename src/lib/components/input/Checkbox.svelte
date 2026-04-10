@@ -8,7 +8,7 @@
 
     let { label, checked = $bindable(false), ...props }: Props = $props();
 
-    const id = stringToId(`${label}-checkbox`);
+    const id = $derived(stringToId(`${label}-checkbox`));
 </script>
 
 <div class="inline-flex items-center gap-1">

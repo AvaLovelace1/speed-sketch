@@ -12,6 +12,7 @@ export class MainMenuPage {
     readonly customTimeMins: Locator;
     readonly customTimeSecs: Locator;
 
+    readonly addPresetBtn: Locator;
     readonly addEntryBtn: Locator;
     readonly numImgsInputs: Locator;
 
@@ -28,7 +29,8 @@ export class MainMenuPage {
         this.customTimeMins = this.page.getByRole("spinbutton", { name: "minute, Custom time" });
         this.customTimeSecs = this.page.getByRole("spinbutton", { name: "second, Custom time" });
 
-        this.addEntryBtn = this.page.getByRole("button", { name: "Add entry" });
+        this.addPresetBtn = this.page.getByRole("button", { name: "Add preset" });
+        this.addEntryBtn = this.page.getByRole("button", { name: "Add drawing interval" });
         this.numImgsInputs = this.page.getByRole("spinbutton", { name: "Images" });
 
         this.goBtn = this.page.getByRole("button", { name: "Go" });
@@ -86,6 +88,15 @@ export class MainMenuPage {
         await expect(this.customTimeHrs).toHaveText(hrs.toString().padStart(2, "0"));
         await expect(this.customTimeMins).toHaveText(mins.toString().padStart(2, "0"));
         await expect(this.customTimeSecs).toHaveText(secs.toString().padStart(2, "0"));
+    };
+
+    addSchedulePreset = async (presetName: string) => {
+        await this.classModeBtn.click();
+        await this.addPresetBtn.click();
+        const nameInput = this.page.getByRole("textbox", { name: "name" });
+        await nameInput.fill(presetName);
+        const addBtn = this.page.getByRole("button", { name: "Add", exact: true });
+        await addBtn.click();
     };
 
     setSchedule = async (numImgs: number[]) => {

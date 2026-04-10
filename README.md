@@ -7,7 +7,7 @@
 [![macOS][macOS]](#desktop-app)
 [![Linux][Linux]](#desktop-app)
 
-**SpeedSketch** is a free app for creating timed drawing sessions using photo references on your own
+**SpeedSketch** is a free app for creating timed drawing sessions using image references on your own
 device. It displays all images in a given collection one by one, each for a specified amount of time.
 Perfect for gesture studies, figure drawing practice, and the like!
 
@@ -17,9 +17,10 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 
 ### Create your own drawing session
 
-- **Personal photo references:** Choose any folder on your device to use as a photo reference source.
-- **Custom session schedule:** Choose a fixed display time in **Endless Mode**, or create your own schedule in **Class Mode**.
-- **Randomize image order:** Choose whether to display images alphabetically or in a random order.
+- **Personal image references:** Choose any folder(s) on your device to use as an image reference source.
+- **Shuffle images:** Choose whether to display images alphabetically or in a random order.
+- **Custom sessions:** Set a fixed display time in **Endless Mode**, or create your own schedules in **Class Mode**.
+- **Breaks:** Rest your wrist! Add breaks of any length to schedules in Class Mode.
 
 ### Image viewer
 
@@ -28,9 +29,9 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 - **Customizable image filters:** Use the **Greyscale**, **High Contrast**, and **Blur** filters to focus on shape
   and form.
 - **Grid overlay:** Display a modifiable grid over the image for checking proportions.
-- **Pin window to top** _(desktop version only)_: Keep the app window on top of other windows for easy reference while
+- **Pin window to top** _(desktop only)_: Keep the app window on top of other windows for easy reference while
   drawing.
-- **Show image folder** _(desktop version only)_: Reveal the image in your system’s file navigator.
+- **Open image folder** _(desktop only)_: Reveal the image in your system’s file navigator.
 - **Light & dark themes**
 
 ## Installation

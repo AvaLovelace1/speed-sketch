@@ -11,7 +11,8 @@
 
     $effect(() => {
         // Set global theme based on user settings
-        document.documentElement.setAttribute("data-theme", appSettings.theme);
+        if (appSettings.theme == "system") document.documentElement.removeAttribute("data-theme");
+        else document.documentElement.setAttribute("data-theme", appSettings.theme);
     });
 </script>
 

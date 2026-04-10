@@ -7,7 +7,15 @@
     import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";
     import Sample2 from "$lib/assets/images/pexels-by-sasha-kim.jpg";
     import Sample3 from "$lib/assets/images/pexels-by-andrew-sindt.jpg";
-    import { fn, expect, clearAllMocks } from "storybook/test";
+    import {
+        fn,
+        expect,
+        clearAllMocks,
+        screen,
+        within,
+        waitFor,
+        waitForElementToBeRemoved,
+    } from "storybook/test";
 
     const img1 = { name: "img1.jpg", url: Sample1 };
     const img2 = { name: "img2.jpg", url: Sample2 };
@@ -40,10 +48,15 @@
     name="Class"
     args={{
         sessionSettings: new SessionSettings({
-            sessionScheduleCustom: [
-                { duration: 60, repeat: 20, id: "1" },
-                { duration: 145, repeat: 10, id: "2" },
-                { duration: 3611, repeat: 5, id: "3" },
+            schedulePresets: [
+                {
+                    name: "Default Preset",
+                    schedule: [
+                        { duration: 60, repeat: 20, id: "1" },
+                        { duration: 145, repeat: 10, id: "2" },
+                        { duration: 3611, repeat: 5, id: "3" },
+                    ],
+                },
             ],
             sessionMode: "Class",
         }),
@@ -82,7 +95,7 @@
     name="Tauri"
     args={{
         sessionSettings: new SessionSettings({
-            imgFolder: "C:\\Users\\User\\Pictures",
+            imgFolders: ["C:\\Users\\User\\Pictures"],
         }),
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
@@ -95,7 +108,7 @@
     name="Tauri Invalid"
     args={{
         sessionSettings: new SessionSettings({
-            imgFolder: "C:\\Users\\User\\Pictures",
+            imgFolders: ["C:\\Users\\User\\Pictures"],
         }),
         imgErrMsg: "No images found",
         canStartSession: false,
@@ -143,6 +156,95 @@
             await userEvent.click(startButton);
             await expect(args.startSession).toHaveBeenCalledOnce();
             clearAllMocks();
+        });
+
+        await step("Switch to Class mode", async () => {
+            await userEvent.click(canvas.getByRole("radio", { name: /class/i }));
+            expect(args.sessionSettings.sessionMode).toBe("Class");
+        });
+
+        const schedulePresetBtn = canvas.getByRole("button", { name: /schedule presets/i });
+        const addPresetBtn = canvas.getByRole("button", { name: /add preset/i });
+        const deleteBtn = canvas.getByRole("button", { name: /delete/i });
+        const customName = "My Warmup";
+        const addDrawingBtn = canvas.getByRole("button", { name: /add drawing/i });
+
+        await step("Default Preset: delete button is disabled", async () => {
+            await expect(deleteBtn).toBeDisabled();
+        });
+
+        await step("Add a new preset with a custom name", async () => {
+            await userEvent.click(addPresetBtn);
+
+            const nameInput = await screen.findByLabelText(/enter a name/i);
+            await userEvent.type(nameInput, customName);
+
+            const submitBtn = screen.getByRole("button", { name: /^add$/i });
+            await userEvent.click(submitBtn);
+            await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+
+            // New preset should be auto-selected
+            expect(args.sessionSettings.selectedScheduleIdx).toBe(1);
+            await waitFor(() => expect(schedulePresetBtn).toHaveTextContent(customName));
+        });
+
+        await step("New preset starts empty", async () => {
+            expect(args.sessionSettings.sessionScheduleCustom).toEqual([]);
+            // No schedule rows should be visible, just the empty prompt
+            await expect(canvas.queryAllByRole("row")).toHaveLength(1); // empty prompt row
+        });
+
+        await step("Add a drawing interval to the new preset", async () => {
+            await userEvent.click(addDrawingBtn);
+
+            const rows = canvas.getAllByRole("row");
+            await expect(rows).toHaveLength(1);
+            const numImgsInput = within(rows[0]).getByRole("spinbutton", { name: /images/i });
+            await expect(numImgsInput).toHaveValue(1);
+
+            // Verify the entry was added to the underlying data
+            await expect(args.sessionSettings.sessionScheduleCustom).toHaveLength(1);
+        });
+
+        await step("Switch back to Default Preset", async () => {
+            await userEvent.click(schedulePresetBtn);
+            const option = await screen.findByRole("option", { name: /default preset/i });
+            await userEvent.click(option);
+
+            await waitFor(() => expect(args.sessionSettings.selectedScheduleIdx).toBe(0));
+            // Default Preset has the default schedule entries
+            await expect(args.sessionSettings.sessionScheduleCustom).toHaveLength(4);
+        });
+
+        await step("Switch back to custom preset and verify entry is preserved", async () => {
+            await userEvent.click(schedulePresetBtn);
+            const option = await screen.findByRole("option", { name: customName });
+            await userEvent.click(option);
+
+            await waitFor(() => expect(args.sessionSettings.selectedScheduleIdx).toBe(1));
+            await expect(args.sessionSettings.sessionScheduleCustom).toHaveLength(1);
+        });
+
+        await step("Delete the custom preset with confirmation", async () => {
+            await expect(deleteBtn).toBeEnabled();
+            await userEvent.click(deleteBtn);
+
+            // Confirmation dialog should appear
+            const alertDialog = await screen.findByRole("alertdialog");
+            await expect(alertDialog).toHaveTextContent(customName);
+
+            const confirmBtn = screen.getByRole("button", { name: /^delete$/i });
+            await userEvent.click(confirmBtn);
+            await waitForElementToBeRemoved(() => screen.queryByRole("alertdialog"));
+
+            // Should fall back to Default Preset
+            await waitFor(() => expect(args.sessionSettings.schedulePresets).toHaveLength(1));
+            expect(args.sessionSettings.selectedScheduleIdx).toBe(0);
+            await waitFor(() => expect(schedulePresetBtn).toHaveTextContent(/default preset/i));
+        });
+
+        await step("Default Preset: delete button is still disabled after deletion", async () => {
+            await expect(deleteBtn).toBeDisabled();
         });
     }}
 />

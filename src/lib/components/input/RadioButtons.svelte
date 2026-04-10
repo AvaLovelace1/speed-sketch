@@ -25,10 +25,11 @@
         ...props
     }: Props = $props();
 
-    const itemClass =
+    const itemClass = $derived(
         buttonStyle === "large"
             ? "group btn join-item aria-checked:btn-primary first:rounded-s-box last:rounded-e-box text-base grow block h-auto px-8 py-4"
-            : "group btn join-item aria-checked:btn-primary grow";
+            : "group btn join-item aria-checked:btn-primary grow",
+    );
 </script>
 
 <fieldset>

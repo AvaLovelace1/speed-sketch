@@ -17,6 +17,7 @@ The user interface for a drawing session.
     import Gridlines from "$lib/components/Gridlines.svelte";
     import { onDestroy, onMount } from "svelte";
     import type { DrawingSession } from "$lib/drawing-session.svelte";
+    import prettyMilliseconds from "pretty-ms";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";
     export interface Props {
@@ -129,17 +130,17 @@ The user interface for a drawing session.
     const prevBtn: Tool = $derived({
         uid: "prev",
         icon: "lucide--arrow-left",
-        action: drawingSession.goPrevImg,
+        action: drawingSession.goPrevInterval,
         hotkey: "ArrowLeft",
-        tooltip: "Previous image",
+        tooltip: "Previous interval",
         disabled: isFrozen,
     });
     const nextBtn: Tool = $derived({
         uid: "next",
         icon: "lucide--arrow-right",
-        action: drawingSession.goNextImg,
+        action: drawingSession.goNextInterval,
         hotkey: "ArrowRight",
-        tooltip: "Next image",
+        tooltip: "Next interval",
         disabled: isFrozen,
     });
     const pauseBtn: Tool = $derived({
@@ -264,12 +265,12 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const showImageFolderBtn: Tool = $derived({
-        uid: "show-image-folder",
+        uid: "open-image-folder",
         icon: "lucide--folder-open",
         action: showImageFolder ? showImageFolder : () => {},
         hotkey: "",
         class: "btn-info",
-        tooltip: "Show image folder",
+        tooltip: "Open image folder",
         disabled: isFrozen,
     });
     const settingsBtn: Tool = $derived({
@@ -327,7 +328,7 @@ The user interface for a drawing session.
         bind:this={confirmExitDialog}
         title="Exit session?"
         description="This will end the current session"
-        cancelText="Stay"
+        cancelText="Cancel"
         confirmText="Exit"
         onOpen={freeze}
         onCancel={unfreeze}
@@ -336,45 +337,60 @@ The user interface for a drawing session.
 {/snippet}
 
 {#snippet image()}
-    <!-- Wrap image in container so panzoom mouse events only fire on the image -->
-    <div class="size-full">
-        <!-- Wrap in another container so flipping works correctly -->
-        <div class="size-full" {@attach panzoomAttachment}>
-            <img
-                src={drawingSession.getCurImg().url}
-                alt="Reference used for drawing practice"
-                class={[
-                    "size-full object-contain",
-                    isFlippedVertical && "-scale-y-100",
-                    isFlippedHorizontal && "-scale-x-100",
-                    isGreyscale && "grayscale",
-                    isHighContrast && appSettings.contrastClass,
-                    isBlurred && appSettings.blurClass,
-                ]}
-                bind:clientWidth={imgWidth}
-                bind:clientHeight={imgHeight}
-            />
-            {#if gridShown}
-                <Gridlines
-                    class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"
-                    rows={appSettings.gridRows}
-                    cols={appSettings.gridCols}
+    {@const curImg = drawingSession.getCurImg()}
+    {#if curImg}
+        <!-- Wrap image in container so panzoom mouse events only fire on the image -->
+        <div class="size-full">
+            <!-- Wrap in another container so flipping works correctly -->
+            <div class="size-full" {@attach panzoomAttachment}>
+                <img
+                    src={curImg.url}
+                    alt="Reference used for drawing practice"
+                    class={[
+                        "size-full object-contain",
+                        isFlippedVertical && "-scale-y-100",
+                        isFlippedHorizontal && "-scale-x-100",
+                        isGreyscale && "grayscale",
+                        isHighContrast && appSettings.contrastClass,
+                        isBlurred && appSettings.blurClass,
+                    ]}
+                    bind:clientWidth={imgWidth}
+                    bind:clientHeight={imgHeight}
                 />
-            {/if}
+                {#if gridShown}
+                    <Gridlines
+                        class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"
+                        rows={appSettings.gridRows}
+                        cols={appSettings.gridCols}
+                    />
+                {/if}
+            </div>
         </div>
-    </div>
+    {:else}
+        <div
+            class="flex size-full items-center justify-center gap-4 text-4xl font-semibold text-muted"
+        >
+            <span class="iconify lucide--coffee"></span>
+            Break
+        </div>
+    {/if}
 {/snippet}
 
 {#snippet statusAlerts()}
-    <div class="toast-top toast-start toast {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
-        <CustomTooltip
-            side="right"
-            onmouseenter={() => (toolbarIsHovered = true)}
-            onmouseleave={() => {
-                toolbarIsHovered = false;
-                resetToolbarTimeout();
-            }}
-        >
+    <div
+        class={[
+            "toast toast-start toast-top items-start",
+            TOOLBAR_TRANSITION,
+            toolbarShown ? "" : "opacity-0",
+        ]}
+        onmouseenter={() => (toolbarIsHovered = true)}
+        onmouseleave={() => {
+            toolbarIsHovered = false;
+            resetToolbarTimeout();
+        }}
+        role="region"
+    >
+        <CustomTooltip side="right">
             <StatusAlert class="alert-success tabular-nums">
                 <span class="iconify lucide--image"></span>
                 <span class="sr-only">Images completed:</span>
@@ -387,8 +403,22 @@ The user interface for a drawing session.
             </StatusAlert>
             {#snippet tooltipContent()}Images completed{/snippet}
         </CustomTooltip>
+        {#if drawingSession.totalTimeRemaining !== Infinity}
+            <CustomTooltip side="right">
+                <StatusAlert class="alert-info tabular-nums">
+                    <span class="iconify lucide--clock"></span>
+                    <span class="sr-only">Total time remaining:</span>
+                    <time>
+                        {prettyMilliseconds(drawingSession.totalTimeRemaining * 1000, {
+                            colonNotation: true,
+                        })}
+                    </time>
+                </StatusAlert>
+                {#snippet tooltipContent()}Session time remaining{/snippet}
+            </CustomTooltip>
+        {/if}
     </div>
-    <div class="toast-top toast-end toast items-end">
+    <div class="toast toast-end toast-top items-end">
         {#if timerShown}
             <CustomTooltip side="left">
                 <Timer
@@ -396,7 +426,7 @@ The user interface for a drawing session.
                     maxTime={drawingSession.getCurScheduleEntry().duration}
                     class={[drawingSession.isPaused && "text-muted!"]}
                 />
-                {#snippet tooltipContent()}Time remaining{/snippet}
+                {#snippet tooltipContent()}Interval time remaining{/snippet}
             </CustomTooltip>
         {/if}
         {#if drawingSession.isPaused}

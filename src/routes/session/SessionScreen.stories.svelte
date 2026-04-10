@@ -52,6 +52,14 @@
     }}
 />
 
+<!-- During a break, an image is not displayed. -->
+<Story
+    name="Break"
+    args={{
+        drawingSession: new DrawingSession(imgs, [{ duration: 30, repeat: 1, isBreak: true }]),
+    }}
+/>
+
 <!-- With user interactions. -->
 <Story
     name="With Interactions"
@@ -87,11 +95,11 @@
         });
 
         await step("Click previous and next buttons", async () => {
-            expect(args.drawingSession.curImgIdx).toBe(0);
+            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[0]);
             await userEvent.click(canvas.getByRole("button", { name: /next/i }));
-            expect(args.drawingSession.curImgIdx).toBe(1);
+            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[1]);
             await userEvent.click(canvas.getByRole("button", { name: /previous/i }));
-            expect(args.drawingSession.curImgIdx).toBe(0);
+            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[0]);
         });
 
         await step("Click zoom buttons", async () => {
@@ -179,8 +187,8 @@
             clearAllMocks();
         });
 
-        await step("Click show image folder button", async () => {
-            const showFolderBtn = canvas.getByRole("button", { name: /show image folder/i });
+        await step("Click image folder button", async () => {
+            const showFolderBtn = canvas.getByRole("button", { name: /open image folder/i });
             await userEvent.click(showFolderBtn);
             await expect(args.showImageFolder).toHaveBeenCalledTimes(1);
             clearAllMocks();

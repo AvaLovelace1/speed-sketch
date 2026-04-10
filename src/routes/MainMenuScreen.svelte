@@ -13,11 +13,14 @@
     import { SessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri as isTauriFn } from "@tauri-apps/api/core";
     import SchedulerInput from "$lib/components/input/SchedulerInput.svelte";
+    import SchedulePresets from "$lib/components/input/SchedulePresets.svelte";
+    import FolderInput from "$lib/components/input/FolderInput.svelte";
+    import ImageGrid from "$lib/components/ImageGrid.svelte";
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
-    const VERSION = "2.1.0";
-    const COPYRIGHT = "© 2024–2025 Ava Pun";
+    const VERSION = "2.2.0";
+    const COPYRIGHT = "© 2024–2026 Ava Pun";
     const GITHUB_URL = "https://github.com/AvaLovelace1/speed-sketch";
     const ISSUE_URL = `${GITHUB_URL}/issues/new`;
     const BUG_REPORT_URL = `${ISSUE_URL}?template=bug_report.md`;
@@ -29,7 +32,7 @@
         imgs?: Image[];
         imgErrMsg?: string;
         isLoadingImgs?: boolean;
-        onImgsInput?: (inputImgsOrFolder: string | Image[] | null) => Promise<void>;
+        onImgsInput?: (inputImgsOrFolders: string[] | Image[] | null) => Promise<void>;
 
         canStartSession?: boolean;
         startSession?: () => Promise<void>;
@@ -48,18 +51,18 @@
         isTauri = isTauriFn(),
     }: Props = $props();
 
-    const sessionModeOptions = sessionSettings.SESSION_MODES.map((sessionMode) => ({
+    const sessionModeOptions = SessionSettings.SESSION_MODES.map((sessionMode) => ({
         label: sessionMode.name,
         value: sessionMode.name,
         description: sessionMode.description,
     }));
-
-    const imgShowTimeOptions = sessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
+    const imgShowTimeOptions = SessionSettings.IMG_SHOW_TIME_OPTIONS.map((option) => ({
         label: option,
         value: option,
     }));
 
-    let schedule = $state(sessionSettings.sessionScheduleCustom);
+    let schedule = $derived(sessionSettings.sessionScheduleCustom);
+    let imgFolders = $derived(sessionSettings.imgFolders);
 </script>
 
 <CenteredFull>
@@ -109,14 +112,36 @@
                                 />
                             </div>
                         </div>
-                        <ImageDropzone
-                            {imgs}
-                            folder={sessionSettings.imgFolder}
-                            bind:isLoading={isLoadingImgs}
-                            errMsg={imgErrMsg}
-                            onInput={onImgsInput}
-                            {isTauri}
-                        />
+                        {#if isTauri}
+                            {#if imgs.length > 0}
+                                <ImageGrid
+                                    {imgs}
+                                    isLoading={isLoadingImgs}
+                                    maxImgs={6}
+                                    gridClass="grid-cols-6 gap-1 mb-4"
+                                    moreTileClass="bg-base-200"
+                                ></ImageGrid>
+                            {:else if imgErrMsg}
+                                <p role="status" class="mb-2 text-sm text-error italic">
+                                    <span class="iconify align-text-bottom lucide--octagon-x">
+                                    </span>
+                                    <span class="sr-only">Error</span>
+                                    {imgErrMsg}
+                                </p>
+                            {/if}
+                            <FolderInput
+                                bind:folders={imgFolders}
+                                onChange={async () => await onImgsInput(null)}
+                            />
+                        {:else}
+                            <ImageDropzone
+                                {imgs}
+                                bind:isLoading={isLoadingImgs}
+                                errMsg={imgErrMsg}
+                                onInput={onImgsInput}
+                                {isTauri}
+                            />
+                        {/if}
                     </div>
                     <RadioButtons
                         class="mb-1 flex"
@@ -146,6 +171,18 @@
                         {/if}
                     {/if}
                     {#if sessionSettings.sessionMode === "Class"}
+                        <div class="mb-2 text-sm text-muted">Schedule</div>
+                        <SchedulePresets
+                            schedulePresets={sessionSettings.schedulePresets}
+                            selectedIdx={sessionSettings.selectedScheduleIdx}
+                            onSelect={(idx) => sessionSettings.selectSchedulePreset(idx)}
+                            onAdd={(name) => sessionSettings.addSchedulePreset(name)}
+                            onRename={(name) => sessionSettings.renameSchedulePreset(name)}
+                            onDelete={() => sessionSettings.removeSchedulePreset()}
+                            renameDisabled={sessionSettings.selectedScheduleIdx === 0}
+                            deleteDisabled={sessionSettings.selectedScheduleIdx === 0}
+                        />
+                        <div class="mb-2"></div>
                         <SchedulerInput bind:schedule />
                     {/if}
                 </div>

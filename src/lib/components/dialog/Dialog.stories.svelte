@@ -61,7 +61,7 @@
                 if (method === "closeBtn") {
                     await userEvent.click(dialogCanvas.getByRole("button", { name: /close/i }));
                 } else if (method === "clickOutside") {
-                    await userEvent.click(screen.getByRole("dialog"));
+                    await userEvent.click(screen.getByRole("presentation"));
                 } else if (method === "keyboard") {
                     await userEvent.keyboard("{Escape}");
                 } else {

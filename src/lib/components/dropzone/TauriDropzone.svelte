@@ -12,7 +12,7 @@ Dropzone component for folder uploads.
 
     interface Props {
         isInvalid?: boolean;
-        onInput?: (inputFolder: string) => Promise<void>;
+        onInput?: (inputFolders: string[]) => Promise<void>;
         children: Snippet;
     }
 
@@ -22,8 +22,8 @@ Dropzone component for folder uploads.
     let unlistenDragDrop: UnlistenFn;
 
     async function chooseFolder() {
-        const folder = await open({ directory: true, multiple: false, title: "Choose Folder" });
-        if (folder) await onInput(folder);
+        const folders = await open({ directory: true, multiple: true, title: "Choose Folders" });
+        if (folders) await onInput(Array.isArray(folders) ? folders : [folders]);
     }
 
     async function tauriDragDropHandler(e: Event<DragDropEvent>) {
@@ -34,10 +34,7 @@ Dropzone component for folder uploads.
             const paths = e.payload.paths;
 
             if (paths.length === 0) return;
-            if (paths.length > 1) {
-                console.warn("Multiple paths dropped, only the first will be used.");
-            }
-            await onInput(paths[0]);
+            await onInput(paths);
         }
     }
 

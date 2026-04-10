@@ -22,7 +22,7 @@
         ...props
     }: Props = $props();
 
-    const id = stringToId(`${label}-slider`);
+    const id = $derived(stringToId(`${label}-slider`));
 </script>
 
 <Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>

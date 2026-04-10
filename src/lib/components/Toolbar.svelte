@@ -48,11 +48,14 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
         return hotkeyLabels.get(hotkey) || [hotkey];
     }
 
-    const toolbarClass = toolbarStyle === "small" ? "flex gap-2" : "join rounded-field shadow-md";
-    const itemClass =
+    const toolbarClass = $derived(
+        toolbarStyle === "small" ? "flex gap-2" : "join rounded-field shadow-md",
+    );
+    const itemClass = $derived(
         toolbarStyle === "small"
             ? "btn btn-circle btn-soft btn-sm text-base"
-            : "btn join-item px-3 py-5 text-lg btn-soft";
+            : "btn join-item px-3 py-5 text-lg btn-soft",
+    );
 </script>
 
 <svelte:window onkeydown={onKeyDown} />

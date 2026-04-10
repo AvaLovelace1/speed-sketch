@@ -47,8 +47,11 @@ test("set schedule", async ({ page }) => {
 
     // Select images
     await mainMenuPage.selectImgFiles(IMG_FOLDER);
-    await mainMenuPage.setSchedule([]);
-    // Cannot start session because schedule is not set
+
+    // Add preset
+    await mainMenuPage.addSchedulePreset("Custom Preset");
+
+    // Cannot start session because schedule is empty
     await mainMenuPage.expectCannotStartSession();
 
     // Set schedule

@@ -11,9 +11,11 @@
     const { children, tooltipContent, side = "bottom", ...triggerProps }: Props = $props();
 
     const flyAmount = 4;
-    const xFlyAmount = side === "left" ? flyAmount : side === "right" ? -flyAmount : 0;
-    const yFlyAmount = side === "top" ? flyAmount : side === "bottom" ? -flyAmount : 0;
-    const flyTransition = { x: xFlyAmount, y: yFlyAmount, duration: "short" } as const;
+    const flyTransition = $derived({
+        x: side === "left" ? flyAmount : side === "right" ? -flyAmount : 0,
+        y: side === "top" ? flyAmount : side === "bottom" ? -flyAmount : 0,
+        duration: "short",
+    } as const);
 </script>
 
 <Tooltip.Root>
