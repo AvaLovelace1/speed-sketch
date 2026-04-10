@@ -25,6 +25,8 @@ export class DrawingSession {
     #timer: NodeJS.Timeout | undefined = undefined;
     // Prefix sums of the (image-only) repeat counts in the schedule, used to compute the current image index
     #imgIntervalPrefixSums: number[];
+    // Suffix sums of total time per schedule entry (entry duration * repeat), used to compute totalTimeRemaining
+    #timeSuffixSums: number[];
 
     constructor(
         // Array of images to be displayed in the session
@@ -51,10 +53,32 @@ export class DrawingSession {
             }
             return prefixSums;
         });
+
+        this.#timeSuffixSums = $derived.by(() => {
+            const suffixSums: number[] = new Array(schedule.length);
+            for (let i = schedule.length - 1; i >= 0; i--) {
+                const entryTotal = schedule[i].duration * schedule[i].repeat;
+                suffixSums[i] =
+                    i === schedule.length - 1 ? entryTotal : entryTotal + suffixSums[i + 1];
+            }
+            return suffixSums;
+        });
     }
 
     get totalImgs() {
         return this.schedule.reduce((acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat), 0);
+    }
+
+    get totalTimeRemaining() {
+        const curEntry = this.getCurScheduleEntry();
+        // Time left in current interval + remaining repeats in current entry + all subsequent entries
+        return (
+            this.timeRemaining +
+            (curEntry.repeat - 1 - this.curRepeatIdx) * curEntry.duration +
+            (this.curEntryIdx < this.schedule.length - 1
+                ? this.#timeSuffixSums[this.curEntryIdx + 1]
+                : 0)
+        );
     }
 
     isValid = () => {

@@ -237,4 +237,47 @@ describe("drawing-session.svelte.ts", () => {
         vi.advanceTimersByTime(5000);
         expect(session.timeRemaining).toBe(BREAK_SCHEDULE[1].duration - 5);
     });
+
+    const totalTimeRemaining = SCHEDULE.reduce(
+        (acc, entry) => acc + entry.duration * entry.repeat,
+        0,
+    );
+
+    test("totalTimeRemaining at start", ({ session }) => {
+        expect(session.totalTimeRemaining).toBe(totalTimeRemaining);
+    });
+
+    test("totalTimeRemaining decreases with timer", ({ session }) => {
+        const timeSpent = 10;
+        session.resume();
+        vi.advanceTimersByTime(timeSpent * 1000);
+        expect(session.totalTimeRemaining).toBe(totalTimeRemaining - timeSpent);
+    });
+
+    test("totalTimeRemaining after advancing intervals", ({ session }) => {
+        // Advance past all of entry 0
+        for (let i = 0; i < SCHEDULE[0].repeat; i++) {
+            session.goNextInterval();
+        }
+        // Now at entry 1, repeat 0
+        expect(session.totalTimeRemaining).toBe(
+            totalTimeRemaining - SCHEDULE[0].duration * SCHEDULE[0].repeat,
+        );
+        // Advance timer
+        session.resume();
+        const timeSpent = 10;
+        vi.advanceTimersByTime(timeSpent * 1000);
+        expect(session.totalTimeRemaining).toBe(
+            totalTimeRemaining - SCHEDULE[0].duration * SCHEDULE[0].repeat - timeSpent,
+        );
+    });
+
+    const totalTimeRemainingBreakSchedule = BREAK_SCHEDULE.reduce(
+        (acc, entry) => acc + entry.duration * entry.repeat,
+        0,
+    );
+
+    testWithBreaks("totalTimeRemaining includes break durations", ({ session }) => {
+        expect(session.totalTimeRemaining).toBe(totalTimeRemainingBreakSchedule);
+    });
 });

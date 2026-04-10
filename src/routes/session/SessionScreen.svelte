@@ -17,6 +17,7 @@ The user interface for a drawing session.
     import Gridlines from "$lib/components/Gridlines.svelte";
     import { onDestroy, onMount } from "svelte";
     import type { DrawingSession } from "$lib/drawing-session.svelte";
+    import prettyMilliseconds from "pretty-ms";
 
     const TOOLBAR_TRANSITION = "duration-300 ease-out";
     export interface Props {
@@ -376,15 +377,20 @@ The user interface for a drawing session.
 {/snippet}
 
 {#snippet statusAlerts()}
-    <div class="toast toast-start toast-top {TOOLBAR_TRANSITION} {toolbarShown ? '' : 'opacity-0'}">
-        <CustomTooltip
-            side="right"
-            onmouseenter={() => (toolbarIsHovered = true)}
-            onmouseleave={() => {
-                toolbarIsHovered = false;
-                resetToolbarTimeout();
-            }}
-        >
+    <div
+        class={[
+            "toast toast-start toast-top items-start",
+            TOOLBAR_TRANSITION,
+            toolbarShown ? "" : "opacity-0",
+        ]}
+        onmouseenter={() => (toolbarIsHovered = true)}
+        onmouseleave={() => {
+            toolbarIsHovered = false;
+            resetToolbarTimeout();
+        }}
+        role="region"
+    >
+        <CustomTooltip side="right">
             <StatusAlert class="alert-success tabular-nums">
                 <span class="iconify lucide--image"></span>
                 <span class="sr-only">Images completed:</span>
@@ -397,6 +403,20 @@ The user interface for a drawing session.
             </StatusAlert>
             {#snippet tooltipContent()}Images completed{/snippet}
         </CustomTooltip>
+        {#if drawingSession.totalTimeRemaining !== Infinity}
+            <CustomTooltip side="right">
+                <StatusAlert class="alert-info tabular-nums">
+                    <span class="iconify lucide--clock"></span>
+                    <span class="sr-only">Total time remaining:</span>
+                    <time>
+                        {prettyMilliseconds(drawingSession.totalTimeRemaining * 1000, {
+                            colonNotation: true,
+                        })}
+                    </time>
+                </StatusAlert>
+                {#snippet tooltipContent()}Session time remaining{/snippet}
+            </CustomTooltip>
+        {/if}
     </div>
     <div class="toast toast-end toast-top items-end">
         {#if timerShown}
@@ -406,7 +426,7 @@ The user interface for a drawing session.
                     maxTime={drawingSession.getCurScheduleEntry().duration}
                     class={[drawingSession.isPaused && "text-muted!"]}
                 />
-                {#snippet tooltipContent()}Time remaining{/snippet}
+                {#snippet tooltipContent()}Interval time remaining{/snippet}
             </CustomTooltip>
         {/if}
         {#if drawingSession.isPaused}
