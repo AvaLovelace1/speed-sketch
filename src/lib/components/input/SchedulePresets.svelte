@@ -64,6 +64,7 @@
         icon: "lucide--trash-2",
         tooltip: "Delete preset",
         action: () => deleteDialog.open(),
+        class: "btn-error",
         disabled: deleteDisabled,
     });
     const selectedName = $derived(schedulePresets[selectedIdx]?.name ?? "Preset");
