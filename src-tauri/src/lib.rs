@@ -49,19 +49,28 @@ fn _get_img_files(dir: &str, include_subdirs: bool) -> Vec<String> {
         .collect()
 }
 
-/// Check if the given entry is an image file based on its extension.
+/// Check if the given extension corresponds to a supported media file (image or video).
+fn is_media_extension(ext: &str) -> bool {
+    matches!(
+        ext.to_lowercase().as_str(),
+        // Images
+        "png" | "jpg" | "jpeg" | "gif" | "bmp" | "webp" | "tif" | "tiff" | "ico" | "svg"
+        // Videos
+        | "mp4" | "webm" | "mov" | "mkv" | "avi" | "m4v" | "ogv"
+    )
+}
+
+/// Check if the given entry is a supported media file based on its extension.
 fn is_img_file(entry: &DirEntry) -> bool {
     if !entry.file_type().is_file() {
         return false;
     }
-    if let Some(ext) = entry.path().extension() {
-        matches!(
-            ext.to_str().unwrap_or_default().to_lowercase().as_str(),
-            "png" | "jpg" | "jpeg" | "gif" | "bmp" | "webp" | "tif" | "tiff" | "ico" | "svg"
-        )
-    } else {
-        false
-    }
+    entry
+        .path()
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(is_media_extension)
+        .unwrap_or(false)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

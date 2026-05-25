@@ -9,7 +9,7 @@ import { SettingsDialog } from "./pages/settings-dialog";
 const IMG_FOLDER = "test-assets";
 const IMG_FILES = fs
     .readdirSync(IMG_FOLDER, { withFileTypes: true })
-    .filter((file: Dirent) => file.isFile() && /\.(jpg|jpeg|png|gif)$/i.test(file.name));
+    .filter((file: Dirent) => file.isFile() && /\.(jpg|jpeg|png|gif|mp4)$/i.test(file.name));
 const IMG_FILENAMES = IMG_FILES.map((file: Dirent) => file.name);
 
 test("typical user flow", async ({ page }) => {

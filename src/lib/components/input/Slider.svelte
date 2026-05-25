@@ -10,6 +10,7 @@
         max?: number;
         step?: number;
         value: number;
+        formatValue?: (value: number) => string;
     }
 
     let {
@@ -19,6 +20,7 @@
         max = 100,
         step = 1,
         value = $bindable(),
+        formatValue = (v) => v?.toString(),
         ...props
     }: Props = $props();
 
@@ -41,4 +43,5 @@
         bind:value
         {...props}
     />
+    <div class="text-xs text-muted tabular-nums">{formatValue(value)}</div>
 </div>

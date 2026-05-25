@@ -19,10 +19,11 @@
 
     const APP_NAME = "SpeedSketch";
     const TAGLINE = "timed drawing sessions";
-    const VERSION = "2.2.0";
+    const VERSION = "2.3.0";
     const COPYRIGHT = "© 2024–2026 Ava Pun";
     const GITHUB_URL = "https://github.com/AvaLovelace1/speed-sketch";
     const ISSUE_URL = `${GITHUB_URL}/issues/new`;
+    const ABOUT_URL = `${GITHUB_URL}#readme`;
     const BUG_REPORT_URL = `${ISSUE_URL}?template=bug_report.md`;
     const FEATURE_REQUEST_URL = `${ISSUE_URL}?template=feature_request.md`;
 
@@ -96,7 +97,7 @@
                 <div class="p-8 pb-12">
                     <div class="mb-6">
                         <div class="mb-2 flex items-baseline justify-between">
-                            <div class="cursor-default text-sm text-muted">Images</div>
+                            <div class="cursor-default text-sm text-muted">References</div>
                             <div class="flex gap-3">
                                 {#if isTauri}
                                     <Checkbox
@@ -155,7 +156,7 @@
                     {#if sessionSettings.sessionMode === "Endless"}
                         <RadioButtons
                             class="mb-4 flex"
-                            groupLabel="Time per image"
+                            groupLabel="Time per drawing"
                             items={imgShowTimeOptions}
                             bind:group={sessionSettings.imgShowTimeOption}
                             required
@@ -201,6 +202,10 @@
 {#snippet footer()}
     <footer class="text-center text-sm text-muted">
         <p>
+            <Link href={ABOUT_URL} external>
+                <strong class="font-semibold">about</strong>
+            </Link>
+            &nbsp;•&nbsp;
             <Link href={BUG_REPORT_URL} external>
                 report <strong class="font-semibold">bug</strong>
             </Link>

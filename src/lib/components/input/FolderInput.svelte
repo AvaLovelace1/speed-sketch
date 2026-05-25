@@ -78,7 +78,7 @@ A reorderable list of image folders with add/remove/move controls.
 
 <ReorderableList
     {manager}
-    caption="Image folders"
+    caption="Reference folders"
     getKey={(folder, i) => folder + i}
     {tools}
     {onChange}
@@ -92,7 +92,7 @@ A reorderable list of image folders with add/remove/move controls.
             Use
             <span class="iconify align-text-bottom text-base-content {addBtn.icon}"></span>
             <span class="sr-only">{addBtn.icon}</span>
-            or click to add image folders
+            or click to add reference folders
         </button>
     {/snippet}
     {#snippet row(folder: string, _index: number, _isSelected: boolean)}

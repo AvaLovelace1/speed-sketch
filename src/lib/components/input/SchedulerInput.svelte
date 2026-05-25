@@ -81,20 +81,20 @@
                 <span class="iconify text-lg lucide--coffee"></span>
                 <div class="cursor-default">Break</div>
             {:else}
-                <Label.Root class="flex items-center text-lg" for={`num-images-${item.id}`}>
+                <Label.Root class="flex items-center text-lg" for={`num-drawings-${item.id}`}>
                     <span class="iconify lucide--image"></span>
-                    <span class="sr-only">Number of images</span>
+                    <span class="sr-only">Number of drawings</span>
                 </Label.Root>
                 <div class="flex items-baseline gap-2">
                     <NumberField
-                        id={`num-images-${item.id}`}
+                        id={`num-drawings-${item.id}`}
                         minValue={1}
                         maxValue={999}
                         bind:value={schedule[index].repeat}
                         bgColor={isSelected ? "primary" : "base"}
                     />
                     <div class="cursor-default text-xs">
-                        {schedule[index].repeat === 1 ? "image" : "images"}
+                        {schedule[index].repeat === 1 ? "drawing" : "drawings"}
                     </div>
                 </div>
             {/if}
@@ -113,7 +113,7 @@
     <p>
         {scheduler.totalImgs}
         <span class="text-sm font-normal text-muted">
-            total {scheduler.totalImgs === 1 ? "image" : "images"}
+            total {scheduler.totalImgs === 1 ? "drawing" : "drawings"}
         </span>
     </p>
     <p>

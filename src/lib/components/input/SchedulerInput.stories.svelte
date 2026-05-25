@@ -66,7 +66,7 @@
 
         function getNumImgsInput(rowIdx: NumberType) {
             const row = getRow(rowIdx);
-            return within(row).getByRole("spinbutton", { name: /images/i });
+            return within(row).getByRole("spinbutton", { name: /drawings/i });
         }
 
         async function selectEntry(rowIdx: NumberType) {

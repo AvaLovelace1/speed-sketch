@@ -18,6 +18,15 @@ export function fisherYatesShuffle(array: unknown[]) {
     }
 }
 
+const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "mov", "mkv", "avi", "m4v", "ogv"]);
+
+export function isVideoFile(path: string): boolean {
+    const dotIdx = path.lastIndexOf(".");
+    if (dotIdx < 0) return false;
+    const ext = path.substring(dotIdx + 1).toLowerCase();
+    return VIDEO_EXTENSIONS.has(ext);
+}
+
 export function basename(path: string) {
     const lastSlashIndex = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
     return path.substring(lastSlashIndex + 1);

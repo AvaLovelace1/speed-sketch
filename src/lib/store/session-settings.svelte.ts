@@ -1,5 +1,11 @@
 import parse from "parse-duration";
-import { validateString, validateInteger, basename, fisherYatesShuffle } from "$lib/utils.svelte";
+import {
+    validateString,
+    validateInteger,
+    basename,
+    fisherYatesShuffle,
+    isVideoFile,
+} from "$lib/utils.svelte";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
@@ -14,7 +20,7 @@ export class SessionSettings implements Record<string, unknown> {
         return [
             {
                 name: "Endless",
-                description: "Fixed time for each image",
+                description: "Fixed time for each drawing",
             },
             {
                 name: "Class",
@@ -229,7 +235,7 @@ export class SessionSettings implements Record<string, unknown> {
     getImgs = async () => {
         if (isTauri()) this.imgs = await this.getImgsFromFolders();
         const imgs = [...this.imgs];
-        if (imgs.length === 0) throw new Error("No images found");
+        if (imgs.length === 0) throw new Error("No references found");
         if (this.shuffleImgs) fisherYatesShuffle(imgs);
         return imgs;
     };
@@ -253,8 +259,8 @@ export class SessionSettings implements Record<string, unknown> {
             if (e === "DoesNotExist") throw new Error("Folder does not exist", { cause: e });
             if (e === "NotADirectory") throw new Error("Path is not a folder", { cause: e });
             if (e === "PathError") throw new Error("Cannot access folder", { cause: e });
-            if (e === "TimeoutError") throw new Error("Loading images timed out", { cause: e });
-            if (e === "TaskJoinError") throw new Error("Failed to load images", { cause: e });
+            if (e === "TimeoutError") throw new Error("Loading references timed out", { cause: e });
+            if (e === "TaskJoinError") throw new Error("Failed to load references", { cause: e });
             throw e;
         })) as string[];
 
@@ -263,6 +269,7 @@ export class SessionSettings implements Record<string, unknown> {
                 name: basename(file),
                 url: convertFileSrc(file),
                 path: file,
+                isVideo: isVideoFile(file),
             }))
             .sort(compareImages);
         return imgs;

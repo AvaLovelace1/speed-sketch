@@ -48,7 +48,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
     {#if !isTauri}
         <p class="text-center">
             <small class="text-xs">
-                Images are stored on your device and will <strong>not</strong> be uploaded
+                References are stored on your device and will <strong>not</strong> be uploaded
             </small>
         </p>
     {/if}
@@ -60,7 +60,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
     </TauriDropzone>
 {:else}
     <WebDropzone
-        accept="image/*"
+        accept="image/*,video/*"
         {isInvalid}
         onFileDropped={() => (isLoading = true)}
         onFileDialogCancel={() => (isLoading = false)}
@@ -69,6 +69,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
                 return {
                     name: file.name,
                     url: URL.createObjectURL(file),
+                    isVideo: file.type.startsWith("video/"),
                 };
             });
             await onInput(inputImgs);

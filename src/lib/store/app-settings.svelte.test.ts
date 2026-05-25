@@ -42,10 +42,33 @@ describe("app-settings.svelte.ts", () => {
         expect(appSettings.theme).toBe(desiredTheme);
     });
 
+    test("videoPlaybackRate defaults to 1 and persists", async ({
+        fixture: { appSettings, persistentStore },
+    }) => {
+        expect(appSettings.videoPlaybackRate).toBe(1);
+        appSettings.videoPlaybackRate = 1.5;
+        await appSettings.saveToStore(persistentStore);
+
+        const loaded = new AppSettings();
+        await loaded.loadFromStore(persistentStore);
+        expect(loaded.videoPlaybackRate).toBe(1.5);
+    });
+
+    test("videoPlaybackRate rejects out-of-range values on load", async ({
+        fixture: { persistentStore },
+    }) => {
+        await persistentStore.set("videoPlaybackRate", 99);
+        await persistentStore.save();
+        const loaded = new AppSettings();
+        await loaded.loadFromStore(persistentStore);
+        // Invalid value is ignored; default is kept
+        expect(loaded.videoPlaybackRate).toBe(1);
+    });
+
     test("contrastClass and blurClass", ({ fixture: { appSettings } }) => {
         appSettings.contrastStrength = 2;
         appSettings.blurStrength = 3;
-        expect(appSettings.contrastClass).toBe(appSettings.CONTRAST_OPTIONS[2]);
-        expect(appSettings.blurClass).toBe(appSettings.BLUR_OPTIONS[3]);
+        expect(appSettings.contrastClass).toBe(AppSettings.CONTRAST_OPTIONS[2]);
+        expect(appSettings.blurClass).toBe(AppSettings.BLUR_OPTIONS[3]);
     });
 });

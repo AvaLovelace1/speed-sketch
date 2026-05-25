@@ -12,7 +12,7 @@ export interface Theme {
 }
 
 export class AppSettings implements Record<string, unknown> {
-    get THEMES() {
+    static get THEMES() {
         return [
             { name: "system", label: "Auto (system setting)", icon: "lucide--monitor" },
             { name: "light", label: "Light", icon: "lucide--sun" },
@@ -20,7 +20,7 @@ export class AppSettings implements Record<string, unknown> {
         ] as Theme[];
     }
 
-    get CONTRAST_OPTIONS() {
+    static get CONTRAST_OPTIONS() {
         return [
             "contrast-125",
             "contrast-150",
@@ -34,9 +34,13 @@ export class AppSettings implements Record<string, unknown> {
         ];
     }
 
-    get BLUR_OPTIONS() {
+    static get BLUR_OPTIONS() {
         return ["blur-xs", "blur-sm", "blur-md", "blur-lg"];
     }
+
+    static readonly MIN_VIDEO_PLAYBACK_RATE = 0.25;
+    static readonly MAX_VIDEO_PLAYBACK_RATE = 2; // Speeds more than 2x don't work well on Safari
+    static readonly VIDEO_PLAYBACK_RATE_STEP = 0.25;
 
     get #KEYS() {
         return [
@@ -45,7 +49,7 @@ export class AppSettings implements Record<string, unknown> {
                 isValid: (v: unknown) => {
                     return validateString(
                         v,
-                        this.THEMES.map((theme) => theme.name),
+                        AppSettings.THEMES.map((theme) => theme.name),
                     );
                 },
             },
@@ -55,11 +59,12 @@ export class AppSettings implements Record<string, unknown> {
             },
             {
                 key: "contrastStrength",
-                isValid: (v: unknown) => validateInteger(v, 0, this.CONTRAST_OPTIONS.length - 1),
+                isValid: (v: unknown) =>
+                    validateInteger(v, 0, AppSettings.CONTRAST_OPTIONS.length - 1),
             },
             {
                 key: "blurStrength",
-                isValid: (v: unknown) => validateInteger(v, 0, this.BLUR_OPTIONS.length - 1),
+                isValid: (v: unknown) => validateInteger(v, 0, AppSettings.BLUR_OPTIONS.length - 1),
             },
             {
                 key: "gridRows",
@@ -68,6 +73,15 @@ export class AppSettings implements Record<string, unknown> {
             {
                 key: "gridCols",
                 isValid: (v: unknown) => validateInteger(v, 0, 99),
+            },
+            {
+                key: "videoPlaybackRate",
+                isValid: (v: unknown) =>
+                    validateNumber(
+                        v,
+                        AppSettings.MIN_VIDEO_PLAYBACK_RATE,
+                        AppSettings.MAX_VIDEO_PLAYBACK_RATE,
+                    ),
             },
         ];
     }
@@ -78,6 +92,7 @@ export class AppSettings implements Record<string, unknown> {
     blurStrength: number;
     gridRows: number;
     gridCols: number;
+    videoPlaybackRate: number;
     [key: string]: unknown;
 
     constructor({
@@ -87,6 +102,7 @@ export class AppSettings implements Record<string, unknown> {
         blurStrength = 1,
         gridRows = 5,
         gridCols = 10,
+        videoPlaybackRate = 1,
     } = {}) {
         this.theme = $state(theme);
         this.volume = $state(volume);
@@ -94,6 +110,7 @@ export class AppSettings implements Record<string, unknown> {
         this.blurStrength = $state(blurStrength);
         this.gridRows = $state(gridRows);
         this.gridCols = $state(gridCols);
+        this.videoPlaybackRate = $state(videoPlaybackRate);
     }
 
     loadFromStore = async (persistentStore?: PersistentStore) => {
@@ -109,11 +126,11 @@ export class AppSettings implements Record<string, unknown> {
     };
 
     get contrastClass() {
-        return this.CONTRAST_OPTIONS[this.contrastStrength];
+        return AppSettings.CONTRAST_OPTIONS[this.contrastStrength];
     }
 
     get blurClass() {
-        return this.BLUR_OPTIONS[this.blurStrength];
+        return AppSettings.BLUR_OPTIONS[this.blurStrength];
     }
 }
 

@@ -4,14 +4,14 @@
     import SessionScreen from "./SessionScreen.svelte";
     import type { Props as SessionScreenProps } from "./SessionScreen.svelte";
     import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";
-    import Sample2 from "$lib/assets/images/pexels-by-sasha-kim.jpg";
+    import Sample2 from "$lib/assets/images/pexels-by-israel-torres.mp4";
     import Sample3 from "$lib/assets/images/pexels-by-andrew-sindt.jpg";
     import { Tooltip } from "bits-ui";
     import { fn, expect, clearAllMocks, screen, within, waitFor } from "storybook/test";
 
     const imgs = [
         { name: "img1.jpg", url: Sample1 },
-        { name: "img2.jpg", url: Sample2 },
+        { name: "img2.mp4", url: Sample2, isVideo: true },
         { name: "img3.jpg", url: Sample3 },
     ];
 
@@ -188,7 +188,7 @@
         });
 
         await step("Click image folder button", async () => {
-            const showFolderBtn = canvas.getByRole("button", { name: /open image folder/i });
+            const showFolderBtn = canvas.getByRole("button", { name: /open reference folder/i });
             await userEvent.click(showFolderBtn);
             await expect(args.showImageFolder).toHaveBeenCalledTimes(1);
             clearAllMocks();
