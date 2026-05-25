@@ -4,7 +4,7 @@
     import Slider from "$lib/components/input/Slider.svelte";
     import { AppSettings } from "$lib/store/app-settings.svelte.js";
     import { playStartAudio } from "$lib/audio";
-    import { Label } from "bits-ui";
+    import { Label, Separator } from "bits-ui";
     import NumberField from "$lib/components/input/NumberField.svelte";
 
     export interface Props {
@@ -33,6 +33,8 @@
     export function setOnClose(fn: () => void) {
         onClose = fn;
     }
+
+    const sectionHeadingClass = "mb-4 text-xs font-semibold tracking-wider uppercase";
 </script>
 
 <Dialog
@@ -44,83 +46,98 @@
         onClose();
     }}
 >
-    <!-- Theme picker -->
-    <div class="mb-4">
-        <Select
-            label="Theme"
-            bind:value={appSettings.theme}
-            items={AppSettings.THEMES.map((t) => ({ value: t.name, label: t.label, icon: t.icon }))}
-        />
-    </div>
-    <!-- Volume -->
-    <div class="mb-12">
-        <Slider
-            label="Volume"
-            icon={volumeIcon}
-            min={0}
-            max={1}
-            step={0.1}
-            bind:value={appSettings.volume}
-            onmouseup={playStartAudio}
-        />
-    </div>
-    <!-- Contrast -->
-    <div class="mb-6">
-        <Slider
-            label="Contrast filter strength"
-            icon="lucide--contrast"
-            min={0}
-            max={AppSettings.CONTRAST_OPTIONS.length - 1}
-            step={1}
-            bind:value={appSettings.contrastStrength}
-        />
-    </div>
-    <!-- Blur -->
-    <div class="mb-6">
-        <Slider
-            label="Blur strength"
-            icon="lucide--droplet"
-            min={0}
-            max={AppSettings.BLUR_OPTIONS.length - 1}
-            step={1}
-            bind:value={appSettings.blurStrength}
-        />
-    </div>
-    <!-- Video playback speed -->
-    <div class="mb-6">
-        <Slider
-            label="Video playback speed ({appSettings.videoPlaybackRate.toFixed(2)}×)"
-            icon="lucide--circle-gauge"
-            min={AppSettings.MIN_VIDEO_PLAYBACK_RATE}
-            max={AppSettings.MAX_VIDEO_PLAYBACK_RATE}
-            step={AppSettings.VIDEO_PLAYBACK_RATE_STEP}
-            bind:value={appSettings.videoPlaybackRate}
-        />
-    </div>
-    <!-- Grid dimensions -->
-    <div class="mb-6">
-        <div class="mb-2 cursor-default text-sm text-muted">Grid dimensions (rows × cols)</div>
-        <div class="flex items-center gap-2">
-            <Label.Root for="gridRowsField" class="flex items-center">
-                <span class="iconify text-stroke lucide--grid"></span>
-                <span class="sr-only">Grid rows</span>
-            </Label.Root>
-            <div>
-                <NumberField
-                    id="gridRowsField"
-                    minValue={1}
-                    maxValue={99}
-                    bind:value={appSettings.gridRows}
-                />
-                <span class="text-xl text-muted">×</span>
-                <Label.Root for="gridColsField" class="sr-only">Grid columns</Label.Root>
-                <NumberField
-                    id="gridColsField"
-                    minValue={1}
-                    maxValue={99}
-                    bind:value={appSettings.gridCols}
-                />
+    <!-- Global settings -->
+    <section>
+        <h3 class={sectionHeadingClass}>Global</h3>
+        <!-- Theme picker -->
+        <div class="mb-4">
+            <Select
+                label="Theme"
+                bind:value={appSettings.theme}
+                items={AppSettings.THEMES.map((t) => ({
+                    value: t.name,
+                    label: t.label,
+                    icon: t.icon,
+                }))}
+            />
+        </div>
+        <!-- Volume -->
+        <div>
+            <Slider
+                label="Volume"
+                icon={volumeIcon}
+                min={0}
+                max={1}
+                step={0.1}
+                bind:value={appSettings.volume}
+                onmouseup={playStartAudio}
+            />
+        </div>
+    </section>
+
+    <Separator.Root class="divider" />
+
+    <!-- Drawing session settings -->
+    <section>
+        <h3 class={sectionHeadingClass}>Session</h3>
+        <!-- Contrast -->
+        <div class="mb-6">
+            <Slider
+                label="Contrast filter strength"
+                icon="lucide--contrast"
+                min={0}
+                max={AppSettings.CONTRAST_OPTIONS.length - 1}
+                step={1}
+                bind:value={appSettings.contrastStrength}
+            />
+        </div>
+        <!-- Blur -->
+        <div class="mb-6">
+            <Slider
+                label="Blur strength"
+                icon="lucide--droplet"
+                min={0}
+                max={AppSettings.BLUR_OPTIONS.length - 1}
+                step={1}
+                bind:value={appSettings.blurStrength}
+            />
+        </div>
+        <!-- Video playback speed -->
+        <div class="mb-6">
+            <Slider
+                label="Video playback speed ({appSettings.videoPlaybackRate.toFixed(2)}×)"
+                icon="lucide--circle-gauge"
+                min={AppSettings.MIN_VIDEO_PLAYBACK_RATE}
+                max={AppSettings.MAX_VIDEO_PLAYBACK_RATE}
+                step={AppSettings.VIDEO_PLAYBACK_RATE_STEP}
+                bind:value={appSettings.videoPlaybackRate}
+            />
+        </div>
+        <!-- Grid dimensions -->
+        <div>
+            <div class="mb-2 cursor-default text-sm text-muted">Grid dimensions (rows × cols)</div>
+            <div class="flex items-center gap-2">
+                <Label.Root for="gridRowsField" class="flex items-center">
+                    <span class="iconify text-stroke lucide--grid"></span>
+                    <span class="sr-only">Grid rows</span>
+                </Label.Root>
+                <div>
+                    <NumberField
+                        id="gridRowsField"
+                        minValue={1}
+                        maxValue={99}
+                        bind:value={appSettings.gridRows}
+                    />
+                    <span class="text-xl text-muted">×</span>
+                    <Label.Root for="gridColsField" class="sr-only">Grid columns</Label.Root>
+                    <NumberField
+                        id="gridColsField"
+                        minValue={1}
+                        maxValue={99}
+                        bind:value={appSettings.gridCols}
+                    />
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 </Dialog>
