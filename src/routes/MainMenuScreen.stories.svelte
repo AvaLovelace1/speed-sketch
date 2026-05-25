@@ -5,7 +5,7 @@
     import { Tooltip } from "bits-ui";
     import { SessionSettings } from "$lib/store/session-settings.svelte";
     import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";
-    import Sample2 from "$lib/assets/images/pexels-by-sasha-kim.jpg";
+    import Sample2 from "$lib/assets/images/pexels-by-israel-torres.mp4";
     import Sample3 from "$lib/assets/images/pexels-by-andrew-sindt.jpg";
     import {
         fn,
@@ -18,7 +18,7 @@
     } from "storybook/test";
 
     const img1 = { name: "img1.jpg", url: Sample1 };
-    const img2 = { name: "img2.jpg", url: Sample2 };
+    const img2 = { name: "img2.mp4", url: Sample2, isVideo: true };
     const img3 = { name: "img3.jpg", url: Sample3 };
 
     const { Story } = defineMeta({

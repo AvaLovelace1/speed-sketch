@@ -1,5 +1,11 @@
 import parse from "parse-duration";
-import { validateString, validateInteger, basename, fisherYatesShuffle } from "$lib/utils.svelte";
+import {
+    validateString,
+    validateInteger,
+    basename,
+    fisherYatesShuffle,
+    isVideoFile,
+} from "$lib/utils.svelte";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
@@ -263,6 +269,7 @@ export class SessionSettings implements Record<string, unknown> {
                 name: basename(file),
                 url: convertFileSrc(file),
                 path: file,
+                isVideo: isVideoFile(file),
             }))
             .sort(compareImages);
         return imgs;

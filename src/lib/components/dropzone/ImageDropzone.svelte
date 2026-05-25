@@ -60,7 +60,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
     </TauriDropzone>
 {:else}
     <WebDropzone
-        accept="image/*"
+        accept="image/*,video/*"
         {isInvalid}
         onFileDropped={() => (isLoading = true)}
         onFileDialogCancel={() => (isLoading = false)}
@@ -69,6 +69,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
                 return {
                     name: file.name,
                     url: URL.createObjectURL(file),
+                    isVideo: file.type.startsWith("video/"),
                 };
             });
             await onInput(inputImgs);

@@ -49,7 +49,20 @@ Shows a grid of image thumbnails.
 {#snippet imgTile(img: Image)}
     <!-- Wrapper div required for object-cover images to look good in Firefox -->
     <div class={TILE_CLASS}>
-        <img src={img.url} alt="Thumbnail for {img.name}" class="size-full object-cover" />
+        {#if img.isVideo}
+            <!-- #t=0.001 ensures the video thumbnail displays in Safari -->
+            <video
+                src="{img.url}#t=0.001"
+                muted
+                playsinline
+                preload="metadata"
+                class="size-full object-cover"
+            >
+                Thumbnail for video {img.name}
+            </video>
+        {:else}
+            <img src={img.url} alt="Thumbnail for {img.name}" class="size-full object-cover" />
+        {/if}
     </div>
 {/snippet}
 

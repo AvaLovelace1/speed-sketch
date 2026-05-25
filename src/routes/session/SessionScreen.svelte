@@ -58,6 +58,14 @@ The user interface for a drawing session.
     let isHighContrast = $state(false);
     let isBlurred = $state(false);
     let isAlwaysOnTop = $state(false);
+    const viewerClass = $derived([
+        "size-full object-contain",
+        isFlippedVertical && "-scale-y-100",
+        isFlippedHorizontal && "-scale-x-100",
+        isGreyscale && "grayscale",
+        isHighContrast && appSettings.contrastClass,
+        isBlurred && appSettings.blurClass,
+    ]);
 
     // UI state management
     let gridShown = $state(false);
@@ -343,20 +351,28 @@ The user interface for a drawing session.
         <div class="size-full">
             <!-- Wrap in another container so flipping works correctly -->
             <div class="size-full" {@attach panzoomAttachment}>
-                <img
-                    src={curImg.url}
-                    alt="Reference used for drawing practice"
-                    class={[
-                        "size-full object-contain",
-                        isFlippedVertical && "-scale-y-100",
-                        isFlippedHorizontal && "-scale-x-100",
-                        isGreyscale && "grayscale",
-                        isHighContrast && appSettings.contrastClass,
-                        isBlurred && appSettings.blurClass,
-                    ]}
-                    bind:clientWidth={imgWidth}
-                    bind:clientHeight={imgHeight}
-                />
+                {#if curImg.isVideo}
+                    <video
+                        src={curImg.url}
+                        autoplay
+                        loop
+                        muted
+                        playsinline
+                        class={viewerClass}
+                        bind:clientWidth={imgWidth}
+                        bind:clientHeight={imgHeight}
+                    >
+                        Video reference used for drawing practice
+                    </video>
+                {:else}
+                    <img
+                        src={curImg.url}
+                        alt="Reference used for drawing practice"
+                        class={viewerClass}
+                        bind:clientWidth={imgWidth}
+                        bind:clientHeight={imgHeight}
+                    />
+                {/if}
                 {#if gridShown}
                     <Gridlines
                         class="absolute inset-0 h-full w-full text-white drop-shadow-xs drop-shadow-offblack/25"

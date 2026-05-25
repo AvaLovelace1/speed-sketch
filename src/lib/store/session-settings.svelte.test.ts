@@ -1,6 +1,14 @@
-import { describe, test as base, expect } from "vitest";
+import { describe, test as base, expect, vi } from "vitest";
 import { SessionSettings } from "./session-settings.svelte";
 import { createMapStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
+
+vi.mock("@tauri-apps/api/core", async () => {
+    return {
+        invoke: vi.fn(),
+        convertFileSrc: (p: string) => `tauri://localhost/${p}`,
+        isTauri: () => false,
+    };
+});
 
 const FOLDER_NAME = "your/test-folder";
 const SORTED_IMGS = [
@@ -92,6 +100,24 @@ describe("session-settings.svelte.ts", () => {
         // Unshuffle again
         sessionSettings.shuffleImgs = false;
         await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
+    });
+
+    test("getImgsFromFolder", async ({ fixture: { sessionSettings } }) => {
+        const { invoke } = await import("@tauri-apps/api/core");
+        vi.mocked(invoke).mockResolvedValueOnce([
+            "/folder/a.jpg",
+            "/folder/b.mp4",
+            "/folder/c.png",
+            "/folder/d.webm",
+        ]);
+        const imgs = await sessionSettings.getImgsFromFolder("/folder");
+        const flags = imgs.map((i) => ({ name: i.name, isVideo: i.isVideo ?? false }));
+        expect(flags).toEqual([
+            { name: "a.jpg", isVideo: false },
+            { name: "b.mp4", isVideo: true },
+            { name: "c.png", isVideo: false },
+            { name: "d.webm", isVideo: true },
+        ]);
     });
 
     test("sessionScheduleCustom returns the selected schedule", ({
