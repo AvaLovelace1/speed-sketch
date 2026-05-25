@@ -45,11 +45,11 @@
     }}
 >
     <!-- Theme picker -->
-    <div class="mb-6">
+    <div class="mb-4">
         <Select
             label="Theme"
             bind:value={appSettings.theme}
-            items={appSettings.THEMES.map((t) => ({ value: t.name, label: t.label, icon: t.icon }))}
+            items={AppSettings.THEMES.map((t) => ({ value: t.name, label: t.label, icon: t.icon }))}
         />
     </div>
     <!-- Volume -->
@@ -70,7 +70,7 @@
             label="Contrast filter strength"
             icon="lucide--contrast"
             min={0}
-            max={appSettings.CONTRAST_OPTIONS.length - 1}
+            max={AppSettings.CONTRAST_OPTIONS.length - 1}
             step={1}
             bind:value={appSettings.contrastStrength}
         />
@@ -81,13 +81,24 @@
             label="Blur strength"
             icon="lucide--droplet"
             min={0}
-            max={appSettings.BLUR_OPTIONS.length - 1}
+            max={AppSettings.BLUR_OPTIONS.length - 1}
             step={1}
             bind:value={appSettings.blurStrength}
         />
     </div>
+    <!-- Video playback speed -->
+    <div class="mb-6">
+        <Slider
+            label="Video playback speed ({appSettings.videoPlaybackRate.toFixed(2)}×)"
+            icon="lucide--circle-gauge"
+            min={AppSettings.MIN_VIDEO_PLAYBACK_RATE}
+            max={AppSettings.MAX_VIDEO_PLAYBACK_RATE}
+            step={AppSettings.VIDEO_PLAYBACK_RATE_STEP}
+            bind:value={appSettings.videoPlaybackRate}
+        />
+    </div>
     <!-- Grid dimensions -->
-    <div class="mb-4">
+    <div class="mb-6">
         <div class="mb-2 cursor-default text-sm text-muted">Grid dimensions (rows × cols)</div>
         <div class="flex items-center gap-2">
             <Label.Root for="gridRowsField" class="flex items-center">

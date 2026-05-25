@@ -361,6 +361,11 @@ The user interface for a drawing session.
                         class={viewerClass}
                         bind:clientWidth={imgWidth}
                         bind:clientHeight={imgHeight}
+                        {@attach (node: HTMLVideoElement) => {
+                            $effect(() => {
+                                node.playbackRate = appSettings.videoPlaybackRate;
+                            });
+                        }}
                     >
                         Video reference used for drawing practice
                     </video>
