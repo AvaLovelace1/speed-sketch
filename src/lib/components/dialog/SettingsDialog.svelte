@@ -63,6 +63,7 @@
         </div>
         <!-- Volume -->
         <div>
+            <!-- Pad value with figure spaces so slider length doesn't shift -->
             <Slider
                 label="Volume"
                 icon={volumeIcon}
@@ -70,6 +71,10 @@
                 max={1}
                 step={0.1}
                 bind:value={appSettings.volume}
+                formatValue={(v) =>
+                    `${Math.round(v * 100)
+                        .toString()
+                        .padStart(3, "\u2007")}%`}
                 onmouseup={playStartAudio}
             />
         </div>
@@ -89,6 +94,7 @@
                 max={AppSettings.CONTRAST_OPTIONS.length - 1}
                 step={1}
                 bind:value={appSettings.contrastStrength}
+                formatValue={(v) => (v + 1).toString()}
             />
         </div>
         <!-- Blur -->
@@ -100,17 +106,19 @@
                 max={AppSettings.BLUR_OPTIONS.length - 1}
                 step={1}
                 bind:value={appSettings.blurStrength}
+                formatValue={(v) => (v + 1).toString()}
             />
         </div>
         <!-- Video playback speed -->
         <div class="mb-6">
             <Slider
-                label="Video playback speed ({appSettings.videoPlaybackRate.toFixed(2)}×)"
+                label="Video playback speed"
                 icon="lucide--circle-gauge"
                 min={AppSettings.MIN_VIDEO_PLAYBACK_RATE}
                 max={AppSettings.MAX_VIDEO_PLAYBACK_RATE}
                 step={AppSettings.VIDEO_PLAYBACK_RATE_STEP}
                 bind:value={appSettings.videoPlaybackRate}
+                formatValue={(v) => `${v.toFixed(2)}×`}
             />
         </div>
         <!-- Grid dimensions -->
