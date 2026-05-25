@@ -85,8 +85,8 @@ describe("SessionScreen.svelte", () => {
             region: () => screen.getAllByRole("toolbar")[0],
         },
         {
-            name: "images completed",
-            region: () => screen.getByText(/images completed/i),
+            name: "drawings completed",
+            region: () => screen.getByText(/drawings completed/i),
         },
     ])(
         "toolbar does not hide if mouse is still over $name",

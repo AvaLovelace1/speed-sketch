@@ -188,7 +188,7 @@
         });
 
         await step("Click image folder button", async () => {
-            const showFolderBtn = canvas.getByRole("button", { name: /open image folder/i });
+            const showFolderBtn = canvas.getByRole("button", { name: /open reference folder/i });
             await userEvent.click(showFolderBtn);
             await expect(args.showImageFolder).toHaveBeenCalledTimes(1);
             clearAllMocks();

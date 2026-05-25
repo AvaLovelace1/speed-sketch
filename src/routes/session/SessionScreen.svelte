@@ -278,7 +278,7 @@ The user interface for a drawing session.
         action: showImageFolder ? showImageFolder : () => {},
         hotkey: "",
         class: "btn-info",
-        tooltip: "Open image folder",
+        tooltip: "Open reference folder",
         disabled: isFrozen,
     });
     const settingsBtn: Tool = $derived({
@@ -414,7 +414,7 @@ The user interface for a drawing session.
         <CustomTooltip side="right">
             <StatusAlert class="alert-success tabular-nums">
                 <span class="iconify lucide--image"></span>
-                <span class="sr-only">Images completed:</span>
+                <span class="sr-only">Drawings completed:</span>
                 <div>
                     {drawingSession.nCompletedImgs}
                     {#if drawingSession.totalImgs !== Infinity}
@@ -422,7 +422,7 @@ The user interface for a drawing session.
                     {/if}
                 </div>
             </StatusAlert>
-            {#snippet tooltipContent()}Images completed{/snippet}
+            {#snippet tooltipContent()}Drawings completed{/snippet}
         </CustomTooltip>
         {#if drawingSession.totalTimeRemaining !== Infinity}
             <CustomTooltip side="right">

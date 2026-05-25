@@ -16,7 +16,7 @@
 
     const stats = $derived([
         {
-            title: "Images completed",
+            title: "Drawings completed",
             value: nCompletedImgs,
             icon: "lucide--image",
             color: "text-primary",

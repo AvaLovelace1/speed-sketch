@@ -87,8 +87,8 @@
 <!-- One image loaded. -->
 <Story name="One Image" args={{ imgs: [img1], canStartSession: true }} />
 
-<!-- Invalid image folder chosen. -->
-<Story name="Invalid" args={{ imgErrMsg: "No images found", canStartSession: false }} />
+<!-- Invalid reference folder chosen. -->
+<Story name="Invalid" args={{ imgErrMsg: "No references found", canStartSession: false }} />
 
 <!-- The Tauri UI shows the shows the "include subfolders" checkbox, shows the folder name, and hides the "no upload" message. -->
 <Story
@@ -110,7 +110,7 @@
         sessionSettings: new SessionSettings({
             imgFolders: ["C:\\Users\\User\\Pictures"],
         }),
-        imgErrMsg: "No images found",
+        imgErrMsg: "No references found",
         canStartSession: false,
         isTauri: true,
     }}
@@ -199,7 +199,7 @@
 
             const rows = canvas.getAllByRole("row");
             await expect(rows).toHaveLength(1);
-            const numImgsInput = within(rows[0]).getByRole("spinbutton", { name: /images/i });
+            const numImgsInput = within(rows[0]).getByRole("spinbutton", { name: /drawings/i });
             await expect(numImgsInput).toHaveValue(1);
 
             // Verify the entry was added to the underlying data

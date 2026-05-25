@@ -31,7 +31,7 @@ export class MainMenuPage {
 
         this.addPresetBtn = this.page.getByRole("button", { name: "Add preset" });
         this.addEntryBtn = this.page.getByRole("button", { name: "Add drawing interval" });
-        this.numImgsInputs = this.page.getByRole("spinbutton", { name: "Images" });
+        this.numImgsInputs = this.page.getByRole("spinbutton", { name: "Drawings" });
 
         this.goBtn = this.page.getByRole("button", { name: "Go" });
     }

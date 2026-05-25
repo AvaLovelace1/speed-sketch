@@ -81,7 +81,7 @@ describe("session-settings.svelte.ts", () => {
 
         // Empty image list
         sessionSettings.imgs = [];
-        await expect(sessionSettings.getImgs()).rejects.toThrow("No images found");
+        await expect(sessionSettings.getImgs()).rejects.toThrow("No references found");
 
         // Valid image list
         const imgs = [...SORTED_IMGS];

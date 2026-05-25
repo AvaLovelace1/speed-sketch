@@ -48,7 +48,7 @@ A dropzone component for uploading an image folder, in a Tauri or web environmen
     {#if !isTauri}
         <p class="text-center">
             <small class="text-xs">
-                Images are stored on your device and will <strong>not</strong> be uploaded
+                References are stored on your device and will <strong>not</strong> be uploaded
             </small>
         </p>
     {/if}

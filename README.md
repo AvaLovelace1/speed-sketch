@@ -7,8 +7,8 @@
 [![macOS][macOS]](#desktop-app)
 [![Linux][Linux]](#desktop-app)
 
-**SpeedSketch** is a free app for creating timed drawing sessions using image references on your own
-device. It displays all images in a given collection one by one, each for a specified amount of time.
+**SpeedSketch** is a free app for creating timed drawing sessions using image/video references on your own
+device. It displays all references in a given collection one by one, each for a specified amount of time.
 Perfect for gesture studies, figure drawing practice, and the like!
 
 _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Windows**, **macOS**, and **Linux**._
@@ -17,21 +17,22 @@ _Available as a [web app][Webapp] and a [desktop app](#desktop-app) for **Window
 
 ### Create your own drawing session
 
-- **Personal image references:** Choose any folder(s) on your device to use as an image reference source.
-- **Shuffle images:** Choose whether to display images alphabetically or in a random order.
+- **Personal image/video references:** Choose any folder(s) on your device to use as a reference source. Video
+  references autoplay in a loop with adjustable playback speed.
+- **Shuffle:** Choose whether to display references alphabetically or in a random order.
 - **Custom sessions:** Set a fixed display time in **Endless Mode**, or create your own schedules in **Class Mode**.
 - **Breaks:** Rest your wrist! Add breaks of any length to schedules in Class Mode.
 
-### Image viewer
+### Image/video reference viewer
 
-- **Zoom/pan:** Scroll to zoom in and out, and click & drag to pan around the image.
-- **Flip horizontally or vertically:** Flip the image for more variety.
-- **Customizable image filters:** Use the **Greyscale**, **High Contrast**, and **Blur** filters to focus on shape
+- **Zoom/pan:** Scroll to zoom in and out, and click & drag to pan around.
+- **Flip horizontally or vertically:** Flip the reference for more variety.
+- **Customizable filters:** Use the **Greyscale**, **High Contrast**, and **Blur** filters to focus on shape
   and form.
-- **Grid overlay:** Display a modifiable grid over the image for checking proportions.
+- **Grid overlay:** Display a modifiable grid over the reference for checking proportions.
 - **Pin window to top** _(desktop only)_: Keep the app window on top of other windows for easy reference while
   drawing.
-- **Open image folder** _(desktop only)_: Reveal the image in your system’s file navigator.
+- **Open folder** _(desktop only)_: Reveal the reference in your system’s file navigator.
 - **Light & dark themes**
 
 ## Installation
@@ -48,11 +49,13 @@ Visit the [SpeedSketch website][Webapp] to use SpeedSketch directly in your brow
 [![macOS][macOS]](#desktop-app)
 [![Linux][Linux]](#desktop-app)
 
-Build the desktop app on your computer by following the instructions in [Building from source](#building-from-source). Pre-built binaries are currently not available.
+Build the desktop app on your computer by following the instructions in [Building from source](#building-from-source).
+Pre-built binaries are currently not available.
 
 ## Building from source
 
-SpeedSketch is built using [SvelteKit](https://svelte.dev/docs/kit/introduction) and [Tauri](https://tauri.app). Follow these steps to build from source:
+SpeedSketch is built using [SvelteKit](https://svelte.dev/docs/kit/introduction) and [Tauri](https://tauri.app). Follow
+these steps to build from source:
 
 1. Clone this repository with `git clone https://github.com/AvaLovelace1/speed-sketch.git && cd speed-sketch`.
 2. Install all [Tauri prerequisites](https://tauri.app/start/prerequisites/), including **System Dependencies**,
@@ -68,7 +71,8 @@ SpeedSketch is built using [SvelteKit](https://svelte.dev/docs/kit/introduction)
 - Thanks to [Lucide](https://lucide.dev) for the icons, [Mixkit](https://mixkit.co) for the sound effects, and
   [Nord](https://www.nordtheme.com) for the colour scheme.
 - Thanks to [Andrew Sindt](https://www.pexels.com/@andrew-sindt-2650965/), [Hong Son](https://www.pexels.com/@hson/),
-  [Sasha Kim](https://www.pexels.com/@sasha-kim/), and [JookpubStock](https://jookpubstock.com) for the
+  [Sasha Kim](https://www.pexels.com/@sasha-kim/), [Israel Torres](https://www.pexels.com/@israwmx/highlights/),
+  and [JookpubStock](https://jookpubstock.com) for the
   reference images used in examples and testing.
 - SpeedSketch was inspired by the wonderful
   [GestureDrawing!](https://cubebrush.co/advanches/products/d9q6yq/gesturedrawing?q=gesturedrawing)
