@@ -1,4 +1,4 @@
-import { type Image } from "$lib/types.svelte";
+import type { Image } from "$lib/types.svelte";
 
 export type ScheduleEntry = {
     duration: number; // Time in seconds to show each image (or break duration)
