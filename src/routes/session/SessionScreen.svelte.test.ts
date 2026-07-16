@@ -100,6 +100,8 @@ describe("SessionScreen.svelte", () => {
     );
 
     test("freeze and unfreeze", async ({ fixture: { sessionScreen, drawingSession } }) => {
+        drawingSession.resume();
+
         // Freeze
         expect(sessionScreen.toolbarIsShown()).toBe(false);
         sessionScreen.freeze();
@@ -113,6 +115,18 @@ describe("SessionScreen.svelte", () => {
         expect(drawingSession.isPaused).toBe(false);
         await waitFor(() => expect(exitButton).toBeEnabled());
         expectToolbarTemporarilyShown(sessionScreen);
+    });
+
+    test("unfreeze does not resume a manually paused session", async ({
+        fixture: { sessionScreen, drawingSession },
+    }) => {
+        drawingSession.resume();
+        drawingSession.pause();
+
+        sessionScreen.freeze();
+        sessionScreen.unfreeze();
+
+        expect(drawingSession.isPaused).toBe(true);
     });
 
     test("resume and pause", async ({ fixture: { sessionScreen, drawingSession, user } }) => {

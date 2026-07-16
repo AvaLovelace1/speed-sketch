@@ -41,6 +41,7 @@ The user interface for a drawing session.
     }: Props = $props();
 
     let isFrozen = $state(false);
+    let wasPausedBeforeFreeze = $state(false);
 
     // Toolbar state management
     let toolbarShown = $state(false);
@@ -97,13 +98,14 @@ The user interface for a drawing session.
     // Prevent any further interaction with the UI
     export function freeze() {
         isFrozen = true;
+        wasPausedBeforeFreeze = drawingSession.isPaused;
         drawingSession.pause();
         showToolbar();
     }
 
     export function unfreeze() {
         isFrozen = false;
-        drawingSession.resume();
+        if (!wasPausedBeforeFreeze) drawingSession.resume();
     }
 
     const panzoomAttachment: Attachment = (element) => {

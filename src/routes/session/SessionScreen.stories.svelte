@@ -65,6 +65,8 @@
     name="With Interactions"
     play={async ({ args, canvas, userEvent, step }) => {
         await step("Freeze and unfreeze", async () => {
+            args.drawingSession.resume();
+
             // Freeze
             expect(sessionScreen.toolbarIsShown()).toBe(false);
             sessionScreen.freeze();
