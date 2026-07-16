@@ -120,6 +120,19 @@ describe("session-settings.svelte.ts", () => {
         ]);
     });
 
+    test("getImgsFromFolders handles libraries with many files", async ({
+        fixture: { sessionSettings },
+    }) => {
+        const { invoke } = await import("@tauri-apps/api/core");
+        const numFiles = 400_000;
+        vi.mocked(invoke).mockResolvedValueOnce(
+            Array.from({ length: numFiles }, (_, i) => `/folder/img${i}.jpg`),
+        );
+        sessionSettings.imgFolders = ["/folder"];
+        const imgs = await sessionSettings.getImgsFromFolders();
+        expect(imgs).toHaveLength(numFiles);
+    });
+
     test("sessionScheduleCustom returns the selected schedule", ({
         fixture: { sessionSettings },
     }) => {

@@ -244,7 +244,10 @@ export class SessionSettings implements Record<string, unknown> {
     getImgsFromFolders = async () => {
         const allImgs: Image[] = [];
         for (const imgFolder of this.imgFolders) {
-            allImgs.push(...(await this.getImgsFromFolder(imgFolder)));
+            // Push instead of spreading to avoid overflowing the call stack for huge folders
+            for (const img of await this.getImgsFromFolder(imgFolder)) {
+                allImgs.push(img);
+            }
         }
         return allImgs;
     };
