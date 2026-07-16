@@ -132,4 +132,17 @@ describe("SessionScreen.svelte", () => {
         expect(screen.getByText(/paused/i)).toBeVisible();
         expectToolbarTemporarilyShown(sessionScreen);
     });
+
+    test("hotkeys with modifier keys held do not trigger tools", async ({
+        fixture: { drawingSession, user },
+    }) => {
+        await user.keyboard("{ArrowRight}");
+        expect(drawingSession.curRepeatIdx).toBe(1);
+        await user.keyboard("{Meta>}{ArrowRight}{/Meta}");
+        expect(drawingSession.curRepeatIdx).toBe(1);
+        await user.keyboard("{Control>}{ArrowRight}{/Control}");
+        expect(drawingSession.curRepeatIdx).toBe(1);
+        await user.keyboard("{Alt>}{ArrowRight}{/Alt}");
+        expect(drawingSession.curRepeatIdx).toBe(1);
+    });
 });
