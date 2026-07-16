@@ -19,26 +19,20 @@ const BREAK_SCHEDULE = [
     { duration: 45, repeat: 3 },
 ];
 
-interface DrawingSessionFixture {
-    session: DrawingSession;
-}
-
-const test = base.extend<DrawingSessionFixture>({
-    session: async ({ task: _task }, use) => {
-        vi.useFakeTimers();
-        const session = new DrawingSession(IMGS, SCHEDULE);
-        await use(session);
+const test = base.extend("session", ({ task: _task }, { onCleanup }) => {
+    vi.useFakeTimers();
+    onCleanup(() => {
         vi.restoreAllMocks();
-    },
+    });
+    return new DrawingSession(IMGS, SCHEDULE);
 });
 
-const testWithBreaks = base.extend<DrawingSessionFixture>({
-    session: async ({ task: _task }, use) => {
-        vi.useFakeTimers();
-        const session = new DrawingSession(IMGS, BREAK_SCHEDULE);
-        await use(session);
+const testWithBreaks = base.extend("session", ({ task: _task }, { onCleanup }) => {
+    vi.useFakeTimers();
+    onCleanup(() => {
         vi.restoreAllMocks();
-    },
+    });
+    return new DrawingSession(IMGS, BREAK_SCHEDULE);
 });
 
 describe("drawing-session.svelte.ts", () => {
