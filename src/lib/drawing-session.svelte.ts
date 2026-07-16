@@ -35,7 +35,7 @@ export class DrawingSession {
         public schedule: SessionSchedule,
     ) {
         this.nCompletedImgs = $state(0);
-        this.timeRemaining = $state(schedule[0].duration);
+        this.timeRemaining = $state(schedule.length > 0 ? schedule[0].duration : 0);
         this.timeSpent = 0;
         this.isPaused = $state(true);
         this.isFinished = $state(false);
@@ -82,7 +82,7 @@ export class DrawingSession {
     }
 
     isValid = () => {
-        return this.imgs.length > 0 && this.schedule[0].duration > 0;
+        return this.imgs.length > 0 && this.schedule.length > 0 && this.schedule[0].duration > 0;
     };
 
     getCurImg = (): Image | undefined => {

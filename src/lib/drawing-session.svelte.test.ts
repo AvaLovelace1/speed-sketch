@@ -280,4 +280,9 @@ describe("drawing-session.svelte.ts", () => {
     testWithBreaks("totalTimeRemaining includes break durations", ({ session }) => {
         expect(session.totalTimeRemaining).toBe(totalTimeRemainingBreakSchedule);
     });
+
+    base("session with empty schedule is invalid", () => {
+        const session = new DrawingSession(IMGS, []);
+        expect(session.isValid()).toBe(false);
+    });
 });
