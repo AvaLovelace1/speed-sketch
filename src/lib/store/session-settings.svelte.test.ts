@@ -1,6 +1,6 @@
 import { describe, test as base, expect, vi } from "vitest";
 import { SessionSettings } from "./session-settings.svelte";
-import { createMapStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
+import { createMapStore } from "$lib/store/persistent-store.svelte";
 
 vi.mock("@tauri-apps/api/core", async () => {
     return {
@@ -17,24 +17,14 @@ const SORTED_IMGS = [
     { name: "image3.jpg", url: "https://localhost/image3.jpg", path: `${FOLDER_NAME}/image3.jpg` },
 ];
 
-interface SessionSettingsFixture {
-    fixture: {
-        sessionSettings: SessionSettings;
-        persistentStore: PersistentStore;
-    };
-}
-
-const test = base.extend<SessionSettingsFixture>({
-    fixture: async ({ task: _task }, use) => {
-        const persistentStore = createMapStore();
-        const sessionSettings = new SessionSettings();
-        await use({ sessionSettings, persistentStore });
-    },
-});
+const test = base
+    .extend("persistentStore", ({ task: _task }) => createMapStore())
+    .extend("sessionSettings", ({ task: _task }) => new SessionSettings());
 
 describe("session-settings.svelte.ts", () => {
     test("saveSessionSettings and loadSessionSettings", async ({
-        fixture: { sessionSettings, persistentStore },
+        sessionSettings,
+        persistentStore,
     }) => {
         // Save settings
         const desiredImgFolders = ["folder1"];
@@ -49,7 +39,8 @@ describe("session-settings.svelte.ts", () => {
     });
 
     test("loading before settings are saved does nothing", async ({
-        fixture: { sessionSettings, persistentStore },
+        sessionSettings,
+        persistentStore,
     }) => {
         const desiredImgFolders = ["folder3"];
         sessionSettings.imgFolders = desiredImgFolders;
@@ -70,13 +61,13 @@ describe("session-settings.svelte.ts", () => {
             option: "Custom",
             expected: 1337,
         },
-    ])("getImgShowTime for %s", ({ option, expected }, { fixture: { sessionSettings } }) => {
+    ])("getImgShowTime for %s", ({ option, expected }, { sessionSettings }) => {
         sessionSettings.imgShowTimeOption = option;
         if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
         expect(sessionSettings.imgShowTime).toBe(expected);
     });
 
-    test("getImgs", async ({ fixture: { sessionSettings } }) => {
+    test("getImgs", async ({ sessionSettings }) => {
         sessionSettings.imgFolders = [];
 
         // Empty image list
@@ -102,7 +93,7 @@ describe("session-settings.svelte.ts", () => {
         await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
     });
 
-    test("getImgsFromFolder", async ({ fixture: { sessionSettings } }) => {
+    test("getImgsFromFolder", async ({ sessionSettings }) => {
         const { invoke } = await import("@tauri-apps/api/core");
         vi.mocked(invoke).mockResolvedValueOnce([
             "/folder/a.jpg",
@@ -120,26 +111,31 @@ describe("session-settings.svelte.ts", () => {
         ]);
     });
 
-    test("sessionScheduleCustom returns the selected schedule", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("getImgsFromFolders handles libraries with many files", async ({ sessionSettings }) => {
+        const { invoke } = await import("@tauri-apps/api/core");
+        const numFiles = 400_000;
+        vi.mocked(invoke).mockResolvedValueOnce(
+            Array.from({ length: numFiles }, (_, i) => `/folder/img${i}.jpg`),
+        );
+        sessionSettings.imgFolders = ["/folder"];
+        const imgs = await sessionSettings.getImgsFromFolders();
+        expect(imgs).toHaveLength(numFiles);
+    });
+
+    test("sessionScheduleCustom returns the selected schedule", ({ sessionSettings }) => {
         expect(sessionSettings.sessionScheduleCustom).toBe(
             sessionSettings.schedulePresets[0].schedule,
         );
     });
 
-    test("addSchedulePreset appends and selects new schedule", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("addSchedulePreset appends and selects new schedule", ({ sessionSettings }) => {
         sessionSettings.addSchedulePreset("Warmup");
         expect(sessionSettings.schedulePresets).toHaveLength(2);
         expect(sessionSettings.schedulePresets[1]).toEqual({ name: "Warmup", schedule: [] });
         expect(sessionSettings.selectedScheduleIdx).toBe(1);
     });
 
-    test("selectSchedulePreset changes sessionScheduleCustom", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("selectSchedulePreset changes sessionScheduleCustom", ({ sessionSettings }) => {
         sessionSettings.addSchedulePreset("Warmup");
         sessionSettings.selectSchedulePreset(0);
         expect(sessionSettings.sessionScheduleCustom).toBe(
@@ -151,37 +147,31 @@ describe("session-settings.svelte.ts", () => {
         );
     });
 
-    test("selectSchedulePreset throws for out-of-range index", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("selectSchedulePreset throws for out-of-range index", ({ sessionSettings }) => {
         expect(() => sessionSettings.selectSchedulePreset(-1)).toThrow("out of range");
         expect(() => sessionSettings.selectSchedulePreset(1)).toThrow("out of range");
     });
 
-    test("editing sessionScheduleCustom mutates the saved schedule", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("editing sessionScheduleCustom mutates the saved schedule", ({ sessionSettings }) => {
         const newEntry = { duration: 60, repeat: 5, id: "x" };
         sessionSettings.sessionScheduleCustom.unshift(newEntry);
         expect(sessionSettings.schedulePresets).toHaveLength(1);
         expect(sessionSettings.schedulePresets[0].schedule[0]).toEqual(newEntry);
     });
 
-    test("renameSchedulePreset renames the selected schedule", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("renameSchedulePreset renames the selected schedule", ({ sessionSettings }) => {
         sessionSettings.addSchedulePreset("Old Name");
         sessionSettings.renameSchedulePreset("New Name");
         expect(sessionSettings.schedulePresets[1].name).toBe("New Name");
         expect(sessionSettings.selectedScheduleIdx).toBe(1);
     });
 
-    test("renameSchedulePreset is no-op for Default Preset", ({ fixture: { sessionSettings } }) => {
+    test("renameSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
         sessionSettings.renameSchedulePreset("Something Else");
         expect(sessionSettings.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
     });
 
-    test("removeSchedulePreset removes selected schedule", ({ fixture: { sessionSettings } }) => {
+    test("removeSchedulePreset removes selected schedule", ({ sessionSettings }) => {
         sessionSettings.addSchedulePreset("A");
         sessionSettings.addSchedulePreset("B");
         sessionSettings.addSchedulePreset("C");
@@ -194,15 +184,13 @@ describe("session-settings.svelte.ts", () => {
         expect(sessionSettings.selectedScheduleIdx).toBe(1);
     });
 
-    test("removeSchedulePreset is no-op for Default Preset", ({ fixture: { sessionSettings } }) => {
+    test("removeSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
         sessionSettings.removeSchedulePreset();
         expect(sessionSettings.schedulePresets).toHaveLength(1);
         expect(sessionSettings.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
     });
 
-    test("removeSchedulePreset clamps index when removing last selected", ({
-        fixture: { sessionSettings },
-    }) => {
+    test("removeSchedulePreset clamps index when removing last selected", ({ sessionSettings }) => {
         sessionSettings.addSchedulePreset("A");
         sessionSettings.addSchedulePreset("B");
         expect(sessionSettings.selectedScheduleIdx).toBe(2);
@@ -210,9 +198,7 @@ describe("session-settings.svelte.ts", () => {
         expect(sessionSettings.selectedScheduleIdx).toBe(1);
     });
 
-    test("saved schedules persist to store", async ({
-        fixture: { sessionSettings, persistentStore },
-    }) => {
+    test("saved schedules persist to store", async ({ sessionSettings, persistentStore }) => {
         sessionSettings.addSchedulePreset("Warmup");
         sessionSettings.schedulePresets[1].schedule.push({
             duration: 30,
@@ -232,7 +218,7 @@ describe("session-settings.svelte.ts", () => {
     });
 
     test("loadFromStore clamps selectedScheduleIdx if out of bounds", async ({
-        fixture: { persistentStore },
+        persistentStore,
     }) => {
         // Manually store an out-of-bounds index
         const schedulePresets = [

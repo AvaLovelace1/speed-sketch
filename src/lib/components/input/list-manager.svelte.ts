@@ -26,12 +26,13 @@ export class ListManager<T> {
     };
 
     removeItem = () => {
+        if (this.selectedIdx === -1) return;
         this.items.splice(this.selectedIdx, 1);
         this.selectedIdx = Math.min(this.selectedIdx, this.items.length - 1);
     };
 
     moveItemUp = () => {
-        if (this.selectedIdx === 0) return;
+        if (this.selectedIdx === -1 || this.selectedIdx === 0) return;
         const item = this.items[this.selectedIdx];
         this.items[this.selectedIdx] = this.items[this.selectedIdx - 1];
         this.items[this.selectedIdx - 1] = item;
@@ -39,7 +40,7 @@ export class ListManager<T> {
     };
 
     moveItemDown = () => {
-        if (this.selectedIdx === this.items.length - 1) return;
+        if (this.selectedIdx === -1 || this.selectedIdx === this.items.length - 1) return;
         const item = this.items[this.selectedIdx];
         this.items[this.selectedIdx] = this.items[this.selectedIdx + 1];
         this.items[this.selectedIdx + 1] = item;
@@ -47,6 +48,7 @@ export class ListManager<T> {
     };
 
     moveItem = (newIdx: number) => {
+        if (this.selectedIdx === -1) return;
         if (newIdx < 0 || newIdx >= this.items.length) {
             throw new Error(`newIdx out of range: ${newIdx}`);
         }

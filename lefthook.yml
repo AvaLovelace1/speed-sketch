@@ -1,0 +1,7 @@
+pre-commit:
+    parallel: true
+    jobs:
+        - name: lint
+          run: npm run lint
+        - name: unit tests
+          run: npm run test:unit

@@ -24,6 +24,8 @@ A toolbar with a set of tools/actions and keyboard shortcuts.
     const { tools, toolbarStyle = "default", tooltipSide = "top", ...props }: Props = $props();
 
     function onKeyDown(e: KeyboardEvent) {
+        // Don't hijack browser/system shortcuts like Cmd+C or Ctrl+F
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
         for (const tool of tools) {
             if (tool.hotkey && e.key === tool.hotkey) {
                 if (!tool.disabled) {

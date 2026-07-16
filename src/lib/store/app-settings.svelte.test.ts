@@ -1,26 +1,13 @@
 import { describe, test as base, expect } from "vitest";
 import { AppSettings } from "./app-settings.svelte";
-import { createMapStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
+import { createMapStore } from "$lib/store/persistent-store.svelte";
 
-interface AppSettingsFixture {
-    fixture: {
-        appSettings: AppSettings;
-        persistentStore: PersistentStore;
-    };
-}
-
-const test = base.extend<AppSettingsFixture>({
-    fixture: async ({ task: _task }, use) => {
-        const persistentStore = createMapStore();
-        const appSettings = new AppSettings();
-        await use({ appSettings, persistentStore });
-    },
-});
+const test = base
+    .extend("persistentStore", ({ task: _task }) => createMapStore())
+    .extend("appSettings", ({ task: _task }) => new AppSettings());
 
 describe("app-settings.svelte.ts", () => {
-    test("saveAppSettings and loadAppSettings", async ({
-        fixture: { appSettings, persistentStore },
-    }) => {
+    test("saveAppSettings and loadAppSettings", async ({ appSettings, persistentStore }) => {
         // Save app settings
         const desiredTheme = "light";
         appSettings.theme = desiredTheme;
@@ -34,7 +21,8 @@ describe("app-settings.svelte.ts", () => {
     });
 
     test("loading before settings are set does nothing", async ({
-        fixture: { appSettings, persistentStore },
+        appSettings,
+        persistentStore,
     }) => {
         const desiredTheme = "light";
         appSettings.theme = desiredTheme;
@@ -43,7 +31,8 @@ describe("app-settings.svelte.ts", () => {
     });
 
     test("videoPlaybackRate defaults to 1 and persists", async ({
-        fixture: { appSettings, persistentStore },
+        appSettings,
+        persistentStore,
     }) => {
         expect(appSettings.videoPlaybackRate).toBe(1);
         appSettings.videoPlaybackRate = 1.5;
@@ -54,9 +43,7 @@ describe("app-settings.svelte.ts", () => {
         expect(loaded.videoPlaybackRate).toBe(1.5);
     });
 
-    test("videoPlaybackRate rejects out-of-range values on load", async ({
-        fixture: { persistentStore },
-    }) => {
+    test("videoPlaybackRate rejects out-of-range values on load", async ({ persistentStore }) => {
         await persistentStore.set("videoPlaybackRate", 99);
         await persistentStore.save();
         const loaded = new AppSettings();
@@ -65,7 +52,7 @@ describe("app-settings.svelte.ts", () => {
         expect(loaded.videoPlaybackRate).toBe(1);
     });
 
-    test("contrastClass and blurClass", ({ fixture: { appSettings } }) => {
+    test("contrastClass and blurClass", ({ appSettings }) => {
         appSettings.contrastStrength = 2;
         appSettings.blurStrength = 3;
         expect(appSettings.contrastClass).toBe(AppSettings.CONTRAST_OPTIONS[2]);

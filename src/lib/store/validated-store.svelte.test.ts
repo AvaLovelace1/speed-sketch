@@ -2,35 +2,27 @@ import { describe, expect, test as base } from "vitest";
 import { ValidatedStore } from "./validated-store.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
-interface ValidatedStoreFixture {
-    validatedStore: ValidatedStore;
-}
-
-const test = base.extend<ValidatedStoreFixture>({
-    validatedStore: async ({ task: _task }, use) => {
-        const keys = [
-            {
-                key: "aString",
-                isValid: (value: unknown): value is string => typeof value === "string",
-            },
-            {
-                key: "aNumberEqualling42",
-                isValid: (value: unknown): value is number =>
-                    typeof value === "number" && value === 42,
-            },
-            {
-                key: "aBoolean",
-                isValid: (value: unknown): value is boolean => typeof value === "boolean",
-            },
-            {
-                key: "anObject",
-                isValid: (value: unknown): value is Record<string, unknown> =>
-                    typeof value === "object" && value !== null && !Array.isArray(value),
-            },
-        ];
-        const validatedStore = new ValidatedStore(createMapStore(), keys);
-        await use(validatedStore);
-    },
+const test = base.extend("validatedStore", ({ task: _task }) => {
+    const keys = [
+        {
+            key: "aString",
+            isValid: (value: unknown): value is string => typeof value === "string",
+        },
+        {
+            key: "aNumberEqualling42",
+            isValid: (value: unknown): value is number => typeof value === "number" && value === 42,
+        },
+        {
+            key: "aBoolean",
+            isValid: (value: unknown): value is boolean => typeof value === "boolean",
+        },
+        {
+            key: "anObject",
+            isValid: (value: unknown): value is Record<string, unknown> =>
+                typeof value === "object" && value !== null && !Array.isArray(value),
+        },
+    ];
+    return new ValidatedStore(createMapStore(), keys);
 });
 
 describe("validated-store.svelte.ts", () => {

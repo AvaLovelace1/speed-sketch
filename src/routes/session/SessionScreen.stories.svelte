@@ -30,6 +30,24 @@
     });
 
     let sessionScreen: SessionScreen;
+
+    // Fake timers are unavailable in Storybook, so toolbar auto-hide stories wait for a short timeout in real time.
+    const SHORT_TOOLBAR_TIMEOUT = 500;
+
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    async function expectToolbarTemporarilyShown() {
+        expect(sessionScreen.toolbarIsShown()).toBe(true);
+        await waitFor(() => expect(sessionScreen.toolbarIsShown()).toBe(false), {
+            timeout: SHORT_TOOLBAR_TIMEOUT * 2,
+        });
+    }
+
+    async function expectToolbarPermanentlyShown() {
+        expect(sessionScreen.toolbarIsShown()).toBe(true);
+        await sleep(SHORT_TOOLBAR_TIMEOUT * 2);
+        expect(sessionScreen.toolbarIsShown()).toBe(true);
+    }
 </script>
 
 {#snippet template(args: SessionScreenProps)}
@@ -60,38 +78,117 @@
     }}
 />
 
+<!-- The toolbar shows on mouse movement and hides automatically after a delay,
+unless the mouse is over the toolbar or the status alerts. -->
+<Story
+    name="Toolbar Auto Hide"
+    args={{
+        drawingSession: new DrawingSession(imgs, [{ duration: 60, repeat: Infinity }]),
+        hideToolbarTimeoutDuration: SHORT_TOOLBAR_TIMEOUT,
+    }}
+    play={async ({ canvas, canvasElement, userEvent, step }) => {
+        await step("Toolbar shows on hover and hides after delay", async () => {
+            expect(sessionScreen.toolbarIsShown()).toBe(false);
+            await userEvent.hover(canvasElement);
+            await expectToolbarTemporarilyShown();
+        });
+
+        for (const { name, region } of [
+            {
+                name: "toolbar",
+                region: () => canvas.getAllByRole("toolbar")[0],
+            },
+            {
+                name: "drawings completed",
+                region: () => canvas.getByText(/drawings completed/i),
+            },
+        ]) {
+            await step(`Toolbar does not hide if mouse is still over ${name}`, async () => {
+                expect(sessionScreen.toolbarIsShown()).toBe(false);
+                await userEvent.hover(region());
+                await expectToolbarPermanentlyShown();
+                await userEvent.unhover(region());
+                await expectToolbarTemporarilyShown();
+            });
+        }
+    }}
+/>
+
 <!-- With user interactions. -->
 <Story
     name="With Interactions"
-    play={async ({ args, canvas, userEvent, step }) => {
+    args={{ hideToolbarTimeoutDuration: SHORT_TOOLBAR_TIMEOUT }}
+    play={async ({ args, canvas, canvasElement, userEvent, step }) => {
+        await step("Toolbar shows on hover and hides after delay", async () => {
+            expect(sessionScreen.toolbarIsShown()).toBe(false);
+            await userEvent.hover(canvasElement);
+            await expectToolbarTemporarilyShown();
+        });
+
+        for (const { name, region } of [
+            {
+                name: "toolbar",
+                region: () => canvas.getAllByRole("toolbar")[0],
+            },
+            {
+                name: "drawings completed",
+                region: () => canvas.getByText(/drawings completed/i),
+            },
+        ]) {
+            await step(`Toolbar does not hide if mouse is still over ${name}`, async () => {
+                expect(sessionScreen.toolbarIsShown()).toBe(false);
+                await userEvent.hover(region());
+                await expectToolbarPermanentlyShown();
+                await userEvent.unhover(region());
+                await expectToolbarTemporarilyShown();
+            });
+        }
+
         await step("Freeze and unfreeze", async () => {
+            args.drawingSession.resume();
+
             // Freeze
             expect(sessionScreen.toolbarIsShown()).toBe(false);
             sessionScreen.freeze();
             expect(args.drawingSession.isPaused).toBe(true);
-            const exitBtn = screen.getByRole("button", { name: "Exit session" });
+            const exitBtn = canvas.getByRole("button", { name: "Exit session" });
             await waitFor(() => expect(exitBtn).toBeDisabled());
+            await expectToolbarPermanentlyShown();
 
             // Unfreeze
             sessionScreen.unfreeze();
             expect(args.drawingSession.isPaused).toBe(false);
             await waitFor(() => expect(exitBtn).toBeEnabled());
+            await expectToolbarTemporarilyShown();
         });
 
-        await userEvent.click(canvas.getByRole("button", { name: /pause/i }));
+        await step("Unfreeze does not resume a manually paused session", async () => {
+            args.drawingSession.pause();
 
-        await step("Click resume and pause buttons", async () => {
+            sessionScreen.freeze();
+            sessionScreen.unfreeze();
+
+            expect(args.drawingSession.isPaused).toBe(true);
+        });
+
+        await step("Click resume button", async () => {
             expect(args.drawingSession.isPaused).toBe(true);
 
-            // Resume
-            await userEvent.click(canvas.getByRole("button", { name: /resume/i }));
+            const resumeBtn = canvas.getByRole("button", { name: /resume/i });
+            await userEvent.click(resumeBtn);
+            await userEvent.unhover(resumeBtn);
             expect(args.drawingSession.isPaused).toBe(false);
             await expect(canvas.queryByText(/paused/i)).toBeNull();
+            await expectToolbarTemporarilyShown();
+        });
 
-            // Pause
-            await userEvent.click(canvas.getByRole("button", { name: /pause/i }));
+        await step("Click pause button", async () => {
+            const pauseBtn = canvas.getByRole("button", { name: /pause/i });
+            await userEvent.click(pauseBtn);
+            await userEvent.unhover(pauseBtn);
             expect(args.drawingSession.isPaused).toBe(true);
             await waitFor(() => expect(canvas.getByText(/paused/i)).toBeVisible());
+            await expectToolbarTemporarilyShown();
         });
 
         await step("Click previous and next buttons", async () => {
@@ -205,6 +302,19 @@
             // Close the dialog. Session should be unfrozen
             await userEvent.click(await dialogCanvas.findByRole("button", { name: /close/i }));
             await waitFor(() => expect(exitBtn).toBeEnabled());
+        });
+
+        await step("Hotkeys do not hijack system shortcuts", async () => {
+            await userEvent.keyboard("{ArrowRight}");
+            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            await userEvent.keyboard("{Meta>}{ArrowRight}{/Meta}");
+            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            await userEvent.keyboard("{Control>}{ArrowRight}{/Control}");
+            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
+            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            await userEvent.keyboard("{ArrowLeft}");
+            expect(args.drawingSession.curRepeatIdx).toBe(0);
         });
     }}
 />

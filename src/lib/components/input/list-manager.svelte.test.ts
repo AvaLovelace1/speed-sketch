@@ -64,6 +64,14 @@ describe("list-manager.svelte.ts", () => {
         expect(manager.selectedIdx).toBe(-1);
     });
 
+    test("removeItem is a no-op when nothing is selected", () => {
+        const manager = new ListManager(["a", "b"]);
+        manager.selectedIdx = -1;
+        manager.removeItem();
+        expect(manager.items).toEqual(["a", "b"]);
+        expect(manager.selectedIdx).toBe(-1);
+    });
+
     test("moveItemUp swaps with previous and updates selection", () => {
         const manager = new ListManager(["a", "b", "c"]);
 
@@ -108,6 +116,17 @@ describe("list-manager.svelte.ts", () => {
         expect(manager.selectedIdx).toBe(1);
     });
 
+    test("moveItemUp and moveItemDown are no-ops when nothing is selected", () => {
+        const manager = new ListManager(["a", "b"]);
+        manager.selectedIdx = -1;
+        manager.moveItemUp();
+        expect(manager.items).toEqual(["a", "b"]);
+        expect(manager.selectedIdx).toBe(-1);
+        manager.moveItemDown();
+        expect(manager.items).toEqual(["a", "b"]);
+        expect(manager.selectedIdx).toBe(-1);
+    });
+
     test("moveItem moves selected item to arbitrary index", () => {
         const manager = new ListManager(["a", "b", "c"]);
 
@@ -133,6 +152,14 @@ describe("list-manager.svelte.ts", () => {
         manager.selectedIdx = 0;
         expect(() => manager.moveItem(-1)).toThrow("out of range");
         expect(() => manager.moveItem(2)).toThrow("out of range");
+    });
+
+    test("moveItem is a no-op when nothing is selected", () => {
+        const manager = new ListManager(["a", "b"]);
+        manager.selectedIdx = -1;
+        manager.moveItem(1);
+        expect(manager.items).toEqual(["a", "b"]);
+        expect(manager.selectedIdx).toBe(-1);
     });
 
     test("items array is mutated in place", () => {

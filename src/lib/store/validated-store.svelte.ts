@@ -1,4 +1,4 @@
-import { type PersistentStore } from "$lib/store/persistent-store.svelte";
+import type { PersistentStore } from "$lib/store/persistent-store.svelte";
 
 // Manages the persistent storage of a group of key-value pairs.
 // Validates the values when loading.

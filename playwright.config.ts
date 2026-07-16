@@ -6,6 +6,7 @@ export default defineConfig({
         port: 4173,
     },
     testDir: "e2e",
+    reporter: "html",
     projects: [
         {
             name: "chromium",

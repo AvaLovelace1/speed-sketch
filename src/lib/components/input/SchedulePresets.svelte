@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { type SchedulePreset } from "$lib/store/session-settings.svelte";
+    import type { SchedulePreset } from "$lib/store/session-settings.svelte";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Dialog from "$lib/components/dialog/Dialog.svelte";
     import Select from "$lib/components/input/Select.svelte";
