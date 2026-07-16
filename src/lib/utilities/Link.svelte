@@ -9,6 +9,7 @@
     const { children, href, external = false }: Props = $props();
 </script>
 
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
 <a
     {href}
     class="hover:text-base-content hover:underline focus:text-base-content focus:underline active:text-primary"
@@ -23,3 +24,4 @@
         </span>
     {/if}
 </a>
+<!-- eslint-enable svelte/no-navigation-without-resolve -->
