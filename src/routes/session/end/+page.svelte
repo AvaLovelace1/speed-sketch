@@ -1,10 +1,15 @@
 <script lang="ts">
     import { currentSession } from "$lib/drawing-session.svelte";
+    import { stats } from "$lib/store/stats.svelte";
     import EndScreen from "./EndScreen.svelte";
     import { onMount } from "svelte";
     import { playEndAudio } from "$lib/audio";
 
     onMount(async () => {
+        await stats.recordSession(
+            currentSession.object.completedDrawings,
+            currentSession.object.timeSpent,
+        );
         await playEndAudio();
     });
 </script>

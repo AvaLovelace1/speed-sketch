@@ -7,8 +7,10 @@ export const ssr = false;
 import type { LayoutLoad } from "./$types";
 import { sessionSettings } from "$lib/store/session-settings.svelte";
 import { appSettings } from "$lib/store/app-settings.svelte";
+import { stats } from "$lib/store/stats.svelte";
 
 export const load: LayoutLoad = async () => {
     await sessionSettings.loadFromStore();
     await appSettings.loadFromStore();
+    await stats.loadFromStore();
 };
