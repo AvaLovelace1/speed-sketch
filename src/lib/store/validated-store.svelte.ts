@@ -1,22 +1,23 @@
+import * as z from "zod";
 import type { PersistentStore } from "$lib/store/persistent-store.svelte";
 
-// Manages the persistent storage of a group of key-value pairs.
-// Validates the values when loading.
+// Manages the schema-validated persistent storage of a group of key-value pairs
 export class ValidatedStore {
     constructor(
         public persistentStore: PersistentStore,
-        public keys: { key: string; isValid: (value: unknown) => boolean }[],
+        public schema: z.ZodObject,
     ) {}
 
-    // Saves all specified keys (if present) and their values in a record to the persistent store.
-    async save(record: Record<string, unknown>): Promise<void> {
-        for (const { key } of this.keys) {
-            if (!(key in record)) {
-                console.warn(`Key ${key} not found in record, skipping save.`);
-                continue;
-            }
+    // Validates and saves `record` to the persistent store
+    async save(record: Record<string, unknown>) {
+        const parsed = z.safeParse(this.schema, record);
+        if (!parsed.success) {
+            console.error("Record parsing failed:", parsed.error);
+            return;
+        }
+        for (const [key, value] of Object.entries(parsed.data as object)) {
             try {
-                await this.persistentStore.set(key, record[key]);
+                await this.persistentStore.set(key, value);
             } catch (e) {
                 console.error(`Failed to save setting ${key} with value ${record[key]}:`, e);
             }
@@ -28,19 +29,26 @@ export class ValidatedStore {
         }
     }
 
-    // Loads values with the specified keys into the provided record object.
-    // Ignores values that do not pass validation.
+    // Validates and loads `record` from the persistent store
     async loadInto(record: Record<string, unknown>) {
-        for (const { key, isValid } of this.keys) {
+        const storeData: Record<string, unknown> = {};
+        for (const key of Object.keys(this.schema.shape)) {
             try {
                 const value = await this.persistentStore.get(key);
                 if (value === undefined) console.warn(`Key ${key} not found in store.`);
-                else if (!isValid(value))
-                    console.warn(`Skipped loading ${key} because of invalid value:`, value);
-                else record[key] = value;
+                else storeData[key] = value;
             } catch (e) {
                 console.error(`Failed to load ${key} from store:`, e);
             }
+        }
+        const parsed = z.safeParse(this.schema, storeData);
+        if (!parsed.success) {
+            console.error("Persistent store parsing failed:", parsed.error);
+            return;
+        }
+        // we set each key individually to avoid problems with Svelte reactive state
+        for (const [key, value] of Object.entries(parsed.data)) {
+            record[key] = value;
         }
     }
 }

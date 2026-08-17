@@ -1,5 +1,6 @@
+import * as z from "zod";
 import { describe, test as base, expect, vi } from "vitest";
-import { SessionSettings } from "./session-settings.svelte";
+import { SessionSettings, type SessionSettingsEntries } from "./session-settings.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
 vi.mock("@tauri-apps/api/core", async () => {
@@ -19,218 +20,445 @@ const SORTED_IMGS = [
 
 const test = base
     .extend("persistentStore", ({ task: _task }) => createMapStore())
-    .extend("sessionSettings", ({ task: _task }) => new SessionSettings());
+    .extend("sessionSettings", ({ task: _task }) => new SessionSettings())
+    .extend("customEntries", ({ task: _task }) => ({
+        imgFolders: [FOLDER_NAME],
+        includeSubfolders: false,
+        shuffleImgs: false,
+        sessionMode: "Class",
+        imgShowTimeOption: "5m",
+        imgShowTimeCustom: 42,
+        schedulePresets: [
+            {
+                name: SessionSettings.DEFAULT_PRESET_NAME,
+                schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
+            },
+            {
+                name: "My Custom Schedule",
+                schedule: [
+                    { duration: 60, repeat: 5, id: "1m x 5", isBreak: false },
+                    { duration: 120, repeat: 1, id: "2m break", isBreak: true },
+                ],
+            },
+        ],
+        selectedScheduleIdx: 1,
+    }));
 
 describe("session-settings.svelte.ts", () => {
-    test("saveSessionSettings and loadSessionSettings", async ({
-        sessionSettings,
-        persistentStore,
-    }) => {
-        // Save settings
-        const desiredImgFolders = ["folder1"];
-        sessionSettings.imgFolders = desiredImgFolders;
-        await sessionSettings.saveToStore(persistentStore);
+    describe("saving and loading", () => {
+        test("changes are persisted to store for all entries", async ({
+            sessionSettings,
+            persistentStore,
+            customEntries,
+        }) => {
+            z.parse(SessionSettings.SCHEMA.strict(), customEntries);
 
-        sessionSettings.imgFolders = ["folder2"]; // Change to a different setting
+            // Modify settings and save to store
+            for (const [key, value] of Object.entries(customEntries)) {
+                expect(sessionSettings[key]).not.toEqual(value);
+                sessionSettings[key] = value;
+            }
+            await sessionSettings.saveToStore(persistentStore);
 
-        // Load settings
-        await sessionSettings.loadFromStore(persistentStore);
-        expect(sessionSettings.imgFolders).toEqual(desiredImgFolders);
-    });
-
-    test("loading before settings are saved does nothing", async ({
-        sessionSettings,
-        persistentStore,
-    }) => {
-        const desiredImgFolders = ["folder3"];
-        sessionSettings.imgFolders = desiredImgFolders;
-        await sessionSettings.loadFromStore(persistentStore);
-        expect(sessionSettings.imgFolders).toEqual(desiredImgFolders);
-    });
-
-    test.for([
-        {
-            option: "30s",
-            expected: 30,
-        },
-        {
-            option: "2m",
-            expected: 120,
-        },
-        {
-            option: "Custom",
-            expected: 1337,
-        },
-    ])("getImgShowTime for %s", ({ option, expected }, { sessionSettings }) => {
-        sessionSettings.imgShowTimeOption = option;
-        if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
-        expect(sessionSettings.imgShowTime).toBe(expected);
-    });
-
-    test("getImgs", async ({ sessionSettings }) => {
-        sessionSettings.imgFolders = [];
-
-        // Empty image list
-        sessionSettings.imgs = [];
-        await expect(sessionSettings.getImgs()).rejects.toThrow("No references found");
-
-        // Valid image list
-        const imgs = [...SORTED_IMGS];
-        sessionSettings.imgs = imgs;
-
-        // Not shuffled (should return sorted order)
-        sessionSettings.shuffleImgs = false;
-        await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
-
-        // Shuffled images
-        sessionSettings.shuffleImgs = true;
-        await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
-        await expect(sessionSettings.getImgs()).resolves.toHaveLength(SORTED_IMGS.length);
-        await expect.poll(sessionSettings.getImgs).not.toEqual(SORTED_IMGS);
-
-        // Unshuffle again
-        sessionSettings.shuffleImgs = false;
-        await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
-    });
-
-    test("getImgsFromFolder", async ({ sessionSettings }) => {
-        const { invoke } = await import("@tauri-apps/api/core");
-        vi.mocked(invoke).mockResolvedValueOnce([
-            "/folder/a.jpg",
-            "/folder/b.mp4",
-            "/folder/c.png",
-            "/folder/d.webm",
-        ]);
-        const imgs = await sessionSettings.getImgsFromFolder("/folder");
-        const flags = imgs.map((i) => ({ name: i.name, isVideo: i.isVideo ?? false }));
-        expect(flags).toEqual([
-            { name: "a.jpg", isVideo: false },
-            { name: "b.mp4", isVideo: true },
-            { name: "c.png", isVideo: false },
-            { name: "d.webm", isVideo: true },
-        ]);
-    });
-
-    test("getImgsFromFolders handles libraries with many files", async ({ sessionSettings }) => {
-        const { invoke } = await import("@tauri-apps/api/core");
-        const numFiles = 400_000;
-        vi.mocked(invoke).mockResolvedValueOnce(
-            Array.from({ length: numFiles }, (_, i) => `/folder/img${i}.jpg`),
-        );
-        sessionSettings.imgFolders = ["/folder"];
-        const imgs = await sessionSettings.getImgsFromFolders();
-        expect(imgs).toHaveLength(numFiles);
-    });
-
-    test("sessionScheduleCustom returns the selected schedule", ({ sessionSettings }) => {
-        expect(sessionSettings.sessionScheduleCustom).toBe(
-            sessionSettings.schedulePresets[0].schedule,
-        );
-    });
-
-    test("addSchedulePreset appends and selects new schedule", ({ sessionSettings }) => {
-        sessionSettings.addSchedulePreset("Warmup");
-        expect(sessionSettings.schedulePresets).toHaveLength(2);
-        expect(sessionSettings.schedulePresets[1]).toEqual({ name: "Warmup", schedule: [] });
-        expect(sessionSettings.selectedScheduleIdx).toBe(1);
-    });
-
-    test("selectSchedulePreset changes sessionScheduleCustom", ({ sessionSettings }) => {
-        sessionSettings.addSchedulePreset("Warmup");
-        sessionSettings.selectSchedulePreset(0);
-        expect(sessionSettings.sessionScheduleCustom).toBe(
-            sessionSettings.schedulePresets[0].schedule,
-        );
-        sessionSettings.selectSchedulePreset(1);
-        expect(sessionSettings.sessionScheduleCustom).toBe(
-            sessionSettings.schedulePresets[1].schedule,
-        );
-    });
-
-    test("selectSchedulePreset throws for out-of-range index", ({ sessionSettings }) => {
-        expect(() => sessionSettings.selectSchedulePreset(-1)).toThrow("out of range");
-        expect(() => sessionSettings.selectSchedulePreset(1)).toThrow("out of range");
-    });
-
-    test("editing sessionScheduleCustom mutates the saved schedule", ({ sessionSettings }) => {
-        const newEntry = { duration: 60, repeat: 5, id: "x" };
-        sessionSettings.sessionScheduleCustom.unshift(newEntry);
-        expect(sessionSettings.schedulePresets).toHaveLength(1);
-        expect(sessionSettings.schedulePresets[0].schedule[0]).toEqual(newEntry);
-    });
-
-    test("renameSchedulePreset renames the selected schedule", ({ sessionSettings }) => {
-        sessionSettings.addSchedulePreset("Old Name");
-        sessionSettings.renameSchedulePreset("New Name");
-        expect(sessionSettings.schedulePresets[1].name).toBe("New Name");
-        expect(sessionSettings.selectedScheduleIdx).toBe(1);
-    });
-
-    test("renameSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
-        sessionSettings.renameSchedulePreset("Something Else");
-        expect(sessionSettings.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
-    });
-
-    test("removeSchedulePreset removes selected schedule", ({ sessionSettings }) => {
-        sessionSettings.addSchedulePreset("A");
-        sessionSettings.addSchedulePreset("B");
-        sessionSettings.addSchedulePreset("C");
-        sessionSettings.selectSchedulePreset(1);
-        sessionSettings.removeSchedulePreset();
-        expect(sessionSettings.schedulePresets).toHaveLength(3);
-        expect(sessionSettings.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
-        expect(sessionSettings.schedulePresets[1].name).toBe("B");
-        expect(sessionSettings.schedulePresets[2].name).toBe("C");
-        expect(sessionSettings.selectedScheduleIdx).toBe(1);
-    });
-
-    test("removeSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
-        sessionSettings.removeSchedulePreset();
-        expect(sessionSettings.schedulePresets).toHaveLength(1);
-        expect(sessionSettings.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
-    });
-
-    test("removeSchedulePreset clamps index when removing last selected", ({ sessionSettings }) => {
-        sessionSettings.addSchedulePreset("A");
-        sessionSettings.addSchedulePreset("B");
-        expect(sessionSettings.selectedScheduleIdx).toBe(2);
-        sessionSettings.removeSchedulePreset();
-        expect(sessionSettings.selectedScheduleIdx).toBe(1);
-    });
-
-    test("saved schedules persist to store", async ({ sessionSettings, persistentStore }) => {
-        sessionSettings.addSchedulePreset("Warmup");
-        sessionSettings.schedulePresets[1].schedule.push({
-            duration: 30,
-            repeat: 5,
-            id: "a",
+            // Load from store
+            const loaded = new SessionSettings();
+            await loaded.loadFromStore(persistentStore);
+            expect(loaded.toPlainObject()).toEqual(expect.objectContaining(customEntries));
         });
-        sessionSettings.selectSchedulePreset(0);
-        await sessionSettings.saveToStore(persistentStore);
 
-        const loaded = new SessionSettings();
-        await loaded.loadFromStore(persistentStore);
-        expect(loaded.schedulePresets).toHaveLength(2);
-        expect(loaded.schedulePresets[0].name).toBe(SessionSettings.DEFAULT_PRESET_NAME);
-        expect(loaded.schedulePresets[1].name).toBe("Warmup");
-        expect(loaded.schedulePresets[1].schedule).toEqual([{ duration: 30, repeat: 5, id: "a" }]);
-        expect(loaded.selectedScheduleIdx).toBe(0);
+        test("falls back to defaults when loading from empty store", async ({
+            sessionSettings,
+            persistentStore,
+            customEntries,
+        }) => {
+            for (const [key, value] of Object.entries(customEntries)) {
+                sessionSettings[key] = value;
+            }
+            await sessionSettings.loadFromStore(persistentStore);
+            expect(sessionSettings.toPlainObject()).toEqual(
+                expect.objectContaining(SessionSettings.DEFAULTS),
+            );
+        });
+
+        test.for([
+            { key: "imgFolders", invalidEntries: [[3]] },
+            { key: "includeSubfolders", invalidEntries: [1] },
+            { key: "shuffleImgs", invalidEntries: [1] },
+            { key: "sessionMode", invalidEntries: ["invalid mode"] },
+            { key: "imgShowTimeOption", invalidEntries: ["invalid show time"] },
+            {
+                key: "imgShowTimeCustom",
+                invalidEntries: [0, SessionSettings.MAX_IMG_SHOW_TIME + 1],
+            },
+            {
+                key: "schedulePresets",
+                invalidEntries: [
+                    [],
+                    [
+                        {
+                            name: SessionSettings.DEFAULT_PRESET_NAME,
+                            schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
+                        },
+                    ],
+                ],
+            },
+            { key: "selectedScheduleIdx", invalidEntries: [-1] },
+        ])(
+            "rejects invalid values and falls back to defaults on load for key $key",
+            async ({ key, invalidEntries }, { customEntries }) => {
+                for (const entry of invalidEntries) {
+                    const persistentStore = createMapStore();
+
+                    // Populate persistent store with valid values + one invalid value
+                    const sessionSettings = new SessionSettings();
+                    for (const [key, value] of Object.entries(customEntries)) {
+                        sessionSettings[key] = value;
+                    }
+                    await sessionSettings.saveToStore(persistentStore);
+                    await persistentStore.set(key, entry);
+
+                    // Load settings from store
+                    const loaded = new SessionSettings();
+                    await loaded.loadFromStore(persistentStore);
+                    const expectedEntries = {
+                        ...customEntries,
+                        [key]: SessionSettings.DEFAULTS[key as keyof SessionSettingsEntries],
+                    };
+                    expectedEntries.selectedScheduleIdx = Math.min(
+                        expectedEntries.selectedScheduleIdx,
+                        expectedEntries.schedulePresets.length - 1,
+                    );
+                    expect(loaded.toPlainObject()).toEqual(
+                        expect.objectContaining(expectedEntries),
+                    );
+                }
+            },
+        );
+
+        test("invalid schedule name falls back without affecting other schedules", async ({
+            sessionSettings,
+            persistentStore,
+            customEntries,
+        }) => {
+            const validSchedule = customEntries.schedulePresets[1].schedule;
+            const presets = [
+                ...customEntries.schedulePresets,
+                { name: 9999, schedule: validSchedule },
+            ];
+            await persistentStore.set("schedulePresets", presets);
+            await sessionSettings.loadFromStore(persistentStore);
+            expect($state.snapshot(sessionSettings.schedulePresets)).toEqual([
+                ...customEntries.schedulePresets,
+                { name: "Preset", schedule: validSchedule },
+            ]);
+        });
+
+        test.for([
+            [{ duration: 300, repeat: 2, id: 9999, isBreak: false }],
+            [
+                { duration: 300, repeat: 2, id: "duplicate", isBreak: false },
+                { duration: 300, repeat: 2, id: "duplicate", isBreak: false },
+            ],
+            ["not a schedule"],
+        ])(
+            "invalid schedule falls back without affecting other schedules",
+            async (badSchedule, { sessionSettings, persistentStore, customEntries }) => {
+                await persistentStore.set("schedulePresets", [
+                    ...customEntries.schedulePresets,
+                    { name: "Funky Preset", schedule: badSchedule },
+                ]);
+                await sessionSettings.loadFromStore(persistentStore);
+                expect($state.snapshot(sessionSettings.schedulePresets)).toEqual([
+                    ...customEntries.schedulePresets,
+                    { name: "Funky Preset", schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE },
+                ]);
+            },
+        );
+
+        test.for([
+            {
+                key: "duration",
+                invalidEntries: [-1, SessionSettings.MAX_IMG_SHOW_TIME + 1],
+                fallback: 60,
+            },
+            { key: "repeat", invalidEntries: [0], fallback: 1 },
+            { key: "isBreak", invalidEntries: [1], fallback: false },
+        ])(
+            "invalid schedule entry $key falls back without affecting other entries",
+            async ({ key, invalidEntries, fallback }, { customEntries }) => {
+                const goodEntry1 = { duration: 60, repeat: 5, id: "1m x 5", isBreak: false };
+                const goodEntry2 = { duration: 120, repeat: 1, id: "2m break", isBreak: true };
+                for (const entry of invalidEntries) {
+                    const persistentStore = createMapStore();
+                    const badEntry = {
+                        duration: 300,
+                        repeat: 2,
+                        id: "5m x 2",
+                        isBreak: false,
+                        [key]: entry,
+                    };
+                    await persistentStore.set("schedulePresets", [
+                        ...customEntries.schedulePresets,
+                        {
+                            name: "Funky Preset",
+                            schedule: [goodEntry1, goodEntry2, badEntry],
+                        },
+                    ]);
+
+                    const sessionSettings = new SessionSettings();
+                    await sessionSettings.loadFromStore(persistentStore);
+
+                    expect($state.snapshot(sessionSettings.schedulePresets)).toEqual([
+                        ...customEntries.schedulePresets,
+                        {
+                            name: "Funky Preset",
+                            schedule: [goodEntry1, goodEntry2, { ...badEntry, [key]: fallback }],
+                        },
+                    ]);
+                }
+            },
+        );
+
+        test("loadFromStore clamps selectedScheduleIdx if out of bounds", async ({
+            persistentStore,
+            customEntries,
+        }) => {
+            await persistentStore.set("schedulePresets", customEntries.schedulePresets);
+            await persistentStore.set("selectedScheduleIdx", customEntries.schedulePresets.length);
+            await persistentStore.save();
+
+            const loaded = new SessionSettings();
+            await loaded.loadFromStore(persistentStore);
+            expect(loaded.selectedScheduleIdx).toBe(customEntries.schedulePresets.length - 1);
+        });
     });
 
-    test("loadFromStore clamps selectedScheduleIdx if out of bounds", async ({
-        persistentStore,
-    }) => {
-        // Manually store an out-of-bounds index
-        const schedulePresets = [
-            { name: SessionSettings.DEFAULT_PRESET_NAME, schedule: [] },
-            { name: "A", schedule: [] },
-        ];
-        await persistentStore.set("schedulePresets", schedulePresets);
-        await persistentStore.set("selectedScheduleIdx", 5);
-        await persistentStore.save();
+    describe("getters", () => {
+        test.for([
+            {
+                option: "30s",
+                expected: 30,
+            },
+            {
+                option: "2m",
+                expected: 120,
+            },
+            {
+                option: "Custom",
+                expected: 1337,
+            },
+        ])(
+            "imgShowTime returns the selected image show time ($option)",
+            ({ option, expected }, { sessionSettings }) => {
+                sessionSettings.imgShowTimeOption = option;
+                if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
+                expect(sessionSettings.imgShowTime).toBe(expected);
+            },
+        );
 
-        const loaded = new SessionSettings();
-        await loaded.loadFromStore(persistentStore);
-        expect(loaded.selectedScheduleIdx).toBe(1);
+        test("sessionSchedule returns an endless schedule if Endless selected", ({
+            sessionSettings,
+        }) => {
+            sessionSettings.sessionMode = "Endless";
+            sessionSettings.imgShowTimeOption = "2m";
+
+            expect(sessionSettings.sessionSchedule).toEqual([
+                {
+                    duration: 120,
+                    repeat: Infinity,
+                    id: "endless",
+                    isBreak: false,
+                },
+            ]);
+        });
+
+        test("sessionSchedule returns the custom schedule if Custom selected", ({
+            sessionSettings,
+            customEntries,
+        }) => {
+            sessionSettings.sessionMode = "Custom";
+            sessionSettings.schedulePresets = customEntries.schedulePresets;
+            sessionSettings.selectedScheduleIdx = 1;
+
+            expect(sessionSettings.sessionSchedule).toBe(
+                sessionSettings.schedulePresets[1].schedule,
+            );
+        });
+
+        test("sessionScheduleCustom returns the selected custom schedule", ({
+            sessionSettings,
+            customEntries,
+        }) => {
+            sessionSettings.sessionMode = "Endless"; // even when "Endless" is selected
+            sessionSettings.schedulePresets = customEntries.schedulePresets;
+            sessionSettings.selectedScheduleIdx = 1;
+
+            expect(sessionSettings.sessionScheduleCustom).toBe(
+                sessionSettings.schedulePresets[1].schedule,
+            );
+        });
+    });
+
+    describe("schedule preset editing", () => {
+        test("editing sessionScheduleCustom mutates the saved schedule", ({ sessionSettings }) => {
+            const newEntry = { duration: 60, repeat: 5, id: "x", isBreak: false };
+            sessionSettings.sessionScheduleCustom.unshift(newEntry);
+            expect(sessionSettings.schedulePresets).toHaveLength(1);
+            expect(sessionSettings.schedulePresets[0].schedule[0]).toEqual(newEntry);
+        });
+
+        test("selectSchedulePreset changes sessionScheduleCustom", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePreset("Warmup");
+            sessionSettings.selectSchedulePreset(0);
+            expect(sessionSettings.sessionScheduleCustom).toBe(
+                sessionSettings.schedulePresets[0].schedule,
+            );
+            sessionSettings.selectSchedulePreset(1);
+            expect(sessionSettings.sessionScheduleCustom).toBe(
+                sessionSettings.schedulePresets[1].schedule,
+            );
+        });
+
+        test("selectSchedulePreset throws for out-of-range index", ({ sessionSettings }) => {
+            expect(() => sessionSettings.selectSchedulePreset(-1)).toThrow("out of range");
+            expect(() => sessionSettings.selectSchedulePreset(1)).toThrow("out of range");
+        });
+
+        test("addSchedulePreset appends and selects new schedule", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePreset("Warmup");
+            expect(sessionSettings.schedulePresets).toHaveLength(2);
+            expect(sessionSettings.schedulePresets[1]).toEqual({ name: "Warmup", schedule: [] });
+            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+        });
+
+        test("renameSchedulePreset renames the selected schedule", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePreset("Old Name");
+            sessionSettings.renameSchedulePreset("New Name");
+            expect(sessionSettings.schedulePresets[1].name).toBe("New Name");
+            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+        });
+
+        test("renameSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
+            sessionSettings.renameSchedulePreset("Something Else");
+            expect(sessionSettings.schedulePresets[0].name).toBe(
+                SessionSettings.DEFAULT_PRESET_NAME,
+            );
+        });
+
+        test("removeSchedulePreset removes selected schedule", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePreset("A");
+            sessionSettings.addSchedulePreset("B");
+            sessionSettings.addSchedulePreset("C");
+            sessionSettings.selectSchedulePreset(1);
+            sessionSettings.removeSchedulePreset();
+            expect(sessionSettings.schedulePresets).toHaveLength(3);
+            expect(sessionSettings.schedulePresets[0].name).toBe(
+                SessionSettings.DEFAULT_PRESET_NAME,
+            );
+            expect(sessionSettings.schedulePresets[1].name).toBe("B");
+            expect(sessionSettings.schedulePresets[2].name).toBe("C");
+            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+        });
+
+        test("removeSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
+            sessionSettings.removeSchedulePreset();
+            expect(sessionSettings.schedulePresets).toHaveLength(1);
+            expect(sessionSettings.schedulePresets[0].name).toBe(
+                SessionSettings.DEFAULT_PRESET_NAME,
+            );
+        });
+
+        test("removeSchedulePreset clamps index when removing last selected", ({
+            sessionSettings,
+        }) => {
+            sessionSettings.addSchedulePreset("A");
+            sessionSettings.addSchedulePreset("B");
+            expect(sessionSettings.selectedScheduleIdx).toBe(2);
+            sessionSettings.removeSchedulePreset();
+            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+        });
+
+        test("saved schedules persist to store", async ({ sessionSettings, persistentStore }) => {
+            const entry = {
+                duration: 30,
+                repeat: 5,
+                id: "a",
+                isBreak: false,
+            };
+            sessionSettings.addSchedulePreset("Warmup");
+            sessionSettings.schedulePresets[1].schedule.push(entry);
+            await sessionSettings.saveToStore(persistentStore);
+
+            const loaded = new SessionSettings();
+            await loaded.loadFromStore(persistentStore);
+            expect(loaded.schedulePresets).toEqual([
+                {
+                    name: SessionSettings.DEFAULT_PRESET_NAME,
+                    schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
+                },
+                { name: "Warmup", schedule: [entry] },
+            ]);
+        });
+    });
+
+    describe("getting images", () => {
+        test("getImgs throws on empty image list", async ({ sessionSettings }) => {
+            sessionSettings.imgs = [];
+            await expect(sessionSettings.getImgs()).rejects.toThrow("No references found");
+        });
+
+        test("getImgs returns images shuffled if `shuffleImgs` is true", async ({
+            sessionSettings,
+        }) => {
+            const imgs = [...SORTED_IMGS];
+            sessionSettings.imgs = imgs;
+
+            // Not shuffled (should return sorted order)
+            sessionSettings.shuffleImgs = false;
+            await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
+
+            // Shuffled images
+            sessionSettings.shuffleImgs = true;
+            await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
+            await expect(sessionSettings.getImgs()).resolves.toHaveLength(SORTED_IMGS.length);
+            await expect.poll(async () => await sessionSettings.getImgs()).not.toEqual(SORTED_IMGS);
+
+            // Unshuffle again
+            sessionSettings.shuffleImgs = false;
+            await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
+        });
+
+        test("getImgsFromFolder returns images from specified folder", async ({
+            sessionSettings,
+        }) => {
+            const { invoke } = await import("@tauri-apps/api/core");
+            vi.mocked(invoke).mockResolvedValueOnce([
+                "/folder/a.jpg",
+                "/folder/b.mp4",
+                "/folder/c.png",
+                "/folder/d.webm",
+            ]);
+            const imgs = await sessionSettings.getImgsFromFolder("/folder");
+            const flags = imgs.map((i) => ({ name: i.name, isVideo: i.isVideo ?? false }));
+            expect(flags).toEqual([
+                { name: "a.jpg", isVideo: false },
+                { name: "b.mp4", isVideo: true },
+                { name: "c.png", isVideo: false },
+                { name: "d.webm", isVideo: true },
+            ]);
+        });
+
+        test("getImgsFromFolders handles libraries with many files", async ({
+            sessionSettings,
+        }) => {
+            const { invoke } = await import("@tauri-apps/api/core");
+            const numFiles = 400_000;
+            vi.mocked(invoke).mockResolvedValueOnce(
+                Array.from({ length: numFiles }, (_, i) => `/folder/img${i}.jpg`),
+            );
+            sessionSettings.imgFolders = ["/folder"];
+            const imgs = await sessionSettings.getImgsFromFolders();
+            expect(imgs).toHaveLength(numFiles);
+        });
     });
 });

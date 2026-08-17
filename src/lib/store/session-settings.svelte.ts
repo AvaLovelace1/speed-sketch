@@ -1,19 +1,11 @@
 import parse from "parse-duration";
-import {
-    validateString,
-    validateInteger,
-    basename,
-    fisherYatesShuffle,
-    isVideoFile,
-} from "$lib/utils.svelte";
+import * as z from "zod";
+import { basename, fisherYatesShuffle, isVideoFile } from "$lib/utils.svelte";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
 import { compareImages, type Image } from "$lib/types.svelte";
-import type { SessionSchedule } from "$lib/drawing-session.svelte";
 import { SvelteSet } from "svelte/reactivity";
-
-export type SchedulePreset = { name: string; schedule: SessionSchedule };
 
 export class SessionSettings implements Record<string, unknown> {
     static get SESSION_MODES() {
@@ -29,6 +21,10 @@ export class SessionSettings implements Record<string, unknown> {
         ];
     }
 
+    static get SESSION_MODE_NAMES() {
+        return SessionSettings.SESSION_MODES.map((mode) => mode.name);
+    }
+
     // Exactly 0 or 1 of these should be "Custom", and the rest should be a valid duration string
     static get IMG_SHOW_TIME_OPTIONS() {
         return ["30s", "45s", "1m", "2m", "5m", "10m", "Custom"];
@@ -37,87 +33,85 @@ export class SessionSettings implements Record<string, unknown> {
     static readonly MAX_IMG_SHOW_TIME = 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
 
     static readonly DEFAULT_PRESET_NAME = "Default Preset";
-
     static get DEFAULT_PRESET_SCHEDULE(): SessionSchedule {
         return [
-            { duration: 60, repeat: 5, id: "1m x 5" },
-            { duration: 120, repeat: 5, id: "2m x 5" },
-            { duration: 300, repeat: 2, id: "5m x 2" },
-            { duration: 600, repeat: 1, id: "10m x 1" },
+            { duration: 60, repeat: 5, id: "1m x 5", isBreak: false },
+            { duration: 120, repeat: 5, id: "2m x 5", isBreak: false },
+            { duration: 300, repeat: 2, id: "5m x 2", isBreak: false },
+            { duration: 600, repeat: 1, id: "10m x 1", isBreak: false },
         ];
     }
 
-    static get DEFAULT_SAVED_SCHEDULES(): SchedulePreset[] {
-        return [
-            {
-                name: SessionSettings.DEFAULT_PRESET_NAME,
-                schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
-            },
-        ];
-    }
-
-    static get #KEYS() {
-        return [
-            {
-                key: "imgFolders",
-                isValid: (v: unknown): v is string[] =>
-                    Array.isArray(v) && v.every((item) => typeof item === "string"),
-            },
-            {
-                key: "includeSubfolders",
-                isValid: (v: unknown): v is boolean => typeof v === "boolean",
-            },
-            {
-                key: "shuffleImgs",
-                isValid: (v: unknown): v is boolean => typeof v === "boolean",
-            },
-            {
-                key: "sessionMode",
-                isValid: (v: unknown): v is string =>
-                    validateString(
-                        v,
-                        SessionSettings.SESSION_MODES.map((t) => t.name),
-                    ),
-            },
-            {
-                key: "imgShowTimeOption",
-                isValid: (v: unknown): v is string =>
-                    validateString(v, SessionSettings.IMG_SHOW_TIME_OPTIONS),
-            },
-            {
-                key: "imgShowTimeCustom",
-                isValid: (v: unknown): v is number =>
-                    validateInteger(v, 1, SessionSettings.MAX_IMG_SHOW_TIME),
-            },
-            {
-                key: "schedulePresets",
-                isValid: (v: unknown): v is SchedulePreset[] => {
-                    if (!Array.isArray(v)) return false;
-                    for (const entry of v) {
-                        if (typeof entry !== "object" || entry === null) return false;
-                        if (typeof entry.name !== "string") return false;
-                        if (!SessionSettings.#isValidSessionSchedule(entry.schedule)) return false;
-                    }
-                    // Must contain at least one entry, and first entry must be "default preset"
-                    return v.length > 0 && v[0].name === SessionSettings.DEFAULT_PRESET_NAME;
+    static get DEFAULTS() {
+        return {
+            imgFolders: [] as string[],
+            includeSubfolders: true,
+            shuffleImgs: true,
+            sessionMode: SessionSettings.SESSION_MODES[0].name,
+            imgShowTimeOption: SessionSettings.IMG_SHOW_TIME_OPTIONS[0],
+            imgShowTimeCustom: Math.floor(
+                (parse(SessionSettings.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000,
+            ),
+            schedulePresets: [
+                {
+                    name: SessionSettings.DEFAULT_PRESET_NAME,
+                    schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
                 },
-            },
-            {
-                key: "selectedScheduleIdx",
-                isValid: (v: unknown): v is number => validateInteger(v, 0, Infinity),
-            },
-        ];
+            ],
+            selectedScheduleIdx: 0,
+        };
     }
 
-    static #isValidSessionSchedule(v: unknown): v is SessionSchedule {
-        if (!Array.isArray(v)) return false;
-        for (const item of v) {
-            if (!validateInteger(item.duration, 1, SessionSettings.MAX_IMG_SHOW_TIME)) return false;
-            if (!validateInteger(item.repeat, 1, Infinity)) return false;
-            if (typeof item.id !== "string") return false;
-        }
-        const uniqueIds = new SvelteSet(v.map((s) => s.id));
-        return uniqueIds.size === v.length;
+    static get SCHEMA() {
+        const defaults = SessionSettings.DEFAULTS;
+        return z.object({
+            imgFolders: z.array(z.string()).catch(defaults.imgFolders),
+            includeSubfolders: z.boolean().catch(defaults.includeSubfolders),
+            shuffleImgs: z.boolean().catch(defaults.shuffleImgs),
+            sessionMode: z.enum(SessionSettings.SESSION_MODE_NAMES).catch(defaults.sessionMode),
+            imgShowTimeOption: z
+                .enum(SessionSettings.IMG_SHOW_TIME_OPTIONS)
+                .catch(defaults.imgShowTimeOption),
+            imgShowTimeCustom: z
+                .int()
+                .gte(1)
+                .lte(SessionSettings.MAX_IMG_SHOW_TIME)
+                .catch(defaults.imgShowTimeCustom),
+            schedulePresets: z
+                .array(SessionSettings.SCHEDULE_PRESET_SCHEMA)
+                .refine(
+                    (schedulePresets) =>
+                        schedulePresets.length > 0 &&
+                        schedulePresets[0].name === SessionSettings.DEFAULT_PRESET_NAME,
+                )
+                .catch(defaults.schedulePresets),
+            selectedScheduleIdx: z.int().gte(0).catch(defaults.selectedScheduleIdx),
+        });
+    }
+
+    static get SCHEDULE_PRESET_SCHEMA() {
+        return z.object({
+            name: z.string().catch("Preset"),
+            schedule: SessionSettings.SESSION_SCHEDULE_SCHEMA.catch(
+                SessionSettings.DEFAULT_PRESET_SCHEDULE,
+            ),
+        });
+    }
+
+    static get SESSION_SCHEDULE_SCHEMA() {
+        return z.array(SessionSettings.SCHEDULE_ENTRY_SCHEMA).refine((schedule) => {
+            const uniqueIds = new SvelteSet(schedule.map((entry) => entry.id));
+            return uniqueIds.size === schedule.length;
+        });
+    }
+
+    static get SCHEDULE_ENTRY_SCHEMA() {
+        return z.object({
+            duration: z.int().gte(1).lte(SessionSettings.MAX_IMG_SHOW_TIME).catch(60),
+            repeat: z.int().gte(1).catch(1),
+            id: z.string(),
+            isBreak: z.boolean().catch(false),
+        });
     }
 
     // Folders containing images to show
@@ -133,11 +127,43 @@ export class SessionSettings implements Record<string, unknown> {
     imgShowTimeCustom: number;
     schedulePresets: SchedulePreset[];
     selectedScheduleIdx: number;
-
     [key: string]: unknown;
 
-    get sessionScheduleCustom(): SessionSchedule {
-        return this.schedulePresets[this.selectedScheduleIdx].schedule;
+    constructor(entries = SessionSettings.DEFAULTS) {
+        this.imgFolders = $state(entries.imgFolders);
+        this.#imgs = [];
+        this.includeSubfolders = $state(entries.includeSubfolders);
+        this.shuffleImgs = $state(entries.shuffleImgs);
+        this.sessionMode = $state(entries.sessionMode);
+        this.imgShowTimeOption = $state(entries.imgShowTimeOption);
+        this.imgShowTimeCustom = $state(entries.imgShowTimeCustom);
+        this.schedulePresets = $state(entries.schedulePresets);
+        this.selectedScheduleIdx = $state(entries.selectedScheduleIdx);
+    }
+
+    // Removes Svelte reactivity from data key-value pairs
+    toPlainObject() {
+        const data: Record<string, unknown> = {};
+        for (const key of Object.keys(SessionSettings.SCHEMA.shape)) {
+            data[key] = $state.snapshot(this[key]);
+        }
+        return data;
+    }
+
+    async loadFromStore(persistentStore?: PersistentStore) {
+        if (!persistentStore) persistentStore = await getStore();
+        const validatedStore = new ValidatedStore(persistentStore, SessionSettings.SCHEMA);
+        await validatedStore.loadInto(this);
+        this.selectedScheduleIdx = Math.min(
+            this.selectedScheduleIdx,
+            this.schedulePresets.length - 1,
+        );
+    }
+
+    async saveToStore(persistentStore?: PersistentStore) {
+        if (!persistentStore) persistentStore = await getStore();
+        const validatedStore = new ValidatedStore(persistentStore, SessionSettings.SCHEMA);
+        await validatedStore.save(this.toPlainObject());
     }
 
     get imgs(): Image[] {
@@ -148,47 +174,27 @@ export class SessionSettings implements Record<string, unknown> {
         this.#imgs = [...value];
     }
 
-    constructor({
-        imgFolders = [] as string[],
-        imgs = [],
-        includeSubfolders = true,
-        shuffleImgs = true,
-        sessionMode = SessionSettings.SESSION_MODES[0].name,
-        imgShowTimeOption = SessionSettings.IMG_SHOW_TIME_OPTIONS[0],
-        imgShowTimeCustom = Math.floor(
-            (parse(SessionSettings.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000,
-        ),
-        schedulePresets: schedulePresets = SessionSettings.DEFAULT_SAVED_SCHEDULES,
-        selectedScheduleIdx = 0,
-    } = {}) {
-        this.imgFolders = $state(imgFolders);
-        this.#imgs = [];
-        this.imgs = imgs;
-        this.includeSubfolders = $state(includeSubfolders);
-        this.shuffleImgs = $state(shuffleImgs);
-        this.sessionMode = $state(sessionMode);
-        this.imgShowTimeOption = $state(imgShowTimeOption);
-        this.imgShowTimeCustom = $state(imgShowTimeCustom);
-        this.schedulePresets = $state(schedulePresets);
-        this.selectedScheduleIdx = $state(selectedScheduleIdx);
+    get imgShowTime() {
+        if (this.imgShowTimeOption === "Custom") {
+            return this.imgShowTimeCustom;
+        } else {
+            return Math.floor((parse(this.imgShowTimeOption) as number) / 1000);
+        }
     }
 
-    loadFromStore = async (persistentStore?: PersistentStore) => {
-        if (!persistentStore) persistentStore = await getStore();
-        const validatedStore = new ValidatedStore(persistentStore, SessionSettings.#KEYS);
-        await validatedStore.loadInto(this);
-        // Clamp selectedScheduleIdx in case schedulePresets shrank
-        this.selectedScheduleIdx = Math.min(
-            this.selectedScheduleIdx,
-            this.schedulePresets.length - 1,
-        );
-    };
+    get sessionSchedule(): SessionSchedule {
+        if (this.sessionMode === "Endless") {
+            return [
+                { duration: this.imgShowTime, repeat: Infinity, id: "endless", isBreak: false },
+            ];
+        } else {
+            return this.sessionScheduleCustom;
+        }
+    }
 
-    saveToStore = async (persistentStore?: PersistentStore) => {
-        if (!persistentStore) persistentStore = await getStore();
-        const validatedStore = new ValidatedStore(persistentStore, SessionSettings.#KEYS);
-        await validatedStore.save(this);
-    };
+    get sessionScheduleCustom(): SessionSchedule {
+        return this.schedulePresets[this.selectedScheduleIdx].schedule;
+    }
 
     selectSchedulePreset(idx: number) {
         if (idx < 0 || idx >= this.schedulePresets.length) {
@@ -216,32 +222,16 @@ export class SessionSettings implements Record<string, unknown> {
         );
     }
 
-    get imgShowTime() {
-        if (this.imgShowTimeOption === "Custom") {
-            return this.imgShowTimeCustom;
-        } else {
-            return Math.floor((parse(this.imgShowTimeOption) as number) / 1000);
-        }
-    }
-
-    get sessionSchedule(): SessionSchedule {
-        if (this.sessionMode === "Endless") {
-            return [{ duration: this.imgShowTime, repeat: Infinity }];
-        } else {
-            return this.sessionScheduleCustom;
-        }
-    }
-
-    getImgs = async () => {
+    async getImgs() {
         if (isTauri()) this.imgs = await this.getImgsFromFolders();
         const imgs = [...this.imgs];
         if (imgs.length === 0) throw new Error("No references found");
         if (this.shuffleImgs) fisherYatesShuffle(imgs);
         return imgs;
-    };
+    }
 
     // Get all image paths from the specified folders, converted to path URLs.
-    getImgsFromFolders = async () => {
+    async getImgsFromFolders() {
         const allImgs: Image[] = [];
         for (const imgFolder of this.imgFolders) {
             // Push instead of spreading to avoid overflowing the call stack for huge folders
@@ -250,10 +240,10 @@ export class SessionSettings implements Record<string, unknown> {
             }
         }
         return allImgs;
-    };
+    }
 
     // Get all image paths from the specified folder, converted to path URLs.
-    getImgsFromFolder = async (imgFolder: string) => {
+    async getImgsFromFolder(imgFolder: string) {
         const files = (await invoke("get_img_files", {
             dir: imgFolder,
             includeSubdirs: this.includeSubfolders,
@@ -276,7 +266,11 @@ export class SessionSettings implements Record<string, unknown> {
             }))
             .sort(compareImages);
         return imgs;
-    };
+    }
 }
+
+export type SessionSchedule = z.infer<typeof SessionSettings.SESSION_SCHEDULE_SCHEMA>;
+export type SchedulePreset = z.infer<typeof SessionSettings.SCHEDULE_PRESET_SCHEMA>;
+export type SessionSettingsEntries = z.infer<typeof SessionSettings.SCHEMA>;
 
 export const sessionSettings = $state(new SessionSettings());

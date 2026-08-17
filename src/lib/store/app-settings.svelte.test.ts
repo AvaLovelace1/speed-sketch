@@ -1,61 +1,108 @@
+import * as z from "zod";
 import { describe, test as base, expect } from "vitest";
-import { AppSettings } from "./app-settings.svelte";
+import { AppSettings, type AppSettingsEntries } from "./app-settings.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
 const test = base
+    .extend("appSettings", ({ task: _task }) => new AppSettings())
     .extend("persistentStore", ({ task: _task }) => createMapStore())
-    .extend("appSettings", ({ task: _task }) => new AppSettings());
+    .extend("customEntries", ({ task: _task }) => ({
+        theme: "dark",
+        volume: 0.42,
+        contrastStrength: 2,
+        blurStrength: 2,
+        gridRows: 42,
+        gridCols: 42,
+        videoPlaybackRate: 0.42,
+    }));
 
 describe("app-settings.svelte.ts", () => {
-    test("saveAppSettings and loadAppSettings", async ({ appSettings, persistentStore }) => {
-        // Save app settings
-        const desiredTheme = "light";
-        appSettings.theme = desiredTheme;
-        await appSettings.saveToStore(persistentStore);
+    describe("saving and loading", () => {
+        test("changes are persisted to store for all entries", async ({
+            appSettings,
+            persistentStore,
+            customEntries,
+        }) => {
+            z.parse(AppSettings.SCHEMA.strict(), customEntries);
 
-        appSettings.theme = "dark"; // Change to a different setting
+            // Modify settings and save to store
+            for (const [key, value] of Object.entries(customEntries)) {
+                expect(appSettings[key]).not.toEqual(value);
+                appSettings[key] = value;
+            }
+            await appSettings.saveToStore(persistentStore);
 
-        // Load app settings
-        await appSettings.loadFromStore(persistentStore);
-        expect(appSettings.theme).toBe(desiredTheme);
+            // Load from store
+            const loaded = new AppSettings();
+            await loaded.loadFromStore(persistentStore);
+            expect(loaded.toPlainObject()).toEqual(expect.objectContaining(customEntries));
+        });
+
+        test("falls back to defaults when loading from empty store", async ({
+            appSettings,
+            persistentStore,
+            customEntries,
+        }) => {
+            for (const [key, value] of Object.entries(customEntries)) {
+                appSettings[key] = value;
+            }
+            await appSettings.loadFromStore(persistentStore);
+            expect(appSettings.toPlainObject()).toEqual(
+                expect.objectContaining(AppSettings.DEFAULTS),
+            );
+        });
+
+        test.for([
+            { key: "theme", invalidEntries: ["invalid theme"] },
+            { key: "volume", invalidEntries: [-0.1, 1.1] },
+            { key: "contrastStrength", invalidEntries: [-1, AppSettings.CONTRAST_OPTIONS.length] },
+            { key: "blurStrength", invalidEntries: [-1, AppSettings.BLUR_OPTIONS.length] },
+            { key: "gridRows", invalidEntries: [0, AppSettings.MAX_GRID_DIM + 1] },
+            { key: "gridCols", invalidEntries: [0, AppSettings.MAX_GRID_DIM + 1] },
+            {
+                key: "videoPlaybackRate",
+                invalidEntries: [
+                    AppSettings.MIN_VIDEO_PLAYBACK_RATE - 0.1,
+                    AppSettings.MAX_VIDEO_PLAYBACK_RATE + 0.1,
+                ],
+            },
+        ])(
+            "rejects invalid values and falls back to defaults on load for key $key",
+            async ({ key, invalidEntries }, { customEntries }) => {
+                for (const entry of invalidEntries) {
+                    const persistentStore = createMapStore();
+
+                    // Populate persistent store with valid values + one invalid value
+                    const appSettings = new AppSettings();
+                    for (const [key, value] of Object.entries(customEntries)) {
+                        appSettings[key] = value;
+                    }
+                    await appSettings.saveToStore(persistentStore);
+                    await persistentStore.set(key, entry);
+
+                    // Load settings from store
+                    const loaded = new AppSettings();
+                    await loaded.loadFromStore(persistentStore);
+                    expect(loaded.toPlainObject()).toEqual(
+                        expect.objectContaining({
+                            ...customEntries,
+                            [key]: AppSettings.DEFAULTS[key as keyof AppSettingsEntries],
+                        }),
+                    );
+                }
+            },
+        );
     });
 
-    test("loading before settings are set does nothing", async ({
-        appSettings,
-        persistentStore,
-    }) => {
-        const desiredTheme = "light";
-        appSettings.theme = desiredTheme;
-        await appSettings.loadFromStore(persistentStore);
-        expect(appSettings.theme).toBe(desiredTheme);
-    });
+    describe("getters", () => {
+        test("contrastClass equals selected option", ({ appSettings }) => {
+            appSettings.contrastStrength = 2;
+            expect(appSettings.contrastClass).toEqual(AppSettings.CONTRAST_OPTIONS[2]);
+        });
 
-    test("videoPlaybackRate defaults to 1 and persists", async ({
-        appSettings,
-        persistentStore,
-    }) => {
-        expect(appSettings.videoPlaybackRate).toBe(1);
-        appSettings.videoPlaybackRate = 1.5;
-        await appSettings.saveToStore(persistentStore);
-
-        const loaded = new AppSettings();
-        await loaded.loadFromStore(persistentStore);
-        expect(loaded.videoPlaybackRate).toBe(1.5);
-    });
-
-    test("videoPlaybackRate rejects out-of-range values on load", async ({ persistentStore }) => {
-        await persistentStore.set("videoPlaybackRate", 99);
-        await persistentStore.save();
-        const loaded = new AppSettings();
-        await loaded.loadFromStore(persistentStore);
-        // Invalid value is ignored; default is kept
-        expect(loaded.videoPlaybackRate).toBe(1);
-    });
-
-    test("contrastClass and blurClass", ({ appSettings }) => {
-        appSettings.contrastStrength = 2;
-        appSettings.blurStrength = 3;
-        expect(appSettings.contrastClass).toBe(AppSettings.CONTRAST_OPTIONS[2]);
-        expect(appSettings.blurClass).toBe(AppSettings.BLUR_OPTIONS[3]);
+        test("blurClass equals selected option", ({ appSettings }) => {
+            appSettings.blurStrength = 3;
+            expect(appSettings.blurClass).toEqual(AppSettings.BLUR_OPTIONS[3]);
+        });
     });
 });

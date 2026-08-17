@@ -1,13 +1,5 @@
+import type { SessionSchedule } from "$lib/store/session-settings.svelte";
 import type { Image } from "$lib/types.svelte";
-
-export type ScheduleEntry = {
-    duration: number; // Time in seconds to show each image (or break duration)
-    repeat: number; // Number of images to show for this time (Infinity for endless sessions)
-    id?: string; // UUID for the schedule entry, useful for tracking
-    isBreak?: boolean; // If true, no image is displayed during this time
-};
-
-export type SessionSchedule = ScheduleEntry[];
 
 export class DrawingSession {
     nCompletedImgs: number;
@@ -183,5 +175,5 @@ export class DrawingSession {
 }
 
 export const currentSession = $state({
-    object: new DrawingSession([], [{ duration: 0, repeat: Infinity }]),
+    object: new DrawingSession([], []),
 });

@@ -8,15 +8,15 @@ const IMGS = [
 ];
 
 const SCHEDULE = [
-    { duration: 60, repeat: 3 },
-    { duration: 30, repeat: 3 },
-    { duration: 45, repeat: 1 },
+    { duration: 60, repeat: 3, id: "1", isBreak: false },
+    { duration: 30, repeat: 3, id: "2", isBreak: false },
+    { duration: 45, repeat: 1, id: "3", isBreak: false },
 ];
 
 const BREAK_SCHEDULE = [
-    { duration: 60, repeat: 2 },
-    { duration: 10, repeat: 1, isBreak: true },
-    { duration: 45, repeat: 3 },
+    { duration: 60, repeat: 2, id: "1", isBreak: false },
+    { duration: 10, repeat: 1, id: "2", isBreak: true },
+    { duration: 45, repeat: 3, id: "3", isBreak: false },
 ];
 
 const test = base.extend("session", ({ task: _task }, { onCleanup }) => {
