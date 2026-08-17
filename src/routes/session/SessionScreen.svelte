@@ -418,7 +418,7 @@ The user interface for a drawing session.
                 <span class="iconify lucide--image"></span>
                 <span class="sr-only">Drawings completed:</span>
                 <div>
-                    {drawingSession.nCompletedImgs}
+                    {drawingSession.completedDrawings}
                     {#if drawingSession.totalImgs !== Infinity}
                         <span class="text-base font-normal">/ {drawingSession.totalImgs}</span>
                     {/if}

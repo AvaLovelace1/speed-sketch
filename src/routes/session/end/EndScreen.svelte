@@ -8,16 +8,16 @@
     import { resolve } from "$app/paths";
 
     export interface Props {
-        nCompletedImgs: number;
+        completedDrawings: number;
         timeSpent: number;
     }
 
-    const { nCompletedImgs, timeSpent }: Props = $props();
+    const { completedDrawings, timeSpent }: Props = $props();
 
     const stats = $derived([
         {
             title: "Drawings completed",
-            value: nCompletedImgs,
+            value: completedDrawings,
             icon: "lucide--image",
             color: "text-primary",
         },

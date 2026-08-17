@@ -38,7 +38,7 @@ const testWithBreaks = base.extend("session", ({ task: _task }, { onCleanup }) =
 describe("drawing-session.svelte.ts", () => {
     test("initialization", ({ session }) => {
         expect(session.imgs).toEqual(IMGS);
-        expect(session.nCompletedImgs).toBe(0);
+        expect(session.completedDrawings).toBe(0);
         expect(session.schedule).toBe(SCHEDULE);
         expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
         expect(session.timeSpent).toBe(0);
@@ -113,7 +113,7 @@ describe("drawing-session.svelte.ts", () => {
     test("advance image when time runs out", ({ session }) => {
         session.resume();
         vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
-        expect(session.nCompletedImgs).toBe(1);
+        expect(session.completedDrawings).toBe(1);
         expect(session.getCurImg()).toEqual(IMGS[1]);
         expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
     });
@@ -176,7 +176,7 @@ describe("drawing-session.svelte.ts", () => {
 
         // Finish the break
         vi.advanceTimersByTime((BREAK_SCHEDULE[1].duration + 1) * 1000);
-        expect(session.nCompletedImgs).toBe(BREAK_SCHEDULE[0].repeat); // nCompletedImgs is unchanged
+        expect(session.completedDrawings).toBe(BREAK_SCHEDULE[0].repeat); // completed drawings is unchanged
 
         // Now on schedule entry 2
         expect(session.getCurScheduleEntry()).toBe(BREAK_SCHEDULE[2]);
@@ -190,7 +190,7 @@ describe("drawing-session.svelte.ts", () => {
 
         // Session is finished
         expect(session.isFinished).toBe(true);
-        expect(session.nCompletedImgs).toBe(BREAK_SCHEDULE[0].repeat + BREAK_SCHEDULE[2].repeat); // only non-break entries counted
+        expect(session.completedDrawings).toBe(BREAK_SCHEDULE[0].repeat + BREAK_SCHEDULE[2].repeat); // only non-break entries counted
     });
 
     testWithBreaks(

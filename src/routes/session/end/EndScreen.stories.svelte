@@ -10,7 +10,7 @@
         tags: ["autodocs"],
         render: template,
         args: {
-            nCompletedImgs: 42,
+            completedDrawings: 42,
             timeSpent: 60 ** 2 + 30 * 60 + 15,
         },
     });

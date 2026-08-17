@@ -2,7 +2,7 @@ import type { SessionSchedule } from "$lib/store/session-settings.svelte";
 import type { Image } from "$lib/types.svelte";
 
 export class DrawingSession {
-    nCompletedImgs: number;
+    completedDrawings: number;
     // Time remaining for the current image to be displayed, in seconds
     timeRemaining: number;
     // Total time spent drawing (not paused), in seconds
@@ -26,7 +26,7 @@ export class DrawingSession {
         // Time each image is displayed for, in seconds
         public schedule: SessionSchedule,
     ) {
-        this.nCompletedImgs = $state(0);
+        this.completedDrawings = $state(0);
         this.timeRemaining = $state(schedule.length > 0 ? schedule[0].duration : 0);
         this.timeSpent = 0;
         this.isPaused = $state(true);
@@ -131,7 +131,7 @@ export class DrawingSession {
 
     // Mark an interval as finished without interruption, and go to the next one
     finishInterval = () => {
-        if (!this.getCurScheduleEntry().isBreak) this.nCompletedImgs += 1;
+        if (!this.getCurScheduleEntry().isBreak) this.completedDrawings += 1;
         this.goNextInterval();
     };
 

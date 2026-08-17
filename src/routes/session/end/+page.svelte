@@ -14,6 +14,6 @@
 </svelte:head>
 
 <EndScreen
-    nCompletedImgs={currentSession.object.nCompletedImgs}
+    completedDrawings={currentSession.object.completedDrawings}
     timeSpent={currentSession.object.timeSpent}
 />
