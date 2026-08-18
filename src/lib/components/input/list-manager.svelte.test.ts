@@ -1,171 +1,167 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test as base } from "vitest";
 import { ListManager } from "./list-manager.svelte";
 
+const test = base
+    .extend("items", ({ task: _task }) => ["a", "b", "c"])
+    .extend("manager", ({ items }) => new ListManager(items));
+
 describe("list-manager.svelte.ts", () => {
-    test("constructor selects first item when non-empty", () => {
-        const manager = new ListManager(["a", "b", "c"]);
-        expect(manager.selectedIdx).toBe(0);
+    describe("constructor", () => {
+        test("selects first item when non-empty", ({ manager }) => {
+            expect(manager.selectedIdx).toBe(0);
+        });
+
+        test("selects -1 when empty", () => {
+            const manager = new ListManager([]);
+            expect(manager.selectedIdx).toBe(-1);
+        });
     });
 
-    test("constructor selects -1 when empty", () => {
-        const manager = new ListManager([]);
-        expect(manager.selectedIdx).toBe(-1);
+    describe("selectedIdx setter", () => {
+        test.for([-1, 0, 1, 2])("allows in-range value %d", (idx, { manager }) => {
+            manager.selectedIdx = idx;
+            expect(manager.selectedIdx).toBe(idx);
+        });
+
+        test.for([-2, 3])("rejects out-of-range value %d", (idx, { manager }) => {
+            expect(() => (manager.selectedIdx = idx)).toThrow("out of range");
+        });
     });
 
-    test("selectedIdx setter rejects out-of-range values", () => {
-        const manager = new ListManager(["a", "b"]);
-        expect(() => (manager.selectedIdx = -2)).toThrow("out of range");
-        expect(() => (manager.selectedIdx = 2)).toThrow("out of range");
+    describe("addItem", () => {
+        test("adds item to empty list and selects it, in-place", () => {
+            const items: string[] = [];
+            const manager = new ListManager<string>(items);
+            manager.addItem("a");
+            expect(items).toEqual(["a"]);
+            expect(manager.selectedIdx).toBe(0);
+        });
+
+        test.for([
+            { idx: -1, expectedItems: ["x", "a", "b", "c"] },
+            { idx: 0, expectedItems: ["a", "x", "b", "c"] },
+            { idx: 2, expectedItems: ["a", "b", "c", "x"] },
+        ])(
+            "adds item after idx $idx and selects it, in-place",
+            ({ idx, expectedItems }, { items, manager }) => {
+                manager.selectedIdx = idx;
+                manager.addItem("x");
+                expect(items).toEqual(expectedItems);
+                expect(manager.selectedIdx).toBe(idx + 1);
+            },
+        );
     });
 
-    test("selectedIdx setter allows -1", () => {
-        const manager = new ListManager(["a"]);
-        manager.selectedIdx = -1;
-        expect(manager.selectedIdx).toBe(-1);
+    describe("removeItem", () => {
+        test("removes only item from list and sets idx to -1, in-place", () => {
+            const items = ["a"];
+            const manager = new ListManager<string>(items);
+            manager.removeItem();
+            expect(items).toEqual([]);
+            expect(manager.selectedIdx).toBe(-1);
+        });
+
+        test.for([
+            { idx: 0, expectedItems: ["b", "c"], expectedIdx: 0 },
+            { idx: 1, expectedItems: ["a", "c"], expectedIdx: 1 },
+            { idx: 2, expectedItems: ["a", "b"], expectedIdx: 1 },
+        ])(
+            "removes selected item $idx and clamps idx, in-place",
+            ({ idx, expectedItems, expectedIdx }, { items, manager }) => {
+                manager.selectedIdx = idx;
+                manager.removeItem();
+                expect(items).toEqual(expectedItems);
+                expect(manager.selectedIdx).toBe(expectedIdx);
+            },
+        );
+
+        test("is no-op when nothing is selected", ({ manager }) => {
+            manager.selectedIdx = -1;
+            manager.removeItem();
+            expect(manager.items).toEqual(["a", "b", "c"]);
+            expect(manager.selectedIdx).toBe(-1);
+        });
     });
 
-    test("addItem inserts after selected and advances selection", () => {
-        const manager = new ListManager<string>([]);
+    describe("moveItemUp", () => {
+        test.for([
+            { idx: 1, expectedItems: ["b", "a", "c"] },
+            { idx: 2, expectedItems: ["a", "c", "b"] },
+        ])(
+            "swaps selected item $idx with previous and updates selection, in-place",
+            ({ idx, expectedItems }, { items, manager }) => {
+                manager.selectedIdx = idx;
+                manager.moveItemUp();
+                expect(items).toEqual(expectedItems);
+                expect(manager.selectedIdx).toBe(idx - 1);
+            },
+        );
 
-        // Add to empty list (selectedIdx is -1, so inserts at 0)
-        manager.addItem("a");
-        expect(manager.items).toEqual(["a"]);
-        expect(manager.selectedIdx).toBe(0);
-
-        // Add after selected (end)
-        manager.addItem("b");
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(1);
-
-        // Add after first item
-        manager.selectedIdx = 0;
-        manager.addItem("c");
-        expect(manager.items).toEqual(["a", "c", "b"]);
-        expect(manager.selectedIdx).toBe(1);
+        test.for([-1, 0])("is no-op if idx %d is selected", (idx, { manager }) => {
+            manager.selectedIdx = idx;
+            manager.moveItemUp();
+            expect(manager.items).toEqual(["a", "b", "c"]);
+            expect(manager.selectedIdx).toBe(idx);
+        });
     });
 
-    test("removeItem removes selected and clamps index", () => {
-        const manager = new ListManager(["a", "b", "c"]);
+    describe("moveItemDown", () => {
+        test.for([
+            { idx: 0, expectedItems: ["b", "a", "c"] },
+            { idx: 1, expectedItems: ["a", "c", "b"] },
+        ])(
+            "swaps selected item $idx with next and updates selection, in-place",
+            ({ idx, expectedItems }, { items, manager }) => {
+                manager.selectedIdx = idx;
+                manager.moveItemDown();
+                expect(items).toEqual(expectedItems);
+                expect(manager.selectedIdx).toBe(idx + 1);
+            },
+        );
 
-        // Remove middle
-        manager.selectedIdx = 1;
-        manager.removeItem();
-        expect(manager.items).toEqual(["a", "c"]);
-        expect(manager.selectedIdx).toBe(1);
-
-        // Remove last
-        manager.removeItem();
-        expect(manager.items).toEqual(["a"]);
-        expect(manager.selectedIdx).toBe(0);
-
-        // Remove only item
-        manager.removeItem();
-        expect(manager.items).toEqual([]);
-        expect(manager.selectedIdx).toBe(-1);
+        test.for([-1, 2])("is no-op if idx %d is selected", (idx, { manager }) => {
+            manager.selectedIdx = idx;
+            manager.moveItemDown();
+            expect(manager.items).toEqual(["a", "b", "c"]);
+            expect(manager.selectedIdx).toBe(idx);
+        });
     });
 
-    test("removeItem is a no-op when nothing is selected", () => {
-        const manager = new ListManager(["a", "b"]);
-        manager.selectedIdx = -1;
-        manager.removeItem();
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(-1);
-    });
+    describe("moveItem", () => {
+        test.for([
+            { idx: 0, targetIdx: 0, expectedItems: ["a", "b", "c"] },
+            { idx: 0, targetIdx: 1, expectedItems: ["b", "a", "c"] },
+            { idx: 1, targetIdx: 2, expectedItems: ["a", "c", "b"] },
+            { idx: 2, targetIdx: 0, expectedItems: ["c", "a", "b"] },
+            { idx: 0, targetIdx: 2, expectedItems: ["b", "c", "a"] },
+        ])(
+            "moves selected item $idx to idx $targetIdx and updates selection, in-place",
+            ({ idx, targetIdx, expectedItems }, { items, manager }) => {
+                manager.selectedIdx = idx;
+                manager.moveItem(targetIdx);
+                expect(items).toEqual(expectedItems);
+                expect(manager.selectedIdx).toBe(targetIdx);
+            },
+        );
 
-    test("moveItemUp swaps with previous and updates selection", () => {
-        const manager = new ListManager(["a", "b", "c"]);
+        test("works on one-item list", () => {
+            const items = ["a"];
+            const manager = new ListManager<string>(items);
+            manager.moveItem(0);
+            expect(items).toEqual(["a"]);
+            expect(manager.selectedIdx).toBe(0);
+        });
 
-        manager.selectedIdx = 2;
-        manager.moveItemUp();
-        expect(manager.items).toEqual(["a", "c", "b"]);
-        expect(manager.selectedIdx).toBe(1);
+        test("is no-op when nothing is selected", ({ manager }) => {
+            manager.selectedIdx = -1;
+            manager.moveItem(1);
+            expect(manager.items).toEqual(["a", "b", "c"]);
+            expect(manager.selectedIdx).toBe(-1);
+        });
 
-        manager.moveItemUp();
-        expect(manager.items).toEqual(["c", "a", "b"]);
-        expect(manager.selectedIdx).toBe(0);
-    });
-
-    test("moveItemUp is a no-op at index 0", () => {
-        const manager = new ListManager(["a", "b"]);
-
-        manager.selectedIdx = 0;
-        manager.moveItemUp();
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(0);
-    });
-
-    test("moveItemDown swaps with next and updates selection", () => {
-        const manager = new ListManager(["a", "b", "c"]);
-
-        manager.selectedIdx = 0;
-        manager.moveItemDown();
-        expect(manager.items).toEqual(["b", "a", "c"]);
-        expect(manager.selectedIdx).toBe(1);
-
-        manager.moveItemDown();
-        expect(manager.items).toEqual(["b", "c", "a"]);
-        expect(manager.selectedIdx).toBe(2);
-    });
-
-    test("moveItemDown is a no-op at last index", () => {
-        const manager = new ListManager(["a", "b"]);
-
-        manager.selectedIdx = 1;
-        manager.moveItemDown();
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(1);
-    });
-
-    test("moveItemUp and moveItemDown are no-ops when nothing is selected", () => {
-        const manager = new ListManager(["a", "b"]);
-        manager.selectedIdx = -1;
-        manager.moveItemUp();
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(-1);
-        manager.moveItemDown();
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(-1);
-    });
-
-    test("moveItem moves selected item to arbitrary index", () => {
-        const manager = new ListManager(["a", "b", "c"]);
-
-        // Move last to first
-        manager.selectedIdx = 2;
-        manager.moveItem(0);
-        expect(manager.items).toEqual(["c", "a", "b"]);
-        expect(manager.selectedIdx).toBe(0);
-
-        // Move first to middle
-        manager.moveItem(1);
-        expect(manager.items).toEqual(["a", "c", "b"]);
-        expect(manager.selectedIdx).toBe(1);
-
-        // Move middle to last
-        manager.moveItem(2);
-        expect(manager.items).toEqual(["a", "b", "c"]);
-        expect(manager.selectedIdx).toBe(2);
-    });
-
-    test("moveItem rejects out-of-range index", () => {
-        const manager = new ListManager(["a", "b"]);
-        manager.selectedIdx = 0;
-        expect(() => manager.moveItem(-1)).toThrow("out of range");
-        expect(() => manager.moveItem(2)).toThrow("out of range");
-    });
-
-    test("moveItem is a no-op when nothing is selected", () => {
-        const manager = new ListManager(["a", "b"]);
-        manager.selectedIdx = -1;
-        manager.moveItem(1);
-        expect(manager.items).toEqual(["a", "b"]);
-        expect(manager.selectedIdx).toBe(-1);
-    });
-
-    test("items array is mutated in place", () => {
-        const arr = ["a", "b"];
-        const manager = new ListManager(arr);
-        manager.addItem("c");
-        expect(arr).toEqual(["a", "c", "b"]);
+        test.for([-1, 3])("rejects out-of-range idx %d", (idx, { manager }) => {
+            manager.selectedIdx = 0;
+            expect(() => manager.moveItem(idx)).toThrow("out of range");
+        });
     });
 });

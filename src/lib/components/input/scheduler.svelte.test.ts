@@ -1,127 +1,58 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test as base } from "vitest";
 import { Scheduler } from "./scheduler.svelte";
 
-const ENTRIES = [0, 1, 2].map((_) => {
-    return { ...Scheduler.DEFAULT_ENTRY, id: self.crypto.randomUUID() };
-});
+const test = base
+    .extend("schedule", ({ task: _task }) => [
+        { duration: 60, repeat: 2, id: "1" },
+        { duration: 10, repeat: 1, id: "2", isBreak: true },
+        { duration: 45, repeat: 3, id: "3" },
+    ])
+    .extend("scheduler", ({ schedule }) => new Scheduler(schedule));
 
 describe("scheduler.svelte.ts", () => {
-    test("add entry", () => {
-        const scheduler = new Scheduler();
-
-        // Add first entry
-        scheduler.addEntry(ENTRIES[0]);
-        expect(scheduler.schedule).toEqual([ENTRIES[0]]);
-        expect(scheduler.selectedIdx).toBe(0);
-
-        // Add second entry. New entry should be selected.
-        scheduler.addEntry(ENTRIES[1]);
-        expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(1);
-
-        // Add third entry after the first.
-        scheduler.selectedIdx = 0;
-        scheduler.addEntry(ENTRIES[2]);
-        expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(1);
+    test("schedule returns same list given to the scheduler", ({ schedule, scheduler }) => {
+        expect(scheduler.schedule).toBe(schedule);
     });
 
-    test("remove entry", () => {
-        const scheduler = new Scheduler([...ENTRIES]);
+    test("totalImgs sums all repeats (not including breaks)", ({ scheduler }) => {
+        expect(scheduler.totalImgs).toBe(5);
+    });
 
+    test("totalDuration sums all durations", ({ scheduler }) => {
+        expect(scheduler.totalDuration).toBe(60 * 2 + 10 + 45 * 3);
+    });
+
+    test("addEntry adds a new entry after the selected idx, in-place", ({
+        schedule,
+        scheduler,
+    }) => {
+        const entries = [...schedule];
+        const newEntry = { duration: 42, repeat: 42, id: "42" };
         scheduler.selectedIdx = 1;
-
-        // Remove middle entry
-        scheduler.removeItem();
-        expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2]]);
-        expect(scheduler.selectedIdx).toBe(1);
-
-        // Remove last entry
-        scheduler.removeItem();
-        expect(scheduler.schedule).toEqual([ENTRIES[0]]);
-        expect(scheduler.selectedIdx).toBe(0);
-
-        // Remove first entry, leaving the schedule empty
-        scheduler.removeItem();
-        expect(scheduler.schedule).toEqual([]);
-        expect(scheduler.selectedIdx).toBe(-1);
+        scheduler.addEntry(newEntry);
+        expect(schedule).toEqual([entries[0], entries[1], newEntry, entries[2]]);
+        expect(scheduler.selectedIdx).toBe(2);
     });
 
-    test("move entry up", () => {
-        const scheduler = new Scheduler([...ENTRIES]);
-
-        scheduler.selectedIdx = 2;
-        scheduler.moveItemUp();
-        expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(1);
-
-        scheduler.moveItemUp();
-        expect(scheduler.schedule).toEqual([ENTRIES[2], ENTRIES[0], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(0);
-
-        scheduler.moveItemUp();
-        expect(scheduler.schedule).toEqual([ENTRIES[2], ENTRIES[0], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(0);
-    });
-
-    test("move entry down", () => {
-        const scheduler = new Scheduler([...ENTRIES]);
-
+    test("addEntry adds a new default non-break entry if unspecified, in-place", ({
+        schedule,
+        scheduler,
+    }) => {
         scheduler.selectedIdx = 0;
-        scheduler.moveItemDown();
-        expect(scheduler.schedule).toEqual([ENTRIES[1], ENTRIES[0], ENTRIES[2]]);
+        scheduler.addEntry();
+        const newEntry = schedule[1];
+        expect(newEntry).toEqual(expect.objectContaining(Scheduler.DEFAULT_ENTRY));
+        expect(newEntry.id).toBeDefined();
+        expect(newEntry.isBreak).toBeUndefined();
         expect(scheduler.selectedIdx).toBe(1);
-
-        scheduler.moveItemDown();
-        expect(scheduler.schedule).toEqual([ENTRIES[1], ENTRIES[2], ENTRIES[0]]);
-        expect(scheduler.selectedIdx).toBe(2);
-
-        scheduler.moveItemDown();
-        expect(scheduler.schedule).toEqual([ENTRIES[1], ENTRIES[2], ENTRIES[0]]);
-        expect(scheduler.selectedIdx).toBe(2);
     });
 
-    test("move entry", () => {
-        const scheduler = new Scheduler([...ENTRIES]);
-
-        scheduler.selectedIdx = 2;
-        scheduler.moveItem(0);
-        expect(scheduler.schedule).toEqual([ENTRIES[2], ENTRIES[0], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(0);
-
-        scheduler.moveItem(1);
-        expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[2], ENTRIES[1]]);
-        expect(scheduler.selectedIdx).toBe(1);
-
-        scheduler.moveItem(2);
-        expect(scheduler.schedule).toEqual([ENTRIES[0], ENTRIES[1], ENTRIES[2]]);
-        expect(scheduler.selectedIdx).toBe(2);
-    });
-
-    test("add break", () => {
-        const scheduler = new Scheduler();
-
+    test("addBreak adds a new default break entry, in-place", ({ schedule, scheduler }) => {
+        scheduler.selectedIdx = 0;
         scheduler.addBreak();
-        expect(scheduler.schedule[0].isBreak).toBe(true);
-        expect(scheduler.schedule[0].duration).toBe(Scheduler.DEFAULT_BREAK.duration);
-        expect(scheduler.schedule[0].repeat).toBe(Scheduler.DEFAULT_BREAK.repeat);
-    });
-
-    test("totalImgs excludes breaks", () => {
-        const scheduler = new Scheduler([
-            { duration: 60, repeat: 5 },
-            { duration: 30, repeat: 1, isBreak: true },
-            { duration: 45, repeat: 3 },
-        ]);
-        expect(scheduler.totalImgs).toBe(8); // 5 + 0 + 3
-    });
-
-    test("totalDuration includes breaks", () => {
-        const scheduler = new Scheduler([
-            { duration: 60, repeat: 2 },
-            { duration: 30, repeat: 1, isBreak: true },
-            { duration: 45, repeat: 1 },
-        ]);
-        expect(scheduler.totalDuration).toBe(60 * 2 + 30 + 45);
+        const newEntry = schedule[1];
+        expect(newEntry).toEqual(expect.objectContaining(Scheduler.DEFAULT_BREAK));
+        expect(newEntry.id).toBeDefined();
+        expect(newEntry.isBreak).toBe(true);
     });
 });
