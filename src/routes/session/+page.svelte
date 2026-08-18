@@ -21,7 +21,7 @@
     }
 
     async function showImageFolder() {
-        const curImgPath = currentSession.object.getCurImg()?.path;
+        const curImgPath = currentSession.object.curImg?.path;
         if (!curImgPath) {
             console.error("No image filepath available to reveal in folder.");
             return;

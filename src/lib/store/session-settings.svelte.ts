@@ -269,8 +269,17 @@ export class SessionSettings implements Record<string, unknown> {
     }
 }
 
+export type ScheduleEntry = z.infer<typeof SessionSettings.SCHEDULE_ENTRY_SCHEMA>;
 export type SessionSchedule = z.infer<typeof SessionSettings.SESSION_SCHEDULE_SCHEMA>;
 export type SchedulePreset = z.infer<typeof SessionSettings.SCHEDULE_PRESET_SCHEMA>;
 export type SessionSettingsEntries = z.infer<typeof SessionSettings.SCHEMA>;
+
+export function totalImgs(schedule: SessionSchedule) {
+    return schedule.reduce((acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat), 0);
+}
+
+export function totalDuration(schedule: SessionSchedule) {
+    return schedule.reduce((acc, entry) => acc + entry.duration * entry.repeat, 0);
+}
 
 export const sessionSettings = $state(new SessionSettings());

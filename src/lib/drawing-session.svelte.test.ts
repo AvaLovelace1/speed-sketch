@@ -1,282 +1,389 @@
 import { describe, expect, test as base, vi } from "vitest";
 import { DrawingSession } from "./drawing-session.svelte";
 
-const IMGS = [
-    { name: "image1.jpg", url: "https://localhost/image1.jpg" },
-    { name: "image2.jpg", url: "https://localhost/image2.jpg" },
-    { name: "image3.jpg", url: "https://localhost/image3.jpg" },
-];
-
-const SCHEDULE = [
-    { duration: 60, repeat: 3, id: "1", isBreak: false },
-    { duration: 30, repeat: 3, id: "2", isBreak: false },
-    { duration: 45, repeat: 1, id: "3", isBreak: false },
-];
-
-const BREAK_SCHEDULE = [
-    { duration: 60, repeat: 2, id: "1", isBreak: false },
-    { duration: 10, repeat: 1, id: "2", isBreak: true },
-    { duration: 45, repeat: 3, id: "3", isBreak: false },
-];
-
-const test = base.extend("session", ({ task: _task }, { onCleanup }) => {
-    vi.useFakeTimers();
-    onCleanup(() => {
-        vi.restoreAllMocks();
+const test = base
+    .extend("imgs", ({ task: _task }) => [
+        { name: "image1.jpg", url: "https://localhost/image1.jpg" },
+        { name: "image2.jpg", url: "https://localhost/image2.jpg" },
+        { name: "image3.jpg", url: "https://localhost/image3.jpg" },
+    ])
+    .extend("schedule", ({ task: _task }) => [
+        { duration: 60, repeat: 2, id: "1" },
+        { duration: 10, repeat: 1, id: "2", isBreak: true },
+        { duration: 45, repeat: 3, id: "3" },
+    ])
+    .extend("session", ({ imgs, schedule }, { onCleanup }) => {
+        vi.useFakeTimers();
+        onCleanup(() => {
+            vi.restoreAllMocks();
+        });
+        return new DrawingSession(imgs, schedule);
     });
-    return new DrawingSession(IMGS, SCHEDULE);
-});
 
-const testWithBreaks = base.extend("session", ({ task: _task }, { onCleanup }) => {
-    vi.useFakeTimers();
-    onCleanup(() => {
-        vi.restoreAllMocks();
-    });
-    return new DrawingSession(IMGS, BREAK_SCHEDULE);
-});
+// Assert that the session timer is ticking.
+// This is not a pure function; it advances time and modifies timeRemaining/timeSpent.
+function expectTimerIsTicking(session: DrawingSession) {
+    const prevTimeRemaining = session.timeRemaining;
+    const prevTimeSpent = session.timeSpent;
+    const delta = Math.ceil(prevTimeRemaining / 2);
+    expect(delta).toBeGreaterThan(0);
+    vi.advanceTimersByTime(delta * 1000);
+    expect(session.timeRemaining).toBe(prevTimeRemaining - delta);
+    expect(session.timeSpent).toBe(prevTimeSpent + delta);
+}
+
+function expectTimerNotTicking(session: DrawingSession) {
+    const prevTimeRemaining = session.timeRemaining;
+    const prevTimeSpent = session.timeSpent;
+    vi.advanceTimersByTime(9000);
+    expect(session.timeRemaining).toBe(prevTimeRemaining);
+    expect(session.timeSpent).toBe(prevTimeSpent);
+}
 
 describe("drawing-session.svelte.ts", () => {
-    test("initialization", ({ session }) => {
-        expect(session.imgs).toEqual(IMGS);
+    test("initial properties are correct", ({ imgs, schedule, session }) => {
+        expect(session.imgs).toEqual(imgs);
+        expect(session.schedule).toBe(schedule);
         expect(session.completedDrawings).toBe(0);
-        expect(session.schedule).toBe(SCHEDULE);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
+        expect(session.timeRemaining).toBe(schedule[0].duration);
         expect(session.timeSpent).toBe(0);
         expect(session.isPaused).toBe(true);
+        expect(session.isFinished).toBe(false);
+        expect(session.curImgIdx).toBe(0);
+        expect(session.curEntryIdx).toBe(0);
+        expect(session.curRepeatIdx).toBe(0);
     });
 
-    test("goPrevInterval and goNextInterval", ({ session }) => {
-        session.goNextInterval();
-        expect(session.getCurImg()).toEqual(IMGS[1]);
-        session.goNextInterval();
-        expect(session.getCurImg()).toEqual(IMGS[2]);
-        session.goNextInterval();
-        expect(session.getCurImg()).toEqual(IMGS[0]);
-        session.goPrevInterval();
-        expect(session.getCurImg()).toEqual(IMGS[2]);
-        session.goPrevInterval();
-        expect(session.getCurImg()).toEqual(IMGS[1]);
-        session.goPrevInterval();
-        expect(session.getCurImg()).toEqual(IMGS[0]);
-        session.goPrevInterval();
-        expect(session.getCurImg()).toEqual(IMGS[0]); // Can't go back past the first interval
+    describe("totalImgs", () => {
+        test("sums all repeats (not including breaks)", ({ session }) => {
+            expect(session.totalImgs).toBe(5);
+        });
+
+        test("is Infinity on endless schedule", ({ imgs }) => {
+            const session = new DrawingSession(imgs, [{ duration: 60, repeat: Infinity, id: "1" }]);
+            expect(session.totalImgs).toBe(Infinity);
+        });
     });
 
-    test("goNextInterval and goPrevInterval reset timer", ({ session }) => {
+    describe("totalDuration", () => {
+        test("sums all durations (including breaks)", ({ session }) => {
+            expect(session.totalDuration).toBe(60 * 2 + 10 + 45 * 3);
+        });
+
+        test("is Infinity on endless schedule", ({ imgs }) => {
+            const session = new DrawingSession(imgs, [{ duration: 60, repeat: Infinity, id: "1" }]);
+            expect(session.totalDuration).toBe(Infinity);
+        });
+    });
+
+    describe("getters", () => {
+        test("curImg returns selected image", ({ session }) => {
+            session.curImgIdx = 0;
+            expect(session.curImg).toEqual(session.imgs[0]);
+            session.curImgIdx = 2;
+            expect(session.curImg).toEqual(session.imgs[2]);
+        });
+
+        test("curImg returns undefined if current entry is break", ({ session }) => {
+            session.curEntryIdx = 1;
+            session.curRepeatIdx = 0;
+            expect(session.curImg).toBeUndefined();
+        });
+
+        test("curScheduleEntry returns selected schedule entry", ({ session }) => {
+            session.curEntryIdx = 0;
+            expect(session.curScheduleEntry).toEqual(session.schedule[0]);
+            session.curEntryIdx = 2;
+            expect(session.curScheduleEntry).toEqual(session.schedule[2]);
+        });
+    });
+
+    describe("curImgNum", () => {
+        test("starts at 1", ({ session }) => {
+            expect(session.curImgNum).toBe(1);
+        });
+
+        test("sums previous (non-break) interval repeats", ({ session }) => {
+            session.curEntryIdx = 2;
+            session.curRepeatIdx = 1;
+            expect(session.curImgNum).toBe(4);
+        });
+
+        test("does not increment when on break", ({ session }) => {
+            session.curEntryIdx = 1;
+            session.curRepeatIdx = 0;
+            expect(session.curImgNum).toBe(2);
+        });
+    });
+
+    describe("curSessionTime", () => {
+        test("starts at 0", ({ session }) => {
+            expect(session.curSessionTime).toBe(0);
+        });
+
+        test("sums previous interval durations + (current duration - timeRemaining)", ({
+            session,
+        }) => {
+            session.curEntryIdx = 2;
+            session.curRepeatIdx = 1;
+            session.timeRemaining = 10;
+            expect(session.curSessionTime).toBe(60 * 2 + 10 + 45 + (45 - 10));
+        });
+    });
+
+    describe("isValid", () => {
+        test("session with no images is invalid", ({ schedule }) => {
+            const session = new DrawingSession([], schedule);
+            expect(session.isValid()).toBe(false);
+        });
+
+        test("session with empty schedule is invalid", ({ imgs }) => {
+            const session = new DrawingSession(imgs, []);
+            expect(session.isValid()).toBe(false);
+        });
+    });
+
+    describe("image navigation", () => {
+        test("goNextImg goes to next image", ({ session }) => {
+            session.curImgIdx = 0;
+            session.goNextImg();
+            expect(session.curImgIdx).toBe(1);
+        });
+
+        test("goNextImg loops around if on last image", ({ session }) => {
+            session.curImgIdx = 2;
+            session.goNextImg();
+            expect(session.curImgIdx).toBe(0);
+        });
+
+        test("goPrevImg goes to previous image", ({ session }) => {
+            session.curImgIdx = 1;
+            session.goPrevImg();
+            expect(session.curImgIdx).toBe(0);
+        });
+
+        test("goPrevImg loops around if on first image", ({ session }) => {
+            session.curImgIdx = 0;
+            session.goPrevImg();
+            expect(session.curImgIdx).toBe(2);
+        });
+    });
+
+    describe("interval navigation", () => {
+        test("goNextInterval goes to next repeat", ({ session }) => {
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 0;
+            session.goNextInterval();
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(1);
+        });
+
+        test("goNextInterval goes to first repeat of next entry if on last repeat", ({
+            session,
+        }) => {
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 1;
+            session.goNextInterval();
+            expect(session.curEntryIdx).toBe(1);
+            expect(session.curRepeatIdx).toBe(0);
+        });
+
+        test("goPrevInterval goes to previous repeat", ({ session }) => {
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 1;
+            session.goPrevInterval();
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(0);
+        });
+
+        test("goPrevInterval goes to last repeat of previous entry if on first repeat", ({
+            session,
+        }) => {
+            session.curEntryIdx = 1;
+            session.curRepeatIdx = 0;
+            session.goPrevInterval();
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(1);
+        });
+
+        test("goNextInterval finishes session if on last repeat of last interval", ({
+            session,
+        }) => {
+            session.curEntryIdx = 2;
+            session.curRepeatIdx = 1;
+
+            session.goNextInterval();
+            expect(session.curEntryIdx).toBe(2);
+            expect(session.curRepeatIdx).toBe(2);
+            expect(session.isFinished).toBe(false);
+
+            session.goNextInterval();
+            expect(session.curEntryIdx).toBe(2);
+            expect(session.curRepeatIdx).toBe(2);
+            expect(session.isFinished).toBe(true);
+        });
+
+        test("goPrevInterval is no-op on first repeat of first interval", ({ session }) => {
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 0;
+            session.goPrevInterval();
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(0);
+        });
+
+        test("goPrevInterval resets time remaining without affecting timeSpent", ({
+            schedule,
+            session,
+        }) => {
+            session.resume();
+            const timeSpent = 10;
+            vi.advanceTimersByTime(timeSpent * 1000);
+            expect(session.timeRemaining).toBe(schedule[0].duration - timeSpent);
+            expect(session.timeSpent).toBe(timeSpent);
+            session.goPrevInterval();
+            expect(session.timeRemaining).toBe(schedule[0].duration);
+            expect(session.timeSpent).toBe(timeSpent);
+        });
+
+        test("goNextInterval resets time remaining without affecting timeSpent", ({
+            schedule,
+            session,
+        }) => {
+            session.resume();
+            const timeSpent = 10;
+            vi.advanceTimersByTime(timeSpent * 1000);
+            expect(session.timeRemaining).toBe(schedule[0].duration - timeSpent);
+            expect(session.timeSpent).toBe(timeSpent);
+            session.goNextInterval();
+            expect(session.timeRemaining).toBe(schedule[0].duration);
+            expect(session.timeSpent).toBe(timeSpent);
+        });
+
+        test("goNextInterval and goPrevInterval don't restart timer when paused", ({ session }) => {
+            session.pause();
+            session.goNextInterval();
+            expectTimerNotTicking(session);
+            session.goPrevInterval();
+            expectTimerNotTicking(session);
+        });
+
+        test("goNextInterval and goPrevInterval do not affect curImg", ({ session }) => {
+            session.curImgIdx = 0;
+            session.goNextInterval();
+            expect(session.curImgIdx).toEqual(0);
+            session.goPrevInterval();
+            expect(session.curImgIdx).toEqual(0);
+        });
+
+        test("goPrevInterval and goNextInterval are no-ops when session finished", ({
+            session,
+        }) => {
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 1;
+            session.finishSession();
+
+            session.goPrevInterval();
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(1);
+
+            session.goNextInterval();
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(1);
+        });
+    });
+
+    describe("finishInterval", () => {
+        test("goes to next image, goes to next interval, and increments completedDrawings", ({
+            session,
+        }) => {
+            session.curImgIdx = 0;
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 0;
+            session.completedDrawings = 0;
+            session.finishInterval();
+            expect(session.curImgIdx).toBe(1);
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(1);
+            expect(session.completedDrawings).toBe(1);
+        });
+
+        test("doesn't increment completedDrawings or go to next image if interval is break", ({
+            session,
+        }) => {
+            session.curImgIdx = 0;
+            session.curEntryIdx = 1;
+            session.curRepeatIdx = 0;
+            session.completedDrawings = 0;
+            session.finishInterval();
+            expect(session.curImgIdx).toBe(0);
+            expect(session.curEntryIdx).toBe(2);
+            expect(session.curRepeatIdx).toBe(0);
+            expect(session.completedDrawings).toBe(0);
+        });
+    });
+
+    test("finishSession sets isFinished and clears timers", ({ session }) => {
+        expect(session.isFinished).toBe(false);
         session.resume();
-
-        vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration - 9);
-        session.goNextInterval();
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
-
-        vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration - 9);
-        session.goPrevInterval();
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
-    });
-
-    test("goNextInterval and goPrevInterval don't restart timer when paused", ({ session }) => {
-        session.pause();
-        const prevTimeRemaining = session.timeRemaining;
-
-        session.goNextInterval();
-        vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(prevTimeRemaining);
-
-        session.goPrevInterval();
-        vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(prevTimeRemaining);
-    });
-
-    test("resume and pause", ({ session }) => {
-        session.resume();
-        expect(session.isPaused).toBe(false);
-        const waitTimeSeconds = 3;
-        vi.advanceTimersByTime(waitTimeSeconds * 1000);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration - waitTimeSeconds);
-
-        session.pause();
-        expect(session.isPaused).toBe(true);
-        const prevTimeRemaining = session.timeRemaining;
-        vi.advanceTimersByTime(9000);
-        expect(session.timeRemaining).toBe(prevTimeRemaining);
-    });
-
-    test("togglePause", ({ session }) => {
-        session.togglePause();
-        expect(session.isPaused).toBe(false);
-        session.togglePause();
-        expect(session.isPaused).toBe(true);
-    });
-
-    test("advance image when time runs out", ({ session }) => {
-        session.resume();
-        vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
-        expect(session.completedDrawings).toBe(1);
-        expect(session.getCurImg()).toEqual(IMGS[1]);
-        expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
-    });
-
-    test("go to next schedule entry", ({ session }) => {
-        session.resume();
-        for (let i = 0; i < SCHEDULE[0].repeat - 1; i++) {
-            vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
-            expect(session.timeRemaining).toBe(SCHEDULE[0].duration);
-        }
-        vi.advanceTimersByTime((SCHEDULE[0].duration + 1) * 1000);
-        expect(session.timeRemaining).toBe(SCHEDULE[1].duration);
-    });
-
-    test("finish session when all schedule entries are done", ({ session }) => {
-        session.resume();
-        for (const sessionEntry of SCHEDULE) {
-            for (let i = 0; i < sessionEntry.repeat; i++) {
-                vi.advanceTimersByTime((sessionEntry.duration + 1) * 1000);
-                const isFinished =
-                    i === sessionEntry.repeat - 1 && sessionEntry === SCHEDULE[SCHEDULE.length - 1];
-                expect(session.isFinished).toBe(isFinished);
-            }
-        }
-    });
-
-    test("finish session via goNextInterval", ({ session }) => {
-        session.resume();
-        for (const sessionEntry of SCHEDULE) {
-            for (let i = 0; i < sessionEntry.repeat; i++) {
-                session.goNextInterval();
-                const isFinished =
-                    i === sessionEntry.repeat - 1 && sessionEntry === SCHEDULE[SCHEDULE.length - 1];
-                expect(session.isFinished).toBe(isFinished);
-            }
-        }
-    });
-
-    test("timeSpent increments correctly", ({ session }) => {
-        session.resume();
-        const waitTimeSeconds = 3;
-        vi.advanceTimersByTime(waitTimeSeconds * 1000);
-        session.pause();
-        vi.advanceTimersByTime(9000);
-        expect(session.timeSpent).toBe(waitTimeSeconds);
-    });
-
-    testWithBreaks("full session with breaks", ({ session }) => {
-        expect(session.totalImgs).toBe(BREAK_SCHEDULE[0].repeat + BREAK_SCHEDULE[2].repeat);
-        session.resume();
-
-        // Finish first entry
-        for (let i = 0; i < BREAK_SCHEDULE[0].repeat; i++) {
-            vi.advanceTimersByTime((BREAK_SCHEDULE[0].duration + 1) * 1000);
-        }
-
-        // On break
-        expect(session.getCurScheduleEntry().isBreak).toBe(true);
-        expect(session.getCurImg()).toBeUndefined();
-
-        // Finish the break
-        vi.advanceTimersByTime((BREAK_SCHEDULE[1].duration + 1) * 1000);
-        expect(session.completedDrawings).toBe(BREAK_SCHEDULE[0].repeat); // completed drawings is unchanged
-
-        // Now on schedule entry 2
-        expect(session.getCurScheduleEntry()).toBe(BREAK_SCHEDULE[2]);
-        expect(session.timeRemaining).toBe(BREAK_SCHEDULE[2].duration);
-        expect(session.getCurImg()).toBeDefined();
-
-        // Finish second entry
-        for (let i = 0; i < BREAK_SCHEDULE[2].repeat; i++) {
-            vi.advanceTimersByTime((BREAK_SCHEDULE[2].duration + 1) * 1000);
-        }
-
-        // Session is finished
+        session.finishSession();
         expect(session.isFinished).toBe(true);
-        expect(session.completedDrawings).toBe(BREAK_SCHEDULE[0].repeat + BREAK_SCHEDULE[2].repeat); // only non-break entries counted
+        expectTimerNotTicking(session);
     });
 
-    testWithBreaks(
-        "goPrevInterval and goNextInterval don't change image index when exiting break",
-        ({ session }) => {
-            expect(session.getCurImg()).toEqual(IMGS[0]); // Entry 0, interval 0
-            session.goNextInterval();
-            expect(session.getCurImg()).toEqual(IMGS[1]); // Entry 0, interval 1
-            session.goNextInterval();
-            expect(session.getCurImg()).toBeUndefined(); // Entry 1 (break)
-            session.goNextInterval();
-            expect(session.getCurImg()).toEqual(IMGS[2]); // Entry 2, interval 0
-            session.goNextInterval();
-            expect(session.getCurImg()).toEqual(IMGS[0]); // Entry 2, interval 1
-            session.goPrevInterval();
-            expect(session.getCurImg()).toEqual(IMGS[2]); // Entry 2, interval 0
-            session.goPrevInterval();
-            expect(session.getCurImg()).toBeUndefined(); // Entry 1 (break)
-            session.goNextInterval();
-            expect(session.getCurImg()).toEqual(IMGS[2]); // Entry 2, interval 0
-            session.goPrevInterval();
-            expect(session.getCurImg()).toBeUndefined(); // Entry 1 (break)
-            session.goPrevInterval();
-            expect(session.getCurImg()).toEqual(IMGS[1]); // Entry 0, interval 1
-            session.goPrevInterval();
-            expect(session.getCurImg()).toEqual(IMGS[0]); // Entry 0, interval 0
-        },
-    );
+    describe("pausing and resuming", () => {
+        test("time advances with resume and freezes with pause", ({ session }) => {
+            session.resume();
+            expect(session.isPaused).toBe(false);
+            expectTimerIsTicking(session);
 
-    testWithBreaks("timer counts down during break", ({ session }) => {
-        session.resume();
-        // Finish 2 images
-        for (let i = 0; i < 2; i++) {
-            vi.advanceTimersByTime((BREAK_SCHEDULE[0].duration + 1) * 1000);
-        }
-        // On break
-        expect(session.timeRemaining).toBe(BREAK_SCHEDULE[1].duration);
-        vi.advanceTimersByTime(5000);
-        expect(session.timeRemaining).toBe(BREAK_SCHEDULE[1].duration - 5);
+            session.pause();
+            expect(session.isPaused).toBe(true);
+            expectTimerNotTicking(session);
+
+            session.resume();
+            expect(session.isPaused).toBe(false);
+            expectTimerIsTicking(session);
+        });
+
+        test("togglePause flips pause state", ({ session }) => {
+            session.togglePause();
+            expect(session.isPaused).toBe(false);
+            session.togglePause();
+            expect(session.isPaused).toBe(true);
+            session.togglePause();
+            expect(session.isPaused).toBe(false);
+        });
+
+        test("resume does not restart timer when session finished", ({ session }) => {
+            session.pause();
+            session.finishSession();
+            session.resume();
+            expect(session.isPaused).toBe(true);
+            expectTimerNotTicking(session);
+        });
     });
 
-    const totalTimeRemaining = SCHEDULE.reduce(
-        (acc, entry) => acc + entry.duration * entry.repeat,
-        0,
-    );
+    describe("timers", () => {
+        test("finishes interval when time runs out", ({ schedule, session }) => {
+            const seconds = 10;
+            session.curEntryIdx = 0;
+            session.curRepeatIdx = 0;
+            session.timeRemaining = seconds;
+            session.resume();
+            vi.advanceTimersByTime((seconds + 1) * 1000);
+            expect(session.curEntryIdx).toBe(0);
+            expect(session.curRepeatIdx).toBe(1);
+            expect(session.timeRemaining).toBe(schedule[0].duration);
+        });
 
-    test("totalTimeRemaining at start", ({ session }) => {
-        expect(session.totalTimeRemaining).toBe(totalTimeRemaining);
-    });
-
-    test("totalTimeRemaining decreases with timer", ({ session }) => {
-        const timeSpent = 10;
-        session.resume();
-        vi.advanceTimersByTime(timeSpent * 1000);
-        expect(session.totalTimeRemaining).toBe(totalTimeRemaining - timeSpent);
-    });
-
-    test("totalTimeRemaining after advancing intervals", ({ session }) => {
-        // Advance past all of entry 0
-        for (let i = 0; i < SCHEDULE[0].repeat; i++) {
-            session.goNextInterval();
-        }
-        // Now at entry 1, repeat 0
-        expect(session.totalTimeRemaining).toBe(
-            totalTimeRemaining - SCHEDULE[0].duration * SCHEDULE[0].repeat,
-        );
-        // Advance timer
-        session.resume();
-        const timeSpent = 10;
-        vi.advanceTimersByTime(timeSpent * 1000);
-        expect(session.totalTimeRemaining).toBe(
-            totalTimeRemaining - SCHEDULE[0].duration * SCHEDULE[0].repeat - timeSpent,
-        );
-    });
-
-    const totalTimeRemainingBreakSchedule = BREAK_SCHEDULE.reduce(
-        (acc, entry) => acc + entry.duration * entry.repeat,
-        0,
-    );
-
-    testWithBreaks("totalTimeRemaining includes break durations", ({ session }) => {
-        expect(session.totalTimeRemaining).toBe(totalTimeRemainingBreakSchedule);
-    });
-
-    base("session with empty schedule is invalid", () => {
-        const session = new DrawingSession(IMGS, []);
-        expect(session.isValid()).toBe(false);
+        test("finishes session when time runs out on final interval", ({ session }) => {
+            const seconds = 10;
+            session.curEntryIdx = 2;
+            session.curRepeatIdx = 2;
+            session.timeRemaining = seconds;
+            session.resume();
+            vi.advanceTimersByTime((seconds + 1) * 1000);
+            expect(session.isFinished).toBe(true);
+        });
     });
 });

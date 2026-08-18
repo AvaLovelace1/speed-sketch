@@ -40,6 +40,8 @@ The user interface for a drawing session.
         hideToolbarTimeoutDuration = 3000,
     }: Props = $props();
 
+    const isEndless = $derived(drawingSession.totalDuration === Infinity);
+
     let isFrozen = $state(false);
     let wasPausedBeforeFreeze = $state(false);
 
@@ -137,22 +139,6 @@ The user interface for a drawing session.
         return panzoom.getTransform();
     }
 
-    const prevBtn: Tool = $derived({
-        uid: "prev",
-        icon: "lucide--arrow-left",
-        action: drawingSession.goPrevInterval,
-        hotkey: "ArrowLeft",
-        tooltip: "Previous interval",
-        disabled: isFrozen,
-    });
-    const nextBtn: Tool = $derived({
-        uid: "next",
-        icon: "lucide--arrow-right",
-        action: drawingSession.goNextInterval,
-        hotkey: "ArrowRight",
-        tooltip: "Next interval",
-        disabled: isFrozen,
-    });
     const pauseBtn: Tool = $derived({
         uid: "pause",
         icon: drawingSession.isPaused ? "lucide--play" : "lucide--pause",
@@ -162,6 +148,36 @@ The user interface for a drawing session.
         },
         hotkey: " ",
         tooltip: drawingSession.isPaused ? "Resume" : "Pause",
+        disabled: isFrozen,
+    });
+    const prevIntervalBtn: Tool = $derived({
+        uid: "prev-interval",
+        icon: "lucide--skip-back",
+        action: drawingSession.goPrevInterval,
+        tooltip: "Previous interval",
+        disabled: isFrozen,
+    });
+    const nextIntervalBtn: Tool = $derived({
+        uid: "next-interval",
+        icon: "lucide--skip-forward",
+        action: drawingSession.goNextInterval,
+        tooltip: "Next interval",
+        disabled: isFrozen,
+    });
+    const prevImgBtn: Tool = $derived({
+        uid: "prev-img",
+        icon: "lucide--arrow-left",
+        action: drawingSession.goPrevImg,
+        hotkey: "ArrowLeft",
+        tooltip: "Previous image",
+        disabled: isFrozen,
+    });
+    const nextImgBtn: Tool = $derived({
+        uid: "next-img",
+        icon: "lucide--arrow-right",
+        action: drawingSession.goNextImg,
+        hotkey: "ArrowRight",
+        tooltip: "Next image",
         disabled: isFrozen,
     });
     const resetZoomBtn: Tool = $derived({
@@ -299,7 +315,8 @@ The user interface for a drawing session.
         disabled: isFrozen,
     });
     const toolsets = $derived([
-        [prevBtn, pauseBtn, nextBtn],
+        isEndless ? [pauseBtn] : [prevIntervalBtn, pauseBtn, nextIntervalBtn],
+        [prevImgBtn, nextImgBtn],
         [resetZoomBtn, zoomOutBtn, zoomInBtn],
         [flipHorizontalBtn, flipVerticalBtn, greyscaleBtn, highContrastBtn, blurBtn],
         [gridBtn, hideTimerBtn]
@@ -347,7 +364,7 @@ The user interface for a drawing session.
 {/snippet}
 
 {#snippet image()}
-    {@const curImg = drawingSession.getCurImg()}
+    {@const curImg = drawingSession.curImg}
     {#if curImg}
         <!-- Wrap image in container so panzoom mouse events only fire on the image -->
         <div class="size-full">
@@ -413,40 +430,57 @@ The user interface for a drawing session.
         }}
         role="region"
     >
-        <CustomTooltip side="right">
-            <StatusAlert class="alert-success tabular-nums">
-                <span class="iconify lucide--image"></span>
-                <span class="sr-only">Drawings completed:</span>
-                <div>
-                    {drawingSession.completedDrawings}
-                    {#if drawingSession.totalImgs !== Infinity}
-                        <span class="text-base font-normal">/ {drawingSession.totalImgs}</span>
-                    {/if}
-                </div>
-            </StatusAlert>
-            {#snippet tooltipContent()}Drawings completed{/snippet}
-        </CustomTooltip>
-        {#if drawingSession.totalTimeRemaining !== Infinity}
+        {#if !isEndless}
+            <CustomTooltip side="right">
+                <StatusAlert class="alert-secondary tabular-nums">
+                    <span class="iconify lucide--image"></span>
+                    <span class="sr-only">Drawing number:</span>
+                    <div>
+                        {drawingSession.curImgNum}
+                        <span class="text-base font-normal">
+                            / {drawingSession.totalImgs}
+                        </span>
+                    </div>
+                </StatusAlert>
+                {#snippet tooltipContent()}Drawing number{/snippet}
+            </CustomTooltip>
             <CustomTooltip side="right">
                 <StatusAlert class="alert-info tabular-nums">
                     <span class="iconify lucide--clock"></span>
-                    <span class="sr-only">Total time remaining:</span>
-                    <time>
-                        {prettyMilliseconds(drawingSession.totalTimeRemaining * 1000, {
-                            colonNotation: true,
-                        })}
-                    </time>
+                    <span class="sr-only">Session time:</span>
+                    <div>
+                        <time>
+                            {prettyMilliseconds(drawingSession.curSessionTime * 1000, {
+                                colonNotation: true,
+                            })}
+                        </time>
+                        <span class="text-base font-normal">
+                            / <time>
+                                {prettyMilliseconds(drawingSession.totalDuration * 1000, {
+                                    colonNotation: true,
+                                })}
+                            </time>
+                        </span>
+                    </div>
                 </StatusAlert>
-                {#snippet tooltipContent()}Session time remaining{/snippet}
+                {#snippet tooltipContent()}Session time{/snippet}
             </CustomTooltip>
         {/if}
+        <CustomTooltip side="right">
+            <StatusAlert class="alert-success tabular-nums">
+                <span class="iconify lucide--check"></span>
+                <span class="sr-only">Drawings completed:</span>
+                {drawingSession.completedDrawings}
+            </StatusAlert>
+            {#snippet tooltipContent()}Drawings completed{/snippet}
+        </CustomTooltip>
     </div>
     <div class="toast toast-end toast-top items-end">
         {#if timerShown}
             <CustomTooltip side="left">
                 <Timer
                     time={drawingSession.timeRemaining}
-                    maxTime={drawingSession.getCurScheduleEntry().duration}
+                    maxTime={drawingSession.curScheduleEntry.duration}
                     class={[drawingSession.isPaused && "text-muted!"]}
                 />
                 {#snippet tooltipContent()}Interval time remaining{/snippet}

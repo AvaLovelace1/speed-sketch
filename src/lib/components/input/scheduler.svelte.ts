@@ -1,4 +1,5 @@
-import type { ScheduleEntry, SessionSchedule } from "$lib/drawing-session.svelte";
+import type { ScheduleEntry, SessionSchedule } from "$lib/store/session-settings.svelte";
+import { totalImgs, totalDuration } from "$lib/store/session-settings.svelte";
 import { ListManager } from "./list-manager.svelte";
 
 export class Scheduler extends ListManager<ScheduleEntry> {
@@ -14,11 +15,11 @@ export class Scheduler extends ListManager<ScheduleEntry> {
     }
 
     get totalImgs() {
-        return this.schedule.reduce((acc, entry) => acc + (entry.isBreak ? 0 : entry.repeat), 0);
+        return totalImgs(this.schedule);
     }
 
     get totalDuration() {
-        return this.schedule.reduce((acc, entry) => acc + entry.duration * entry.repeat, 0);
+        return totalDuration(this.schedule);
     }
 
     addEntry = (newEntry: ScheduleEntry | undefined = undefined) => {
