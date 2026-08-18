@@ -36,7 +36,7 @@ const test = base
             {
                 name: "My Custom Schedule",
                 schedule: [
-                    { duration: 60, repeat: 5, id: "1m x 5", isBreak: false },
+                    { duration: 60, repeat: 5, id: "1m x 5" },
                     { duration: 120, repeat: 1, id: "2m break", isBreak: true },
                 ],
             },
@@ -154,10 +154,10 @@ describe("session-settings.svelte.ts", () => {
         });
 
         test.for([
-            [{ duration: 300, repeat: 2, id: 9999, isBreak: false }],
+            [{ duration: 300, repeat: 2, id: 9999 }],
             [
-                { duration: 300, repeat: 2, id: "duplicate", isBreak: false },
-                { duration: 300, repeat: 2, id: "duplicate", isBreak: false },
+                { duration: 300, repeat: 2, id: "duplicate" },
+                { duration: 300, repeat: 2, id: "duplicate" },
             ],
             ["not a schedule"],
         ])(
@@ -186,7 +186,7 @@ describe("session-settings.svelte.ts", () => {
         ])(
             "invalid schedule entry $key falls back without affecting other entries",
             async ({ key, invalidEntries, fallback }, { customEntries }) => {
-                const goodEntry1 = { duration: 60, repeat: 5, id: "1m x 5", isBreak: false };
+                const goodEntry1 = { duration: 60, repeat: 5, id: "1m x 5" };
                 const goodEntry2 = { duration: 120, repeat: 1, id: "2m break", isBreak: true };
                 for (const entry of invalidEntries) {
                     const persistentStore = createMapStore();
@@ -263,12 +263,7 @@ describe("session-settings.svelte.ts", () => {
             sessionSettings.imgShowTimeOption = "2m";
 
             expect(sessionSettings.sessionSchedule).toEqual([
-                {
-                    duration: 120,
-                    repeat: Infinity,
-                    id: "endless",
-                    isBreak: false,
-                },
+                { duration: 120, repeat: Infinity, id: "endless" },
             ]);
         });
 
@@ -301,7 +296,7 @@ describe("session-settings.svelte.ts", () => {
 
     describe("schedule preset editing", () => {
         test("editing sessionScheduleCustom mutates the saved schedule", ({ sessionSettings }) => {
-            const newEntry = { duration: 60, repeat: 5, id: "x", isBreak: false };
+            const newEntry = { duration: 60, repeat: 5, id: "x" };
             sessionSettings.sessionScheduleCustom.unshift(newEntry);
             expect(sessionSettings.schedulePresets).toHaveLength(1);
             expect(sessionSettings.schedulePresets[0].schedule[0]).toEqual(newEntry);
@@ -379,12 +374,7 @@ describe("session-settings.svelte.ts", () => {
         });
 
         test("saved schedules persist to store", async ({ sessionSettings, persistentStore }) => {
-            const entry = {
-                duration: 30,
-                repeat: 5,
-                id: "a",
-                isBreak: false,
-            };
+            const entry = { duration: 30, repeat: 5, id: "a", isBreak: false };
             sessionSettings.addSchedulePreset("Warmup");
             sessionSettings.schedulePresets[1].schedule.push(entry);
             await sessionSettings.saveToStore(persistentStore);

@@ -35,10 +35,10 @@ export class SessionSettings implements Record<string, unknown> {
     static readonly DEFAULT_PRESET_NAME = "Default Preset";
     static get DEFAULT_PRESET_SCHEDULE(): SessionSchedule {
         return [
-            { duration: 60, repeat: 5, id: "1m x 5", isBreak: false },
-            { duration: 120, repeat: 5, id: "2m x 5", isBreak: false },
-            { duration: 300, repeat: 2, id: "5m x 2", isBreak: false },
-            { duration: 600, repeat: 1, id: "10m x 1", isBreak: false },
+            { duration: 60, repeat: 5, id: "1m x 5" },
+            { duration: 120, repeat: 5, id: "2m x 5" },
+            { duration: 300, repeat: 2, id: "5m x 2" },
+            { duration: 600, repeat: 1, id: "10m x 1" },
         ];
     }
 
@@ -110,7 +110,7 @@ export class SessionSettings implements Record<string, unknown> {
             duration: z.int().gte(1).lte(SessionSettings.MAX_IMG_SHOW_TIME).catch(60),
             repeat: z.int().gte(1).catch(1),
             id: z.string(),
-            isBreak: z.boolean().catch(false),
+            isBreak: z.boolean().optional().catch(false),
         });
     }
 
@@ -129,16 +129,25 @@ export class SessionSettings implements Record<string, unknown> {
     selectedScheduleIdx: number;
     [key: string]: unknown;
 
-    constructor(entries = SessionSettings.DEFAULTS) {
-        this.imgFolders = $state(entries.imgFolders);
+    constructor({
+        imgFolders = SessionSettings.DEFAULTS.imgFolders,
+        includeSubfolders = SessionSettings.DEFAULTS.includeSubfolders,
+        shuffleImgs = SessionSettings.DEFAULTS.shuffleImgs,
+        sessionMode = SessionSettings.DEFAULTS.sessionMode,
+        imgShowTimeOption = SessionSettings.DEFAULTS.imgShowTimeOption,
+        imgShowTimeCustom = SessionSettings.DEFAULTS.imgShowTimeCustom,
+        schedulePresets = SessionSettings.DEFAULTS.schedulePresets,
+        selectedScheduleIdx = SessionSettings.DEFAULTS.selectedScheduleIdx,
+    } = {}) {
+        this.imgFolders = $state(imgFolders);
         this.#imgs = [];
-        this.includeSubfolders = $state(entries.includeSubfolders);
-        this.shuffleImgs = $state(entries.shuffleImgs);
-        this.sessionMode = $state(entries.sessionMode);
-        this.imgShowTimeOption = $state(entries.imgShowTimeOption);
-        this.imgShowTimeCustom = $state(entries.imgShowTimeCustom);
-        this.schedulePresets = $state(entries.schedulePresets);
-        this.selectedScheduleIdx = $state(entries.selectedScheduleIdx);
+        this.includeSubfolders = $state(includeSubfolders);
+        this.shuffleImgs = $state(shuffleImgs);
+        this.sessionMode = $state(sessionMode);
+        this.imgShowTimeOption = $state(imgShowTimeOption);
+        this.imgShowTimeCustom = $state(imgShowTimeCustom);
+        this.schedulePresets = $state(schedulePresets);
+        this.selectedScheduleIdx = $state(selectedScheduleIdx);
     }
 
     // Removes Svelte reactivity from data key-value pairs
@@ -184,9 +193,7 @@ export class SessionSettings implements Record<string, unknown> {
 
     get sessionSchedule(): SessionSchedule {
         if (this.sessionMode === "Endless") {
-            return [
-                { duration: this.imgShowTime, repeat: Infinity, id: "endless", isBreak: false },
-            ];
+            return [{ duration: this.imgShowTime, repeat: Infinity, id: "endless" }];
         } else {
             return this.sessionScheduleCustom;
         }
