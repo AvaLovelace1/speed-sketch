@@ -2,7 +2,7 @@
     import NumberField from "$lib/components/input/NumberField.svelte";
     import DurationField from "$lib/components/input/DurationField.svelte";
     import { Scheduler } from "$lib/components/input/scheduler.svelte";
-    import type { ScheduleEntry, SessionSchedule } from "$lib/drawing-session.svelte";
+    import type { ScheduleEntry, SessionSchedule } from "$lib/store/session-settings.svelte";
     import ReorderableList from "$lib/components/input/ReorderableList.svelte";
     import type { Tool } from "$lib/components/Toolbar.svelte";
     import prettyMilliseconds from "pretty-ms";

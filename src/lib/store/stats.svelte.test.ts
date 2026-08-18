@@ -18,6 +18,7 @@ const test = base
         dailyDrawings: { "2026-01-01": 1, "2026-01-02": 2, "2026-01-04": 5 },
         dailyTimeSpent: { "2026-01-01": 1, "2026-01-02": 60, "2026-01-04": 5000 },
     }));
+
 describe("stats.svelte.ts", () => {
     describe("saving and loading", () => {
         test("changes are persisted to store for all entries", async ({
@@ -118,28 +119,28 @@ describe("stats.svelte.ts", () => {
         const key = "2025-12-31";
         const date = new SvelteDate(2025, 11, 31);
         expect(Stats.keyToDate(key)).toEqual(date);
-        expect(Stats.dateToKey(date)).toEqual(key);
+        expect(Stats.dateToKey(date)).toBe(key);
     });
 
     describe("getters", () => {
         test("totalDrawings returns sum of drawings in dailyDrawings", ({ stats }) => {
             stats.dailyDrawings = { "2026-01-01": 1, "2026-01-02": 2, "2026-01-04": 5 };
-            expect(stats.totalDrawings).toEqual(1 + 2 + 5);
+            expect(stats.totalDrawings).toBe(1 + 2 + 5);
         });
 
         test("totalDrawings is zero if dailyDrawings empty", ({ stats }) => {
             stats.dailyDrawings = {};
-            expect(stats.totalDrawings).toEqual(0);
+            expect(stats.totalDrawings).toBe(0);
         });
 
         test("totalTimeSpent returns sum of times spent in dailyTimeSpent", ({ stats }) => {
             stats.dailyTimeSpent = { "2026-01-01": 1, "2026-01-02": 60, "2026-01-04": 5000 };
-            expect(stats.totalTimeSpent).toEqual(1 + 60 + 5000);
+            expect(stats.totalTimeSpent).toBe(1 + 60 + 5000);
         });
 
         test("totalTimeSpent is zero if dailyTimeSpent empty", ({ stats }) => {
             stats.dailyTimeSpent = {};
-            expect(stats.totalTimeSpent).toEqual(0);
+            expect(stats.totalTimeSpent).toBe(0);
         });
 
         test("dailyActivity returns activity from dailyTimeSpent", ({ stats }) => {
