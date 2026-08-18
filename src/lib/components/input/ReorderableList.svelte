@@ -22,6 +22,8 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
         getKey: (item: T, index: number) => string;
         tools?: Tool[];
         onChange?: () => void;
+        disabled?: boolean;
+        disabledState?: Snippet;
     }
 
     const {
@@ -32,6 +34,8 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
         getKey = (_: T, index: number) => index.toString(),
         tools = [],
         onChange = () => {},
+        disabled = false,
+        disabledState,
     }: Props = $props();
 
     let sortable: Sortable;
@@ -62,42 +66,52 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
         {@attach sortableAttachment}
         class="list max-h-48 overflow-auto rounded-box bg-base-200 inset-shadow-xs"
     >
-        {#if manager.items.length === 0 && emptyState}
-            <tr class="list-row flex justify-center text-center">
-                <td class="grow">
-                    {@render emptyState()}
-                </td>
-            </tr>
-        {/if}
-        {#each manager.items as item, i (getKey(item, i))}
-            <tr
-                class="group list-row flex items-center text-muted transition-[background-color]
+        {#if disabled}
+            {#if disabledState}
+                <tr class="list-row flex justify-center text-center">
+                    <td class="grow">
+                        {@render disabledState()}
+                    </td>
+                </tr>
+            {/if}
+        {:else}
+            {#if manager.items.length === 0 && emptyState}
+                <tr class="list-row flex justify-center text-center">
+                    <td class="grow">
+                        {@render emptyState()}
+                    </td>
+                </tr>
+            {/if}
+            {#each manager.items as item, i (getKey(item, i))}
+                <tr
+                    class="group list-row flex items-center text-muted transition-[background-color]
                        duration-(--daisyui-btn-duration) ease-(--daisyui-btn-ease)
                        hover:bg-base-300 aria-selected:bg-primary aria-selected:text-primary-content"
-                aria-selected={i === manager.selectedIdx}
-                onclick={() => (manager.selectedIdx = i)}
-                onfocusin={() => (manager.selectedIdx = i)}
-                onkeydown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                        manager.selectedIdx = i;
-                        e.preventDefault();
-                    }
-                }}
-            >
-                <td class="flex self-stretch">
-                    <Button.Root
-                        class="sortable-handle flex cursor-grab items-center
+                    aria-selected={i === manager.selectedIdx}
+                    onclick={() => (manager.selectedIdx = i)}
+                    onfocusin={() => (manager.selectedIdx = i)}
+                    onkeydown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            manager.selectedIdx = i;
+                            e.preventDefault();
+                        }
+                    }}
+                >
+                    <td class="flex self-stretch">
+                        <Button.Root
+                            class="sortable-handle flex cursor-grab items-center
                            text-base text-stroke group-aria-selected:text-primary-content"
-                        onmousedown={() => (manager.selectedIdx = i)}
-                        type="button"
-                    >
-                        <span class="iconify lucide--grip-vertical"></span>
-                        <span class="sr-only">Drag to reorder</span>
-                    </Button.Root>
-                </td>
-                {@render row(item, i, i === manager.selectedIdx)}
-            </tr>
-        {/each}
+                            onmousedown={() => (manager.selectedIdx = i)}
+                            type="button"
+                        >
+                            <span class="iconify lucide--grip-vertical"></span>
+                            <span class="sr-only">Drag to reorder</span>
+                        </Button.Root>
+                    </td>
+                    {@render row(item, i, i === manager.selectedIdx)}
+                </tr>
+            {/each}
+        {/if}
     </tbody>
 </table>
 <Toolbar {tools} class="mb-6" toolbarStyle="small" />

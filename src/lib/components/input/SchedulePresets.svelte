@@ -10,8 +10,6 @@
     export interface Props {
         schedulePresets?: SchedulePreset[];
         selectedIdx?: number;
-        renameDisabled?: boolean;
-        deleteDisabled?: boolean;
         onSelect?: (idx: number) => void;
         onAdd?: (name: string) => void;
         onRename?: (name: string) => void;
@@ -21,8 +19,6 @@
     const {
         schedulePresets = [],
         selectedIdx = 0,
-        renameDisabled = false,
-        deleteDisabled = false,
         onSelect = (_) => {},
         onAdd = (_) => {},
         onRename = (_) => {},
@@ -57,7 +53,7 @@
             renameName = schedulePresets[selectedIdx]?.name ?? "";
             renameDialog.open();
         },
-        disabled: renameDisabled,
+        disabled: selectedIdx === -1,
     });
     const deleteTool: Tool = $derived({
         uid: "delete-schedule",
@@ -65,7 +61,7 @@
         tooltip: "Delete preset",
         action: () => deleteDialog.open(),
         class: "btn-error",
-        disabled: deleteDisabled,
+        disabled: selectedIdx === -1,
     });
     const selectedName = $derived(schedulePresets[selectedIdx]?.name ?? "Preset");
     const tools = $derived([addTool, renameTool, deleteTool]);
@@ -103,6 +99,7 @@
             bind:value={selectValue}
             hideLabel
             width="w-full"
+            disabled={schedulePresets.length === 0}
         />
         <Toolbar {tools} toolbarStyle="small" />
     </div>

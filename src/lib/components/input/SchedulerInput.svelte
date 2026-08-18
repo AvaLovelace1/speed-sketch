@@ -13,45 +13,47 @@
         schedule?: SessionSchedule;
     }
 
-    const { schedule = $bindable([]) }: Props = $props();
+    const { schedule = $bindable(undefined) }: Props = $props();
     // Only recreate Scheduler when the schedule prop identity changes (e.g. switching presets)
     let scheduler = $derived.by(() => {
         const s = schedule;
         return untrack(() => new Scheduler(s));
     });
 
-    const addBtn: Tool = {
+    const addBtn: Tool = $derived({
         uid: "add-entry",
         icon: "lucide--plus",
         action: () => scheduler.addEntry(),
         tooltip: "Add drawing interval",
-    };
-    const addBreakBtn: Tool = {
+        disabled: !schedule,
+    });
+    const addBreakBtn: Tool = $derived({
         uid: "add-break",
         icon: "lucide--coffee",
         action: () => scheduler.addBreak(),
         tooltip: "Add break",
-    };
+        disabled: !schedule,
+    });
     const removeBtn: Tool = $derived({
         uid: "remove-entry",
         icon: "lucide--minus",
         action: () => scheduler.removeItem(),
         tooltip: "Remove entry",
-        disabled: schedule.length === 0,
+        disabled: !schedule || schedule.length === 0,
     });
     const moveUpBtn: Tool = $derived({
         uid: "move-entry-up",
         icon: "lucide--arrow-up-from-line",
         action: () => scheduler.moveItemUp(),
         tooltip: "Move entry up",
-        disabled: scheduler.selectedIdx <= 0,
+        disabled: !schedule || scheduler.selectedIdx <= 0,
     });
     const moveDownBtn: Tool = $derived({
         uid: "move-entry-down",
         icon: "lucide--arrow-down-from-line",
         action: () => scheduler.moveItemDown(),
         tooltip: "Move entry down",
-        disabled: scheduler.selectedIdx >= schedule.length - 1,
+        disabled: !schedule || scheduler.selectedIdx >= schedule.length - 1,
     });
     const tools = $derived([addBtn, addBreakBtn, removeBtn, moveUpBtn, moveDownBtn]);
 </script>
@@ -61,6 +63,7 @@
     caption="Scheduler input"
     getKey={(entry, i) => entry.id + i.toString()}
     {tools}
+    disabled={!schedule}
 >
     {#snippet emptyState()}
         <p class="p-1 text-xs text-muted">
@@ -90,22 +93,30 @@
                         id={`num-drawings-${item.id}`}
                         minValue={1}
                         maxValue={999}
-                        bind:value={schedule[index].repeat}
+                        bind:value={schedule![index].repeat}
                         bgColor={isSelected ? "primary" : "base"}
                     />
                     <div class="cursor-default text-xs">
-                        {schedule[index].repeat === 1 ? "drawing" : "drawings"}
+                        {schedule![index].repeat === 1 ? "drawing" : "drawings"}
                     </div>
                 </div>
             {/if}
         </td>
         <td>
             <DurationField
-                bind:seconds={schedule[index].duration}
+                bind:seconds={schedule![index].duration}
                 inputStyle="small"
                 bgColor={isSelected ? "primary" : "base"}
             />
         </td>
+    {/snippet}
+    {#snippet disabledState()}
+        <p class="p-1 text-xs text-muted">
+            Use
+            <span class="iconify align-text-bottom text-base-content lucide--list-plus"></span>
+            <span class="sr-only">Add preset</span>
+            to add a new preset
+        </p>
     {/snippet}
 </ReorderableList>
 

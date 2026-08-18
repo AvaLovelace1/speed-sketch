@@ -32,14 +32,16 @@ export class SessionSettings implements Record<string, unknown> {
 
     static readonly MAX_IMG_SHOW_TIME = 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
 
-    static readonly DEFAULT_PRESET_NAME = "Default Preset";
-    static get DEFAULT_PRESET_SCHEDULE(): SessionSchedule {
-        return [
-            { duration: 60, repeat: 5, id: "1m x 5" },
-            { duration: 120, repeat: 5, id: "2m x 5" },
-            { duration: 300, repeat: 2, id: "5m x 2" },
-            { duration: 600, repeat: 1, id: "10m x 1" },
-        ];
+    static get DEFAULT_PRESET() {
+        return {
+            name: "Default Preset",
+            schedule: [
+                { duration: 60, repeat: 5, id: "1m x 5" },
+                { duration: 120, repeat: 5, id: "2m x 5" },
+                { duration: 300, repeat: 2, id: "5m x 2" },
+                { duration: 600, repeat: 1, id: "10m x 1" },
+            ],
+        };
     }
 
     static get DEFAULTS() {
@@ -52,12 +54,7 @@ export class SessionSettings implements Record<string, unknown> {
             imgShowTimeCustom: Math.floor(
                 (parse(SessionSettings.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000,
             ),
-            schedulePresets: [
-                {
-                    name: SessionSettings.DEFAULT_PRESET_NAME,
-                    schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
-                },
-            ],
+            schedulePresets: [SessionSettings.DEFAULT_PRESET],
             selectedScheduleIdx: 0,
         };
     }
@@ -79,11 +76,6 @@ export class SessionSettings implements Record<string, unknown> {
                 .catch(defaults.imgShowTimeCustom),
             schedulePresets: z
                 .array(SessionSettings.SCHEDULE_PRESET_SCHEMA)
-                .refine(
-                    (schedulePresets) =>
-                        schedulePresets.length > 0 &&
-                        schedulePresets[0].name === SessionSettings.DEFAULT_PRESET_NAME,
-                )
                 .catch(defaults.schedulePresets),
             selectedScheduleIdx: z.int().gte(0).catch(defaults.selectedScheduleIdx),
         });
@@ -93,7 +85,7 @@ export class SessionSettings implements Record<string, unknown> {
         return z.object({
             name: z.string().catch("Preset"),
             schedule: SessionSettings.SESSION_SCHEDULE_SCHEMA.catch(
-                SessionSettings.DEFAULT_PRESET_SCHEDULE,
+                SessionSettings.DEFAULT_PRESET.schedule,
             ),
         });
     }
@@ -126,6 +118,7 @@ export class SessionSettings implements Record<string, unknown> {
     imgShowTimeOption: string;
     imgShowTimeCustom: number;
     schedulePresets: SchedulePreset[];
+    // -1 if no schedule selected
     selectedScheduleIdx: number;
     [key: string]: unknown;
 
@@ -191,7 +184,7 @@ export class SessionSettings implements Record<string, unknown> {
         }
     }
 
-    get sessionSchedule(): SessionSchedule {
+    get sessionSchedule() {
         if (this.sessionMode === "Endless") {
             return [{ duration: this.imgShowTime, repeat: Infinity, id: "endless" }];
         } else {
@@ -199,12 +192,13 @@ export class SessionSettings implements Record<string, unknown> {
         }
     }
 
-    get sessionScheduleCustom(): SessionSchedule {
+    get sessionScheduleCustom() {
+        if (this.selectedScheduleIdx === -1) return undefined;
         return this.schedulePresets[this.selectedScheduleIdx].schedule;
     }
 
     selectSchedulePreset(idx: number) {
-        if (idx < 0 || idx >= this.schedulePresets.length) {
+        if (idx < -1 || idx >= this.schedulePresets.length) {
             throw new Error(`Index out of range: ${idx}`);
         }
         this.selectedScheduleIdx = idx;
@@ -216,12 +210,12 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     renameSchedulePreset(name: string) {
-        if (this.selectedScheduleIdx === 0) return; // Don't allow renaming default preset
+        if (this.selectedScheduleIdx === -1) return;
         this.schedulePresets[this.selectedScheduleIdx].name = name;
     }
 
     removeSchedulePreset() {
-        if (this.selectedScheduleIdx === 0) return; // Don't allow removing default preset
+        if (this.selectedScheduleIdx === -1) return;
         this.schedulePresets.splice(this.selectedScheduleIdx, 1);
         this.selectedScheduleIdx = Math.min(
             this.selectedScheduleIdx,

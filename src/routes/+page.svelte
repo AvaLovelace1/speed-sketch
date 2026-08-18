@@ -13,7 +13,9 @@
     let imgErrMsg = $state("");
     let isLoadingImgs = $state(false);
     let imgsAreValid = $state(false);
-    let scheduleIsValid = $derived(sessionSettings.sessionSchedule.length > 0);
+    let scheduleIsValid = $derived(
+        sessionSettings.sessionSchedule && sessionSettings.sessionSchedule.length > 0,
+    );
     let canStartSession = $derived(imgsAreValid && scheduleIsValid);
 
     // Updates the shown images from inputImgsOrFolders.
@@ -65,7 +67,7 @@
     async function startSession() {
         if (!canStartSession) return;
         await sessionSettings.saveToStore();
-        currentSession.object = new DrawingSession(imgs, sessionSettings.sessionSchedule);
+        currentSession.object = new DrawingSession(imgs, sessionSettings.sessionSchedule!);
         await goto(resolve("/session"), { replaceState: true });
     }
 

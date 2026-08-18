@@ -180,8 +180,6 @@
                             onAdd={(name) => sessionSettings.addSchedulePreset(name)}
                             onRename={(name) => sessionSettings.renameSchedulePreset(name)}
                             onDelete={() => sessionSettings.removeSchedulePreset()}
-                            renameDisabled={sessionSettings.selectedScheduleIdx === 0}
-                            deleteDisabled={sessionSettings.selectedScheduleIdx === 0}
                         />
                         <div class="mb-2"></div>
                         <SchedulerInput bind:schedule />

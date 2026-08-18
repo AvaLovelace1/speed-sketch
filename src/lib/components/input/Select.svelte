@@ -23,9 +23,17 @@
         value: string;
         hideLabel?: boolean;
         width?: string;
+        disabled?: boolean;
     }
 
-    let { label, items, value = $bindable(), hideLabel = false, width = "w-3xs" }: Props = $props();
+    let {
+        label,
+        items,
+        value = $bindable(),
+        hideLabel = false,
+        width = "w-3xs",
+        disabled = false,
+    }: Props = $props();
 
     function isItemGroup(item: Item | ItemGroup): item is ItemGroup {
         return "heading" in item;
@@ -56,7 +64,7 @@
 {#if !hideLabel}
     <Label.Root class="mb-2 block text-sm text-muted" for={id}>{label}</Label.Root>
 {/if}
-<Select.Root type="single" bind:value items={allItems}>
+<Select.Root type="single" bind:value items={allItems} {disabled}>
     <Select.Trigger
         {id}
         class="select flex cursor-pointer items-center gap-2 active:bg-base-200 {width}"

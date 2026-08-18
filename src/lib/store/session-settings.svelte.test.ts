@@ -29,10 +29,7 @@ const test = base
         imgShowTimeOption: "5m",
         imgShowTimeCustom: 42,
         schedulePresets: [
-            {
-                name: SessionSettings.DEFAULT_PRESET_NAME,
-                schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
-            },
+            SessionSettings.DEFAULT_PRESET,
             {
                 name: "My Custom Schedule",
                 schedule: [
@@ -90,18 +87,7 @@ describe("session-settings.svelte.ts", () => {
                 key: "imgShowTimeCustom",
                 invalidEntries: [0, SessionSettings.MAX_IMG_SHOW_TIME + 1],
             },
-            {
-                key: "schedulePresets",
-                invalidEntries: [
-                    [],
-                    [
-                        {
-                            name: SessionSettings.DEFAULT_PRESET_NAME,
-                            schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
-                        },
-                    ],
-                ],
-            },
+            { key: "schedulePresets", invalidEntries: ["not an array"] },
             { key: "selectedScheduleIdx", invalidEntries: [-1] },
         ])(
             "rejects invalid values and falls back to defaults on load for key $key",
@@ -170,7 +156,7 @@ describe("session-settings.svelte.ts", () => {
                 await sessionSettings.loadFromStore(persistentStore);
                 expect($state.snapshot(sessionSettings.schedulePresets)).toEqual([
                     ...customEntries.schedulePresets,
-                    { name: "Funky Preset", schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE },
+                    { name: "Funky Preset", schedule: SessionSettings.DEFAULT_PRESET.schedule },
                 ]);
             },
         );
@@ -233,32 +219,23 @@ describe("session-settings.svelte.ts", () => {
         });
     });
 
-    describe("getters", () => {
+    describe("imgShowTime", () => {
         test.for([
-            {
-                option: "30s",
-                expected: 30,
-            },
-            {
-                option: "2m",
-                expected: 120,
-            },
-            {
-                option: "Custom",
-                expected: 1337,
-            },
+            { option: "30s", expected: 30 },
+            { option: "2m", expected: 120 },
+            { option: "Custom", expected: 1337 },
         ])(
-            "imgShowTime returns the selected image show time ($option)",
+            "returns the selected image show time ($option)",
             ({ option, expected }, { sessionSettings }) => {
                 sessionSettings.imgShowTimeOption = option;
                 if (option === "Custom") sessionSettings.imgShowTimeCustom = expected;
                 expect(sessionSettings.imgShowTime).toBe(expected);
             },
         );
+    });
 
-        test("sessionSchedule returns an endless schedule if Endless selected", ({
-            sessionSettings,
-        }) => {
+    describe("sessionSchedule", () => {
+        test("returns an endless schedule if Endless selected", ({ sessionSettings }) => {
             sessionSettings.sessionMode = "Endless";
             sessionSettings.imgShowTimeOption = "2m";
 
@@ -267,7 +244,7 @@ describe("session-settings.svelte.ts", () => {
             ]);
         });
 
-        test("sessionSchedule returns the custom schedule if Custom selected", ({
+        test("returns the custom schedule if Custom selected", ({
             sessionSettings,
             customEntries,
         }) => {
@@ -279,11 +256,10 @@ describe("session-settings.svelte.ts", () => {
                 sessionSettings.schedulePresets[1].schedule,
             );
         });
+    });
 
-        test("sessionScheduleCustom returns the selected custom schedule", ({
-            sessionSettings,
-            customEntries,
-        }) => {
+    describe("sessionScheduleCustom", () => {
+        test("returns the selected custom schedule", ({ sessionSettings, customEntries }) => {
             sessionSettings.sessionMode = "Endless"; // even when "Endless" is selected
             sessionSettings.schedulePresets = customEntries.schedulePresets;
             sessionSettings.selectedScheduleIdx = 1;
@@ -292,103 +268,98 @@ describe("session-settings.svelte.ts", () => {
                 sessionSettings.schedulePresets[1].schedule,
             );
         });
-    });
 
-    describe("schedule preset editing", () => {
+        test("returns undefined if selected idx is -1", ({ sessionSettings, customEntries }) => {
+            sessionSettings.sessionMode = "Endless";
+            sessionSettings.schedulePresets = customEntries.schedulePresets;
+            sessionSettings.selectedScheduleIdx = -1;
+            expect(sessionSettings.sessionScheduleCustom).toBeUndefined();
+        });
+
         test("editing sessionScheduleCustom mutates the saved schedule", ({ sessionSettings }) => {
             const newEntry = { duration: 60, repeat: 5, id: "x" };
-            sessionSettings.sessionScheduleCustom.unshift(newEntry);
+            sessionSettings.sessionScheduleCustom?.unshift(newEntry);
             expect(sessionSettings.schedulePresets).toHaveLength(1);
             expect(sessionSettings.schedulePresets[0].schedule[0]).toEqual(newEntry);
         });
+    });
 
-        test("selectSchedulePreset changes sessionScheduleCustom", ({ sessionSettings }) => {
+    describe("selectSchedulePreset", () => {
+        test.for([0, 1])("selects preset %d", (idx, { sessionSettings }) => {
             sessionSettings.addSchedulePreset("Warmup");
-            sessionSettings.selectSchedulePreset(0);
+            sessionSettings.selectSchedulePreset(idx);
             expect(sessionSettings.sessionScheduleCustom).toBe(
-                sessionSettings.schedulePresets[0].schedule,
-            );
-            sessionSettings.selectSchedulePreset(1);
-            expect(sessionSettings.sessionScheduleCustom).toBe(
-                sessionSettings.schedulePresets[1].schedule,
+                sessionSettings.schedulePresets[idx].schedule,
             );
         });
 
-        test("selectSchedulePreset throws for out-of-range index", ({ sessionSettings }) => {
-            expect(() => sessionSettings.selectSchedulePreset(-1)).toThrow("out of range");
-            expect(() => sessionSettings.selectSchedulePreset(1)).toThrow("out of range");
-        });
-
-        test("addSchedulePreset appends and selects new schedule", ({ sessionSettings }) => {
+        test.for([-2, 2])("throws for out-of-range index %d", (idx, { sessionSettings }) => {
             sessionSettings.addSchedulePreset("Warmup");
-            expect(sessionSettings.schedulePresets).toHaveLength(2);
-            expect(sessionSettings.schedulePresets[1]).toEqual({ name: "Warmup", schedule: [] });
-            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+            expect(() => sessionSettings.selectSchedulePreset(idx)).toThrow("out of range");
         });
+    });
 
-        test("renameSchedulePreset renames the selected schedule", ({ sessionSettings }) => {
-            sessionSettings.addSchedulePreset("Old Name");
+    test("addSchedulePreset appends and selects new schedule", ({ sessionSettings }) => {
+        sessionSettings.addSchedulePreset("Warmup");
+        expect(sessionSettings.schedulePresets).toEqual([
+            SessionSettings.DEFAULT_PRESET,
+            { name: "Warmup", schedule: [] },
+        ]);
+        expect(sessionSettings.selectedScheduleIdx).toBe(1);
+    });
+
+    describe("renameSchedulePreset", () => {
+        test.for([0, 1])("renames selected schedule %d", (idx, { sessionSettings }) => {
             sessionSettings.renameSchedulePreset("New Name");
-            expect(sessionSettings.schedulePresets[1].name).toBe("New Name");
-            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+            expect(sessionSettings.schedulePresets[0].name).toBe("New Name");
         });
 
-        test("renameSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
-            sessionSettings.renameSchedulePreset("Something Else");
-            expect(sessionSettings.schedulePresets[0].name).toBe(
-                SessionSettings.DEFAULT_PRESET_NAME,
-            );
+        test("is no-op if no schedule selected", ({ sessionSettings }) => {
+            sessionSettings.selectSchedulePreset(-1);
+            sessionSettings.renameSchedulePreset("New Name");
+            expect(sessionSettings.schedulePresets).toEqual([SessionSettings.DEFAULT_PRESET]);
+            expect(sessionSettings.selectedScheduleIdx).toBe(-1);
         });
+    });
 
-        test("removeSchedulePreset removes selected schedule", ({ sessionSettings }) => {
-            sessionSettings.addSchedulePreset("A");
-            sessionSettings.addSchedulePreset("B");
-            sessionSettings.addSchedulePreset("C");
-            sessionSettings.selectSchedulePreset(1);
-            sessionSettings.removeSchedulePreset();
-            expect(sessionSettings.schedulePresets).toHaveLength(3);
-            expect(sessionSettings.schedulePresets[0].name).toBe(
-                SessionSettings.DEFAULT_PRESET_NAME,
-            );
-            expect(sessionSettings.schedulePresets[1].name).toBe("B");
-            expect(sessionSettings.schedulePresets[2].name).toBe("C");
-            expect(sessionSettings.selectedScheduleIdx).toBe(1);
-        });
-
-        test("removeSchedulePreset is no-op for Default Preset", ({ sessionSettings }) => {
-            sessionSettings.removeSchedulePreset();
-            expect(sessionSettings.schedulePresets).toHaveLength(1);
-            expect(sessionSettings.schedulePresets[0].name).toBe(
-                SessionSettings.DEFAULT_PRESET_NAME,
-            );
-        });
-
-        test("removeSchedulePreset clamps index when removing last selected", ({
-            sessionSettings,
-        }) => {
-            sessionSettings.addSchedulePreset("A");
-            sessionSettings.addSchedulePreset("B");
-            expect(sessionSettings.selectedScheduleIdx).toBe(2);
-            sessionSettings.removeSchedulePreset();
-            expect(sessionSettings.selectedScheduleIdx).toBe(1);
-        });
-
-        test("saved schedules persist to store", async ({ sessionSettings, persistentStore }) => {
-            const entry = { duration: 30, repeat: 5, id: "a", isBreak: false };
+    describe("removeSchedulePreset", () => {
+        test.for([
+            { idx: 0, expectedSchedule: [{ name: "Warmup", schedule: [] }] },
+            { idx: 1, expectedSchedule: [SessionSettings.DEFAULT_PRESET] },
+        ])("removes selected schedule %d", ({ idx, expectedSchedule }, { sessionSettings }) => {
             sessionSettings.addSchedulePreset("Warmup");
-            sessionSettings.schedulePresets[1].schedule.push(entry);
-            await sessionSettings.saveToStore(persistentStore);
-
-            const loaded = new SessionSettings();
-            await loaded.loadFromStore(persistentStore);
-            expect(loaded.schedulePresets).toEqual([
-                {
-                    name: SessionSettings.DEFAULT_PRESET_NAME,
-                    schedule: SessionSettings.DEFAULT_PRESET_SCHEDULE,
-                },
-                { name: "Warmup", schedule: [entry] },
-            ]);
+            sessionSettings.selectSchedulePreset(idx);
+            sessionSettings.removeSchedulePreset();
+            expect(sessionSettings.schedulePresets).toEqual(expectedSchedule);
+            expect(sessionSettings.selectedScheduleIdx).toBe(0);
         });
+
+        test("removes only schedule", ({ sessionSettings }) => {
+            sessionSettings.removeSchedulePreset();
+            expect(sessionSettings.schedulePresets).toEqual([]);
+            expect(sessionSettings.selectedScheduleIdx).toBe(-1);
+        });
+
+        test("is no-op if no schedule selected", ({ sessionSettings }) => {
+            sessionSettings.selectSchedulePreset(-1);
+            sessionSettings.removeSchedulePreset();
+            expect(sessionSettings.schedulePresets).toEqual([SessionSettings.DEFAULT_PRESET]);
+            expect(sessionSettings.selectedScheduleIdx).toBe(-1);
+        });
+    });
+
+    test("saved presets persist to store", async ({ sessionSettings, persistentStore }) => {
+        const entry = { duration: 30, repeat: 5, id: "a", isBreak: false };
+        sessionSettings.addSchedulePreset("Warmup");
+        sessionSettings.schedulePresets[1].schedule.push(entry);
+        await sessionSettings.saveToStore(persistentStore);
+
+        const loaded = new SessionSettings();
+        await loaded.loadFromStore(persistentStore);
+        expect(loaded.schedulePresets).toEqual([
+            SessionSettings.DEFAULT_PRESET,
+            { name: "Warmup", schedule: [entry] },
+        ]);
     });
 
     describe("getting images", () => {
