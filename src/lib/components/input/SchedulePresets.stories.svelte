@@ -47,7 +47,20 @@
 <!-- Schedule presets selector with pre-existing schedule presets. -->
 <Story name="Default" />
 
-<!-- Selecting a schedule from the dropdown switches the active schedule. -->
+<!-- With no presets, the dropdown, delete, and rename buttons are disabled. -->
+<Story
+    name="No Presets"
+    args={{ schedulePresets: [], selectedIdx: -1 }}
+    play={async ({ canvas }) => {
+        await expect(canvas.getByRole("button", { name: /schedule presets/i })).toBeDisabled();
+        await expect(canvas.getByRole("button", { name: /add preset/i })).toBeEnabled();
+        for (const btnName of [/rename preset/i, /delete preset/i]) {
+            await expect(canvas.getByRole("button", { name: btnName })).toBeDisabled();
+        }
+    }}
+/>
+
+<!-- Supports preset select, add, rename, and delete callbacks. -->
 <Story
     name="With Interactions"
     play={async ({ args, canvas, userEvent, step }) => {
@@ -91,7 +104,7 @@
 
             const submitBtn = screen.getByRole("button", { name: /^rename$/i });
 
-            // Clear and leave empty — submit should be disabled
+            // Clear and leave empty; submit should be disabled
             await userEvent.clear(nameInput);
             await expect(submitBtn).toBeDisabled();
 

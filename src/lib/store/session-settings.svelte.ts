@@ -54,7 +54,7 @@ export class SessionSettings implements Record<string, unknown> {
             imgShowTimeCustom: Math.floor(
                 (parse(SessionSettings.IMG_SHOW_TIME_OPTIONS[0]) as number) / 1000,
             ),
-            schedulePresets: [SessionSettings.DEFAULT_PRESET],
+            schedulePresets: [SessionSettings.DEFAULT_PRESET] as SchedulePreset[],
             selectedScheduleIdx: 0,
         };
     }

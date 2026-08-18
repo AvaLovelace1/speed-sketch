@@ -217,6 +217,18 @@ describe("session-settings.svelte.ts", () => {
             await loaded.loadFromStore(persistentStore);
             expect(loaded.selectedScheduleIdx).toBe(customEntries.schedulePresets.length - 1);
         });
+
+        test("loadFromStore clamps selectedScheduleIdx to -1 if schedulePresets is empty", async ({
+            persistentStore,
+        }) => {
+            await persistentStore.set("schedulePresets", []);
+            await persistentStore.set("selectedScheduleIdx", 5);
+            await persistentStore.save();
+
+            const loaded = new SessionSettings();
+            await loaded.loadFromStore(persistentStore);
+            expect(loaded.selectedScheduleIdx).toBe(-1);
+        });
     });
 
     describe("imgShowTime", () => {

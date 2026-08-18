@@ -26,11 +26,7 @@
         component: MainMenuScreen,
         tags: ["autodocs"],
         render: template,
-        args: {
-            sessionSettings: new SessionSettings(),
-            onImgsInput: fn(),
-            startSession: fn(),
-        },
+        args: { onImgsInput: fn(), startSession: fn() },
     });
 </script>
 
@@ -41,7 +37,31 @@
 {/snippet}
 
 <!-- The user sees this on first startup. -->
-<Story name="Default" />
+<Story
+    name="Default"
+    play={async ({ canvas, step }) => {
+        await expect(canvas.getByRole("heading", { level: 1 })).toBeVisible();
+
+        await step("Footer has expected items", async () => {
+            const footer = canvas.getByRole("contentinfo");
+            for (const linkName of [/about/i, /bug/i, /feature/i]) {
+                await expect(within(footer).getByRole("link", { name: linkName })).toBeVisible();
+            }
+            console.log(footer.textContent);
+            await expect(footer.textContent).toMatch(/© \d\d\d\d/i);
+            await expect(footer.textContent).toMatch(/v\d+\.\d+\.\d+/i);
+        });
+
+        await expect(canvas.getByRole("button", { name: /settings/i })).toBeEnabled();
+        await expect(canvas.getByRole("button", { name: /choose folder/i })).toBeEnabled();
+
+        await step("Default session options are selected", async () => {
+            await expect(canvas.getByRole("checkbox", { name: /shuffle/i })).toBeChecked();
+            await expect(canvas.getByRole("radio", { name: /endless/i })).toBeChecked();
+            await expect(canvas.getByRole("radio", { name: /30s/i })).toBeChecked();
+        });
+    }}
+/>
 
 <!-- Scheduler input is displayed when using Class session mode. -->
 <Story
@@ -53,18 +73,54 @@
                     name: "Default Preset",
                     schedule: [
                         { duration: 60, repeat: 20, id: "1" },
-                        { duration: 145, repeat: 10, id: "2" },
-                        { duration: 3611, repeat: 5, id: "3" },
+                        { duration: 120, repeat: 1, id: "break", isBreak: true },
+                        { duration: 3611, repeat: 5, id: "2" },
                     ],
                 },
             ],
             sessionMode: "Class",
         }),
     }}
+    play={async ({ canvas }) => {
+        await expect(canvas.getByRole("radio", { name: /class/i })).toBeChecked();
+        await expect(canvas.getByText(/total drawings/i)).toBeVisible();
+        await expect(canvas.getByText(/total duration/i)).toBeVisible();
+    }}
+/>
+
+<!-- A message is displayed when there are no presets, and the dropdown is disabled. -->
+<Story
+    name="No Presets"
+    args={{
+        sessionSettings: new SessionSettings({
+            schedulePresets: [],
+            selectedScheduleIdx: -1,
+            sessionMode: "Class",
+        }),
+    }}
+    play={async ({ canvas }) => {
+        for (const btnName of [
+            /add drawing interval/i,
+            /add break/i,
+            /remove entry/i,
+            /move entry up/i,
+            /move entry down/i,
+        ]) {
+            await expect(canvas.getByRole("button", { name: btnName })).toBeDisabled();
+        }
+    }}
 />
 
 <!-- Loading images. -->
-<Story name="Loading Images" args={{ isLoadingImgs: true, canStartSession: false }} />
+<Story
+    name="Loading Images"
+    args={{ isLoadingImgs: true, canStartSession: false }}
+    play={async ({ canvas }) => {
+        const spinners = canvas.getAllByRole("progressbar", { name: /loading/i });
+        await expect(spinners.length).toBeGreaterThan(1);
+        for (const spinner of spinners) await expect(spinner).toBeVisible();
+    }}
+/>
 
 <!-- More images loaded than can fit in the thumbnail grid. -->
 <Story
@@ -72,6 +128,11 @@
     args={{
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2, img3, img1, img2, img3],
         canStartSession: true,
+    }}
+    play={async ({ canvas }) => {
+        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+        await expect(imgs.length).toBeGreaterThan(1);
+        for (const img of imgs) await expect(img).toBeVisible();
     }}
 />
 
@@ -82,15 +143,36 @@
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
     }}
+    play={async ({ canvas }) => {
+        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+        await expect(imgs).toHaveLength(8 - 3); // not including video thumbnails
+        for (const img of imgs) await expect(img).toBeVisible();
+    }}
 />
 
 <!-- One image loaded. -->
-<Story name="One Image" args={{ imgs: [img1], canStartSession: true }} />
+<Story
+    name="One Image"
+    args={{ imgs: [img1], canStartSession: true }}
+    play={async ({ canvas }) => {
+        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+        await expect(imgs).toHaveLength(1);
+        for (const img of imgs) await expect(img).toBeVisible();
+    }}
+/>
 
 <!-- Invalid reference folder chosen. -->
-<Story name="Invalid" args={{ imgErrMsg: "No references found", canStartSession: false }} />
+<Story
+    name="Invalid"
+    args={{ imgErrMsg: "No references found", canStartSession: false }}
+    play={async ({ args, canvas }) => {
+        const status = canvas.getByRole("status");
+        await expect(status).toBeVisible();
+        await expect(status.textContent).toContain(args.imgErrMsg);
+    }}
+/>
 
-<!-- The Tauri UI shows the shows the "include subfolders" checkbox, shows the folder name, and hides the "no upload" message. -->
+<!-- The Tauri default UI has the "include subfolders" checkbox checked and displays a table with the selected folders. -->
 <Story
     name="Tauri"
     args={{
@@ -101,9 +183,27 @@
         canStartSession: true,
         isTauri: true,
     }}
+    play={async ({ args, canvas, userEvent, step }) => {
+        await step("Toggle subfolders checkbox", async () => {
+            const subfoldersCheckbox = await canvas.findByRole("checkbox", { name: /subfolders/i });
+            await expect(subfoldersCheckbox).toBeChecked();
+            await userEvent.click(subfoldersCheckbox);
+            expect(args.sessionSettings.includeSubfolders).toBe(false);
+            await userEvent.click(subfoldersCheckbox);
+            expect(args.sessionSettings.includeSubfolders).toBe(true);
+        });
+
+        const table = canvas.getByRole("table", { name: /reference folders/i });
+        await expect(table).toBeVisible();
+        await expect(within(table).getByRole("row", { name: /Pictures/i })).toBeVisible();
+
+        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+        await expect(imgs.length).toBeGreaterThan(1);
+        for (const img of imgs) await expect(img).toBeVisible();
+    }}
 />
 
-<!-- The folder name is red when invalid. -->
+<!-- Invalid reference folder chosen. -->
 <Story
     name="Tauri Invalid"
     args={{
@@ -114,11 +214,16 @@
         canStartSession: false,
         isTauri: true,
     }}
+    play={async ({ args, canvas }) => {
+        const status = canvas.getByRole("status");
+        await expect(status).toBeVisible();
+        await expect(status.textContent).toContain(args.imgErrMsg);
+    }}
 />
 
 <Story
     name="With Interactions"
-    args={{ canStartSession: true }}
+    args={{ sessionSettings: new SessionSettings(), canStartSession: true }}
     play={async ({ args, canvas, userEvent, step }) => {
         await step("Toggle shuffle checkbox", async () => {
             const shuffleCheckbox = await canvas.findByRole("checkbox", { name: /shuffle/i });
@@ -165,13 +270,11 @@
 
         const schedulePresetBtn = canvas.getByRole("button", { name: /schedule presets/i });
         const addPresetBtn = canvas.getByRole("button", { name: /add preset/i });
+        const renameBtn = canvas.getByRole("button", { name: /rename/i });
         const deleteBtn = canvas.getByRole("button", { name: /delete/i });
         const customName = "My Warmup";
+        const newName = "New Name";
         const addDrawingBtn = canvas.getByRole("button", { name: /add drawing/i });
-
-        await step("Default Preset: delete button is disabled", async () => {
-            await expect(deleteBtn).toBeDisabled();
-        });
 
         await step("Add a new preset with a custom name", async () => {
             await userEvent.click(addPresetBtn);
@@ -225,13 +328,34 @@
             await expect(args.sessionSettings.sessionScheduleCustom).toHaveLength(1);
         });
 
+        await step("Rename the custom preset", async () => {
+            await expect(renameBtn).toBeEnabled();
+            await userEvent.click(renameBtn);
+
+            // Confirmation dialog should appear
+            const dialog = await screen.findByRole("dialog");
+            await expect(dialog).toHaveTextContent(/rename preset/i);
+
+            const nameInput = await screen.findByLabelText(/enter a new name/i);
+            await userEvent.clear(nameInput);
+            await userEvent.type(nameInput, newName);
+
+            const confirmBtn = screen.getByRole("button", { name: /^rename$/i });
+            await userEvent.click(confirmBtn);
+            await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+
+            await waitFor(() => expect(args.sessionSettings.schedulePresets[1].name).toBe(newName));
+            await waitFor(() => expect(schedulePresetBtn).toHaveTextContent(newName));
+        });
+
         await step("Delete the custom preset with confirmation", async () => {
             await expect(deleteBtn).toBeEnabled();
             await userEvent.click(deleteBtn);
 
             // Confirmation dialog should appear
             const alertDialog = await screen.findByRole("alertdialog");
-            await expect(alertDialog).toHaveTextContent(customName);
+            await expect(alertDialog).toHaveTextContent(/delete preset/i);
+            await expect(alertDialog).toHaveTextContent(newName);
 
             const confirmBtn = screen.getByRole("button", { name: /^delete$/i });
             await userEvent.click(confirmBtn);
@@ -240,11 +364,7 @@
             // Should fall back to Default Preset
             await waitFor(() => expect(args.sessionSettings.schedulePresets).toHaveLength(1));
             expect(args.sessionSettings.selectedScheduleIdx).toBe(0);
-            await waitFor(() => expect(schedulePresetBtn).toHaveTextContent(/default preset/i));
-        });
-
-        await step("Default Preset: delete button is still disabled after deletion", async () => {
-            await expect(deleteBtn).toBeDisabled();
+            await waitFor(() => expect(schedulePresetBtn).toHaveTextContent("Default Preset"));
         });
     }}
 />

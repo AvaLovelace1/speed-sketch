@@ -21,7 +21,6 @@
         tags: ["autodocs"],
         render: template,
         args: {
-            drawingSession: new DrawingSession(imgs, [{ duration: 60, repeat: Infinity }]),
             exit: fn(),
             setAlwaysOnTop: fn(),
             showImageFolder: fn(),
@@ -57,16 +56,70 @@
 {/snippet}
 
 <!-- The main UI for the drawing session. -->
-<Story name="Default" />
-
-<!-- With a custom schedule, the total number of images is displayed in the top left. -->
 <Story
-    name="Class"
+    name="Default"
     args={{
         drawingSession: new DrawingSession(imgs, [
-            { duration: 60, repeat: 42 },
-            { duration: 120, repeat: 13 },
+            { duration: 60, repeat: 42, id: "1" },
+            { duration: 120, repeat: 13, id: "2" },
         ]),
+    }}
+    play={async ({ canvas, canvasElement, userEvent, step }) => {
+        await userEvent.hover(canvasElement);
+
+        await step("Drawing number is displayed", async () => {
+            const drawingNumBtn = canvas.getByRole("button", { name: /drawing number/i });
+            await waitFor(() => expect(drawingNumBtn).toBeVisible());
+            await expect(drawingNumBtn.textContent).toContain("1 / 55");
+        });
+
+        await step("Session time is displayed", async () => {
+            const sessionTimeBtn = canvas.getByRole("button", { name: /session time/i });
+            await expect(sessionTimeBtn).toBeVisible();
+            await expect(sessionTimeBtn.textContent).toContain("0:00 / 1:08:00");
+        });
+
+        await step("Drawings completed is displayed", async () => {
+            const completedBtn = canvas.getByRole("button", { name: /drawings completed/i });
+            await expect(completedBtn).toBeVisible();
+            await expect(completedBtn.textContent).toContain("0");
+        });
+
+        await step("Time remaining is displayed", async () => {
+            const remainingBtn = canvas.getByRole("button", { name: /time remaining/i });
+            await expect(remainingBtn).toBeVisible();
+            await expect(remainingBtn.textContent).toContain("1:00");
+        });
+
+        await expect(canvas.getByText(/Paused/i)).toBeVisible();
+
+        await expect(canvas.getByRole("img", { name: /reference/i })).toBeVisible();
+    }}
+/>
+
+<!-- An endless session does not have session info or interval navigation. -->
+<Story
+    name="Endless"
+    args={{
+        drawingSession: new DrawingSession(imgs, [{ duration: 60, repeat: Infinity, id: "1" }]),
+    }}
+    play={async ({ canvas, canvasElement, userEvent, step }) => {
+        await userEvent.hover(canvasElement);
+
+        await step("Drawings completed is displayed", async () => {
+            const completedBtn = canvas.getByRole("button", { name: /drawings completed/i });
+            await waitFor(() => expect(completedBtn).toBeVisible());
+            await expect(completedBtn.textContent).toContain("0");
+        });
+
+        for (const btnName of [
+            /drawing number/i,
+            /session time/i,
+            /previous interval/i,
+            /next interval/i,
+        ]) {
+            await expect(canvas.queryByRole("button", { name: btnName })).toBeNull();
+        }
     }}
 />
 
@@ -74,50 +127,25 @@
 <Story
     name="Break"
     args={{
-        drawingSession: new DrawingSession(imgs, [{ duration: 30, repeat: 1, isBreak: true }]),
+        drawingSession: new DrawingSession(imgs, [
+            { duration: 30, repeat: 1, id: "1", isBreak: true },
+        ]),
     }}
-/>
-
-<!-- The toolbar shows on mouse movement and hides automatically after a delay,
-unless the mouse is over the toolbar or the status alerts. -->
-<Story
-    name="Toolbar Auto Hide"
-    args={{
-        drawingSession: new DrawingSession(imgs, [{ duration: 60, repeat: Infinity }]),
-        hideToolbarTimeoutDuration: SHORT_TOOLBAR_TIMEOUT,
-    }}
-    play={async ({ canvas, canvasElement, userEvent, step }) => {
-        await step("Toolbar shows on hover and hides after delay", async () => {
-            expect(sessionScreen.toolbarIsShown()).toBe(false);
-            await userEvent.hover(canvasElement);
-            await expectToolbarTemporarilyShown();
-        });
-
-        for (const { name, region } of [
-            {
-                name: "toolbar",
-                region: () => canvas.getAllByRole("toolbar")[0],
-            },
-            {
-                name: "drawings completed",
-                region: () => canvas.getByText(/drawings completed/i),
-            },
-        ]) {
-            await step(`Toolbar does not hide if mouse is still over ${name}`, async () => {
-                expect(sessionScreen.toolbarIsShown()).toBe(false);
-                await userEvent.hover(region());
-                await expectToolbarPermanentlyShown();
-                await userEvent.unhover(region());
-                await expectToolbarTemporarilyShown();
-            });
-        }
+    play={async ({ canvas }) => {
+        await expect(canvas.queryByRole("img", { name: /reference/i })).toBeNull();
     }}
 />
 
 <!-- With user interactions. -->
 <Story
     name="With Interactions"
-    args={{ hideToolbarTimeoutDuration: SHORT_TOOLBAR_TIMEOUT }}
+    args={{
+        drawingSession: new DrawingSession(imgs, [
+            { duration: 60, repeat: 42, id: "1" },
+            { duration: 120, repeat: 13, id: "2" },
+        ]),
+        hideToolbarTimeoutDuration: SHORT_TOOLBAR_TIMEOUT,
+    }}
     play={async ({ args, canvas, canvasElement, userEvent, step }) => {
         await step("Toolbar shows on hover and hides after delay", async () => {
             expect(sessionScreen.toolbarIsShown()).toBe(false);
@@ -191,12 +219,23 @@ unless the mouse is over the toolbar or the status alerts. -->
             await expectToolbarTemporarilyShown();
         });
 
-        await step("Click previous and next buttons", async () => {
-            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[0]);
-            await userEvent.click(canvas.getByRole("button", { name: /next/i }));
-            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[1]);
-            await userEvent.click(canvas.getByRole("button", { name: /previous/i }));
-            expect(args.drawingSession.getCurImg()).toBe(args.drawingSession.imgs[0]);
+        await step("Click previous and next interval buttons", async () => {
+            expect(args.drawingSession.curEntryIdx).toBe(0);
+            expect(args.drawingSession.curRepeatIdx).toBe(0);
+            await userEvent.click(canvas.getByRole("button", { name: /next interval/i }));
+            expect(args.drawingSession.curEntryIdx).toBe(0);
+            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            await userEvent.click(canvas.getByRole("button", { name: /previous interval/i }));
+            expect(args.drawingSession.curEntryIdx).toBe(0);
+            expect(args.drawingSession.curRepeatIdx).toBe(0);
+        });
+
+        await step("Click previous and next image buttons", async () => {
+            expect(args.drawingSession.curImg).toEqual(args.drawingSession.imgs[0]);
+            await userEvent.click(canvas.getByRole("button", { name: /next image/i }));
+            expect(args.drawingSession.curImg).toEqual(args.drawingSession.imgs[1]);
+            await userEvent.click(canvas.getByRole("button", { name: /previous image/i }));
+            expect(args.drawingSession.curImg).toEqual(args.drawingSession.imgs[0]);
         });
 
         await step("Click zoom buttons", async () => {
@@ -306,15 +345,15 @@ unless the mouse is over the toolbar or the status alerts. -->
 
         await step("Hotkeys do not hijack system shortcuts", async () => {
             await userEvent.keyboard("{ArrowRight}");
-            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            expect(args.drawingSession.curImgIdx).toBe(1);
             await userEvent.keyboard("{Meta>}{ArrowRight}{/Meta}");
-            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            expect(args.drawingSession.curImgIdx).toBe(1);
             await userEvent.keyboard("{Control>}{ArrowRight}{/Control}");
-            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            expect(args.drawingSession.curImgIdx).toBe(1);
             await userEvent.keyboard("{Alt>}{ArrowRight}{/Alt}");
-            expect(args.drawingSession.curRepeatIdx).toBe(1);
+            expect(args.drawingSession.curImgIdx).toBe(1);
             await userEvent.keyboard("{ArrowLeft}");
-            expect(args.drawingSession.curRepeatIdx).toBe(0);
+            expect(args.drawingSession.curImgIdx).toBe(0);
         });
     }}
 />
