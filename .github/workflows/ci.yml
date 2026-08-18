@@ -15,13 +15,15 @@ jobs:
                   node-version: lts/*
             - name: Install dependencies
               run: npm ci
+            - name: Run check
+              run: npm run check
             - name: Run lint
               run: npm run lint
             # The storybook vitest project runs stories with Playwright
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
             - name: Run unit tests
-              run: npm run test:unit
+              run: npm run test:unit -- --run
             - name: Run Playwright tests
               run: npm run test:e2e
             - uses: actions/upload-artifact@v7
