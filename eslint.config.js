@@ -2,7 +2,7 @@
 import storybook from "eslint-plugin-storybook";
 import prettier from "eslint-config-prettier";
 import js from "@eslint/js";
-import { includeIgnoreFile } from "@eslint/compat";
+import { includeIgnoreFile } from "@eslint/config-helpers";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import { fileURLToPath } from "node:url";
