@@ -2,13 +2,8 @@ import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
-const dirname =
-    typeof import.meta.dirname !== "undefined"
-        ? import.meta.dirname
-        : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const host = process.env.TAURI_DEV_HOST;
@@ -41,7 +36,7 @@ export default defineConfig({
         },
         projects: [
             {
-                extends: "./vite.config.ts",
+                extends: true,
                 test: {
                     name: "client",
                     environment: "jsdom",
@@ -51,7 +46,7 @@ export default defineConfig({
                 },
             },
             {
-                extends: "./vite.config.ts",
+                extends: true,
                 test: {
                     name: "server",
                     environment: "node",
@@ -65,7 +60,7 @@ export default defineConfig({
                     // The plugin will run tests for the stories defined in your Storybook config
                     // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
                     storybookTest({
-                        configDir: path.join(dirname, ".storybook"),
+                        configDir: path.join(import.meta.dirname, ".storybook"),
                     }),
                 ],
                 test: {
