@@ -22,7 +22,7 @@
         "security": {
             "assetProtocol": {
                 "enable": true,
-                "scope": ["$APPCACHE/**", "$RESOURCE/**", "$HOME/**"]
+                "scope": ["$APPCACHE/**", "$RESOURCE/**"]
             },
             "csp": {
                 "default-src": "'self' customprotocol: asset:",

@@ -7,3 +7,6 @@ pre-commit:
           run: npm run lint
         - name: unit tests
           run: npm run test:unit -- --run
+        - name: rust tests
+          glob: "src-tauri/**"
+          run: npm run test:rust

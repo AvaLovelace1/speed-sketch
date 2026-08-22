@@ -15,6 +15,7 @@
         "test": "npm run test:unit -- --run && npm run test:e2e",
         "test:unit": "vitest",
         "test:e2e": "playwright test",
+        "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "tauri": "tauri",
