@@ -32,6 +32,17 @@ export class SessionSettings implements Record<string, unknown> {
 
     static readonly MAX_IMG_SHOW_TIME = 23 * 60 ** 2 + 59 * 60 + 59; // 23h59m59s
 
+    // Failures reported by the `get_img_files` command
+    static get SCAN_ERRS(): Record<string, string> {
+        return {
+            DoesNotExist: "Folder does not exist",
+            NotADirectory: "Path is not a folder",
+            PathError: "Cannot access folder",
+            TimeoutError: "Loading references timed out",
+            TaskJoinError: "Failed to load references",
+        };
+    }
+
     static get DEFAULT_PRESET() {
         return {
             name: "Default Preset",
@@ -224,23 +235,32 @@ export class SessionSettings implements Record<string, unknown> {
     }
 
     async getImgs() {
-        if (isTauri()) this.imgs = await this.getImgsFromFolders();
+        let folderErrs: Record<string, string> = {};
+        if (isTauri()) {
+            const result = await this.getImgsFromFolders();
+            this.imgs = result.imgs;
+            folderErrs = result.folderErrs;
+        }
         const imgs = [...this.imgs];
-        if (imgs.length === 0) throw new Error("No references found");
-        if (this.shuffleImgs) fisherYatesShuffle(imgs);
-        return imgs;
+        const globalErr = imgs.length === 0 ? "No references found" : "";
+        if (this.shuffleImgs && imgs.length > 0) fisherYatesShuffle(imgs);
+        return { imgs, globalErr, folderErrs };
     }
 
     // Get all image paths from the specified folders, converted to path URLs.
+    // A folder that fails to load is reported in `folderErrs` (keyed by folder path) and skipped.
     async getImgsFromFolders() {
-        const allImgs: Image[] = [];
+        const imgs: Image[] = [];
+        const folderErrs: Record<string, string> = {};
         for (const imgFolder of this.imgFolders) {
-            // Push instead of spreading to avoid overflowing the call stack for huge folders
-            for (const img of await this.getImgsFromFolder(imgFolder)) {
-                allImgs.push(img);
+            try {
+                // Push instead of spreading to avoid overflowing the call stack for huge folders
+                for (const img of await this.getImgsFromFolder(imgFolder)) imgs.push(img);
+            } catch (e) {
+                folderErrs[imgFolder] = e instanceof Error ? e.message : "Cannot load folder";
             }
         }
-        return allImgs;
+        return { imgs, folderErrs };
     }
 
     // Get all image paths from the specified folder, converted to path URLs.
@@ -250,12 +270,9 @@ export class SessionSettings implements Record<string, unknown> {
             includeSubdirs: this.includeSubfolders,
             timeoutDuration: 60,
         }).catch((e) => {
-            if (e === "DoesNotExist") throw new Error("Folder does not exist", { cause: e });
-            if (e === "NotADirectory") throw new Error("Path is not a folder", { cause: e });
-            if (e === "PathError") throw new Error("Cannot access folder", { cause: e });
-            if (e === "TimeoutError") throw new Error("Loading references timed out", { cause: e });
-            if (e === "TaskJoinError") throw new Error("Failed to load references", { cause: e });
-            throw e;
+            const scanErr = typeof e === "string" ? SessionSettings.SCAN_ERRS[e] : undefined;
+            if (!scanErr) throw e;
+            throw new Error(scanErr, { cause: e });
         })) as string[];
 
         const imgs: Image[] = files

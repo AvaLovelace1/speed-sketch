@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { describe, test as base, expect, vi } from "vitest";
+import { beforeEach, describe, test as base, expect, vi } from "vitest";
 import { SessionSettings, type SessionSettingsEntries } from "./session-settings.svelte";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
 
@@ -7,7 +7,7 @@ vi.mock("@tauri-apps/api/core", async () => {
     return {
         invoke: vi.fn(),
         convertFileSrc: (p: string) => `tauri://localhost/${p}`,
-        isTauri: () => false,
+        isTauri: vi.fn(() => false),
     };
 });
 
@@ -42,6 +42,10 @@ const test = base
     }));
 
 describe("session-settings.svelte.ts", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
     describe("saving and loading", () => {
         test("changes are persisted to store for all entries", async ({
             sessionSettings,
@@ -322,8 +326,10 @@ describe("session-settings.svelte.ts", () => {
 
     describe("renameSchedulePreset", () => {
         test.for([0, 1])("renames selected schedule %d", (idx, { sessionSettings }) => {
+            sessionSettings.addSchedulePreset("Warmup");
+            sessionSettings.selectSchedulePreset(idx);
             sessionSettings.renameSchedulePreset("New Name");
-            expect(sessionSettings.schedulePresets[0].name).toBe("New Name");
+            expect(sessionSettings.schedulePresets[idx].name).toBe("New Name");
         });
 
         test("is no-op if no schedule selected", ({ sessionSettings }) => {
@@ -374,36 +380,104 @@ describe("session-settings.svelte.ts", () => {
         ]);
     });
 
-    describe("getting images", () => {
-        test("getImgs throws on empty image list", async ({ sessionSettings }) => {
-            sessionSettings.imgs = [];
-            await expect(sessionSettings.getImgs()).rejects.toThrow("No references found");
+    describe("getImgs", () => {
+        test("successfully returns specified image list", async ({ sessionSettings }) => {
+            sessionSettings.shuffleImgs = false;
+            const expectedImgs = [...SORTED_IMGS];
+            sessionSettings.imgs = expectedImgs;
+            const { imgs, globalErr, folderErrs } = await sessionSettings.getImgs();
+            expect(imgs).toEqual(expectedImgs);
+            expect(globalErr).toBe("");
+            expect(folderErrs).toEqual({});
         });
 
-        test("getImgs returns images shuffled if `shuffleImgs` is true", async ({
-            sessionSettings,
-        }) => {
+        test("returns images shuffled if `shuffleImgs` is true", async ({ sessionSettings }) => {
             const imgs = [...SORTED_IMGS];
             sessionSettings.imgs = imgs;
+            const getImgs = async () => {
+                const { imgs } = await sessionSettings.getImgs();
+                return imgs;
+            };
 
             // Not shuffled (should return sorted order)
             sessionSettings.shuffleImgs = false;
-            await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
+            await expect(getImgs()).resolves.toEqual(SORTED_IMGS);
 
             // Shuffled images
             sessionSettings.shuffleImgs = true;
-            await expect(sessionSettings.getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
-            await expect(sessionSettings.getImgs()).resolves.toHaveLength(SORTED_IMGS.length);
-            await expect.poll(async () => await sessionSettings.getImgs()).not.toEqual(SORTED_IMGS);
+            await expect(getImgs()).resolves.toEqual(expect.arrayContaining(imgs));
+            await expect(getImgs()).resolves.toHaveLength(SORTED_IMGS.length);
+            await expect.poll(async () => await getImgs()).not.toEqual(SORTED_IMGS);
 
             // Unshuffle again
             sessionSettings.shuffleImgs = false;
-            await expect(sessionSettings.getImgs()).resolves.toEqual(SORTED_IMGS);
+            await expect(getImgs()).resolves.toEqual(SORTED_IMGS);
         });
 
-        test("getImgsFromFolder returns images from specified folder", async ({
+        test("returns globalErr when image list is empty", async ({ sessionSettings }) => {
+            sessionSettings.imgs = [];
+            const { imgs, globalErr, folderErrs } = await sessionSettings.getImgs();
+            expect(globalErr).toBe("No references found");
+            expect(imgs).toEqual([]);
+            expect(folderErrs).toEqual({});
+        });
+
+        test("returns per-folder errors", async ({ sessionSettings }) => {
+            const { invoke, isTauri } = await import("@tauri-apps/api/core");
+            vi.mocked(isTauri).mockReturnValue(true);
+            vi.mocked(invoke).mockRejectedValueOnce("NotADirectory");
+            sessionSettings.imgFolders = ["/not-a-folder"];
+
+            const { folderErrs } = await sessionSettings.getImgs();
+            expect(folderErrs).toEqual({ "/not-a-folder": "Path is not a folder" });
+
+            vi.mocked(isTauri).mockReturnValue(false);
+        });
+    });
+
+    describe("getImgsFromFolders", () => {
+        test("handles libraries with many files", async ({ sessionSettings }) => {
+            const { invoke } = await import("@tauri-apps/api/core");
+            const numFiles = 400_000;
+            vi.mocked(invoke).mockResolvedValueOnce(
+                Array.from({ length: numFiles }, (_, i) => `/folder/img${i}.jpg`),
+            );
+            sessionSettings.imgFolders = ["/folder"];
+            const { imgs } = await sessionSettings.getImgsFromFolders();
+            expect(imgs).toHaveLength(numFiles);
+        });
+
+        test("reports errors per folder", async ({ sessionSettings }) => {
+            const { invoke } = await import("@tauri-apps/api/core");
+            vi.mocked(invoke)
+                .mockResolvedValueOnce(["/ok1/a.jpg"])
+                .mockRejectedValueOnce("NotADirectory")
+                .mockResolvedValueOnce(["/ok2/b.jpg"]);
+            sessionSettings.imgFolders = ["/ok1", "/not-a-folder", "/ok2"];
+
+            const { folderErrs } = await sessionSettings.getImgsFromFolders();
+
+            expect(folderErrs).toEqual({ "/not-a-folder": "Path is not a folder" });
+        });
+
+        test("reports errors per folder, keeping images from folders that loaded", async ({
             sessionSettings,
         }) => {
+            const { invoke } = await import("@tauri-apps/api/core");
+            vi.mocked(invoke)
+                .mockResolvedValueOnce(["/ok1/a.jpg"])
+                .mockRejectedValueOnce("NotADirectory")
+                .mockResolvedValueOnce(["/ok2/b.jpg"]);
+            sessionSettings.imgFolders = ["/ok1", "/not-a-folder", "/ok2"];
+
+            const { imgs, folderErrs } = await sessionSettings.getImgsFromFolders();
+            expect(imgs.map((img) => img.path)).toEqual(["/ok1/a.jpg", "/ok2/b.jpg"]);
+            expect(folderErrs).toEqual({ "/not-a-folder": "Path is not a folder" });
+        });
+    });
+
+    describe("getImgsFromFolder", () => {
+        test("returns images from specified folder", async ({ sessionSettings }) => {
             const { invoke } = await import("@tauri-apps/api/core");
             vi.mocked(invoke).mockResolvedValueOnce([
                 "/folder/a.jpg",
@@ -419,19 +493,6 @@ describe("session-settings.svelte.ts", () => {
                 { name: "c.png", isVideo: false },
                 { name: "d.webm", isVideo: true },
             ]);
-        });
-
-        test("getImgsFromFolders handles libraries with many files", async ({
-            sessionSettings,
-        }) => {
-            const { invoke } = await import("@tauri-apps/api/core");
-            const numFiles = 400_000;
-            vi.mocked(invoke).mockResolvedValueOnce(
-                Array.from({ length: numFiles }, (_, i) => `/folder/img${i}.jpg`),
-            );
-            sessionSettings.imgFolders = ["/folder"];
-            const imgs = await sessionSettings.getImgsFromFolders();
-            expect(imgs).toHaveLength(numFiles);
         });
     });
 });

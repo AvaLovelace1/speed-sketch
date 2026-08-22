@@ -33,6 +33,7 @@
 
         imgs?: Image[];
         imgErrMsg?: string;
+        folderErrs?: Record<string, string>;
         isLoadingImgs?: boolean;
         onImgsInput?: (inputImgsOrFolders: string[] | Image[] | null) => Promise<void>;
 
@@ -46,6 +47,7 @@
         sessionSettings = new SessionSettings(),
         imgs = [],
         imgErrMsg = "",
+        folderErrs = {},
         isLoadingImgs = $bindable(false),
         onImgsInput = async (_) => {},
         canStartSession = false,
@@ -65,6 +67,8 @@
 
     let schedule = $derived(sessionSettings.sessionScheduleCustom);
     let imgFolders = $derived(sessionSettings.imgFolders);
+
+    const rescanRefs = async () => await onImgsInput(null);
 </script>
 
 <CenteredFull>
@@ -105,13 +109,13 @@
                                     <Checkbox
                                         label="Include subfolders"
                                         bind:checked={sessionSettings.includeSubfolders}
-                                        onCheckedChange={async (_) => await onImgsInput(null)}
+                                        onCheckedChange={rescanRefs}
                                     />
                                 {/if}
                                 <Checkbox
                                     label="Shuffle"
                                     bind:checked={sessionSettings.shuffleImgs}
-                                    onCheckedChange={async (_) => await onImgsInput(null)}
+                                    onCheckedChange={rescanRefs}
                                 />
                             </div>
                         </div>
@@ -134,7 +138,9 @@
                             {/if}
                             <FolderInput
                                 bind:folders={imgFolders}
-                                onChange={async () => await onImgsInput(null)}
+                                {folderErrs}
+                                onChange={rescanRefs}
+                                onRefresh={rescanRefs}
                             />
                         {:else}
                             <ImageDropzone

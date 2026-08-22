@@ -175,55 +175,6 @@
     }}
 />
 
-<!-- The Tauri default UI has the "include subfolders" checkbox checked and displays a table with the selected folders. -->
-<Story
-    name="Tauri"
-    args={{
-        sessionSettings: new SessionSettings({
-            imgFolders: ["C:\\Users\\User\\Pictures"],
-        }),
-        imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
-        canStartSession: true,
-        isTauri: true,
-    }}
-    play={async ({ args, canvas, userEvent, step }) => {
-        await step("Toggle subfolders checkbox", async () => {
-            const subfoldersCheckbox = await canvas.findByRole("checkbox", { name: /subfolders/i });
-            await expect(subfoldersCheckbox).toBeChecked();
-            await userEvent.click(subfoldersCheckbox);
-            expect(args.sessionSettings.includeSubfolders).toBe(false);
-            await userEvent.click(subfoldersCheckbox);
-            expect(args.sessionSettings.includeSubfolders).toBe(true);
-        });
-
-        const table = canvas.getByRole("table", { name: /reference folders/i });
-        await expect(table).toBeVisible();
-        await expect(within(table).getByRole("row", { name: /Pictures/i })).toBeVisible();
-
-        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
-        await expect(imgs.length).toBeGreaterThan(1);
-        for (const img of imgs) await expect(img).toBeVisible();
-    }}
-/>
-
-<!-- Invalid reference folder chosen. -->
-<Story
-    name="Tauri Invalid"
-    args={{
-        sessionSettings: new SessionSettings({
-            imgFolders: ["C:\\Users\\User\\Pictures"],
-        }),
-        imgErrMsg: "No references found",
-        canStartSession: false,
-        isTauri: true,
-    }}
-    play={async ({ args, canvas }) => {
-        const status = canvas.getByRole("status");
-        await expect(status).toBeVisible();
-        await expect(status.textContent).toContain(args.imgErrMsg);
-    }}
-/>
-
 <Story
     name="With Interactions"
     args={{ sessionSettings: new SessionSettings(), canStartSession: true }}
@@ -368,6 +319,91 @@
             await waitFor(() => expect(args.sessionSettings.schedulePresets).toHaveLength(1));
             expect(args.sessionSettings.selectedScheduleIdx).toBe(0);
             await waitFor(() => expect(schedulePresetBtn).toHaveTextContent("Default Preset"));
+        });
+    }}
+/>
+
+<!-- The Tauri default UI has the "include subfolders" checkbox checked and displays a table with the selected folders. -->
+<Story
+    name="Tauri"
+    args={{
+        sessionSettings: new SessionSettings({ imgFolders: ["C:\\Users\\User\\Pictures"] }),
+        imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
+        canStartSession: true,
+        isTauri: true,
+    }}
+    play={async ({ canvas }) => {
+        const subfoldersCheckbox = await canvas.findByRole("checkbox", { name: /subfolders/i });
+        await expect(subfoldersCheckbox).toBeChecked();
+
+        const table = canvas.getByRole("table", { name: /reference folders/i });
+        await expect(table).toBeVisible();
+        await expect(within(table).getByRole("row", { name: /Pictures/i })).toBeVisible();
+
+        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+        await expect(imgs.length).toBeGreaterThan(1);
+        for (const img of imgs) await expect(img).toBeVisible();
+    }}
+/>
+
+<!-- Global invalid message. -->
+<Story
+    name="Tauri Invalid"
+    args={{
+        sessionSettings: new SessionSettings({ imgFolders: ["C:\\Users\\User\\Pictures"] }),
+        imgErrMsg: "No references found",
+        canStartSession: false,
+        isTauri: true,
+    }}
+    play={async ({ args, canvas }) => {
+        const status = canvas.getByRole("status");
+        await expect(status).toBeVisible();
+        await expect(status.textContent).toContain(args.imgErrMsg);
+    }}
+/>
+
+<!-- One folder is flagged as invalid, and the references from the others still load. -->
+<Story
+    name="Tauri Invalid Folder"
+    args={{
+        sessionSettings: new SessionSettings({
+            imgFolders: ["C:\\Users\\User\\Pictures", "E:\\External\\Unreachable"],
+        }),
+        imgs: [img1, img2, img3],
+        folderErrs: { "E:\\External\\Unreachable": "Cannot access folder" },
+        canStartSession: true,
+        isTauri: true,
+    }}
+    play={async ({ canvas }) => {
+        const table = canvas.getByRole("table", { name: /reference folders/i });
+        const workingRow = within(table).getByRole("row", { name: /Pictures/i });
+        const failedRow = within(table).getByRole("row", { name: /Unreachable/i });
+        await expect(workingRow).not.toHaveTextContent(/cannot access folder/i);
+        await expect(failedRow).toHaveTextContent(/cannot access folder/i);
+    }}
+/>
+
+<Story
+    name="Tauri With Interactions"
+    args={{
+        sessionSettings: new SessionSettings({ imgFolders: ["C:\\Users\\User\\Pictures"] }),
+        imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
+        canStartSession: true,
+        isTauri: true,
+    }}
+    play={async ({ args, canvas, userEvent, step }) => {
+        await step("Toggle subfolders checkbox", async () => {
+            const subfoldersCheckbox = await canvas.findByRole("checkbox", { name: /subfolders/i });
+            await userEvent.click(subfoldersCheckbox);
+            expect(args.sessionSettings.includeSubfolders).toBe(false);
+            await userEvent.click(subfoldersCheckbox);
+            expect(args.sessionSettings.includeSubfolders).toBe(true);
+        });
+
+        await step("Refresh references", async () => {
+            clearAllMocks();
+            await userEvent.click(canvas.getByRole("button", { name: /refresh/i }));
+            await expect(args.onImgsInput).toHaveBeenCalledWith(null);
         });
     }}
 />

@@ -12,11 +12,19 @@ A reorderable list of image folders with add/remove/move controls.
 
     export interface Props {
         folders?: string[];
+        folderErrs?: Record<string, string>;
         onAdd?: () => Promise<string[] | null>;
         onChange?: () => void;
+        onRefresh?: () => void;
     }
 
-    const { folders = $bindable([]), onAdd = defaultOnAdd, onChange = () => {} }: Props = $props();
+    const {
+        folders = $bindable([]),
+        folderErrs = {},
+        onAdd = defaultOnAdd,
+        onChange = () => {},
+        onRefresh = () => {},
+    }: Props = $props();
 
     // Recreate manager when the folders array identity changes (e.g. from TauriDropzone)
     let manager = $derived.by(() => {
@@ -73,7 +81,15 @@ A reorderable list of image folders with add/remove/move controls.
         tooltip: "Move folder down",
         disabled: manager.selectedIdx >= manager.items.length - 1,
     });
-    const tools = $derived([addBtn, removeBtn, moveUpBtn, moveDownBtn]);
+    const refreshBtn: Tool = $derived({
+        uid: "refresh-folders",
+        icon: "lucide--refresh-cw",
+        action: onRefresh,
+        tooltip: "Refresh references",
+        disabled: manager.items.length === 0,
+        class: "ml-auto",
+    });
+    const tools = $derived([addBtn, removeBtn, moveUpBtn, moveDownBtn, refreshBtn]);
 </script>
 
 <ReorderableList
@@ -96,9 +112,30 @@ A reorderable list of image folders with add/remove/move controls.
         </button>
     {/snippet}
     {#snippet row(folder: string, _index: number, _isSelected: boolean)}
-        <td class="flex grow items-center gap-2 truncate text-sm" title={folder}>
-            <span class="iconify lucide--folder"></span>
-            {basename(folder)}
+        {@const folderErr = folderErrs[folder]}
+        <td
+            class="flex grow items-center gap-2 truncate text-sm"
+            title={folderErr ? `${folder} — ${folderErr}` : folder}
+        >
+            <span
+                class={[
+                    "iconify shrink-0",
+                    folderErr
+                        ? "text-error lucide--folder-x group-aria-selected:text-primary-content"
+                        : "lucide--folder",
+                ]}
+            ></span>
+            <span class="truncate">{basename(folder)}</span>
+            {#if folderErr}
+                <span
+                    class="ml-auto flex shrink-0 items-center gap-1 text-xs text-error italic
+                           group-aria-selected:text-primary-content"
+                >
+                    <span class="iconify lucide--octagon-x"></span>
+                    <span class="sr-only">Error</span>
+                    {folderErr}
+                </span>
+            {/if}
         </td>
     {/snippet}
 </ReorderableList>

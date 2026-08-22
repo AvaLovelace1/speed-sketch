@@ -11,6 +11,7 @@
 
     let imgs = $state<Image[]>([]);
     let imgErrMsg = $state("");
+    let folderErrs = $state<Record<string, string>>({});
     let isLoadingImgs = $state(false);
     let imgsAreValid = $state(false);
     let scheduleIsValid = $derived(
@@ -43,13 +44,11 @@
             sessionSettings.imgs = inputRawImgs;
         }
 
-        let inputImgs: Image[] = [];
-        let inputErrMsg = "";
-        try {
-            inputImgs = await sessionSettings.getImgs();
-        } catch (e) {
-            inputErrMsg = e instanceof Error ? e.message : "Unknown error loading images";
-        }
+        const {
+            imgs: inputImgs,
+            globalErr: inputErrMsg,
+            folderErrs: inputFolderErrs,
+        } = await sessionSettings.getImgs();
 
         // If the folders have changed while loading, ignore the result
         if (
@@ -60,6 +59,7 @@
 
         imgs = inputImgs;
         imgErrMsg = inputErrMsg;
+        folderErrs = inputFolderErrs;
         isLoadingImgs = false;
         imgsAreValid = inputImgs.length > 0 && inputErrMsg === "";
     }
@@ -106,6 +106,7 @@
     {sessionSettings}
     {imgs}
     {imgErrMsg}
+    {folderErrs}
     bind:isLoadingImgs
     {canStartSession}
     {onImgsInput}
