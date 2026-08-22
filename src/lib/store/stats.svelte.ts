@@ -19,7 +19,10 @@ function addDays(date: Date, n: number): Date {
 // Global, all-time drawing statistics, persisted across sessions.
 export class Stats implements Record<string, unknown> {
     static get DEFAULTS() {
-        return { dailyDrawings: {}, dailyTimeSpent: {} };
+        return {
+            dailyDrawings: {} as Record<string, number>,
+            dailyTimeSpent: {} as Record<string, number>,
+        };
     }
 
     static get SCHEMA() {
@@ -65,9 +68,9 @@ export class Stats implements Record<string, unknown> {
 
     [key: string]: unknown;
 
-    constructor(entries = Stats.DEFAULTS) {
-        this.dailyDrawings = $state(entries.dailyDrawings);
-        this.dailyTimeSpent = $state(entries.dailyTimeSpent);
+    constructor({ dailyDrawings = {}, dailyTimeSpent = {} } = Stats.DEFAULTS) {
+        this.dailyDrawings = $state(dailyDrawings);
+        this.dailyTimeSpent = $state(dailyTimeSpent);
     }
 
     // Removes Svelte reactivity from data key-value pairs
@@ -162,3 +165,7 @@ export class Stats implements Record<string, unknown> {
 export type StatsEntries = z.infer<typeof Stats.SCHEMA>;
 
 export const stats = $state(new Stats());
+
+export const statsDialog = $state({
+    component: null as StatsDialog | null,
+});

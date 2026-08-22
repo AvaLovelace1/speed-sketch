@@ -4,6 +4,7 @@
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Card from "$lib/components/Card.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
+    import StatsButton from "$lib/components/StatsButton.svelte";
     import { goto } from "$app/navigation";
     import { resolve } from "$app/paths";
 
@@ -14,16 +15,16 @@
 
     const { completedDrawings, timeSpent }: Props = $props();
 
-    const stats = $derived([
+    const statCards = $derived([
         {
             title: "Drawings completed",
-            value: completedDrawings,
+            value: completedDrawings.toLocaleString(),
             icon: "lucide--image",
             color: "text-primary",
         },
         {
             title: "Time spent drawing",
-            value: prettyMilliseconds(Math.max(timeSpent, 1) * 1000),
+            value: timeSpent === 0 ? "0s" : prettyMilliseconds(timeSpent * 1000, { unitCount: 2 }),
             icon: "lucide--clock",
             color: "text-secondary",
         },
@@ -35,13 +36,13 @@
         <Card class="p-8">
             <h1 class="mb-6 text-2xl font-semibold">Session complete!</h1>
             <div class="stats mb-6">
-                {#each stats as { title, value, color, icon } (title)}
+                {#each statCards as { title, value, color, icon } (title)}
                     <div class="stat">
                         <div class="stat-figure {color} self-end text-3xl">
                             <span class="iconify {icon}"></span>
                         </div>
                         <div class="stat-title text-muted">{title}</div>
-                        <div class="stat-value {color}">{value}</div>
+                        <div class="stat-value {color}" data-testid={title}>{value}</div>
                     </div>
                 {/each}
             </div>
@@ -57,3 +58,4 @@
     </div>
 </CenteredFull>
 <SettingsButton />
+<StatsButton />

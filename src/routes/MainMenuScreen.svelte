@@ -10,6 +10,7 @@
     import ImageDropzone from "$lib/components/dropzone/ImageDropzone.svelte";
     import RadioButtons from "$lib/components/input/RadioButtons.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
+    import StatsButton from "$lib/components/StatsButton.svelte";
     import { SessionSettings } from "$lib/store/session-settings.svelte";
     import { isTauri as isTauriFn } from "@tauri-apps/api/core";
     import SchedulerInput from "$lib/components/input/SchedulerInput.svelte";
@@ -72,6 +73,7 @@
         {@render form()}
         {@render footer()}
         <SettingsButton />
+        <StatsButton />
     </div>
 </CenteredFull>
 

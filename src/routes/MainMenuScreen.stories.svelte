@@ -52,8 +52,11 @@
             await expect(footer.textContent).toMatch(/v\d+\.\d+\.\d+/i);
         });
 
-        await expect(canvas.getByRole("button", { name: /settings/i })).toBeEnabled();
-        await expect(canvas.getByRole("button", { name: /choose folder/i })).toBeEnabled();
+        await step("Buttons are enabled", async () => {
+            for (const btnName of [/choose folder/i, /settings/i, /stats/i]) {
+                await expect(canvas.getByRole("button", { name: btnName })).toBeEnabled();
+            }
+        });
 
         await step("Default session options are selected", async () => {
             await expect(canvas.getByRole("checkbox", { name: /shuffle/i })).toBeChecked();
