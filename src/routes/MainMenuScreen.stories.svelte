@@ -86,8 +86,6 @@
     }}
     play={async ({ canvas }) => {
         await expect(canvas.getByRole("radio", { name: /class/i })).toBeChecked();
-        await expect(canvas.getByText(/total drawings/i)).toBeVisible();
-        await expect(canvas.getByText(/total duration/i)).toBeVisible();
     }}
 />
 
@@ -101,16 +99,23 @@
             sessionMode: "Class",
         }),
     }}
-    play={async ({ canvas }) => {
-        for (const btnName of [
-            /add drawing interval/i,
-            /add break/i,
-            /remove entry/i,
-            /move entry up/i,
-            /move entry down/i,
-        ]) {
-            await expect(canvas.getByRole("button", { name: btnName })).toBeDisabled();
-        }
+    play={async ({ canvas, step }) => {
+        await step("Schedule-editing buttons are disabled", async () => {
+            for (const btnName of [
+                /add drawing interval/i,
+                /add break/i,
+                /remove entry/i,
+                /move entry up/i,
+                /move entry down/i,
+            ]) {
+                await expect(canvas.getByRole("button", { name: btnName })).toBeDisabled();
+            }
+        });
+
+        await step("Total stats are zero", async () => {
+            await expect(canvas.getByTestId("total drawings")).toHaveTextContent(/^0$/);
+            await expect(canvas.getByTestId("total duration")).toHaveTextContent(/^0s$/);
+        });
     }}
 />
 
@@ -118,10 +123,12 @@
 <Story
     name="Loading Images"
     args={{ isLoadingImgs: true, canStartSession: false }}
-    play={async ({ canvas }) => {
-        const spinners = canvas.getAllByRole("progressbar", { name: /loading/i });
-        await expect(spinners.length).toBeGreaterThan(1);
-        for (const spinner of spinners) await expect(spinner).toBeVisible();
+    play={async ({ canvas, step }) => {
+        await step("Spinners are visible", async () => {
+            const spinners = canvas.getAllByRole("progressbar", { name: /loading/i });
+            await expect(spinners.length).toBeGreaterThan(1);
+            for (const spinner of spinners) await expect(spinner).toBeVisible();
+        });
     }}
 />
 
@@ -132,10 +139,12 @@
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2, img3, img1, img2, img3],
         canStartSession: true,
     }}
-    play={async ({ canvas }) => {
-        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
-        await expect(imgs.length).toBeGreaterThan(1);
-        for (const img of imgs) await expect(img).toBeVisible();
+    play={async ({ canvas, step }) => {
+        await step("Images are visible", async () => {
+            const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+            await expect(imgs.length).toBeGreaterThan(1);
+            for (const img of imgs) await expect(img).toBeVisible();
+        });
     }}
 />
 
@@ -146,10 +155,12 @@
         imgs: [img1, img2, img3, img1, img2, img3, img1, img2],
         canStartSession: true,
     }}
-    play={async ({ canvas }) => {
-        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
-        await expect(imgs).toHaveLength(8 - 3); // not including video thumbnails
-        for (const img of imgs) await expect(img).toBeVisible();
+    play={async ({ canvas, step }) => {
+        await step("Images are visible", async () => {
+            const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+            await expect(imgs).toHaveLength(8 - 3); // not including video thumbnails
+            for (const img of imgs) await expect(img).toBeVisible();
+        });
     }}
 />
 
@@ -157,10 +168,12 @@
 <Story
     name="One Image"
     args={{ imgs: [img1], canStartSession: true }}
-    play={async ({ canvas }) => {
-        const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
-        await expect(imgs).toHaveLength(1);
-        for (const img of imgs) await expect(img).toBeVisible();
+    play={async ({ canvas, step }) => {
+        await step("One image is visible", async () => {
+            const imgs = canvas.getAllByRole("img", { name: /thumbnail/i });
+            await expect(imgs).toHaveLength(1);
+            for (const img of imgs) await expect(img).toBeVisible();
+        });
     }}
 />
 

@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
-import { isVideoFile } from "./utils.svelte";
+import { isVideoFile } from "./utils";
 
-describe("utils.svelte.ts", () => {
+describe("utils.ts", () => {
     test.for([
         "movie.mp4",
         "clip.webm",

@@ -5,7 +5,7 @@
     import type { ScheduleEntry, SessionSchedule } from "$lib/store/session-settings.svelte";
     import ReorderableList from "$lib/components/input/ReorderableList.svelte";
     import type { Tool } from "$lib/components/Toolbar.svelte";
-    import prettyMilliseconds from "pretty-ms";
+    import { formatDuration } from "$lib/utils";
     import { Label } from "bits-ui";
     import { untrack } from "svelte";
 
@@ -122,13 +122,13 @@
 
 <div class="flex justify-center gap-6 text-2xl font-semibold">
     <p>
-        {scheduler.totalImgs}
+        <span data-testid="total drawings">{scheduler.totalImgs}</span>
         <span class="text-sm font-normal text-muted">
             total {scheduler.totalImgs === 1 ? "drawing" : "drawings"}
         </span>
     </p>
     <p>
-        {prettyMilliseconds(scheduler.totalDuration * 1000)}
+        <span data-testid="total duration">{formatDuration(scheduler.totalDuration)}</span>
         <span class="text-sm font-normal text-muted">total duration</span>
     </p>
 </div>

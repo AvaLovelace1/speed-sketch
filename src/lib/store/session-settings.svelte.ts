@@ -1,10 +1,11 @@
 import parse from "parse-duration";
 import * as z from "zod";
-import { basename, fisherYatesShuffle, isVideoFile } from "$lib/utils.svelte";
+import { basename, fisherYatesShuffle, isVideoFile } from "$lib/utils";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
-import { compareImages, type Image } from "$lib/types.svelte";
+import type { Image } from "$lib/types";
+import { compareImages } from "$lib/types";
 import { SvelteSet } from "svelte/reactivity";
 
 export class SessionSettings implements Record<string, unknown> {

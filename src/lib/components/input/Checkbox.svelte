@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Checkbox, Label } from "bits-ui";
-    import { stringToId } from "$lib/utils.svelte.js";
+    import { stringToId } from "$lib/utils";
 
     interface Props extends Checkbox.RootProps {
         label: string;

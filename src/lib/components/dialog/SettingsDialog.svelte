@@ -2,7 +2,7 @@
     import Dialog from "$lib/components/dialog/Dialog.svelte";
     import Select from "$lib/components/input/Select.svelte";
     import Slider from "$lib/components/input/Slider.svelte";
-    import { AppSettings } from "$lib/store/app-settings.svelte.js";
+    import { AppSettings } from "$lib/store/app-settings.svelte";
     import { playStartAudio } from "$lib/audio";
     import { Label, Separator } from "bits-ui";
     import NumberField from "$lib/components/input/NumberField.svelte";

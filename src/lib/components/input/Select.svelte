@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Label, Select } from "bits-ui";
     import { fly } from "$lib/motion.svelte";
-    import { stringToId } from "$lib/utils.svelte.js";
+    import { stringToId } from "$lib/utils";
 
     const SIDE_OFFSET = 8;
 

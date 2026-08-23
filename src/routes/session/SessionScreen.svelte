@@ -5,7 +5,7 @@ The user interface for a drawing session.
 <script lang="ts">
     import type { Attachment } from "svelte/attachments";
     import createPanZoom, { type PanZoom } from "panzoom";
-    import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte.js";
+    import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import AlertDialog from "$lib/components/dialog/AlertDialog.svelte";
     import Timer from "$lib/components/Timer.svelte";

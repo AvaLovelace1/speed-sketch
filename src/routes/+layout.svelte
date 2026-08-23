@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Tooltip } from "bits-ui";
     import type { LayoutProps } from "./$types";
-    import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte.js";
-    import { stats, statsDialog } from "$lib/store/stats.svelte.js";
+    import { appSettings, appSettingsDialog } from "$lib/store/app-settings.svelte";
+    import { stats, statsDialog } from "$lib/store/stats.svelte";
     import SettingsDialog from "$lib/components/dialog/SettingsDialog.svelte";
     import StatsDialog from "$lib/components/dialog/StatsDialog.svelte";
     import "../app.css";

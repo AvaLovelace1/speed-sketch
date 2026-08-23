@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Button } from "bits-ui";
-    import prettyMilliseconds from "pretty-ms";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Card from "$lib/components/Card.svelte";
     import SettingsButton from "$lib/components/SettingsButton.svelte";
     import StatsButton from "$lib/components/StatsButton.svelte";
+    import { formatDuration } from "$lib/utils";
     import { goto } from "$app/navigation";
     import { resolve } from "$app/paths";
 
@@ -24,7 +24,7 @@
         },
         {
             title: "Time spent drawing",
-            value: timeSpent === 0 ? "0s" : prettyMilliseconds(timeSpent * 1000, { unitCount: 2 }),
+            value: formatDuration(timeSpent),
             icon: "lucide--clock",
             color: "text-secondary",
         },

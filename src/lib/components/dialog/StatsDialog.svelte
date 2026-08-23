@@ -4,12 +4,8 @@
     import Heatmap from "$lib/components/heatmap/Heatmap.svelte";
     import type { DateKey } from "$lib/date-key";
     import { formatDateKey, toDateKey, getYear } from "$lib/date-key";
+    import { formatDuration } from "$lib/utils";
     import { Stats } from "$lib/store/stats.svelte";
-    import prettyMilliseconds from "pretty-ms";
-
-    // Seconds as e.g. "3h 10m"
-    const formatDuration = (seconds: number) =>
-        prettyMilliseconds(seconds * 1000, { unitCount: 2 });
 
     // e.g. "4 drawings, 40m", or "No drawings" when nothing was recorded
     function activitySummary(drawings: number, timeSpent: number): string {

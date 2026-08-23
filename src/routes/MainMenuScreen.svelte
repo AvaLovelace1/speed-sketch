@@ -1,7 +1,7 @@
 <script lang="ts">
     import { slide } from "$lib/motion.svelte";
     import { Separator, Button } from "bits-ui";
-    import type { Image } from "$lib/types.svelte";
+    import type { Image } from "$lib/types";
     import CenteredFull from "$lib/utilities/CenteredFull.svelte";
     import Link from "$lib/utilities/Link.svelte";
     import Card from "$lib/components/Card.svelte";

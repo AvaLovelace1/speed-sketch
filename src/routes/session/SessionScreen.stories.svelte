@@ -1,6 +1,6 @@
 <script module lang="ts">
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import { DrawingSession } from "$lib/drawing-session.svelte.js";
+    import { DrawingSession } from "$lib/drawing-session.svelte";
     import SessionScreen from "./SessionScreen.svelte";
     import type { Props as SessionScreenProps } from "./SessionScreen.svelte";
     import Sample1 from "$lib/assets/images/pexels-by-hong-son.jpg";

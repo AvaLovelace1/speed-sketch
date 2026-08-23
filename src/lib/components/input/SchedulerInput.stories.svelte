@@ -50,12 +50,17 @@
 <Story
     name="With Interactions"
     args={{ schedule: [] }}
-    play={async ({ args: _args, canvas, userEvent, step }) => {
+    play={async ({ canvas, userEvent, step }) => {
         const addBtn = canvas.getByRole("button", { name: /add drawing/i });
         const addBreakBtn = canvas.getByRole("button", { name: /add break/i });
         const removeBtn = canvas.getByRole("button", { name: /remove/i });
         const moveUpBtn = canvas.getByRole("button", { name: /up/i });
         const moveDownBtn = canvas.getByRole("button", { name: /down/i });
+
+        async function expectTotals(drawings: string | RegExp, duration: string | RegExp) {
+            await expect(canvas.getByTestId("total drawings")).toHaveTextContent(drawings);
+            await expect(canvas.getByTestId("total duration")).toHaveTextContent(duration);
+        }
 
         function getRow(rowIdx: number) {
             return canvas.getAllByRole("row")[rowIdx];
@@ -64,6 +69,15 @@
         function getNumImgsInput(rowIdx: number) {
             const row = getRow(rowIdx);
             return within(row).getByRole("spinbutton", { name: /drawings/i });
+        }
+
+        function getDurationInputs(rowIdx: number) {
+            const row = getRow(rowIdx);
+            return {
+                hour: within(row).getByRole("spinbutton", { name: /hour/i }),
+                minute: within(row).getByRole("spinbutton", { name: /minute/i }),
+                second: within(row).getByRole("spinbutton", { name: /second/i }),
+            };
         }
 
         async function selectEntry(rowIdx: number) {
@@ -75,24 +89,52 @@
             await expect(getRow(rowIdx)).toHaveAttribute("aria-selected", "true");
         }
 
-        async function editEntry(rowIdx: number, numImgs: number) {
-            const numImgsInput = getNumImgsInput(rowIdx);
-            await userEvent.clear(numImgsInput);
-            await userEvent.type(numImgsInput, numImgs.toString());
-            await userEvent.keyboard("{Enter}");
+        // Edit the number of images and duration of a schedule entry
+        async function editEntry(
+            rowIdx: number,
+            content: {
+                numImgs: number | null;
+                duration: { hour: number; minute: number; second: number };
+            },
+        ) {
+            const { numImgs, duration } = content;
+
+            if (numImgs !== null) {
+                const numImgsInput = getNumImgsInput(rowIdx);
+                await userEvent.clear(numImgsInput);
+                await userEvent.type(numImgsInput, numImgs.toString());
+                await userEvent.keyboard("{Enter}");
+            }
+
+            const durationInputs = getDurationInputs(rowIdx);
+            await userEvent.type(durationInputs.hour, duration.hour.toString());
+            await userEvent.type(durationInputs.minute, duration.minute.toString());
+            await userEvent.type(durationInputs.second, duration.second.toString());
         }
 
-        // Check that the schedule entries match the expected number of images.
+        // Check that the schedule entries match the expected number of images and duration.
         // expectedNumImgs[i] = null if the entry is a break.
-        async function expectEntries(expectedNumImgs: (number | null)[]) {
+        async function expectEntries(
+            expectedContent: {
+                numImgs: number | null;
+                duration: { hour: number; minute: number; second: number };
+            }[],
+        ) {
             const rows = canvas.queryAllByRole("row");
-            await expect(rows).toHaveLength(expectedNumImgs.length);
-            for (let i = 0; i < expectedNumImgs.length; i++) {
-                if (expectedNumImgs[i] === null) await expect(rows[i]).toHaveTextContent(/break/i);
+            await expect(rows).toHaveLength(expectedContent.length);
+            for (let i = 0; i < expectedContent.length; i++) {
+                const { numImgs, duration } = expectedContent[i];
+                const row = rows[i];
+
+                if (numImgs === null) await expect(row).toHaveTextContent(/break/i);
                 else {
-                    await expect(getNumImgsInput(i)).toHaveValue(expectedNumImgs[i]);
-                    await expect(rows[i]).not.toHaveTextContent(/break/i);
+                    await expect(row).not.toHaveTextContent(/break/i);
+                    await expect(getNumImgsInput(i)).toHaveValue(numImgs);
                 }
+
+                await expect(getDurationInputs(i).hour).toHaveValue(duration.hour);
+                await expect(getDurationInputs(i).minute).toHaveValue(duration.minute);
+                await expect(getDurationInputs(i).second).toHaveValue(duration.second);
             }
         }
 
@@ -104,17 +146,32 @@
             await expect(moveDownBtn).toBeDisabled();
         });
 
+        await step("Empty schedule has 0 drawings and 0 duration", async () => {
+            await expectTotals(/^0$/, /^0s$/);
+        });
+
         await step("Add three new entries", async () => {
             await userEvent.click(addBtn);
             await userEvent.click(addBreakBtn);
             await userEvent.click(addBtn);
-            await expectEntries([1, null, 1]);
+            await expectEntries([
+                { numImgs: 1, duration: { hour: 0, minute: 1, second: 0 } },
+                { numImgs: null, duration: { hour: 0, minute: 0, second: 30 } },
+                { numImgs: 1, duration: { hour: 0, minute: 1, second: 0 } },
+            ]);
+            await expectTotals(/^2$/, /^2m 30s$/);
         });
 
+        const newEntry0 = { numImgs: 1, duration: { hour: 2, minute: 0, second: 0 } };
+        const newEntry1 = { numImgs: null, duration: { hour: 0, minute: 2, second: 0 } };
+        const newEntry2 = { numImgs: 1, duration: { hour: 0, minute: 0, second: 2 } };
+
         await step("Edit entries", async () => {
-            await editEntry(0, 1);
-            await editEntry(2, 3);
-            await expectEntries([1, null, 3]);
+            await editEntry(0, newEntry0);
+            await editEntry(1, newEntry1);
+            await editEntry(2, newEntry2);
+            await expectEntries([newEntry0, newEntry1, newEntry2]);
+            await expectTotals(/^2$/, /^2h 2m$/); // duration is abbreviated to 2 units
         });
 
         await step("Select the first entry", async () => {
@@ -141,21 +198,21 @@
         await step("Move the first entry down", async () => {
             await selectEntry(0);
             await userEvent.click(moveDownBtn);
-            await expectEntries([null, 1, 3]);
+            await expectEntries([newEntry1, newEntry0, newEntry2]);
             await expectSelectedEntry(1);
         });
 
         await step("Move the last entry up", async () => {
             await selectEntry(2);
             await userEvent.click(moveUpBtn);
-            await expectEntries([null, 3, 1]);
+            await expectEntries([newEntry1, newEntry2, newEntry0]);
             await expectSelectedEntry(1);
         });
 
         await step("Remove an entry", async () => {
             await selectEntry(1);
             await userEvent.click(removeBtn);
-            await expectEntries([null, 1]);
+            await expectEntries([newEntry1, newEntry0]);
             await expectSelectedEntry(1);
         });
     }}

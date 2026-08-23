@@ -3,7 +3,7 @@
 A dropzone component for uploading an image folder, in a Tauri or web environment.
 -->
 <script lang="ts">
-    import type { Image } from "$lib/types.svelte.js";
+    import type { Image } from "$lib/types";
     import TauriDropzone from "$lib/components/dropzone/TauriDropzone.svelte";
     import WebDropzone from "$lib/components/dropzone/WebDropzone.svelte";
     import ImageGrid from "$lib/components/ImageGrid.svelte";

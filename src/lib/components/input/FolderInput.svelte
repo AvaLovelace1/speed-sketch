@@ -8,7 +8,7 @@ A reorderable list of image folders with add/remove/move controls.
     import type { Tool } from "$lib/components/Toolbar.svelte";
     import { open } from "@tauri-apps/plugin-dialog";
     import { untrack } from "svelte";
-    import { basename } from "$lib/utils.svelte";
+    import { basename } from "$lib/utils";
 
     export interface Props {
         folders?: string[];

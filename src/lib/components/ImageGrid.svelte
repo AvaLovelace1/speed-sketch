@@ -3,7 +3,7 @@
 Shows a grid of image thumbnails.
 -->
 <script lang="ts">
-    import type { Image } from "$lib/types.svelte";
+    import type { Image } from "$lib/types";
 
     const TILE_CLASS =
         "bg-base-100 text-muted flex aspect-square items-center justify-center overflow-hidden rounded shadow-sm";

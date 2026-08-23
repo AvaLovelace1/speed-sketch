@@ -1,3 +1,5 @@
+import prettyMilliseconds from "pretty-ms";
+
 // Shuffle an array in place
 export function fisherYatesShuffle(array: unknown[]) {
     for (let curIdx = array.length - 1; curIdx >= 1; curIdx--) {
@@ -20,9 +22,14 @@ export function basename(path: string) {
     return path.substring(lastSlashIndex + 1);
 }
 
+// Convert a string to a valid HTML id
 export function stringToId(str: string): string {
     return str
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
+}
+
+export function formatDuration(seconds: number): string {
+    return seconds === 0 ? "0s" : prettyMilliseconds(seconds * 1000, { unitCount: 2 });
 }

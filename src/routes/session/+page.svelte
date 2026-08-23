@@ -6,7 +6,7 @@
     import { goto } from "$app/navigation";
     import { resolve } from "$app/paths";
     import { currentSession } from "$lib/drawing-session.svelte";
-    import { startWakelock, stopWakelock } from "$lib/wakelock.svelte";
+    import { startWakelock, stopWakelock } from "$lib/wakelock";
     import SessionScreen from "./SessionScreen.svelte";
     import { playCountdownBeep, playCountdownDone, playStartAudio } from "$lib/audio";
 

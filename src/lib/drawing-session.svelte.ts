@@ -1,6 +1,6 @@
 import type { SessionSchedule } from "$lib/store/session-settings.svelte";
 import { totalDuration, totalImgs } from "$lib/store/session-settings.svelte";
-import type { Image } from "$lib/types.svelte";
+import type { Image } from "$lib/types";
 
 export class DrawingSession {
     completedDrawings: number;
