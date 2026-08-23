@@ -1,20 +1,11 @@
 import * as z from "zod";
 import { SvelteDate, SvelteSet } from "svelte/reactivity";
-import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
+import type { PersistentStore } from "$lib/store/persistent-store.svelte";
+import { getStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
-
-// A single day of drawing activity, for the heatmap calendar.
-export interface DailyActivity {
-    date: Date;
-    value: number;
-}
-
-// Return a new date offset from `date` by `n` days.
-function addDays(date: Date, n: number): Date {
-    const d = new SvelteDate(date);
-    d.setDate(d.getDate() + n);
-    return d;
-}
+import type { DateKey } from "$lib/date-key";
+import { toDateKey, addDays, getYear } from "$lib/date-key";
+import StatsDialog from "$lib/components/dialog/StatsDialog.svelte";
 
 // Global, all-time drawing statistics, persisted across sessions.
 export class Stats implements Record<string, unknown> {
@@ -45,21 +36,6 @@ export class Stats implements Record<string, unknown> {
                 )
                 .catch(defaults.dailyTimeSpent),
         });
-    }
-
-    // Local date key ("YYYY-MM-DD") for a given date. Uses local time so
-    // the heatmap calendar day matches what the user sees on their clock.
-    static dateToKey(date: Date): string {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-    }
-
-    // Parse a "YYYY-MM-DD" key back into a Date at local midnight.
-    static keyToDate(key: string): Date {
-        const [year, month, day] = key.split("-").map(Number);
-        return new SvelteDate(year, month - 1, day);
     }
 
     // Number of drawings and time spent, keyed by date. Values are always positive.
@@ -102,12 +78,23 @@ export class Stats implements Record<string, unknown> {
         return Object.values(this.dailyTimeSpent).reduce((acc, entry) => acc + entry, 0);
     }
 
-    // Daily activity as an array suitable for the heatmap calendar. Pulled from dailyTimeSpent.
-    get dailyActivity(): DailyActivity[] {
-        return Object.entries(this.dailyTimeSpent).map(([key, value]) => ({
-            date: Stats.keyToDate(key),
-            value,
-        }));
+    // The earliest calendar year with any recorded activity, or undefined if there is none.
+    get earliestYear(): number | undefined {
+        const years = [...Object.keys(this.dailyDrawings), ...Object.keys(this.dailyTimeSpent)].map(
+            (key) => Number(getYear(key)),
+        );
+        return years.length > 0 ? Math.min(...years) : undefined;
+    }
+
+    // Drawings and time spent within a single calendar year.
+    totalsForYear(year: number) {
+        const prefix = `${year}-`;
+        const inYear = (entries: Record<string, number>) =>
+            Object.entries(entries).reduce(
+                (total, [key, value]) => (key.startsWith(prefix) ? total + value : total),
+                0,
+            );
+        return { drawings: inYear(this.dailyDrawings), timeSpent: inYear(this.dailyTimeSpent) };
     }
 
     // Record the results of a completed session and persist the updated totals.
@@ -115,24 +102,23 @@ export class Stats implements Record<string, unknown> {
     async recordSession(
         completedDrawings: number,
         timeSpent: number,
-        date: Date = new SvelteDate(),
+        date: DateKey = toDateKey(new SvelteDate()),
         persistentStore?: PersistentStore,
     ) {
-        const key = Stats.dateToKey(date);
         if (completedDrawings > 0) {
-            this.dailyDrawings[key] = (this.dailyDrawings[key] ?? 0) + completedDrawings;
+            this.dailyDrawings[date] = (this.dailyDrawings[date] ?? 0) + completedDrawings;
         }
         if (timeSpent > 0) {
-            this.dailyTimeSpent[key] = (this.dailyTimeSpent[key] ?? 0) + timeSpent;
+            this.dailyTimeSpent[date] = (this.dailyTimeSpent[date] ?? 0) + timeSpent;
         }
         await this.saveToStore(persistentStore);
     }
 
     // Compute the current and longest daily streaks. The current streak counts back from
     // `today`; if today has no activity yet, it counts back from yesterday.
-    computeStreaks(today: Date = new SvelteDate()) {
+    computeStreaks(today: DateKey = toDateKey(new SvelteDate())) {
         const activeDates = new SvelteSet(
-            this.dailyActivity.map(({ date }) => Stats.dateToKey(date)),
+            Object.entries(this.dailyTimeSpent).map(([date, _]) => date),
         );
 
         // Longest streak
@@ -140,20 +126,17 @@ export class Stats implements Record<string, unknown> {
         let run = 0;
         let prevKey: string | null = null;
         for (const key of [...activeDates].sort()) {
-            if (prevKey !== null && Stats.dateToKey(addDays(Stats.keyToDate(prevKey), 1)) === key) {
-                run += 1;
-            } else {
-                run = 1;
-            }
+            if (prevKey !== null && addDays(prevKey, 1) === key) run += 1;
+            else run = 1;
             if (run > longest) longest = run;
             prevKey = key;
         }
 
         // Current streak
-        let cursor: Date = new SvelteDate(today.getFullYear(), today.getMonth(), today.getDate());
-        if (!activeDates.has(Stats.dateToKey(cursor))) cursor = addDays(cursor, -1);
+        let cursor: DateKey = today;
+        if (!activeDates.has(cursor)) cursor = addDays(cursor, -1);
         let current = 0;
-        while (activeDates.has(Stats.dateToKey(cursor))) {
+        while (activeDates.has(cursor)) {
             current += 1;
             cursor = addDays(cursor, -1);
         }

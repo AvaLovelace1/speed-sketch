@@ -14,12 +14,8 @@
         parameters: {
             a11y: {
                 config: {
-                    rules: [
-                        {
-                            id: "color-contrast",
-                            enabled: false, // Transitions interfere with color contrast checks
-                        },
-                    ],
+                    // Transitions interfere with color contrast checks
+                    rules: [{ id: "color-contrast", enabled: false }],
                 },
             },
         },

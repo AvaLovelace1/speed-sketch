@@ -1,15 +1,11 @@
 import * as z from "zod";
 import { describe, test as base, expect } from "vitest";
 import { Stats, type StatsEntries } from "./stats.svelte";
+import { addDays } from "$lib/date-key";
 import { createMapStore } from "$lib/store/persistent-store.svelte";
-import { SvelteDate } from "svelte/reactivity";
 
-const TODAY = new Date(2026, 6, 22);
-const day = (n: number) => {
-    const d = new Date(TODAY);
-    d.setDate(d.getDate() + n);
-    return d;
-};
+const TODAY = "2026-06-22";
+const day = (n: number) => addDays(TODAY, n);
 
 const test = base
     .extend("stats", ({ task: _task }) => new Stats())
@@ -115,40 +111,54 @@ describe("stats.svelte.ts", () => {
         );
     });
 
-    test("date/key conversion round-trips", () => {
-        const key = "2025-12-31";
-        const date = new SvelteDate(2025, 11, 31);
-        expect(Stats.keyToDate(key)).toEqual(date);
-        expect(Stats.dateToKey(date)).toBe(key);
-    });
-
-    describe("getters", () => {
-        test("totalDrawings returns sum of drawings in dailyDrawings", ({ stats }) => {
+    describe("totalDrawings", () => {
+        test("returns sum of drawings in dailyDrawings", ({ stats }) => {
             stats.dailyDrawings = { "2026-01-01": 1, "2026-01-02": 2, "2026-01-04": 5 };
             expect(stats.totalDrawings).toBe(1 + 2 + 5);
         });
 
-        test("totalDrawings is zero if dailyDrawings empty", ({ stats }) => {
+        test("is zero if dailyDrawings empty", ({ stats }) => {
             stats.dailyDrawings = {};
             expect(stats.totalDrawings).toBe(0);
         });
+    });
 
-        test("totalTimeSpent returns sum of times spent in dailyTimeSpent", ({ stats }) => {
+    describe("totalTimeSpent", () => {
+        test("returns sum of times spent in dailyTimeSpent", ({ stats }) => {
             stats.dailyTimeSpent = { "2026-01-01": 1, "2026-01-02": 60, "2026-01-04": 5000 };
             expect(stats.totalTimeSpent).toBe(1 + 60 + 5000);
         });
 
-        test("totalTimeSpent is zero if dailyTimeSpent empty", ({ stats }) => {
+        test("is zero if dailyTimeSpent empty", ({ stats }) => {
             stats.dailyTimeSpent = {};
             expect(stats.totalTimeSpent).toBe(0);
         });
+    });
 
-        test("dailyActivity returns activity from dailyTimeSpent", ({ stats }) => {
-            stats.dailyTimeSpent = { "2026-01-01": 1, "2026-01-02": 60 };
-            expect(stats.dailyActivity).toEqual([
-                { date: Stats.keyToDate("2026-01-01"), value: 1 },
-                { date: Stats.keyToDate("2026-01-02"), value: 60 },
-            ]);
+    describe("earliestYear", () => {
+        test("finds the first year with activity of either kind", ({ stats }) => {
+            stats.dailyDrawings = { "2026-01-01": 1 };
+            stats.dailyTimeSpent = { "2024-06-05": 60, "2026-01-01": 60 };
+            expect(stats.earliestYear).toBe(2024);
+        });
+
+        test("is undefined with no activity at all", ({ stats }) => {
+            expect(stats.earliestYear).toBeUndefined();
+        });
+    });
+
+    describe("totalsForYear", () => {
+        test("sums only the days in that calendar year", ({ stats }) => {
+            stats.dailyDrawings = { "2025-12-31": 7, "2026-01-01": 1, "2026-12-31": 2 };
+            stats.dailyTimeSpent = { "2025-12-31": 90, "2026-01-01": 60, "2026-12-31": 30 };
+            expect(stats.totalsForYear(2026)).toEqual({ drawings: 1 + 2, timeSpent: 60 + 30 });
+            expect(stats.totalsForYear(2025)).toEqual({ drawings: 7, timeSpent: 90 });
+        });
+
+        test("is zero for a year with no activity", ({ stats }) => {
+            stats.dailyDrawings = { "2026-01-01": 1 };
+            stats.dailyTimeSpent = { "2026-01-01": 60 };
+            expect(stats.totalsForYear(2024)).toEqual({ drawings: 0, timeSpent: 0 });
         });
     });
 
@@ -161,14 +171,8 @@ describe("stats.svelte.ts", () => {
         await stats.recordSession(5, 150, day(0), persistentStore); // 2.5 min, today (same day)
         await stats.recordSession(0, 0, day(-2), persistentStore); // zero entries should be ignored
 
-        expect(stats.dailyDrawings).toEqual({
-            [Stats.dateToKey(day(-1))]: 3,
-            [Stats.dateToKey(day(0))]: 2 + 5,
-        });
-        expect(stats.dailyTimeSpent).toEqual({
-            [Stats.dateToKey(day(-1))]: 120,
-            [Stats.dateToKey(day(0))]: 30 + 150,
-        });
+        expect(stats.dailyDrawings).toEqual({ [day(-1)]: 3, [day(0)]: 2 + 5 });
+        expect(stats.dailyTimeSpent).toEqual({ [day(-1)]: 120, [day(0)]: 30 + 150 });
 
         const loaded = new Stats();
         await loaded.loadFromStore(persistentStore);
@@ -183,18 +187,14 @@ describe("stats.svelte.ts", () => {
         });
 
         test("current streak counts consecutive days ending today", ({ stats }) => {
-            stats.dailyTimeSpent = {
-                [Stats.dateToKey(day(-2))]: 5,
-                [Stats.dateToKey(day(-1))]: 5,
-                [Stats.dateToKey(day(0))]: 5,
-            };
+            stats.dailyTimeSpent = { [day(-2)]: 5, [day(-1)]: 5, [day(0)]: 5 };
             expect(stats.computeStreaks(TODAY)).toEqual({ current: 3, longest: 3 });
         });
 
         test("streak stays alive on the day after activity (today not yet active)", ({ stats }) => {
             stats.dailyTimeSpent = {
-                [Stats.dateToKey(day(-2))]: 5,
-                [Stats.dateToKey(day(-1))]: 5,
+                [day(-2)]: 5,
+                [day(-1)]: 5,
                 // nothing today yet
             };
             expect(stats.computeStreaks(TODAY).current).toBe(2);
@@ -202,8 +202,8 @@ describe("stats.svelte.ts", () => {
 
         test("current streak is zero once a full day is missed", ({ stats }) => {
             stats.dailyTimeSpent = {
-                [Stats.dateToKey(day(-3))]: 5,
-                [Stats.dateToKey(day(-2))]: 5,
+                [day(-3)]: 5,
+                [day(-2)]: 5,
                 // gap on day(-1) and day(0)
             };
             expect(stats.computeStreaks(TODAY).current).toBe(0);
@@ -214,19 +214,19 @@ describe("stats.svelte.ts", () => {
         }) => {
             stats.dailyTimeSpent = {
                 // Older 4-day run
-                [Stats.dateToKey(day(-10))]: 5,
-                [Stats.dateToKey(day(-9))]: 5,
-                [Stats.dateToKey(day(-8))]: 5,
-                [Stats.dateToKey(day(-7))]: 5,
+                [day(-10)]: 5,
+                [day(-9)]: 5,
+                [day(-8)]: 5,
+                [day(-7)]: 5,
                 // Recent 2-day run ending today
-                [Stats.dateToKey(day(-1))]: 5,
-                [Stats.dateToKey(day(0))]: 5,
+                [day(-1)]: 5,
+                [day(0)]: 5,
             };
             expect(stats.computeStreaks(TODAY)).toEqual({ current: 2, longest: 4 });
         });
 
         test("streak computation handles month boundaries", ({ stats }) => {
-            const today = new Date(2026, 2, 1); // 2026-03-01
+            const today = "2026-03-01";
             stats.dailyTimeSpent = {
                 "2026-02-27": 5,
                 "2026-02-28": 5,
