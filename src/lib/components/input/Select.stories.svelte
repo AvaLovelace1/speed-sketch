@@ -16,9 +16,6 @@
             ],
         },
     });
-
-    // Workaround for bug https://youtrack.jetbrains.com/issue/WEB-61819/Svelte-5-TypeScript-in-markup-expressions
-    type NumberType = number;
 </script>
 
 <!-- A dropdown select component with options. -->
@@ -53,7 +50,7 @@
 <Story
     name="With Interactions"
     play={async ({ args, canvas, userEvent, step }) => {
-        async function selectOption(num: NumberType) {
+        async function selectOption(num: number) {
             await step(`Set option to ${num}`, async () => {
                 const item = args.items[num] as { value: string; label: string };
                 const selectBtn = canvas.getByRole("button", { name: args.label });

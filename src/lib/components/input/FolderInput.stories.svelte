@@ -21,9 +21,6 @@
             onRefresh: fn(),
         },
     });
-
-    // Workaround for bug https://youtrack.jetbrains.com/issue/WEB-61819/Svelte-5-TypeScript-in-markup-expressions
-    type NumberType = number;
 </script>
 
 {#snippet template(args: FolderInputProps)}
@@ -76,11 +73,11 @@
         const moveDownBtn = canvas.getByRole("button", { name: /down/i });
         const refreshBtn = canvas.getByRole("button", { name: /refresh/i });
 
-        function getOption(idx: NumberType) {
+        function getOption(idx: number) {
             return canvas.getAllByRole("row")[idx];
         }
 
-        async function selectEntry(idx: NumberType) {
+        async function selectEntry(idx: number) {
             await userEvent.click(getOption(idx));
         }
 

@@ -23,10 +23,6 @@ Shows a grid of image thumbnails.
         gridClass = "",
         moreTileClass = "",
     }: Props = $props();
-
-    // Workaround for bug https://youtrack.jetbrains.com/issue/WEB-61819/Svelte-5-TypeScript-in-markup-expressions
-    type StringType = string;
-    type NumberType = number;
 </script>
 
 {#if isLoading || imgs.length > 0}
@@ -66,13 +62,13 @@ Shows a grid of image thumbnails.
     </div>
 {/snippet}
 
-{#snippet moreTile(count: NumberType)}
+{#snippet moreTile(count: number)}
     <div class={[TILE_CLASS, moreTileClass]}>
         + <span class="text-lg font-semibold">{count}</span>
     </div>
 {/snippet}
 
-{#snippet loadingTile(id: StringType)}
+{#snippet loadingTile(id: string)}
     <div class={TILE_CLASS}>
         <span id="loading-label-{id}" class="sr-only">Loading...</span>
         <span

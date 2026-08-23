@@ -29,9 +29,6 @@
     });
 
     let dialog: Dialog;
-
-    // Workaround for bug https://youtrack.jetbrains.com/issue/WEB-61819/Svelte-5-TypeScript-in-markup-expressions
-    type StringType = string;
 </script>
 
 {#snippet template(args: DialogProps)}
@@ -55,7 +52,7 @@
             });
         }
 
-        async function closeDialog(method: StringType = "closeBtn") {
+        async function closeDialog(method: string = "closeBtn") {
             await step("Close dialog", async () => {
                 const dialogCanvas = within(screen.getByRole("dialog"));
                 if (method === "closeBtn") {

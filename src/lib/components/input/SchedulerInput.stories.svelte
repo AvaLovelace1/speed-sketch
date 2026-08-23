@@ -18,9 +18,6 @@
             ],
         },
     });
-
-    // Workaround for bug https://youtrack.jetbrains.com/issue/WEB-61819/Svelte-5-TypeScript-in-markup-expressions
-    type NumberType = number;
 </script>
 
 {#snippet template(args: SchedulerInputProps)}
@@ -60,25 +57,25 @@
         const moveUpBtn = canvas.getByRole("button", { name: /up/i });
         const moveDownBtn = canvas.getByRole("button", { name: /down/i });
 
-        function getRow(rowIdx: NumberType) {
+        function getRow(rowIdx: number) {
             return canvas.getAllByRole("row")[rowIdx];
         }
 
-        function getNumImgsInput(rowIdx: NumberType) {
+        function getNumImgsInput(rowIdx: number) {
             const row = getRow(rowIdx);
             return within(row).getByRole("spinbutton", { name: /drawings/i });
         }
 
-        async function selectEntry(rowIdx: NumberType) {
+        async function selectEntry(rowIdx: number) {
             await userEvent.click(getRow(rowIdx));
             await expectSelectedEntry(rowIdx);
         }
 
-        async function expectSelectedEntry(rowIdx: NumberType) {
+        async function expectSelectedEntry(rowIdx: number) {
             await expect(getRow(rowIdx)).toHaveAttribute("aria-selected", "true");
         }
 
-        async function editEntry(rowIdx: NumberType, numImgs: NumberType) {
+        async function editEntry(rowIdx: number, numImgs: number) {
             const numImgsInput = getNumImgsInput(rowIdx);
             await userEvent.clear(numImgsInput);
             await userEvent.type(numImgsInput, numImgs.toString());
@@ -87,7 +84,7 @@
 
         // Check that the schedule entries match the expected number of images.
         // expectedNumImgs[i] = null if the entry is a break.
-        async function expectEntries(expectedNumImgs: (NumberType | null)[]) {
+        async function expectEntries(expectedNumImgs: (number | null)[]) {
             const rows = canvas.queryAllByRole("row");
             await expect(rows).toHaveLength(expectedNumImgs.length);
             for (let i = 0; i < expectedNumImgs.length; i++) {
