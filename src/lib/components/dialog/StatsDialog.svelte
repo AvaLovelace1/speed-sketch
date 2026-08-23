@@ -104,9 +104,11 @@
         >
             {#each statCards as { title, value, color, icon }, i (title)}
                 <div
-                    class="stat {i % 2 === 0
-                        ? 'md:border-e md:border-dashed md:border-current/10 lg:border-b-0'
-                        : ''} {i === 2 ? 'md:border-b-0' : ''}"
+                    class={[
+                        "stat lg:border-b-0",
+                        i % 2 === 0 ? "md:border-e md:border-dashed md:border-current/10" : "",
+                        i >= 2 ? "md:border-b-0" : "",
+                    ]}
                 >
                     <div class="stat-figure {color} self-end text-3xl">
                         <span class="iconify {icon}"></span>
