@@ -3,7 +3,14 @@
     import SchedulePresets from "$lib/components/input/SchedulePresets.svelte";
     import type { Props as schedulePresetsProps } from "$lib/components/input/SchedulePresets.svelte";
     import { Tooltip } from "bits-ui";
-    import { fn, expect, screen, clearAllMocks, waitForElementToBeRemoved } from "storybook/test";
+    import {
+        fn,
+        expect,
+        screen,
+        clearAllMocks,
+        waitFor,
+        waitForElementToBeRemoved,
+    } from "storybook/test";
 
     const { Story } = defineMeta({
         title: "Components/Input/SchedulePresets",
@@ -81,6 +88,9 @@
             await userEvent.click(addBtn);
             const nameInput = await screen.findByLabelText(/enter a name/i);
 
+            // Focus starts in the text box so the user can just type
+            await waitFor(() => expect(nameInput).toHaveFocus());
+
             const submitBtn = screen.getByRole("button", { name: /^add$/i });
             await expect(submitBtn).toBeDisabled();
 
@@ -99,8 +109,9 @@
             await userEvent.click(renameBtn);
             const nameInput = await screen.findByLabelText(/enter a new name/i);
 
-            // Pre-filled with current preset name
+            // Pre-filled with current preset name, and ready to edit
             await expect(nameInput).toHaveValue("Default Preset");
+            await waitFor(() => expect(nameInput).toHaveFocus());
 
             const submitBtn = screen.getByRole("button", { name: /^rename$/i });
 

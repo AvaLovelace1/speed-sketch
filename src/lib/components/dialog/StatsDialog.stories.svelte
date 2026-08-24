@@ -64,7 +64,10 @@
         await step("Open dialog", async () => {
             await userEvent.click(canvas.getByRole("button", { name: /open/i }));
             await waitFor(() => expect(screen.getByRole("dialog")).toBeVisible());
+            await waitFor(() => expect(screen.getByRole("dialog")).toHaveFocus());
             await waitFor(() => expect(args.onOpen).toHaveBeenCalledOnce());
+            // Tooltip should not automatically show on open
+            await expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
             clearAllMocks();
         });
     }

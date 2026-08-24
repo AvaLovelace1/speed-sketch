@@ -65,6 +65,10 @@
 
         await step("Open and close dialog", async () => {
             await openDialog();
+            const dialog = screen.getByRole("dialog");
+            await waitFor(() => expect(dialog).toHaveFocus());
+            // Theme select should be unfocused so its focus ring doesn't show up
+            await expect(within(dialog).getByRole("button", { name: /theme/i })).not.toHaveFocus();
             await closeDialog();
         });
     }}

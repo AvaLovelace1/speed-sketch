@@ -105,7 +105,7 @@
     </div>
 </div>
 
-<Dialog bind:this={addDialog} title="Add preset">
+<Dialog bind:this={addDialog} title="Add preset" initialFocus="firstControl">
     <form
         onsubmit={(e) => {
             e.preventDefault();
@@ -123,7 +123,7 @@
     </form>
 </Dialog>
 
-<Dialog bind:this={renameDialog} title="Rename preset">
+<Dialog bind:this={renameDialog} title="Rename preset" initialFocus="firstControl">
     <form
         onsubmit={(e) => {
             e.preventDefault();

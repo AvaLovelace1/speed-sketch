@@ -80,11 +80,41 @@
             await closeDialog();
         });
 
+        await step("Opening moves focus to the dialog", async () => {
+            await openDialog();
+            const dialog = screen.getByRole("dialog");
+            await waitFor(() => expect(dialog).toHaveFocus());
+            // Tabbing from there still walks the dialog's controls
+            await userEvent.tab();
+            await expect(within(dialog).getByRole("button", { name: /close/i })).toHaveFocus();
+            await closeDialog();
+        });
+
         await step("Open and close dialog using all methods", async () => {
             for (const method of ["closeBtn", "clickOutside", "keyboard"]) {
                 await openDialog();
                 await closeDialog(method);
             }
+        });
+    }}
+/>
+
+<!-- A dialog that exists to fill in one field can focus that field on open instead. -->
+<Story
+    name="Focus First Control"
+    args={{
+        initialFocus: "firstControl",
+        children: createRawSnippet(() => ({
+            render: () => `<input type="text" class="input" aria-label="Name" />`,
+        })),
+    }}
+    play={async ({ canvas, userEvent, step }) => {
+        await step("Opening focuses the text box", async () => {
+            await userEvent.click(canvas.getByRole("button", { name: /open/i }));
+            const dialog = await screen.findByRole("dialog");
+            await waitFor(() =>
+                expect(within(dialog).getByRole("textbox", { name: /name/i })).toHaveFocus(),
+            );
         });
     }}
 />

@@ -7,14 +7,22 @@
 
     export interface Props {
         title: string;
+        initialFocus?: "dialog" | "firstControl";
         onOpen?: () => void;
         onClose?: () => void;
         children: Snippet;
     }
 
-    const { title, onOpen = () => {}, onClose = () => {}, children }: Props = $props();
+    const {
+        title,
+        initialFocus = "dialog",
+        onOpen = () => {},
+        onClose = () => {},
+        children,
+    }: Props = $props();
 
     let openBind = $state(false);
+    let content: HTMLElement | null = $state(null);
 
     export function open() {
         openBind = true;
@@ -40,7 +48,17 @@
                 {#if open}<Overlay {...props} />{/if}
             {/snippet}
         </Dialog.Overlay>
-        <Dialog.Content forceMount interactOutsideBehavior="close">
+        <Dialog.Content
+            forceMount
+            interactOutsideBehavior="close"
+            bind:ref={content}
+            class="focus:outline-none"
+            onOpenAutoFocus={(event) => {
+                if (initialFocus === "firstControl") return;
+                event.preventDefault();
+                content?.focus();
+            }}
+        >
             {#snippet child({ props, open })}
                 {#if open}
                     <Popup {...props}>
