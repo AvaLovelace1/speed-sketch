@@ -1,6 +1,6 @@
 import parse from "parse-duration";
 import * as z from "zod";
-import { basename, fisherYatesShuffle, isVideoFile } from "$lib/utils";
+import { basename, fisherYatesShuffle, isVideoFile, uniqueName } from "$lib/utils";
 import { getStore, type PersistentStore } from "$lib/store/persistent-store.svelte";
 import { ValidatedStore } from "$lib/store/validated-store.svelte";
 import { convertFileSrc, invoke, isTauri } from "@tauri-apps/api/core";
@@ -219,6 +219,20 @@ export class SessionSettings implements Record<string, unknown> {
     addSchedulePreset(name: string) {
         this.schedulePresets.push({ name, schedule: [] });
         this.selectedScheduleIdx = this.schedulePresets.length - 1;
+    }
+
+    // Append imported presets, numbering any name that would clash with one already there
+    addSchedulePresets(presets: SchedulePreset[]) {
+        if (presets.length === 0) return;
+        const firstNewIdx = this.schedulePresets.length;
+        for (const preset of presets) {
+            const name = uniqueName(
+                this.schedulePresets.map((existing) => existing.name),
+                preset.name,
+            );
+            this.schedulePresets.push({ name, schedule: preset.schedule });
+        }
+        this.selectedScheduleIdx = firstNewIdx;
     }
 
     renameSchedulePreset(name: string) {

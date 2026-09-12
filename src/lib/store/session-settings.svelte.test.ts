@@ -324,6 +324,51 @@ describe("session-settings.svelte.ts", () => {
         expect(sessionSettings.selectedScheduleIdx).toBe(1);
     });
 
+    describe("addSchedulePresets", () => {
+        const imported = [
+            { name: "Warmup", schedule: [{ duration: 60, repeat: 5, id: "1m x 5" }] },
+            { name: "Long Poses", schedule: [{ duration: 1800, repeat: 1, id: "30m x 1" }] },
+        ];
+
+        test("appends every preset and selects the first one added", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePresets(imported);
+            expect(sessionSettings.schedulePresets).toEqual([
+                SessionSettings.DEFAULT_PRESET,
+                ...imported,
+            ]);
+            expect(sessionSettings.selectedScheduleIdx).toBe(1);
+        });
+
+        test("numbers a name that is already taken", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePresets([{ name: "Warmup", schedule: [] }]);
+            sessionSettings.addSchedulePresets([{ name: "Warmup", schedule: [] }]);
+            expect(sessionSettings.schedulePresets.map((preset) => preset.name)).toEqual([
+                SessionSettings.DEFAULT_PRESET.name,
+                "Warmup",
+                "Warmup (2)",
+            ]);
+        });
+
+        test("numbers names that clash within one import", ({ sessionSettings }) => {
+            sessionSettings.addSchedulePresets([
+                { name: "Warmup", schedule: [] },
+                { name: "Warmup", schedule: [] },
+            ]);
+            expect(sessionSettings.schedulePresets.map((preset) => preset.name)).toEqual([
+                SessionSettings.DEFAULT_PRESET.name,
+                "Warmup",
+                "Warmup (2)",
+            ]);
+        });
+
+        test("leaves everything alone when there is nothing to add", ({ sessionSettings }) => {
+            sessionSettings.selectSchedulePreset(-1);
+            sessionSettings.addSchedulePresets([]);
+            expect(sessionSettings.schedulePresets).toEqual([SessionSettings.DEFAULT_PRESET]);
+            expect(sessionSettings.selectedScheduleIdx).toBe(-1);
+        });
+    });
+
     describe("renameSchedulePreset", () => {
         test.for([0, 1])("renames selected schedule %d", (idx, { sessionSettings }) => {
             sessionSettings.addSchedulePreset("Warmup");
