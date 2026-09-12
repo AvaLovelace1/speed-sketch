@@ -30,7 +30,22 @@
 {/snippet}
 
 <!-- Displays a list of image folders with add/remove/move controls. -->
-<Story name="Default" />
+<Story
+    name="Default"
+    play={async ({ canvas, step }) => {
+        await step("Refresh button is justified to the far right", async () => {
+            const addBtn = canvas.getByRole("button", { name: /add folder/i });
+            const refreshBtn = canvas.getByRole("button", { name: /refresh references/i });
+
+            const listBox = canvas.getByRole("table").getBoundingClientRect();
+            const refreshBox = refreshBtn.getBoundingClientRect();
+            await expect(refreshBox.right).toBe(listBox.right);
+            await expect(refreshBox.left).toBeGreaterThan(
+                addBtn.getBoundingClientRect().right + 20,
+            );
+        });
+    }}
+/>
 
 <!-- When empty, the UI displays a prompt to add a folder. -->
 <Story

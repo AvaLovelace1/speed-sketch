@@ -87,16 +87,15 @@ A reorderable list of image folders with add/remove/move controls.
         action: onRefresh,
         tooltip: "Refresh references",
         disabled: manager.items.length === 0,
-        class: "ml-auto",
     });
-    const tools = $derived([addBtn, removeBtn, moveUpBtn, moveDownBtn, refreshBtn]);
+    const toolbars = $derived([[addBtn, removeBtn, moveUpBtn, moveDownBtn], [refreshBtn]]);
 </script>
 
 <ReorderableList
     {manager}
     caption="Reference folders"
     getKey={(folder, i) => folder + i}
-    {tools}
+    {toolbars}
     {onChange}
 >
     {#snippet emptyState()}

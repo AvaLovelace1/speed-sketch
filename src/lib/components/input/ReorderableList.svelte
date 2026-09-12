@@ -20,7 +20,8 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
         emptyState?: Snippet;
         row: Snippet<[T, number, boolean]>;
         getKey: (item: T, index: number) => string;
-        tools?: Tool[];
+        toolbars?: Tool[][];
+        footer?: Snippet;
         onChange?: () => void;
         disabled?: boolean;
         disabledState?: Snippet;
@@ -32,7 +33,8 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
         emptyState,
         row,
         getKey = (_: T, index: number) => index.toString(),
-        tools = [],
+        toolbars = [],
+        footer,
         onChange = () => {},
         disabled = false,
         disabledState,
@@ -114,4 +116,13 @@ A reorderable list with drag-and-drop support, single-item selection, and a tool
         {/if}
     </tbody>
 </table>
-<Toolbar {tools} class="mb-6" toolbarStyle="small" />
+<div class="mb-6">
+    <div class="flex justify-between">
+        {#each toolbars as tools, i (i)}
+            <div class="flex items-center gap-2"><Toolbar {tools} toolbarStyle="small" /></div>
+        {/each}
+    </div>
+    {#if footer}
+        <div class="mt-2">{@render footer()}</div>
+    {/if}
+</div>
